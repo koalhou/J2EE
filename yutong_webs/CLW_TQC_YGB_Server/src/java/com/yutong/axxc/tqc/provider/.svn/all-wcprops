@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/provider
+END
+DataAccessExceptionMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/provider/DataAccessExceptionMapper.java
+END
+JacksonSerializeExceptionMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/provider/JacksonSerializeExceptionMapper.java
+END
+JacksonDeserializeExceptionMapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/provider/JacksonDeserializeExceptionMapper.java
+END

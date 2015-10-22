@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TerminalAuthentication">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="TerminalAuthenticationInfo" type="com.neusoft.clw.yw.xj.monitor.ds.TerminalAuthenticationInfo" />
+	
+	<resultMap id="terminalAuthenticationInfo-result" class="TerminalAuthenticationInfo">
+		<result property="terminalAnthenticationId" column="ID" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="createTime" column="CREATE_TIME" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_YW_CERTIFICATION_FAILE_T T
+         <dynamic prepend="WHERE">
+         	<isNotEmpty prepend="AND" property="terminalCode">
+               T.TERMINAL_ID LIKE '%$terminalCode$%'
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="vehicleVin">
+               T.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="simCardNumber">
+               T.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         	</isNotEmpty>
+         </dynamic>
+	</select>
+	
+	<select id="getTerminalAuthenticationInfos" parameterClass="Map" resultMap="terminalAuthenticationInfo-result">
+		SELECT T.ID,
+               T.TERMINAL_ID,
+               T.VEHICLE_VIN,
+               T.SIM_CARD_NUMBER,
+               TO_CHAR(T.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME
+          FROM CLW_YW_CERTIFICATION_FAILE_T T
+         <dynamic prepend="WHERE">
+         	<isNotEmpty prepend="AND" property="terminalCode">
+               T.TERMINAL_ID LIKE '%$terminalCode$%'
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="vehicleVin">
+               T.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="simCardNumber">
+               T.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         	</isNotEmpty>
+         </dynamic> 
+         ORDER BY T.CREATE_TIME DESC
+	</select>
+	
+	<select id="getTerminalAuthenticationById" parameterClass="String" resultMap="terminalAuthenticationInfo-result">
+		SELECT T.ID,
+               T.TERMINAL_ID,
+               T.VEHICLE_VIN,
+               T.SIM_CARD_NUMBER,
+               TO_CHAR(T.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME
+          FROM CLW_YW_CERTIFICATION_FAILE_T T
+         WHERE T.ID = #terminalAnthenticationId#
+	</select>
+	
+	<delete id="deleteTerminalAuthenticationById" parameterClass="String">
+		DELETE FROM CLW_YW_CERTIFICATION_FAILE_T T
+         WHERE T.ID = #terminalAnthenticationId#
+	</delete>
+	
+</sqlMap>
+	

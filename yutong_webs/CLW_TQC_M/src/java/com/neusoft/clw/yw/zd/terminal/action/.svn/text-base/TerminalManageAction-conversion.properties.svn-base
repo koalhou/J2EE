@@ -1,0 +1,2 @@
+Element_channelList=com.neusoft.clw.yw.zd.terminal.ds.ChannelInfo
+CreateIfNull_channelList=true

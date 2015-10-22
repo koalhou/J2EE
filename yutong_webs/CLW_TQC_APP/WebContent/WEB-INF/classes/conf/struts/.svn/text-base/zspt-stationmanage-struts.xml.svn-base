@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="sitmanage" namespace="/sit" extends="clw-default">
+		
+		<action name="stationmanage" class="sitManageAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/sitemanage/oilBottom.jsp</result>
+			<result name="success">/WEB-INF/jsp/sitemanage/oilBottom.jsp</result>	
+		</action>
+		
+		<action name="selectTreeWin" class="sitManageAction" method="selectTreeWin">
+			<result name="error">/WEB-INF/jsp/sitemanage/openTreeWin.jsp</result>
+			<result name="success">/WEB-INF/jsp/sitemanage/openTreeWin.jsp</result>	
+		</action>
+		
+		<action name="dialog_times">
+			<result>/WEB-INF/jsp/sitemanage/dialog_times.jsp</result>
+		</action>
+		
+		<action name="dialog_low">
+			<result>/WEB-INF/jsp/sitemanage/dialog_low.jsp</result>
+		</action>
+		
+		<!-- 删除采集站点 -->
+		<action name="deleteCollection_ID" class="sitManageAction" method="deleteCollectionByID">
+			<result name="error" type="redirect-action">
+				<param name="actionName">stationmanage</param>
+			</result>
+		</action>
+		
+		<!-- 修改采集站点 -->
+<!-- 		<action name="updateCollection_ID" class="sitManageAction" method="updateCollectionByID"> -->
+<!-- 			<result name="error" type="redirect-action"> -->
+<!-- 				<param name="actionName">stationmanage</param> -->
+<!-- 			</result> -->
+<!-- 		</action> -->
+		<action name="getSingleLONLAT" class="sitManageAction" method="getSingleLONLAT">
+		</action>
+		<!-- 获取是否关联线路 -->
+<!-- 		<action name="getStationFlag" class="sitManageAction" method="getStationFlag"> -->
+<!-- 		</action> -->
+	</package>
+	<package name="sitGrid" namespace="/sitGrid" extends="json-default">
+		<action name="stationList" class="sitManageAction" method="siteBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+
+		
+		<action name="addStation_do" class="sitManageAction" method="add">
+		   <result name="success" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>			
+		</action>
+		<action name="editStation_do" class="sitManageAction" method="updateStation">
+			<result name="success" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>		
+		</action>
+		<action name="deleteStation" class="sitManageAction" method="deleteStation">
+			<result name="success" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>		
+		</action>
+		
+		<action name="getAllStationInfo" class="sitManageAction" method="getLeftList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">newlist</param>
+           </result>
+		</action>
+		
+		<action name="getCheckedLeftList" class="sitManageAction" method="getCheckedLeftList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">newlist</param>
+           </result>
+		</action>
+		
+		<action name="getMapSearchList" class="sitManageAction" method="getMapSearchList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">newlist</param>
+           </result>
+		</action>
+		
+		
+		<action name="addOilTimerConfig" class="sitManageAction" method="addOilTimerConfig">
+			<result name="success" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+		</action>
+		
+		<action name="updateOilTimerConfig" class="sitManageAction" method="updateOilTimerConfig">
+			<result name="success" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+		</action>
+		
+		<action name="updateLowerOil" class="sitManageAction" method="updateLowerOil">
+			<result name="success" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/html</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">result</param>
+           </result>
+		</action>
+		
+		
+		<action name="selectOilTimerConfig" class="sitManageAction" method="selectOilTimerConfig">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">oilConfigList</param>
+           </result>
+		</action>
+		
+		<action name="selectStationSet" class="sitManageAction" method="selectStationSet">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+		</action>
+		
+		<action name="setParameterLater" class="sitManageAction" method="setParameterLater">
+				<result name="success" type="json">
+	           	  <param name="contentType">text/json</param>
+				  <param name="excludeNullProperties">false</param>
+	           	  <param name="noCache">true</param>
+	              <param name="root">map</param>
+	           </result>
+	           <result name="error" type="json">
+	           	  <param name="contentType">text/json</param>
+				  <param name="excludeNullProperties">false</param>
+	           	  <param name="noCache">true</param>
+	              <param name="root">map</param>
+	           </result>
+		</action>
+		
+	</package>
+</struts>

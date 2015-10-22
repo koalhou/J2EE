@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="stewardmanage" namespace="/steward" extends="clw-default">
+		<action name="stewardmanage" class="stewardManageAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/infomanage/stewardmanage/stewardmanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/stewardmanage/stewardmanage.jsp</result>	
+		</action>
+		<action name="addstewardbefore" class="stewardManageAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/stewardmanage/addsteward.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="steward_add" class="stewardManageAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/stewardmanage/addsteward.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addstewardbefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>		
+		</action>
+		<action name="steward_edit_form" class="stewardManageAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/stewardmanage/altersteward.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		
+		<action name="show_pic" class="stewardManageAction" method="showStewardPhoto">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="steward_edit" class="stewardManageAction" method="updateSteward">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/stewardmanage/altersteward.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/stewardmanage/altersteward.jsp
+			</result>			
+		</action>
+		<action name="steward_delete" class="stewardManageAction" method="deleteSteward">
+			<result name="success" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="forbid" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/stewardmanage/altersteward.jsp
+			</result>			
+		</action>
+		
+		<action name="importStewardBefore" class="stewardManageAction" method="importStewardBefore">
+			<result name="success">
+				/WEB-INF/jsp/infomanage/stewardmanage/stewardImport.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<action name="importSteward" class="stewardManageAction" method="importSteward">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/stewardmanage/stewardImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/stewardmanage/stewardImport.jsp
+			</result>
+		</action>
+		
+		<action name="exportSteward" class="stewardManageAction" method="exportSteward">
+			<result name="error" type="redirect-action">
+				<param name="actionName">stewardmanage</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		
+	</package>
+	<package name="stewardGrid" namespace="/stewardGrid" extends="json-default">
+		<action name="stewardList" class="stewardManageAction"  method="stewardBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

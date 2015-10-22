@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SingleTerminalMonitor">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="SingleTerminalInfo" type="com.neusoft.clw.yw.xj.monitor.ds.SingleTerminalInfo" />
+	
+	<resultMap id="singleTerminalStatus-result" class="SingleTerminalInfo">
+		<result property="monitorTime" column="TERMINAL_TIME" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalStatus" column="REC_NUMBER" />
+		<result property="gpsStatus" column="GPS_STATE" />
+		<result property="powerStatus" column="POWER_STATE" />
+		<result property="videoId" column="VIDEO_ID" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="enterpriseName" column="FULL_NAME" />
+	</resultMap>
+	
+	<resultMap id="vehicleInfo-result" class="SingleTerminalInfo">
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="videoId" column="VIDEO_ID" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="enterpriseName" column="FULL_NAME" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="SingleTerminalInfo" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_YW_TERMINAL_RECORD_T YTR,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_JC_TERMINAL_T JT,
+               CLW_JC_ENTERPRISE_T JE,
+               (SELECT TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI') AS TERMINAL_TIME,
+                       MAX(T.TERMINAL_TIME) AS MAX_TERMINAL_TIME,
+                       T.VEHICLE_VIN AS VEHICLE_VIN,
+                       COUNT(1) AS REC_NUMBER
+                  FROM CLW_YW_TERMINAL_RECORD_T T
+                 WHERE T.VEHICLE_VIN = #vehicleVin#
+                   AND T.TERMINAL_TIME BETWEEN TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI') + 1/(24*60) AND TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI')+ (#minuteValue#+1)/(24*60)
+                 GROUP BY TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI'), T.VEHICLE_VIN
+        
+                 UNION ALL
+        
+                SELECT TERMINAL_TIME,
+                       NULL AS MAX_TERMINAL_TIME,
+                       NULL AS VEHICLE_VIN,
+                       0 AS REC_NUMBER
+                  FROM (SELECT TO_CHAR(TO_DATE(#startDate#, 'YYYY-MM-DD HH24:MI')+ROWNUM/(24 * 60),'YYYY-MM-DD HH24:MI') TERMINAL_TIME
+                          FROM DUAL
+                       CONNECT BY ROWNUM &lt; = #minuteValue#
+                
+                         MINUS
+                
+                        SELECT TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI') AS TERMINAL_TIME
+                          FROM CLW_YW_TERMINAL_RECORD_T T
+                         WHERE T.VEHICLE_VIN = #vehicleVin#
+                           AND T.TERMINAL_TIME BETWEEN TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI') + 1/(24*60) AND TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI')+ (#minuteValue#+1)/(24*60)
+                         GROUP BY TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI'))
+               ) MIDDLE_T
+         WHERE YTR.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND YTR.TERMINAL_ID = JT.TERMINAL_ID(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND MIDDLE_T.VEHICLE_VIN = YTR.VEHICLE_VIN(+)
+           AND MIDDLE_T.MAX_TERMINAL_TIME = YTR.TERMINAL_TIME(+)
+         ORDER BY MIDDLE_T.TERMINAL_TIME DESC
+	</select>
+	
+	<select id="getSingleTerminalStatus" parameterClass="SingleTerminalInfo" resultMap="singleTerminalStatus-result">
+		SELECT MIDDLE_T.TERMINAL_TIME,
+               MIDDLE_T.VEHICLE_VIN,
+               MIDDLE_T.REC_NUMBER,
+               YTR.GPS_STATE,
+               YTR.POWER_STATE,
+               JT.VIDEO_ID,
+               JT.TERMINAL_ID,
+               CBI.VEHICLE_LN,
+               JE.FULL_NAME
+          FROM CLW_YW_TERMINAL_RECORD_T YTR,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_JC_TERMINAL_T JT,
+               CLW_JC_ENTERPRISE_T JE,
+               (SELECT TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI') AS TERMINAL_TIME,
+                       MAX(T.TERMINAL_TIME) AS MAX_TERMINAL_TIME,
+                       T.VEHICLE_VIN AS VEHICLE_VIN,
+                       COUNT(1) AS REC_NUMBER
+                  FROM CLW_YW_TERMINAL_RECORD_T T
+                 WHERE T.VEHICLE_VIN = #vehicleVin#
+                   AND T.TERMINAL_TIME BETWEEN TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI') + 1/(24*60) AND TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI')+ (#minuteValue#+1)/(24*60)
+                 GROUP BY TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI'), T.VEHICLE_VIN
+        
+                 UNION ALL
+        
+                SELECT TERMINAL_TIME,
+                       NULL AS MAX_TERMINAL_TIME,
+                       NULL AS VEHICLE_VIN,
+                       0 AS REC_NUMBER
+                  FROM (SELECT TO_CHAR(TO_DATE(#startDate#, 'YYYY-MM-DD HH24:MI')+ROWNUM/(24 * 60),'YYYY-MM-DD HH24:MI') TERMINAL_TIME
+                          FROM DUAL
+                       CONNECT BY ROWNUM &lt; = #minuteValue#
+                
+                         MINUS
+                
+                        SELECT TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI') AS TERMINAL_TIME
+                          FROM CLW_YW_TERMINAL_RECORD_T T
+                         WHERE T.VEHICLE_VIN = #vehicleVin#
+                           AND T.TERMINAL_TIME BETWEEN TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI')+ 1/(24*60) AND TO_DATE(#startDate#,'YYYY-MM-DD HH24:MI')+ (#minuteValue#+1)/(24*60)
+                         GROUP BY TO_CHAR(T.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI'))
+               ) MIDDLE_T
+         WHERE YTR.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND YTR.TERMINAL_ID = JT.TERMINAL_ID(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND MIDDLE_T.VEHICLE_VIN = YTR.VEHICLE_VIN(+)
+           AND MIDDLE_T.MAX_TERMINAL_TIME = YTR.TERMINAL_TIME(+)
+         ORDER BY MIDDLE_T.TERMINAL_TIME DESC
+	</select>
+	
+	<select id="getVehicleInfo" parameterClass="String" resultMap="vehicleInfo-result">
+		SELECT CBI.VEHICLE_VIN,
+               JT.VIDEO_ID,
+               JT.TERMINAL_ID,
+               CBI.VEHICLE_LN,
+               JE.FULL_NAME
+          FROM CLW_CL_BASE_INFO_T CBI,
+               CLW_JC_TERMINAL_T JT, 
+               CLW_JC_ENTERPRISE_T JE
+         WHERE CBI.VEHICLE_VIN = #value#
+           AND CBI.VEHICLE_VIN = JT.VEHICLE_VIN
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID
+           AND ROWNUM = 1
+	</select>
+</sqlMap>

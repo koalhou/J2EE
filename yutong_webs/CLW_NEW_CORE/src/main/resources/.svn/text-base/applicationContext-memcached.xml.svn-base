@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+	<!-- Memcached配置 -->
+	<bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder">
+		<!-- memcached主机信息. -->
+		<constructor-arg>
+			<value>${memcached.hosts}</value>
+		</constructor-arg>
+		<!-- nio connection pool size -->
+		<!-- Use binary protocol,default is TextCommandFactory <property name="commandFactory"> 
+			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean> 
+			</property> -->
+		<!-- Distributed strategy -->
+		<property name="sessionLocator">
+			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+		</property>
+		<!-- Serializing transcoder -->
+		<property name="transcoder">
+			<bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+		</property>
+		<!-- ByteBuffer allocator -->
+		<property name="bufferAllocator">
+			<bean class="net.rubyeye.xmemcached.buffer.SimpleBufferAllocator"></bean>
+		</property>
+	</bean>
+	<!-- Use factory bean to build memcached client -->
+	<bean name="memcachedClient" factory-bean="memcachedClientBuilder" factory-method="build" destroy-method="shutdown" />
+
+	<cache:annotation-driven />
+
+	<bean id="cacheManager" class="com.neusoft.mid.clwapi.memcached.MemcacheCacheManager">
+		<property name="client" ref="memcachedClient" />
+		<property name="caches">
+			<set>
+				<bean class="com.yutong.clw.memcached.MemcacheCache">
+					<property name="name" value="CLW_API_CACHE" />
+					<property name="client" ref="memcachedClient" />
+				</bean>
+			</set>
+		</property>
+	</bean>
+
+
+</beans>

@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="PassengerStat">
+<!--客流统计首页折线图
+t1：宇通通勤车和日期
+t2：宇通通勤车人次统计
+t3：一厂和日期
+t4：一厂人次统计
+t5：二厂和日期
+t6：二厂人次统计
+-->
+<select id="getLineChartFirstPage" parameterClass="map" resultClass="HashMap">
+with t1 as
+ (select '宇通通勤车' organization_name,
+         to_char(to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1,
+                 'yyyy-mm-dd') rq
+    from dual
+  connect by level <![CDATA[ <= ]]>
+             round(to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss') -
+                   to_date(#begin_time#, 'yyyy-mm-dd'))),
+t2 as
+ (select to_char(b.end_time, 'yyyy-mm-dd') rq,
+         sum(b.load_number) person_count
+    from clw_xc_route_t a, 
+(
+select d1.route_id,d1.end_time,d1.load_number  from TQC_SEND_PASSENGER d1
+union all
+select d2.route_id,d2.end_time,d2.load_num from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) b
+   where a.route_id = b.route_id and a.valid_flag = '0'
+     and b.end_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+     and b.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	a.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(a.route_class = '0' or a.route_class = '1')
+     </isEmpty>
+     and a.route_organization_id in
+         (select enterprise_id
+            from clw_jc_enterprise_t a
+           where a.VALID_FLAG = '0'
+           start with a.enterprise_id = #yutong_enterprise_id#
+          connect by prior a.enterprise_id = a.parent_id)
+   group by to_char(b.end_time, 'yyyy-mm-dd')),
+t3 as
+ (select '一厂' organization_name,
+         to_char(to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1, 'yyyy-mm-dd') rq
+    from dual
+  connect by level <![CDATA[ <= ]]>
+             round(to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss') - to_date(#begin_time#, 'yyyy-mm-dd'))),
+t4 as
+ (select to_char(b.end_time, 'yyyy-mm-dd') rq,
+         sum(b.load_number) person_count
+    from clw_xc_route_t a,
+(
+select d1.route_id,d1.end_time,d1.load_number  from TQC_SEND_PASSENGER d1
+union all
+select d2.route_id,d2.end_time,d2.load_num from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) b
+   where a.route_id = b.route_id and a.valid_flag = '0'
+     and b.end_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+     and b.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	a.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(a.route_class = '0' or a.route_class = '1')
+     </isEmpty>
+     and a.route_organization_id in
+         (select enterprise_id
+            from clw_jc_enterprise_t a
+           where a.VALID_FLAG = '0'
+           start with a.enterprise_id = #yichang_enterprise_id#
+          connect by prior a.enterprise_id = a.parent_id)
+   group by to_char(b.end_time, 'yyyy-mm-dd')),
+t5 as
+ (select '二厂' organization_name,
+         to_char(to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1,
+                 'yyyy-mm-dd') rq
+    from dual
+  connect by level <![CDATA[ <= ]]>
+             round(to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss') - to_date(#begin_time#, 'yyyy-mm-dd'))),
+t6 as
+ (select to_char(b.end_time, 'yyyy-mm-dd') rq,
+         sum(b.load_number) person_count
+    from clw_xc_route_t a, 
+(
+select d1.route_id,d1.end_time,d1.load_number  from TQC_SEND_PASSENGER d1
+union all
+select d2.route_id,d2.end_time,d2.load_num from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) b
+   where a.route_id = b.route_id and a.valid_flag = '0'
+     and b.end_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+     and b.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	a.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(a.route_class = '0' or a.route_class = '1')
+     </isEmpty>
+     and a.route_organization_id in
+         (select enterprise_id
+            from clw_jc_enterprise_t a
+           where a.VALID_FLAG = '0'
+           start with a.enterprise_id = #erchang_enterprise_id#
+          connect by prior a.enterprise_id = a.parent_id)
+   group by to_char(b.end_time, 'yyyy-mm-dd'))
+select to_char(to_date(t1.rq,'yyyy-mm-dd'),'mm/dd') rq, t1.organization_name, nvl(t2.person_count, 0) person_count
+  from t1, t2
+ where t1.rq = t2.rq(+)
+   <isNotEmpty prepend="AND" property="showVacation">
+   t1.rq not in (select to_char(vacation_day, 'yyyy-mm-dd')
+                       from tqc_organize_set
+                      where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+                        and vacation_day <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+                        and valid_flag='0'
+                        )
+                        
+   </isNotEmpty>
+union all
+select to_char(to_date(t3.rq,'yyyy-mm-dd'),'mm/dd') rq, t3.organization_name, nvl(t4.person_count, 0) person_count
+  from t3, t4
+ where t3.rq = t4.rq(+)
+   <isNotEmpty prepend="AND" property="showVacation">
+   t3.rq not in (select to_char(vacation_day, 'yyyy-mm-dd')
+                       from tqc_organize_set
+                      where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+                        and vacation_day <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+                        and valid_flag='0'
+                        )
+   </isNotEmpty>
+union all
+select to_char(to_date(t5.rq,'yyyy-mm-dd'),'mm/dd') rq, t5.organization_name, nvl(t6.person_count, 0) person_count
+  from t5, t6
+ where t5.rq = t6.rq(+)
+   <isNotEmpty prepend="AND" property="showVacation">
+   t5.rq not in (select to_char(vacation_day, 'yyyy-mm-dd')
+                       from tqc_organize_set
+                      where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+                        and vacation_day <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+                        and valid_flag='0'
+                        )
+   </isNotEmpty>
+order by 2, 1
+</select>
+
+
+
+
+<!--查询首页图表下的统计数据，宇通通勤车、一厂、二厂通过union合并，避免多次查询-->
+<select id="getDataByOrganization" parameterClass="map" resultClass="HashMap">
+select 1 sort_order,
+       nvl(count(a.sp_id), 0) banci,
+       nvl(sum(b.limite_number), 0) zuowei,
+       nvl(sum(a.load_number), 0) renci
+  from 
+(
+select d1.sp_id,d1.load_number,d1.vin_code,d1.route_id,d1.valid_flag,d1.organization_id,d1.start_time,d1.end_time  from TQC_SEND_PASSENGER d1
+union all
+select to_char(d2.auto_id) as sp_id,d2.load_num,d2.vehicle_vin as vin_code,d2.route_id,d2.valid_flag,d2.organization_id,d2.start_time,d2.end_time from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+, clw_cl_base_info_t b, clw_xc_route_t c
+ where a.vin_code = b.vehicle_vin
+   and a.route_id = c.route_id
+   and a.valid_flag = '0'
+   and b.valid_flag = '0'
+   and c.valid_flag = '0'
+   and c.route_organization_id in
+       (select enterprise_id
+          from clw_jc_enterprise_t a
+         where a.VALID_FLAG = '0'
+         start with a.enterprise_id = #yutong_enterprise_id#
+        connect by prior a.enterprise_id = a.parent_id)
+   and a.start_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+   and a.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	c.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(c.route_class = '0' or c.route_class = '1')
+     </isEmpty>
+   <isNotEmpty prepend="AND" property="showVacation">
+     to_char(a.end_time, 'yyyy-mm-dd') not in
+       (select to_char(vacation_day, 'yyyy-mm-dd')
+          from tqc_organize_set
+         where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+           and vacation_day <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+           and valid_flag='0'
+           )
+   </isNotEmpty>
+union
+select 2 sort_order,
+       nvl(count(a.sp_id), 0) banci,
+       nvl(sum(b.limite_number), 0) zuowei,
+       nvl(sum(a.load_number), 0) renci
+  from 
+  
+(
+select d1.sp_id,d1.load_number,d1.vin_code,d1.route_id,d1.valid_flag,d1.organization_id,d1.start_time,d1.end_time  from TQC_SEND_PASSENGER d1
+union all
+select to_char(d2.auto_id) as sp_id,d2.load_num,d2.vehicle_vin as vin_code,d2.route_id,d2.valid_flag,d2.organization_id,d2.start_time,d2.end_time from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+  
+  , clw_cl_base_info_t b, clw_xc_route_t c
+ where a.vin_code = b.vehicle_vin
+   and a.route_id = c.route_id
+   and a.valid_flag = '0'
+   and b.valid_flag = '0'
+   and c.valid_flag = '0'
+   and c.route_organization_id in
+       (select enterprise_id
+          from clw_jc_enterprise_t a
+         where a.VALID_FLAG = '0'
+         start with a.enterprise_id = #yichang_enterprise_id#
+        connect by prior a.enterprise_id = a.parent_id)
+   and a.start_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+   and a.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	c.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(c.route_class = '0' or c.route_class = '1')
+     </isEmpty>
+   <isNotEmpty prepend="AND" property="showVacation">
+     to_char(a.end_time, 'yyyy-mm-dd') not in
+       (select to_char(vacation_day, 'yyyy-mm-dd')
+          from tqc_organize_set
+         where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+           and vacation_day <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+           and valid_flag='0'
+           )
+   </isNotEmpty>
+union
+select 3 sort_order,
+       nvl(count(a.sp_id), 0) banci,
+       nvl(sum(b.limite_number), 0) zuowei,
+       nvl(sum(a.load_number), 0) renci
+  from 
+  
+ (
+select d1.sp_id,d1.load_number,d1.vin_code,d1.route_id,d1.valid_flag,d1.organization_id,d1.start_time,d1.end_time  from TQC_SEND_PASSENGER d1
+union all
+select to_char(d2.auto_id) as sp_id,d2.load_num,d2.vehicle_vin as vin_code,d2.route_id,d2.valid_flag,d2.organization_id,d2.start_time,d2.end_time from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+  
+  
+  ,clw_cl_base_info_t b, clw_xc_route_t c
+ where a.vin_code = b.vehicle_vin
+   and a.route_id = c.route_id
+   and a.valid_flag = '0'
+   and b.valid_flag = '0'
+   and c.valid_flag = '0'
+   and c.route_organization_id in
+       (select enterprise_id
+          from clw_jc_enterprise_t a
+         where a.VALID_FLAG = '0'
+         start with a.enterprise_id = #erchang_enterprise_id#
+        connect by prior a.enterprise_id = a.parent_id)
+   and a.start_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+   and a.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	c.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(c.route_class = '0' or c.route_class = '1')
+     </isEmpty>
+   <isNotEmpty prepend="AND" property="showVacation">
+     to_char(a.end_time, 'yyyy-mm-dd') not in
+       (select to_char(vacation_day, 'yyyy-mm-dd')
+          from tqc_organize_set
+         where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+           and vacation_day <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+           and valid_flag='0'
+           )
+   </isNotEmpty>
+</select>
+
+
+<!--导出Excel查询，汇总报表-->
+<select id="getPassengerStatExcelSum" parameterClass="map" resultClass="HashMap">
+select t1.rq,
+       t1.route_name,
+       t1.short_name,
+       t1.route_class,
+       to_char(nvl(t2.person_count, 0)) person_count
+  from (select a.rq,
+               b.route_id,
+               b.route_name,
+               e.short_name,
+               decode(b.route_class,'0','早班线路','1','晚班线路','2','场内通勤','') route_class
+          from (select to_char(to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1,
+                               'yyyy-mm-dd') rq
+                  from dual
+                connect by level <![CDATA[ <= ]]>
+                           round(to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss') -
+                                 to_date(#begin_time#, 'yyyy-mm-dd'))) a,
+               clw_xc_route_t b,
+               clw_jc_enterprise_t e
+         where b.route_organization_id = e.enterprise_id and b.valid_flag = '0' and e.valid_flag = '0'
+                 <isNotEmpty prepend="AND" property="route_id">
+		               b.route_id in 
+						<iterate property="route_id" conjunction=","  open="(" close=")">
+				       		#route_id[]#
+				     	</iterate>
+		         </isNotEmpty>
+				<isNotEmpty prepend="AND" property="route_class">
+			     	b.route_class = #route_class#
+			     </isNotEmpty>
+			     <isEmpty prepend="AND" property="route_class">
+			     	(b.route_class = '0' or b.route_class = '1')
+			     </isEmpty>
+		               and b.route_id in (select route_id from clw_xc_route_t where ROUTE_ORGANIZATION_ID in
+						(select enterprise_id
+						  from clw_jc_enterprise_t a
+						 where a.VALID_FLAG = '0'
+						 start with a.enterprise_id = #enterprise_id#
+						connect by prior a.enterprise_id = a.parent_id))
+           ) t1,
+       (select a.route_id,
+               to_char(a.end_time, 'yyyy-mm-dd') rq,
+               sum(a.load_number) person_count
+          from 
+          
+(
+select d1.load_number,d1.route_id,d1.start_time,d1.end_time  from TQC_SEND_PASSENGER d1
+union all
+select d2.load_num,d2.route_id,d2.start_time,d2.end_time from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+          
+         where 1 = 1
+	         <isNotEmpty prepend="AND" property="route_id">
+	               a.route_id in 
+					<iterate property="route_id" conjunction=","  open="(" close=")">
+			       		#route_id[]#
+			     	</iterate>
+	         </isNotEmpty>
+	               and a.route_id in (select route_id from clw_xc_route_t where ROUTE_ORGANIZATION_ID in
+					(select enterprise_id
+					  from clw_jc_enterprise_t a
+					 where a.VALID_FLAG = '0'
+					 start with a.enterprise_id = #enterprise_id#
+					connect by prior a.enterprise_id = a.parent_id))
+           and a.end_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+           and a.end_time <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+           group by a.route_id,to_char(a.end_time, 'yyyy-mm-dd')) t2
+ where t1.rq = t2.rq(+)
+   and t1.route_id = t2.route_id(+)
+ order by NLSSORT(t1.ROUTE_NAME, 'NLS_SORT=SCHINESE_PINYIN_M'), t1.rq
+</select>
+
+<!--导出Excel查询，明细报表-->
+<select id="getPassengerStatExcel" parameterClass="map" resultClass="HashMap">
+select t1.rq,
+	   to_char(t1.route_id) route_id,
+       t1.route_name,
+       to_char(t1.site_id) site_id,
+       t1.site_name,
+       t1.short_name,
+       t1.route_class,
+       to_char(nvl(t2.person_count, 0)) person_count
+  from (select a.rq,
+               b.route_id,
+               b.route_name,
+               d.site_id,
+               d.site_name,
+               c.rs_order,
+               e.short_name,
+               decode(b.route_class,'0','早班线路','1','晚班线路','2','场内通勤','') route_class
+          from (select to_char(to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1,
+                               'yyyy-mm-dd') rq
+                  from dual
+                connect by level <![CDATA[ <= ]]>
+                           round(to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss') -
+                                 to_date(#begin_time#, 'yyyy-mm-dd'))) a,
+               clw_xc_route_t b,
+               CLW_XC_ROUTESITE_T c,
+               clw_xc_site_t d,
+               clw_jc_enterprise_t e
+         where b.route_id = c.route_id
+           and c.site_id = d.site_id
+           and b.route_organization_id = e.enterprise_id and b.valid_flag = '0' and d.valid_flag = '0' and e.valid_flag = '0'
+                 <isNotEmpty prepend="AND" property="route_id">
+		               b.route_id in 
+						<iterate property="route_id" conjunction=","  open="(" close=")">
+				       		#route_id[]#
+				     	</iterate>
+		         </isNotEmpty>
+				<isNotEmpty prepend="AND" property="route_class">
+			     	b.route_class = #route_class#
+			     </isNotEmpty>
+			     <isEmpty prepend="AND" property="route_class">
+			     	(b.route_class = '0' or b.route_class = '1')
+			     </isEmpty>
+		               AND b.route_id in (select route_id from clw_xc_route_t where ROUTE_ORGANIZATION_ID in
+						(select enterprise_id
+						  from clw_jc_enterprise_t a
+						 where a.VALID_FLAG = '0'
+						 start with a.enterprise_id = #enterprise_id#
+						connect by prior a.enterprise_id = a.parent_id))
+           ) t1,
+       (select a.route_id,
+               a.site_id,
+               to_char(a.reality_out_time, 'yyyy-mm-dd') rq,
+               sum(a.reality_up_num) person_count
+          from 
+          
+(
+select d1.route_id,d1.site_id,d1.reality_out_time,d1.reality_up_num  from CLW_XC_INOUTSITE_T d1,
+	(select p.start_time ,p.end_time,p.route_id,p.vin_code from tqc_send_passenger p where p.start_time  <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+	and p.start_time <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')) aa
+where d1.route_id = aa.route_id
+and d1.vehicle_vin = aa.vin_code
+and d1.reality_out_time <![CDATA[ >= ]]> aa.start_time
+and d1.reality_out_time <![CDATA[ <= ]]> aa.end_time
+union all
+select d2.route_id,d2.site_id,d2.end_time as reality_out_time,d2.load_num as reality_up_num from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+          
+          
+         where 1 = 1
+	         <isNotEmpty prepend="AND" property="route_id">
+	               a.route_id in 
+					<iterate property="route_id" conjunction=","  open="(" close=")">
+			       		#route_id[]#
+			     	</iterate>
+	         </isNotEmpty>
+	               AND a.route_id in (select route_id from clw_xc_route_t where ROUTE_ORGANIZATION_ID in
+					(select enterprise_id
+					  from clw_jc_enterprise_t a
+					 where a.VALID_FLAG = '0'
+					 start with a.enterprise_id = #enterprise_id#
+					connect by prior a.enterprise_id = a.parent_id))
+           and a.reality_out_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+           and a.reality_out_time <![CDATA[ <= ]]>
+               to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+         group by a.route_id,
+                  a.site_id,
+                  to_char(a.reality_out_time, 'yyyy-mm-dd')) t2
+ where t1.rq = t2.rq(+)
+   and t1.route_id = t2.route_id(+)
+   and t1.site_id = t2.site_id(+)
+ order by NLSSORT(t1.ROUTE_NAME, 'NLS_SORT=SCHINESE_PINYIN_M'), t1.rs_order, t1.rq
+</select>
+
+
+<!--堆积图，t1临时表查询日期、线路、站点基本信息，t2临时表查询统计数据-->
+<select id="getPassengerStatStackChart" parameterClass="map" resultClass="HashMap">
+with aa as (select p.start_time ,p.end_time,p.vin_code from tqc_send_passenger p where p.start_time  <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+and p.start_time <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+and p.route_id = #route_id#),
+
+
+t1 as
+ (select a.rq,
+         b.route_id,
+         b.route_name,
+         d.site_id,
+         d.site_name,
+         c.rs_order,
+         decode(b.route_class,
+                '0',
+                '早班线路',
+                '1',
+                '晚班线路',
+                '2',
+                '场内通勤',
+                '') route_class
+    from (select to_char(to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1,
+                         'yyyy-mm-dd') rq
+            from dual
+          connect by level <![CDATA[ <= ]]>
+                     round(to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss') - to_date(#begin_time#, 'yyyy-mm-dd'))) a,
+         clw_xc_route_t b,
+         CLW_XC_ROUTESITE_T c,
+         clw_xc_site_t d
+   where b.route_id = c.route_id
+     and c.site_id = d.site_id
+     and b.valid_flag = '0'
+     and d.valid_flag = '0'
+     and b.route_id = #route_id#),
+t2 as
+ (select a.route_id,
+         a.site_id,
+         to_char(a.reality_out_time, 'yyyy-mm-dd') rq,
+         sum(a.reality_up_num) person_count
+    from 
+    
+(
+select d1.route_id,d1.site_id,d1.reality_out_time,d1.reality_up_num  from CLW_XC_INOUTSITE_T d1,aa
+where d1.vehicle_vin = aa.vin_code 
+and d1.reality_out_time <![CDATA[ >= ]]> aa.start_time
+and d1.reality_out_time <![CDATA[ <= ]]> aa.end_time
+union all
+select d2.route_id,d2.site_id,d2.end_time as reality_out_time,d2.load_num as reality_up_num from TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+    
+   where 1 = 1
+     and a.route_id = #route_id#
+     and a.reality_out_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+     and a.reality_out_time <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+   group by a.route_id, a.site_id, to_char(a.reality_out_time, 'yyyy-mm-dd'))
+select to_char(to_date(t1.rq,'yyyy-mm-dd'),'mm/dd') rq,
+       to_char(t1.route_id) route_id,
+       t1.route_name,
+       to_char(t1.site_id) site_id,
+       t1.site_name,
+       t1.route_class,
+       to_char(nvl(t2.person_count, 0)) person_count
+  from t1, t2
+ where t1.route_id = t2.route_id(+)
+   and t1.site_id = t2.site_id(+)
+   and t1.rq = t2.rq(+)
+   <isNotEmpty prepend="AND" property="showVacationDetail">
+   t1.rq not in (select to_char(vacation_day, 'yyyy-mm-dd')
+                       from tqc_organize_set
+                      where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+                        and vacation_day <![CDATA[ <= ]]> to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+                        and valid_flag='0'
+                        )
+   </isNotEmpty>
+   order by NLSSORT(t1.ROUTE_NAME, 'NLS_SORT=SCHINESE_PINYIN_M'), t1.rs_order, t1.rq
+</select>
+
+
+
+<!--线路详情页面图表下面的统计数据，根据线路id-->
+<select id="getDataByRoute" parameterClass="map" resultClass="HashMap">
+select nvl(count(a.sp_id), 0) banci,
+       nvl(sum(b.limite_number), 0) zuowei,
+       nvl(sum(a.load_number), 0) renci
+  from 
+  
+  (
+select d1.sp_id,d1.load_number,d1.vin_code,d1.route_id,d1.valid_flag,d1.organization_id,d1.start_time,d1.end_time  from TQC_SEND_PASSENGER d1
+union all
+select to_char(d2.auto_id) as sp_id,d2.load_num,d2.vehicle_vin as vin_code,d2.route_id,d2.valid_flag,d2.organization_id,d2.start_time,d2.end_time from 
+
+TQC_RECORD_LOAD_NUM_T d2 where d2.valid_flag='0'
+) a
+  
+  , clw_cl_base_info_t b, clw_xc_route_t c
+ where a.vin_code = b.vehicle_vin
+   and a.route_id = c.route_id
+   and a.valid_flag = '0'
+   and b.valid_flag = '0'
+   and c.valid_flag = '0'
+   and a.organization_id in
+       (select enterprise_id
+          from clw_jc_enterprise_t a
+         where a.VALID_FLAG = '0'
+         start with a.enterprise_id = #yutong_enterprise_id#
+        connect by prior a.enterprise_id = a.parent_id)
+   and a.start_time <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+   and a.end_time <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+     <isNotEmpty prepend="AND" property="route_class">
+     	c.route_class = #route_class#
+     </isNotEmpty>
+     <isEmpty prepend="AND" property="route_class">
+     	(c.route_class = '0' or c.route_class = '1')
+     </isEmpty>
+   <isNotEmpty prepend="AND" property="showVacationDetail">
+     to_char(a.end_time, 'yyyy-mm-dd') not in
+       (select to_char(vacation_day, 'yyyy-mm-dd')
+          from tqc_organize_set
+         where vacation_day <![CDATA[ >= ]]> to_date(#begin_time#, 'yyyy-mm-dd')
+           and vacation_day <![CDATA[ <= ]]> to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')
+           and valid_flag='0'
+           )
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="route_id">
+   	 c.route_id = #route_id#
+   </isNotEmpty>
+</select>
+	<!--获取节假日信息-->
+<select id="getHolidayInfo" parameterClass="map" resultClass="HashMap">
+select to_char(t.vacation_day,'mm/dd') vacation_day  from TQC_ORGANIZE_SET t
+         where t.valid_flag='0'
+           <![CDATA[
+           and t.vacation_day >= to_date(#begin_time#, 'yyyy-mm-dd')
+           and t.vacation_day <= to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+           ]]> 
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!--分页查询线路-->
+	<select id="getlineInfobyentForChart" parameterClass="map" resultClass="String">
+        select t.id from (select s.*, rownum as rownum_2 from (
+        SELECT TO_CHAR(ROUTE.ROUTE_ID) ID,
+                     ROUTE.ROUTE_NAME NAME,
+                     ROUTE.ROUTE_ORGANIZATION_ID PID,
+                     'false' open,
+                     'pLine' as iconSkin
+                FROM CLW_XC_ROUTE_T ROUTE
+               WHERE ROUTE_ORGANIZATION_ID in
+                     (select enterprise_id
+                        from clw_jc_enterprise_vi
+                       where left_num &gt;=
+                             (select left_num
+                                from clw_jc_enterprise_vi
+                               where enterprise_id =
+                                     #enterpriseId#)
+                         and right_num &lt;=
+                             (select right_num
+                                from clw_jc_enterprise_vi
+                               where enterprise_id =#enterpriseId#))
+                 AND ROUTE.VALID_FLAG = '0'
+                 AND ROUTE.ROUTE_CLASS IS NOT NULL
+                 AND ROUTE.ROUTE_CLASS = #route_class#
+                 <isNotEmpty prepend="AND" property="route_id">
+		               ROUTE.route_id in 
+						<iterate property="route_id" conjunction=","  open="(" close=")">
+				       		#route_id[]#
+				     	</iterate>
+		         </isNotEmpty>
+               ORDER BY NLSSORT(ROUTE.ROUTE_NAME, 'NLS_SORT=SCHINESE_PINYIN_M') ASC
+               ) s where rownum&lt;= #rowEnd# ) t where rownum_2 &gt; #rowStart#
+	</select>
+	
+	<!--查询线路的站点-->
+	<select id="getInfoForChart" parameterClass="map" resultClass="HashMap">
+select t1.route_id,
+       t1.route_name,
+       t3.site_id,
+       t3.site_name,
+       t2.rs_order,
+       count(t4.site_id) upnum
+  from clw_xc_route_t t1,
+       CLW_XC_ROUTESITE_T t2,
+       CLW_XC_SITE_T t3,
+       (select site_id
+          from CLW_XC_ST_CHECK_T
+         where route_id = #route_id#
+         <![CDATA[
+           and terminal_time >= to_date(#begintime#,'yyyy-mm-dd')
+           and terminal_time <= to_date(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+           ]]> ) t4
+ where t1.route_id = t2.route_id
+   and t2.site_id = t3.site_id
+   and t3.site_id = t4.site_id(+)
+   and t1.route_id = #route_id#
+ group by t1.route_id, t1.route_name, t3.site_id, t3.site_name, t2.rs_order
+ order by t2.rs_order
+	</select>
+
+<!--折线图-->
+<select id="getLineChart" parameterClass="map" resultClass="HashMap">
+select t1.rq, nvl(t2.person_count, 0) person_count
+  from (select to_char(rq, 'yyyy-mm-dd') rq
+          from (select to_date(#begin_time#, 'yyyy-mm-dd') + rownum - 1 rq
+                  from dual a
+                  <![CDATA[
+                connect by level <= 365
+                ]]>)
+         where 1 = 1
+           <![CDATA[
+           and rq >= to_date(#begin_time#, 'yyyy-mm-dd')
+           and rq <= to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+           ]]> ) t1,
+       (select to_char(terminal_time, 'yyyy-mm-dd') rq,
+               count(STU_ID) person_count
+          from CLW_XC_ST_CHECK_T
+         where 1 = 1
+         	<isNotEmpty prepend="AND" property="route_id">
+         	 route_id = #route_id#
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="site_id">
+         	 site_id = #site_id#
+         	</isNotEmpty>
+           <![CDATA[
+           and terminal_time >= to_date(#begin_time#, 'yyyy-mm-dd')
+           and terminal_time <=
+               to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+           ]]>
+         group by to_char(terminal_time, 'yyyy-mm-dd')) t2
+ where t1.rq = t2.rq(+)
+ order by 1
+</select>
+
+
+
+
+
+
+
+</sqlMap>

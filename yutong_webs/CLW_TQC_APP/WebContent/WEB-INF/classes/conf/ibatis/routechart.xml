@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RouteChart">
+	<typeAlias alias="chart" type="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart" />
+		
+	<resultMap class="chart" id="route_info">
+		<result property="route_id" column="ROUTE_ID" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="route_incharge_person" column="ROUTE_INCHARGE_PERSON" />
+	</resultMap>		
+	
+	<resultMap class="chart" id="chart_info">
+		<result property="route_id" column="ROUTE_ID" />
+		<result property="site_id" column="SITE_ID" />
+		<result property="site_name" column="SITE_NAME" />
+		<result property="site_updown" column="SITE_UPDOWN" />
+		<result property="rs_order" column="RS_ORDER" />
+		<result property="re_flag" column="RE_FLAG" />
+		<result property="VIN" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="inout_flag" column="INOUT_FLAG" />
+		<result property="car_state" column="CAR_STATE" />
+		<result property="upNum" column="UPNUM" />
+		<result property="downNum" column="DOWNNUM" />
+		<result property="stu_error" column="STU_ERROR" />
+		<result property="time_error" column="TIME_ERROR" />
+	</resultMap>
+	<resultMap class="chart" id="chart_car_info">
+		<result property="route_id" column="ROUTE_ID" />
+		<result property="trip_id" column="trip_id" />
+		<result property="type" column="type" />
+		<result property="update_time" column="update_time" />
+		<result property="VIN" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="send_condition" column="send_condition" />
+		<result property="send_time" column="send_time" />
+		<result property="car_state" column="CAR_STATE" />
+		<result property="send_order" column="send_order" />
+		<result property="week_seq" column="week_seq" />
+		<result property="limite_number" column="limite_number" />
+		<result property="driver_name" column="driver_name" />
+		<result property="vehicle_type" column="vehicle_type" />
+		<result property="driver_id" column="driver_id" />
+	</resultMap>
+	
+	<resultMap class="chart" id="stu">
+		<result property="stu_name" column="STU_NAME" />
+		<result property="stu_code" column="STU_CODE" />
+		<result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />
+		<result property="VSS_FLAG" column="VSS_FLAG" />
+		<result property="stu_relative_tel" column="RELATIVE_TEL" />
+		<result property="stu_teacher_tel" column="TEACHER_TEL" />
+	</resultMap>
+	
+	<resultMap class="chart" id="car_select">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="VIN" column="VEHICLE_VIN" />
+	</resultMap>
+	<parameterMap id="pm_add_route_car_" class="Map">
+		<parameter property="route_id" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="vehicle_vin" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="send_condition" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="send_time" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="send_order" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="update_by" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="week_seq" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="driver_id" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+	<parameterMap id="pm_del_route_car_" class="Map">
+		<parameter property="route_id" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="trip_id" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="vehicle_vin" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="send_order" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="week_seq" javaType="String" jdbcType="NUMBER" mode="IN" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+	<select id="getRouteCount" parameterClass="chart" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_XC_ROUTE_T   
+		WHERE VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="route_name">
+               ROUTE_NAME LIKE '%' || #route_name# ||'%' ESCAPE '\'
+         </isNotEmpty>         
+         <isNotEmpty prepend="AND" property="route_organization_id">
+			   ROUTE_ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #route_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #route_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+	</select>
+	
+	<select id="getRouteInfos" parameterClass="chart" resultMap="route_info">
+		SELECT ROUTE_ID,ROUTE_NAME, ROUTE_INCHARGE_PERSON FROM CLW_XC_ROUTE_T   
+		WHERE VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="route_name">
+               ROUTE_NAME LIKE '%' || #route_name# ||'%' ESCAPE '\'
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="route_id">
+               ROUTE_ID = #route_id#
+         </isNotEmpty>                   
+         <isNotEmpty prepend="AND" property="route_organization_id">
+			   ROUTE_ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #route_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #route_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	<select id="getcarInfobyentForChart" parameterClass="Map" resultMap="chart_car_info">
+		select trip.trip_id,trip.route_id,trip.type,trip.update_time, info.vehicle_ln ,trip.vehicle_vin,info.vehicle_code,
+		trip.send_condition,trip.send_time,trip.send_order,car_tem.iconSkin car_state,week_seq,
+		info.vehicle_type,
+		info.limite_number,(select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=trip.driver_id group by cydt.driver_name) as driver_name,
+		trip.driver_id
+		from CLW_XC_TRIP_T trip,CLW_CL_BASE_INFO_T info, 
+		(select CASE WHEN CAR_T.ONLINE_FLAG = '1' THEN 'online' ELSE 'offline' END AS iconSkin,
+	      CASE WHEN CAR_T.ONDVR_FLAG = '1' THEN 'ondvr' ELSE 'offdvr' END AS dvrState,
+	         car_t.vehicle_vin
+		  from (
+		       select CASE WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN '0'
+		              WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN '0'
+		              WHEN JT.TERMINAL_TIME is null THEN '0' ELSE '1' END ONLINE_FLAG,
+		         CASE WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN '0'
+		              WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN '0'
+		              WHEN JT.TERMINAL_TIME is null THEN '0' WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' THEN '0'
+		              WHEN NVL(SUBSTRB(JT.VEH_EXT_INFO, 1, 1), '1') = '0' THEN '0' ELSE '1' END ONDVR_FLAG,
+		        jt.vehicle_vin
+		    from CLW_JC_TERMINAL_T JT
+		  ) CAR_T ) car_tem
+		where trip.route_id = #route_id#
+		and car_tem.vehicle_vin = trip.vehicle_vin
+		and info.valid_flag = '0'
+		and trip.vehicle_vin = info.vehicle_vin
+		order by trip.send_order
+	</select>
+	<select id="getcarInfobyentForChartRe" parameterClass="Map" resultMap="chart_car_info">
+		select trip.trip_id,trip.route_id,trip.type,trip.update_time, info.vehicle_ln ,trip.vehicle_vin,info.vehicle_code,
+		trip.send_condition,trip.send_time,trip.send_order,car_tem.iconSkin car_state,week_seq,
+		info.vehicle_type,
+		info.limite_number,(select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=trip.driver_id group by cydt.driver_name) as driver_name,
+		trip.driver_id
+		from CLW_XC_TRIP_T trip,CLW_CL_BASE_INFO_T info,
+		(select CASE WHEN CAR_T.ONLINE_FLAG = '1' THEN 'online' ELSE 'offline' END AS iconSkin,
+	      CASE WHEN CAR_T.ONDVR_FLAG = '1' THEN 'ondvr' ELSE 'offdvr' END AS dvrState,
+	         car_t.vehicle_vin
+		  from (
+		       select CASE WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN '0'
+		              WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN '0'
+		              WHEN JT.TERMINAL_TIME is null THEN '0' ELSE '1' END ONLINE_FLAG,
+		         CASE WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN '0'
+		              WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN '0'
+		              WHEN JT.TERMINAL_TIME is null THEN '0' WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' THEN '0'
+		              WHEN NVL(SUBSTRB(JT.VEH_EXT_INFO, 1, 1), '1') = '0' THEN '0' ELSE '1' END ONDVR_FLAG,
+		        jt.vehicle_vin
+		    from CLW_JC_TERMINAL_T JT
+		  ) CAR_T ) car_tem
+		where trip.route_id = #route_id#
+		and trip.vehicle_vin = car_tem.vehicle_vin
+		and info.valid_flag = '0'
+		and trip.week_seq = #seq_week#
+		and trip.vehicle_vin = info.vehicle_vin
+		order by trip.send_order
+	</select>
+	<procedure id="add_route_car_" parameterMap="pm_add_route_car_">
+		{call CBM_MODULE_PACK.route_add_car_changeno(?, ? ,? ,? ,?, ?, ?,?, ?)}
+    </procedure>
+    <procedure id="del_route_car_" parameterMap="pm_del_route_car_">
+		{call CBM_MODULE_PACK.route_del_car_changeno(?, ? , ? , ? , ? , ?)}
+    </procedure>
+    <insert id="add_route_car_info" parameterClass="chart">
+    	insert into CLW_XC_TRIP_T
+      (trip_id,
+       route_id,
+       vehicle_vin,
+       send_condition,
+       send_time,
+       send_order,
+       type,
+       operateor,
+       update_time,
+       operate_time,
+       week_seq,
+       valid_flag)
+    values
+      (SEQ_XC_TRIP_T.NEXTVAL,
+       #route_id#,
+       #VIN#,
+       #send_condition#,
+       #send_time#,
+       #send_order#,
+       0,
+       #user_enterprise_id#,
+       sysdate,
+       sysdate,
+       #week_seq#,
+       0)
+    </insert>
+	<select id="getInfoForChart" parameterClass="chart" resultMap="chart_info">
+	SELECT A1.ROUTE_ID, A1.SITE_ID, A1.SITE_NAME, A1.RS_ORDER, A1.SITE_UPDOWN, A1.RE_FLAG,
+		   A1.VEHICLE_VIN, A1.INOUT_FLAG, A1.CAR_STATE, A1.VEHICLE_LN,
+		   A1.UPNUM, A1.DOWNNUM, A1.STU_ERROR, A1.TIME_ERROR
+	FROM 
+	(
+		(
+			SELECT T2.ROUTE_ID,T2.SITE_ID, T3.SITE_NAME, T2.RS_ORDER, T2.SITE_UPDOWN,
+				   '' VEHICLE_VIN, '0' INOUT_FLAG, '' CAR_STATE, '0' RE_FLAG, '' VEHICLE_LN,
+				   NVL(T1.UPNUM,-1) UPNUM, NVL(T1.DOWNNUM,-1) DOWNNUM,
+				   NVL(T1.STU_ERROR,-1) STU_ERROR,
+				   NVL(T1.TIME_ERROR,-1) TIME_ERROR
+			FROM CLW_XC_ROUTESITE_T T2,CLW_XC_SITE_T T3,
+			     (
+				     SELECT A.ROUTE_ID, A.SITE_ID, SUM(A.REALITY_UP_NUM) UPNUM, SUM(A.REALITY_DOWN_NUM) DOWNNUM,
+		             SUM(CASE WHEN (ABS(A.REALITY_UP_NUM-A.PLAN_UP_NUM)>0 OR ABS(A.REALITY_DOWN_NUM-A.PLAN_DOWN_NUM)>0) THEN 1 ELSE 0 END) STU_ERROR,
+		             SUM(CASE WHEN (ABS(A.REALITY_IN_TIME-A.PLAN_IN_TIME)>0 OR ABS(A.REALITY_OUT_TIME-A.PLAN_OUT_TIME)>0) THEN 1 ELSE 0 END) TIME_ERROR				     
+				     FROM CLW_XC_INOUTSITE_T A, CLW_CL_BASE_INFO_T B
+				     WHERE A.VEHICLE_VIN = B.VEHICLE_VIN
+				     AND B.VALID_FLAG = '0'
+		 			 AND B.DEVICE_TYPE = '0'
+				     AND A.INOUT_FLAG = '1'
+					<isNotEmpty prepend="AND" property="route_id">
+						A.ROUTE_ID=#route_id#
+					</isNotEmpty>
+					<isNotEmpty prepend="AND" property="vehicle_ln">
+						upper(B.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+					</isNotEmpty>
+					<isNotEmpty prepend="AND" property="VIN">
+						A.VEHICLE_VIN = #VIN#
+					</isNotEmpty>
+					<isNotEmpty prepend="AND" property="user_organization_id">
+						B.ORGANIZATION_ID IN
+								<![CDATA[
+									(SELECT ENTERPRISE_ID
+									     FROM CLW_JC_ENTERPRISE_VI
+									     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+									                  FROM CLW_JC_ENTERPRISE_VI
+									                  WHERE ENTERPRISE_ID = #user_organization_id#)
+									     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+									                  FROM CLW_JC_ENTERPRISE_VI
+									                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+									)
+							     ]]>
+					</isNotEmpty>																		     
+				     AND A.TERMINAL_TIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE)+1
+				     GROUP BY A.ROUTE_ID, A.SITE_ID
+			     ) T1
+			WHERE T2.SITE_ID = T3.SITE_ID
+			AND T2.ROUTE_ID = T1.ROUTE_ID(+)
+			AND T2.SITE_ID = T1.SITE_ID(+)
+			AND T3.VALID_FLAG = '0'
+			<dynamic>
+			    <!--  
+				<isNotEmpty prepend="AND" property="vehicle_ln">
+					T2.ROUTE_ID IN 
+						(
+							SELECT A.ROUTE_ID FROM CLW_CL_BASE_INFO_T A
+							WHERE A.VALID_FLAG = '0'
+							<isNotEmpty prepend="AND" property="vehicle_ln">
+								upper(A.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+							</isNotEmpty>
+						)
+				</isNotEmpty>
+				-->
+				<isNotEmpty prepend="AND" property="route_id">
+					T2.ROUTE_ID=#route_id#
+				</isNotEmpty>
+				<isNotEmpty prepend="AND" property="site_updown">
+					T2.SITE_UPDOWN=#site_updown#
+				</isNotEmpty>													
+			</dynamic>
+		)
+		UNION ALL
+		(
+			SELECT T1.ROUTE_ID, T1.SITE_ID, '' SITE_NAME, T2.RS_ORDER, T2.SITE_UPDOWN,
+				   T1.VEHICLE_VIN, T1.INSTANCE_PERCENT INOUT_FLAG, '' CAR_STATE, '1' RE_FLAG, T3.VEHICLE_LN,
+				   0 UPNUM, 0 DOWNNUM,0 STU_ERROR, 0 TIME_ERROR
+			FROM CLW_JC_TERMINAL_T T1,CLW_XC_ROUTESITE_T T2,CLW_CL_BASE_INFO_T T3
+			WHERE T1.ROUTE_ID = T2.ROUTE_ID
+			AND T1.SITE_ID = T2.SITE_ID
+			AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+			<isNotEmpty prepend="AND" property="site_updown">
+				T2.SITE_UPDOWN=#site_updown#
+			</isNotEmpty>			
+			AND T3.VALID_FLAG = '0'
+			AND T3.DEVICE_TYPE = '0'
+			AND T1.DEVICE_TYPE = '0'
+			AND T1.TERMINAL_TIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE)+1			
+			<dynamic>
+				<isNotEmpty prepend="AND" property="vehicle_ln">
+					upper(T3.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+				</isNotEmpty>
+				<isNotEmpty prepend="AND" property="VIN">
+					T1.VEHICLE_VIN = #VIN#
+				</isNotEmpty>				
+				<isNotEmpty prepend="AND" property="route_id">
+					T3.ORGANIZATION_ID IN
+							<![CDATA[
+								(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+								)
+						     ]]>
+					 <!-- AND T3.ROUTE_ID = #route_id# -->
+					 AND T1.ROUTE_ID = #route_id#
+				</isNotEmpty>									
+			</dynamic>		
+		)
+	) A1
+	ORDER BY A1.SITE_UPDOWN,A1.RS_ORDER,A1.RE_FLAG,A1.INOUT_FLAG ASC
+	</select>
+
+	<select id="getCountStuListBySite" parameterClass="chart" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_XC_ST_CHECK_RECORD_T T1,CLW_XC_STUDENT_T T2
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T2.VALID_FLAG = '0'
+		<isNotEmpty prepend="AND" property="site_id">
+			T1.SITE_ID=#site_id#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="route_id">
+			T1.ROUTE_ID=#route_id#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="VIN">
+			T1.VEHICLE_VIN=#VIN#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="VSS_FLAG">
+			 T1.VSS_FLAG = #VSS_FLAG#
+		</isNotEmpty>	
+		<isNotEmpty prepend="AND" property="alarm_type_id">
+			 T1.ALARM_TYPE_ID = #alarm_type_id#
+		</isNotEmpty>	
+	    <isNotEmpty prepend="AND" property="begTime">
+	        T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'YYYY-MM-DD HH24:mi:ss') 
+		</isNotEmpty>
+	    <isNotEmpty prepend="AND" property="endTime"> 
+	        T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'YYYY-MM-DD HH24:mi:ss')
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="id">
+			T1.INOUT_ID = #id#
+		</isNotEmpty>
+	</select>
+	
+	<select id="getStuListBySite" parameterClass="chart" resultMap="stu">
+	SELECT T2.STU_NAME, T2.STU_CODE, T2.STU_SCHOOL, T2.STU_CLASS,
+		   T2.TEACHER_TEL,T2.RELATIVE_TEL,
+		   CASE 
+		   WHEN T1.VSS_FLAG='0' AND T1.ALARM_TYPE_ID IS NULL THEN '正常上车'
+		   WHEN T1.VSS_FLAG='0' AND T1.ALARM_TYPE_ID = '73' THEN '未在规定站点上车'
+		   WHEN T1.VSS_FLAG='1' AND T1.ALARM_TYPE_ID IS NULL THEN '正常下车'
+		   WHEN T1.VSS_FLAG='1' AND T1.ALARM_TYPE_ID = '74' THEN '未在规定站点下车'
+		   WHEN T1.VSS_FLAG='2' AND T1.ALARM_TYPE_ID = '79' THEN '未上车'
+		   WHEN T1.VSS_FLAG='2' AND T1.ALARM_TYPE_ID = '80' THEN '未下车'
+		   WHEN T1.VSS_FLAG='2' AND T1.ALARM_TYPE_ID = 'QJ' THEN '请假'
+		   ELSE '--' END VSS_FLAG
+	FROM CLW_XC_ST_CHECK_RECORD_T T1,CLW_XC_STUDENT_T T2
+	WHERE T1.STU_ID = T2.STU_ID
+	AND T2.VALID_FLAG = '0'
+	<isNotEmpty prepend="AND" property="site_id">
+		T1.SITE_ID=#site_id#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="route_id">
+		T1.ROUTE_ID=#route_id#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="VIN">
+		T1.VEHICLE_VIN=#VIN#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="VSS_FLAG">
+		 T1.VSS_FLAG = #VSS_FLAG#
+	</isNotEmpty>	
+	<isNotEmpty prepend="AND" property="alarm_type_id">
+		 T1.ALARM_TYPE_ID = #alarm_type_id#
+	</isNotEmpty>	
+    <isNotEmpty prepend="AND" property="begTime">
+        T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'YYYY-MM-DD HH24:mi:ss') 
+	</isNotEmpty>
+    <isNotEmpty prepend="AND" property="endTime"> 
+        T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'YYYY-MM-DD HH24:mi:ss')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="id">
+		T1.INOUT_ID = #id#
+	</isNotEmpty>	
+    <dynamic prepend="ORDER BY">  
+		<isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		</isNotEmpty>  
+	</dynamic>
+	</select>
+	
+	<select id="getVehByRouteid" parameterClass="chart" resultMap="car_select">
+		SELECT DISTINCT T1.VEHICLE_VIN,T2.VEHICLE_LN 
+		FROM CLW_XC_TRIP_T T1,CLW_CL_BASE_INFO_T T2
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		AND T1.VALID_FLAG='0'
+		AND T2.VALID_FLAG = '0'
+		AND T2.DEVICE_TYPE = '0'
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			T2.ORGANIZATION_ID IN
+			<![CDATA[
+		    		(SELECT ENTERPRISE_ID
+					     FROM CLW_JC_ENTERPRISE_VI
+					     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+					                  FROM CLW_JC_ENTERPRISE_VI
+					                  WHERE ENTERPRISE_ID = #user_organization_id#)
+					     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+					                  FROM CLW_JC_ENTERPRISE_VI
+					                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+					)
+			]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="route_id">
+			T1.ROUTE_ID=#route_id#
+		</isNotEmpty>
+	</select>
+	<delete id="delcarbyroute_id" parameterClass="Map">
+		delete CLW_XC_TRIP_T t where t.route_id = #route_id#
+	</delete>
+</sqlMap>

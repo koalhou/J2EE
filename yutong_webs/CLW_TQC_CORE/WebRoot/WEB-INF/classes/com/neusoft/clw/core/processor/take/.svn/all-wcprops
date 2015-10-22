@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take
+END
+CmdTstBatchProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/CmdTstBatchProcessor.java
+END
+StatPhotoListProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/StatPhotoListProcessor.java
+END
+CmdMsBatchProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/CmdMsBatchProcessor.java
+END
+KeepAliveProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/KeepAliveProcessor.java
+END
+SubscribeRuleSetProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/SubscribeRuleSetProcessor.java
+END
+VehicleTarget.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/VehicleTarget.java
+END
+LoginProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/LoginProcessor.java
+END
+QueryTargetListProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/QueryTargetListProcessor.java
+END
+CmdTcProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/CmdTcProcessor.java
+END
+CmdEcBatchProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/core/processor/take/CmdEcBatchProcessor.java
+END

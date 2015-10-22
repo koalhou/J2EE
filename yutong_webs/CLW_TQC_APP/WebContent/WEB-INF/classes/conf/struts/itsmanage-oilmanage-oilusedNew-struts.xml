@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="oilusedNew" namespace="/oilusedNew" extends="clw-default">
+		<action name="oilused" class="oilUsedNewAction" method="readyPage">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/itsmanage/oilusedNew/oilusedTree.jsp</result>
+		</action>
+		<action name="exportOilbyCar" class="oilUsedNewAction" method="exportOilbyCar">
+			<result name="error" type="redirect-action">
+				<param name="actionName">oilused</param>
+			</result>
+		</action>
+		
+		
+		
+	</package>
+	<package name="oilUsedGridNew" namespace="/oilUsedGridNew" extends="json-default">
+		<action name="getOilLineChart" class="oilUsedNewAction" method="getOilLineChart">
+		</action>
+		<action name="oilUsedList" class="oilUsedNewAction"  method="oilUsedList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>           
+       </action>
+	</package>
+</struts>

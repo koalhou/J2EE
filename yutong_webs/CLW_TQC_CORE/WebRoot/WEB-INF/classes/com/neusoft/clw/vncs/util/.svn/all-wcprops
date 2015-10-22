@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util
+END
+Base64.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/Base64.java
+END
+StringUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/StringUtil.java
+END
+Converser.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/Converser.java
+END
+Seq.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/Seq.java
+END
+AccountUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/AccountUtil.java
+END
+SUNBASE64.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/SUNBASE64.java
+END
+UUIDGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/util/UUIDGenerator.java
+END

@@ -1,0 +1,23 @@
+#\u6c14\u8c61\u56fe\u6807\u7ec8\u7aef\u8bbf\u95ee\u4f4d\u7f6e
+weather.web.path=http://localhost:8080/resource/weatherimg
+
+#\u65b0\u95fb\u8425\u9500\u4fe1\u606f\u56fe\u7247\u7ec8\u7aef\u8bbf\u95ee\u4f4d\u7f6e
+info.web.path=http://localhost:8080/resource/
+
+#\u6838\u5fc3\u670d\u52a1\u5206\u914d\u7684APP_ID
+clwapi.appid=03
+
+#ACCESS_TOKEN\u5931\u6548\u65f6\u95f4\u95f4\u9694,\u5355\u4f4d:\u79d2
+token.expire.interval=86400
+
+#\u65b0\u7248\u7ec8\u7aef\u8f6f\u4ef6\u83b7\u53d6\u4e3b\u673a\u4fe1\u606f
+new.version.software.host=http://127.0.0.1:9009
+
+#memcached\u4e3b\u673a\u4fe1\u606f.\u914d\u7f6e\u89c4\u5219:"host:port host2:port"
+memcached.hosts=10.8.2.204:11211
+
+#\u6c14\u8c61\u4fe1\u606f\u6709\u6548\u65f6\u957f,\u5355\u4f4d:\u79d2
+weather.valid.time=9000
+
+#\u63a5\u5165\u5c42\u5173\u95ed\u4f01\u4e1a\u6216\u7528\u6237\u4f7f\u7528\u6743\u9650\u63a5\u53e3APP_ID
+clwapi.auth.appid=03_1

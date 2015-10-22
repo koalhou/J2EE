@@ -1,0 +1,335 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis
+END
+newenergyalarm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/newenergyalarm.xml
+END
+exportIniFile.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/exportIniFile.xml
+END
+stshuaka.xml
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/stshuaka.xml
+END
+vehiclestatus.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/vehiclestatus.xml
+END
+zonemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/zonemanage.xml
+END
+fileupload.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/fileupload.xml
+END
+ridingPlan.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/ridingPlan.xml
+END
+drivershuaka.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/drivershuaka.xml
+END
+sendcommand.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/sendcommand.xml
+END
+newterminalparams.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/newterminalparams.xml
+END
+stride.xml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/stride.xml
+END
+sendcommandhis.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/sendcommandhis.xml
+END
+newenergybattery.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/newenergybattery.xml
+END
+runtimeset.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/runtimeset.xml
+END
+studentmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/studentmanage.xml
+END
+ridealarm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/ridealarm.xml
+END
+holidaymanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/holidaymanage.xml
+END
+gpsmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/gpsmanage.xml
+END
+drivermanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/drivermanage.xml
+END
+alarmmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/alarmmanage.xml
+END
+wxmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/wxmanage.xml
+END
+routemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/routemanage.xml
+END
+userlogin.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/userlogin.xml
+END
+androidDownload.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/androidDownload.xml
+END
+entimanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/entimanage.xml
+END
+newenergyversion.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/newenergyversion.xml
+END
+overload.xml
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/overload.xml
+END
+gpsmanagenew.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/gpsmanagenew.xml
+END
+user.xml
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/user.xml
+END
+photoGrapSet.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/photoGrapSet.xml
+END
+routechart.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/routechart.xml
+END
+stewardmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/stewardmanage.xml
+END
+newenergymotor.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/newenergymotor.xml
+END
+newenergysms.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/newenergysms.xml
+END
+vehiclemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/vehiclemanage.xml
+END
+smsreminder.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/smsreminder.xml
+END
+treeData.xml
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/treeData.xml
+END
+stationmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/stationmanage.xml
+END
+messagesend.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/messagesend.xml
+END
+smssignset.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/smssignset.xml
+END
+oilset.xml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/oilset.xml
+END
+appcfg.xml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/appcfg.xml
+END
+operatelog.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/operatelog.xml
+END
+photomonitor.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/photomonitor.xml
+END
+oilused.xml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/oilused.xml
+END
+ocktimeset.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/ocktimeset.xml
+END
+runoilrecord.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/runoilrecord.xml
+END
+baddriving.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/baddriving.xml
+END
+operationmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/operationmanage.xml
+END
+humanbaddrive.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/humanbaddrive.xml
+END
+RoleManage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/RoleManage.xml
+END
+handmobilemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/handmobilemanage.xml
+END
+smsmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/smsmanage.xml
+END
+carrunhistory.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/carrunhistory.xml
+END
+sql-map-config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/conf/ibatis/sql-map-config.xml
+END

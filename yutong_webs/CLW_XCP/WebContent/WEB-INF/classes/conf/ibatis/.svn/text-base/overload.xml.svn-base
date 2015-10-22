@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="overload">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="overloadInfo"
+		type="com.neusoft.clw.businessmanage.overload.domain.OverloadInfo" />
+
+
+	<!-- 获取超载列表条数 -->
+	<select id="getOverloadCount" parameterClass="overloadInfo"
+		resultClass="Integer">
+		SELECT COUNT(1)
+        FROM CLW_YW_PHOTO_T B,CLW_CL_BASE_INFO_T C,CLW_JC_USER_T USR,CLW_JC_USER_T USR2
+        WHERE C.VALID_FLAG = '0'
+        AND C.DEVICE_TYPE = '0'
+        AND B.PHOTO_FALG = #photo_flag#
+        AND B.VEHICLE_VIN = C.VEHICLE_VIN
+        AND B.FLAG_USER = USR.USER_ID(+)
+        AND B.RELI_USER = USR2.USER_ID(+)
+		AND C.ORGANIZATION_ID IN
+		(SELECT ENTERPRISE_ID
+		FROM CLW_JC_ENTERPRISE_VI
+		WHERE LEFT_NUM >=
+		(SELECT LEFT_NUM
+		FROM CLW_JC_ENTERPRISE_VI
+		WHERE ENTERPRISE_ID = #organization_id#)
+		AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+		)
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+			C.VEHICLE_LN LIKE '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+		 <isEqual  property="photo_flag" compareValue="1">
+				  <isNotEmpty prepend="AND" property="end_time">
+                    B.FLAG_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                  <isNotEmpty prepend="AND" property="start_time">
+                    B.FLAG_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                   <isNotEmpty prepend="AND" property="user_name">
+                    USR.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+                   </isNotEmpty>
+		 </isEqual>
+		 <isEqual  property="photo_flag" compareValue="0">
+				   <isNotEmpty prepend="AND" property="end_time">
+                    B.RELI_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                  <isNotEmpty prepend="AND" property="start_time">
+                    B.RELI_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                   <isNotEmpty prepend="AND" property="user_name">
+                    USR2.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+                   </isNotEmpty>
+		 </isEqual>			   
+		      
+        
+	</select>
+	
+	<!-- 获取超载列表 -->
+	<select id="getoverloadList" parameterClass="overloadInfo" resultClass="overloadInfo">
+      SELECT 
+      B.PHOTO_ID,
+      B.VEHICLE_VIN,
+      C.VEHICLE_LN,
+      B.PHOTO_FALG AS PHOTO_FLAG,
+      TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+      TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME,
+      B.PHOTO_DESC,
+      B.PHOTO_FILE,
+      USR.USER_NAME,
+      USR2.USER_NAME AS RELI_USER,
+      TO_CHAR(B.RELI_TIME, 'YYYY-MM-DD HH24:MI:SS') RELI_TIME
+      FROM CLW_YW_PHOTO_T        B,
+           CLW_CL_BASE_INFO_T    C,
+           CLW_JC_USER_T         USR,
+           CLW_JC_USER_T         USR2
+      WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+       AND C.VALID_FLAG = '0'
+       AND C.DEVICE_TYPE = '0'
+       AND B.PHOTO_FALG=#photo_flag#
+       AND B.FLAG_USER = USR.USER_ID(+)
+       AND B.RELI_USER=USR2.USER_ID(+)
+       AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+              C.VEHICLE_LN LIKE '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isEqual  property="photo_flag" compareValue="1">
+				  <isNotEmpty prepend="AND" property="end_time">
+                    B.FLAG_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                  <isNotEmpty prepend="AND" property="start_time">
+                    B.FLAG_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                   <isNotEmpty prepend="AND" property="user_name">
+                    USR.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+                   </isNotEmpty>
+		 </isEqual>
+		 <isEqual  property="photo_flag" compareValue="0">
+				   <isNotEmpty prepend="AND" property="end_time">
+                    B.RELI_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                  <isNotEmpty prepend="AND" property="start_time">
+                    B.RELI_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+                  </isNotEmpty>
+                   <isNotEmpty prepend="AND" property="user_name">
+                    USR2.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+                   </isNotEmpty>
+		 </isEqual>			
+	  <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>  
+	</select>
+	
+	<!-- 导出超载列表 -->
+	<select id="expoverloadList" parameterClass="overloadInfo" resultClass="overloadInfo">
+	  SELECT VEHICLE_LN,
+       USER_NAME,
+       CASE
+         WHEN PHOTO_FLAG = '1' THEN
+          '标记超载'
+         ELSE
+          '解除标记'
+       END PHOTO_FLAG,
+       FLAG_TIME,
+       PHOTO_TIME,
+       PHOTO_DESC
+  FROM (SELECT C.VEHICLE_LN,
+               USR.USER_NAME,
+               '1' PHOTO_FLAG,
+               TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME,
+               TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+               B.PHOTO_DESC
+          FROM CLW_YW_PHOTO_T B, CLW_CL_BASE_INFO_T C, CLW_JC_USER_T USR
+         WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+           AND C.VALID_FLAG = '0'
+           AND C.DEVICE_TYPE = '0'
+           AND B.PHOTO_FALG = '1'
+           AND B.FLAG_USER = USR.USER_ID(+)
+           AND C.ORGANIZATION_ID IN
+          (SELECT ENTERPRISE_ID
+             FROM CLW_JC_ENTERPRISE_VI
+             WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+               AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+          <isNotEmpty prepend="AND" property="vehicle_ln">
+               C.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="end_time">
+            B.FLAG_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            B.FLAG_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="user_name">
+            USR.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+         </isNotEmpty>
+        UNION ALL
+        SELECT C.VEHICLE_LN,
+               USR2.USER_NAME,
+               '0' PHOTO_FLAG,
+               TO_CHAR(B.RELI_TIME, 'YYYY-MM-DD HH24:MI:SS') AS FLAG_TIME,
+               TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+               B.PHOTO_DESC
+          FROM CLW_YW_PHOTO_T B, CLW_CL_BASE_INFO_T C, CLW_JC_USER_T USR2
+         WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+           AND C.VALID_FLAG = '0'
+           AND C.DEVICE_TYPE = '0'
+           AND B.PHOTO_FALG = '0'
+           AND B.RELI_USER = USR2.USER_ID(+)
+           AND C.ORGANIZATION_ID IN
+          (SELECT ENTERPRISE_ID
+             FROM CLW_JC_ENTERPRISE_VI
+             WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+               AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+          <isNotEmpty prepend="AND" property="vehicle_ln">
+               C.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="end_time">
+            B.RELI_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            B.RELI_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="user_name">
+            USR2.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+         </isNotEmpty>
+         )
+         <isNotEmpty prepend="WHERE" property="photo_flag">  
+            PHOTO_FLAG=#photo_flag#
+         </isNotEmpty>  
+     
+          
+	  <dynamic prepend="ORDER BY">  
+        <isNotEmpty property="sortname">  
+           $sortname$   $sortorder$  
+         </isNotEmpty>  
+       </dynamic>  
+	</select>
+	
+	
+	<!-- 获取拍照列表 -->
+	<select id="getPhotoView" parameterClass="java.util.Map" resultClass="photoMonitorInfo">
+      select b.vehicle_vin,
+       c.vehicle_ln,
+       c.vehicle_code,
+       b.CHANNEL_NUMBER as chanle_code,
+       to_char(b.photo_time, 'yyyy-mm-dd hh24:mi:ss') photo_time,
+       b.photo_event,
+       b.photo_file,
+       b.photo_falg,
+       b.photo_desc
+  from CLW_YW_PHOTO_T        B,
+       CLW_CL_BASE_INFO_T    C
+ where B.vehicle_vin = c.vehicle_vin
+   AND B.PHOTO_ID=#photo_id#
+	</select>
+	
+	<update id="updatephotoflag" parameterClass="overloadInfo">
+	    UPDATE CLW_YW_PHOTO_T
+		SET PHOTO_FALG=#photo_flag#,
+		<isEqual  property="photo_flag" compareValue="0">
+		    RELI_USER=#reli_user#,
+		    RELI_TIME=SYSDATE,
+		</isEqual>
+		<isEqual  property="photo_flag" compareValue="1">
+		   FLAG_USER=#flag_user#,
+		   FLAG_TIME=SYSDATE,
+		</isEqual>
+		  PHOTO_DESC=#photo_desc#
+	   	WHERE  PHOTO_ID=#photo_id#
+	   	and PHOTO_TIME=to_date(#photo_time#,'yyyy-mm-dd hh24:mi:ss')
+	</update>
+	
+	<!-- 
+	SELECT VEHICLE_LN,
+       USER_NAME,
+       PHOTO_FLAG,
+       FLAG_TIME,
+       FLAG_TIME2,
+       RELI_TIME,
+       RELI_USER,
+       USER_NAME2,
+       PHOTO_TIME,
+       PHOTO_DESC
+  FROM (SELECT C.VEHICLE_LN,
+               USR.USER_NAME,
+               '1' PHOTO_FLAG,
+               TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME,
+               TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME2,
+               TO_CHAR(B.RELI_TIME, 'YYYY-MM-DD HH24:MI:SS') RELI_TIME,
+               USR2.User_Name as RELI_USER,
+               USR.USER_NAME as USER_NAME2,
+               TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+               B.PHOTO_DESC
+          FROM CLW_YW_PHOTO_T     B,
+               CLW_CL_BASE_INFO_T C,
+               CLW_JC_USER_T      USR,
+               CLW_JC_USER_T      USR2
+         WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+           AND C.VALID_FLAG = '0'
+           AND C.DEVICE_TYPE = '0'
+           AND B.PHOTO_FALG = '1'
+           AND B.FLAG_USER = USR.USER_ID(+)
+           AND B.RELI_USER = USR2.USER_ID(+)
+           AND B.FLAG_TIME <
+               TO_DATE('2013-07-12 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+           AND B.FLAG_TIME > TO_DATE('2013-07-11', 'YYYY-MM-DD HH24:MI:SS')
+        UNION ALL
+        SELECT C.VEHICLE_LN,
+               USR2.USER_NAME,
+               '0' PHOTO_FLAG,
+               TO_CHAR(B.RELI_TIME, 'YYYY-MM-DD HH24:MI:SS') AS FLAG_TIME,
+               TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME2,
+               TO_CHAR(B.RELI_TIME, 'YYYY-MM-DD HH24:MI:SS') RELI_TIME,
+               USR2.User_Name as RELI_USER,
+               USR.USER_NAME as USER_NAME2,
+               TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+               B.PHOTO_DESC
+          FROM CLW_YW_PHOTO_T     B,
+               CLW_CL_BASE_INFO_T C,
+               CLW_JC_USER_T      USR,
+               CLW_JC_USER_T      USR2
+         WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+           AND C.VALID_FLAG = '0'
+           AND C.DEVICE_TYPE = '0'
+           AND B.PHOTO_FALG = '0'
+           AND B.FLAG_USER = USR.USER_ID(+)
+           AND B.RELI_USER = USR2.USER_ID(+)
+           AND B.RELI_TIME <
+               TO_DATE('2013-07-12 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+           AND B.RELI_TIME > TO_DATE('2013-07-11', 'YYYY-MM-DD HH24:MI:SS'))
+           ORDER BY FLAG_TIME
+	 -->
+</sqlMap>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    DTD for the IE(Importer & Exportor) 2008-8-18 22:40
+	Auther : Yujingqiang
+-->
+
+
+<!-- ========== Defined Types ============================================= -->
+
+
+<!ENTITY % Description "CDATA">
+<!ENTITY % FieldName "CDATA">
+<!ENTITY % Boolean "(true|false|yes|no)">
+<!ENTITY % ClassName "CDATA">
+<!ENTITY % Integer "CDATA">
+<!ENTITY % Location "#PCDATA">
+<!ENTITY % PropName "CDATA">
+<!ENTITY % RequestPath "CDATA">
+
+<!ENTITY % MethodName "CDATA">
+<!ENTITY % ExcelType "(number|string)">
+<!ENTITY % ValidateValue "CDATA">
+<!ENTITY % ValidateMessage "CDATA">
+<!ENTITY % Reference "CDATA">
+<!ENTITY % FilterScope "CDATA">
+<!ENTITY % SheetDepends "CDATA">
+
+
+
+
+
+<!ELEMENT struts-config (sheets, excels, csvs, global-property-validate?, global-object-validate?, global-regxp-validate?, global-dynamic-filter?)>
+
+
+
+
+
+<!ELEMENT sheets (sheet*)>
+
+
+
+
+<!ELEMENT sheet (property*)>
+<!ATTLIST sheet        id             ID                       #REQUIRED>
+<!ATTLIST sheet        properties     %Integer;                #REQUIRED>
+<!ATTLIST sheet        title          %Description;            #IMPLIED>
+<!ATTLIST sheet        memo           %Description;            #REQUIRED>
+<!ATTLIST sheet        class          %ClassName;              #REQUIRED>
+<!ATTLIST sheet        validate       %MethodName;             #IMPLIED>
+
+
+
+
+
+
+<!ELEMENT property (validate?, filter?)>
+<!ATTLIST property     name             %FieldName;            #REQUIRED>
+<!ATTLIST property     type             %ExcelType;            #IMPLIED>
+<!ATTLIST property     memo             %Description;          #REQUIRED>
+
+
+
+
+
+
+<!ELEMENT validate (require?, reference?, max?, min?, scope?, regxp?, unique?)>
+
+<!ELEMENT require (#PCDATA)>
+<!ATTLIST require	   value            %ValidateValue;         #REQUIRED>
+<!ATTLIST require      message          %ValidateMessage;       #IMPLIED>
+
+
+<!ELEMENT reference (#PCDATA)>
+<!ATTLIST reference    value            %ValidateValue;         #REQUIRED>
+<!ATTLIST reference    message          %ValidateMessage;       #IMPLIED>
+
+<!ELEMENT max (#PCDATA)>
+<!ATTLIST max          value            %ValidateValue;         #REQUIRED>
+<!ATTLIST max          message          %ValidateMessage;       #IMPLIED>
+
+<!ELEMENT min (#PCDATA)>
+<!ATTLIST min          value            %ValidateValue;         #REQUIRED>
+<!ATTLIST min          message          %ValidateMessage;       #IMPLIED>
+
+<!ELEMENT scope (#PCDATA)>
+<!ATTLIST scope        value            %ValidateValue;         #REQUIRED>
+<!ATTLIST scope        message          %ValidateMessage;       #IMPLIED>
+
+<!ELEMENT regxp (#PCDATA)>
+<!ATTLIST regxp        value            %ValidateValue;         #IMPLIED>
+<!ATTLIST regxp        message          %ValidateMessage;       #IMPLIED>
+<!ATTLIST regxp        reference        %Reference;             #IMPLIED>
+
+<!ELEMENT unique (#PCDATA)>
+<!ATTLIST unique       value            %ValidateValue;         #IMPLIED>
+<!ATTLIST unique       message          %ValidateMessage;       #IMPLIED>
+
+
+
+
+
+
+
+
+
+<!ELEMENT filter (#PCDATA)>
+<!ATTLIST filter       scope            %FilterScope;           #REQUIRED>
+<!ATTLIST filter       reference        %Reference;             #IMPLIED>
+
+
+
+
+
+
+
+
+
+<!ELEMENT excels (workbook*)>
+
+
+<!ELEMENT workbook (export?, import?)>
+<!ATTLIST workbook     id                ID                     #REQUIRED>
+
+<!ELEMENT export (#PCDATA)>
+<!ATTLIST export       depends           %SheetDepends;         #REQUIRED>
+
+
+<!ELEMENT import (#PCDATA)>
+<!ATTLIST import       depends           %SheetDepends;         #REQUIRED>
+
+
+
+
+
+
+
+
+<!ELEMENT csvs (csv*)>
+
+<!ELEMENT csv (#PCDATA)>
+<!ATTLIST csv          id                ID                     #REQUIRED>
+<!ATTLIST csv          depend            %SheetDepends;         #REQUIRED>
+
+
+
+<!ELEMENT global-property-validate (property-validate*)>
+
+<!ELEMENT property-validate (#PCDATA)>
+<!ATTLIST property-validate    name            ID                     #REQUIRED>
+<!ATTLIST property-validate    class           %ClassName;            #REQUIRED>
+<!ATTLIST property-validate    method          %MethodName;           #REQUIRED>
+<!ATTLIST property-validate    message         %ValidateMessage;      #REQUIRED>
+
+
+
+
+
+<!ELEMENT global-object-validate (object-validate*)>
+
+<!ELEMENT object-validate (#PCDATA)>
+<!ATTLIST object-validate      name            ID                     #REQUIRED>
+<!ATTLIST object-validate      class           %ClassName;            #REQUIRED>
+<!ATTLIST object-validate      memo            %Description;          #REQUIRED>
+
+
+
+
+
+
+
+<!ELEMENT global-regxp-validate (regxp-validate*)>
+
+<!ELEMENT regxp-validate (#PCDATA)>
+<!ATTLIST regxp-validate       name            ID                     #REQUIRED>
+<!ATTLIST regxp-validate       value           %ValidateValue;        #REQUIRED>
+<!ATTLIST regxp-validate       message         %ValidateMessage;      #REQUIRED>
+
+
+
+
+
+<!ELEMENT global-dynamic-filter (dynamic-filter*)>
+
+<!ELEMENT dynamic-filter (#PCDATA)>
+<!ATTLIST dynamic-filter       name            ID                     #REQUIRED>
+<!ATTLIST dynamic-filter       class           %ClassName;            #REQUIRED>
+<!ATTLIST dynamic-filter       method          %MethodName;           #REQUIRED>

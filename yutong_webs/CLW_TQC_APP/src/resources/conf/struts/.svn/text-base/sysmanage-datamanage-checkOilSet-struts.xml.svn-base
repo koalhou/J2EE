@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="checkOilSet" namespace="/checkOilSet" extends="clw-default">
+		
+		<action name="checkOilSetInit" class="checkOilSetAction" method="init">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>	
+		</action>
+		
+		<action name="exportCheckOilSet" class="checkOilSetAction" method="exportCheckOilSet">
+			<result name="error" type="redirect-action">
+				<param name="actionName">checkOilSetInit</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		
+		
+		<action name="importCheckOilSet" class="checkOilSetAction" method="importCheckOilSet">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSetImport.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">checkOilSetInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		
+		<action name="importCheckOilInfo" class="checkOilSetAction" method="importCheckOilInfo">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSetImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">checkOilSetInit</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSetImport.jsp
+			</result>
+		</action>
+		
+		<action name="checkOilSetAdd" class="checkOilSetAction" method="add">
+		    <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSetAdd.jsp</result>
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>		
+		</action>
+		
+		
+		
+		
+		
+		
+		
+	
+	<action name="checkOilSetAddSubmit" class="checkOilSetAction" method="checkOilSetAddSubmit">
+	    <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>	
+	</action>
+	
+	
+	
+	
+	
+	<action name="selectVehicleLn" class="checkOilSetAction" method="selectVehicleLn">
+      <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/selectVehicle.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/selectVehicle.jsp</result>	
+    </action>
+	
+       
+       <action name="getCheckValue" class="checkOilSetAction" method="getCheckValue">
+        <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkValue.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkValue.jsp</result>	
+     </action>
+       
+     
+       
+       <action name="deleteCheckInfo" class="checkOilSetAction" method="deleteCheckInfo">
+        <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>	
+     </action>
+       
+       
+       <action name="updateCheckInfo" class="checkOilSetAction" method="updateCheckInfo">
+        <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>	
+     </action>
+       
+       <!-- 设置考核月度 -->
+       <action name="initChcekMonth" class="checkOilSetAction" method="initChcekMonth">
+        <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkMonth.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkMonth.jsp</result>	
+     </action>
+       
+      <action name="setChcekMonth" class="checkOilSetAction" method="setChcekMonth">
+        <result name="success">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>
+		<result name="error">/WEB-INF/jsp/sysmanage/datamanage/checkOilSet/checkOilSet.jsp</result>	
+     </action>
+     
+	
+	</package>	
+	<package name="checkOilSetlist" namespace="/checkOilSetlist" extends="json-default">
+	
+	<action name="checkOilList" class="checkOilSetAction" method="checkOilListDong">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">checkOilSetMap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">checkOilSetMap</param>
+           </result>
+            </action>
+           <action name="getVehicleList" class="checkOilSetAction" method="getVehicleList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">vehicleVinMap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">vehicleVinMap</param>
+           </result>
+       </action>
+      
+        <action name="getCheckValueTime" class="checkOilSetAction" method="getCheckValueTime">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">checkValueTimeMap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">checkValueTimeMap</param>
+           </result>
+       </action> 
+       <action name="selectCheckMonth" class="checkOilSetAction" method="selectCheckMonth">
+     	<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">checkMonthlist</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">checkMonthlist</param>
+           </result>
+     </action>
+    </package>
+</struts>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    <!-- 数据挖掘新__能源故障表 -->
+<sqlMap namespace="energyVersion">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="newEnergyVersion"
+		type="com.neusoft.clw.newenergy.newenergyVersion.domain.EnergyVersion" />
+
+	<resultMap id="version-result" class="newEnergyVersion">
+		<result property="versionId" column="id" />
+		<result property="vehicleVin" column="vehicle_vin" />
+		<result property="vehicleln" column="vehicle_ln" />
+		<result property="terminalTime" column="terminal_time" />
+		<result property="routeName" column="route_name" />
+		
+		<result property="address" column="address" />
+		<result property="softDate" column="SOFT_DATE" />
+		<result property="softVersion" column="SOFT_VERSION" />
+		<result property="hardWareVersion" column="HARDWARE_VERSION" />
+	</resultMap>
+	<!-- 新能源故障查询 -->
+	<select id="energyVersionList" parameterClass="Map" resultMap="version-result">
+		select t.id,t.vehicle_vin,info.vehicle_ln,to_char(t.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time,
+        	t.address,soft_date,t.soft_version,t.hardware_version,
+        	route.route_name
+         from clw_newenergy_version_t t,clw_cl_base_info_t info,clw_xc_route_t route 
+        	where 1=1
+        	and t.vehicle_vin = info.vehicle_vin(+)
+        	and t.route_id = route.route_id(+)
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             t.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             t.terminal_time >= to_date(#startTime#,'yyyy-mm-dd hh24:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ t.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="versionId">
+        	t.id = #version#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = t.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	
+	<select id="energyVersionListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		select t.id,t.vehicle_vin,info.vehicle_ln,t.terminal_time,
+        	t.address,t.soft_date,t.soft_version,t.hardware_version,
+        	route.route_name
+         from clw_newenergy_version_t t,clw_cl_base_info_t info,clw_xc_route_t route 
+        	where 1=1
+        	and t.vehicle_vin = info.vehicle_vin(+)
+        	and t.route_id = route.route_id(+)
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             t.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             t.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ t.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="versionId">
+        	t.id = #versionId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = t.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+		
+</sqlMap>

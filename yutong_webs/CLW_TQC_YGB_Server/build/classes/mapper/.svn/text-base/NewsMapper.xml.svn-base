@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="News">
+
+	<select id="getSegment"  parameterType="map"  resultType="News">
+	select * from (select s.*, rownum as rownum_2 from (
+		select a.msg_id as id,
+		       a.msg_type type,
+		       a.msg_title title,
+		       a.msg_ov summary,
+		       to_char(a.publish_time, 'yyyyMMddhh24miss') publishDate
+		  from CLW_m_PUSH_MESSAGE_T a
+		 where 1=1 
+		 <if test="start_time != null">
+		    <![CDATA[ and 	 a.publish_time >= to_date(#{start_time},'yyyyMMddhh24miss') ]]>
+		 </if>
+		 <if test="end_time != null">
+		   <![CDATA[ and  a.publish_time <= to_date(#{end_time},'yyyyMMddhh24miss')]]>
+		 </if>
+		       <if test="news_type != -1">
+				   and a.msg_type = #{news_type}
+		       </if>
+		       order by a.publish_time desc 
+		     
+			<![CDATA[
+				) s where rownum<= #{num}) where rownum_2 > 0
+			]]>
+		
+	</select>
+	
+	<select id="getOne" parameterType="string" resultType="News" >
+		select a.msg_id as id,
+		       a.msg_type type,
+		       a.msg_title title,
+		       a.msg_img_url  imgURL,
+		       a.msg_text content,
+		       a.msg_ov summary,
+		       a.publisher publisher,
+		       to_char(a.publish_time,'yyyyMMddhh24miss') publishDate
+		  from CLW_m_PUSH_MESSAGE_T a
+		 where a.msg_id=#{value}	
+	</select>
+	
+	 
+</mapper>

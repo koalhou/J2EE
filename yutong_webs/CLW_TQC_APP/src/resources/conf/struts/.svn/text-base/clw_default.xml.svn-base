@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="clw-default" extends="struts-default">
+		<interceptors>
+			<!--用户的每一次请求，必须调用这个拦截器 -->
+			<interceptor name="turnPageInter" class="turnPageInterceptor" />
+			<interceptor name="authentication" class="authenticationInterceptor" />
+			<interceptor-stack name="matStack">
+				<interceptor-ref name="authentication">
+					<param name="excludeMethods">creatValidatePic,login,logout</param>
+				</interceptor-ref>			
+				<interceptor-ref name="turnPageInter" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="matStack" />
+		
+		<default-action-ref name="login" />
+		
+		<global-results>
+			<result name="login" type="redirect-action">
+				<param name="actionName">logout</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="lose" type="redirect-action">
+				<param name="actionName">sessionOut</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="no_permission" type="dispatcher"></result>
+		</global-results>
+		
+		<!-- 注销 -->
+		<action name="logout" class="securityAction" method="logout">
+		    <result name="error">sessionTimeOut.jsp</result>
+			<result name="success">sessionTimeOut.jsp</result>
+		</action>
+		
+		<!-- session失效 -->
+		<action name="sessionOut" class="securityAction" method="logout">
+		    <result name="error">overtime.jsp</result>
+			<result name="success">overtime.jsp</result>
+		</action>
+		
+		<!-- 首页 -->
+		<!--  
+		<action name="main" class="mainAction" method="execute">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">firstSet</param>
+				<param name="namespace">/firstSet</param>
+			</result>
+		</action>
+		-->
+		  
+		<action name="main" class="mainAction" method="execute">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">gpsAction</param>
+				<param name="namespace">/gps</param>
+			</result>
+		</action>		
+		
+		 <!-- 验证码  -->
+		<action name="validatecode" class="validateCode" method="creatValidatePic">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="gpsAction3" class="gpsAction" method="gpsPostionTest">
+			<result name="error">login.jsp</result>
+			<result name="success">
+				/WEB-INF/jsp/oilmoniter/ridingplan.jsp
+			</result>
+		</action>
+		
+		<!-- 泰安旅汽注销-->
+		<action name="logoutTa" class="securityAction" method="logout">
+			<result name="success">sessionTimeOutTa.jsp</result>
+		</action>
+		
+		<!-- 标准化注销-->
+		<action name="logoutBiaoZhunHua" class="securityAction" method="logout">
+			<result name="success">sessionTimeOutBiaoZhunHua.jsp</result>
+		</action>
+		
+		
+		<!-- 宇通登陆 -->  
+		<action name="login" class="securityAction" method="login">	
+			<result name="success" type="redirect-action">
+				<param name="actionName">main</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="error">login.jsp</result>
+		</action>
+		
+		<!-- 标准化登陆 -->  
+		<action name="loginTqc" class="securityAction" method="login">	
+			<result name="success" type="redirect-action">
+				<param name="actionName">main</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="error">/tqc/login.jsp</result>
+		</action>
+		
+		<!-- 泰安登陆 -->  
+		<action name="loginTa" class="securityAction" method="login">	
+			<result name="success" type="redirect-action">
+				<param name="actionName">main</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="error">/talq/login.jsp</result>
+		</action>
+		<!-- 精益达登陆 -->  
+		<action name="logoutJyd" class="securityAction" method="logout">	
+			<result name="success" type="">sessionTimeOutJyd.jsp</result>
+		</action>
+		
+		<!-- 主题样式图片获取 -->
+		<action name="showPhoto" class="securityAction" method="showPhoto">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StuRide">
+	<typeAlias alias="rideInfo"
+		type="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart" />
+		
+	<resultMap class="rideInfo" id="infos">
+		<result property="id" column="ID" />
+		<result property="stu_id" column="STU_ID" />
+		<result property="stu_code" column="STU_CODE" />
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="stu_name" column="STU_NAME" />
+		<result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />
+		<result property="route_name" column="Route_Name" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="sichen_name" column="SICHEN_NAME" />	
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="mesg_flag" column="MESG_FLAG" />
+		<result property="st_ride_flag" column="ST_RIDE_FLAG" />	
+		<result property="site_name" column="SITE_NAME" />
+	</resultMap>
+	
+	<resultMap class="rideInfo" id="car_select">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="VIN" column="VEHICLE_VIN" />
+	</resultMap>
+	
+	<resultMap class="rideInfo" id="site_select">
+		<result property="site_name" column="SITE_NAME" />
+		<result property="site_id" column="SITE_ID" />
+	</resultMap>				
+		
+	<select id="getStuRideInfoList" parameterClass="rideInfo" resultMap="infos">
+	SELECT  T1.ID,T1.STU_ID,T2.STU_NAME,T2.STU_CODE,T2.STU_SCHOOL,T2.STU_CLASS,
+	        T3.VEHICLE_LN,T4.ROUTE_NAME,T5.SICHEN_NAME,T6.DRIVER_NAME,T1.MESG_FLAG,
+			CASE 
+			WHEN T1.SITE_FLAG='0' AND T1.ALARM_TYPE_ID IS NULL THEN '上学正常'			
+			WHEN T1.SITE_FLAG='0' AND T1.ALARM_TYPE_ID IS NOT NULL THEN '上学异常'
+			WHEN T1.SITE_FLAG='1' AND T1.ALARM_TYPE_ID IS NULL THEN '放学正常'			
+			WHEN T1.SITE_FLAG='1' AND T1.ALARM_TYPE_ID IS NOT NULL THEN '放学异常'			
+			ELSE '--' END ST_RIDE_FLAG,
+			TO_CHAR(T1.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME,
+			T7.SITE_NAME
+		FROM (SELECT * FROM CLW_XC_ST_CHECK_RECORD_T A
+			  <dynamic prepend="WHERE"> 
+	          <isNotEmpty property="st_ride_flag">
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0000">
+					   1=2
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1111">
+					   A.SITE_FLAG IS NOT NULL
+				 </isEqual>			           
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1000">
+					   A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0100">
+					   A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0010">
+					   A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0001">
+					   A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL
+				 </isEqual>			 			 			 
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1100">
+					   A.SITE_FLAG='0'
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0011">
+					   A.SITE_FLAG='1'
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1010">
+					   A.ALARM_TYPE_ID IS NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0101">
+					   A.ALARM_TYPE_ID IS NOT NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0110">
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL)
+					   OR
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1001">
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL)
+					   OR
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1110">
+					   (A.SITE_FLAG='0')
+					   OR
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1101">
+					   (A.SITE_FLAG='0')
+					   OR
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL)
+				 </isEqual>	
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1011">
+					   (A.SITE_FLAG='1')
+					   OR
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0111">
+					   (A.SITE_FLAG='1')
+					   OR
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL)
+				 </isEqual>			 			 				 
+	         </isNotEmpty> 
+	         </dynamic>		
+			  ) T1,
+			CLW_XC_STUDENT_T T2,
+			(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0'AND A.DEVICE_TYPE = '0') T3,
+		     (SELECT A.ROUTE_ID,A.ROUTE_NAME FROM CLW_XC_ROUTE_T A WHERE A.VALID_FLAG = '0') T4,
+		     (SELECT A.SICHEN_ID,A.SICHEN_NAME FROM CLW_XC_SICHEN_T A WHERE A.VALID_FLAG = '0') T5,
+		     (SELECT A.DRIVER_ID,A.DRIVER_NAME FROM CLW_YW_DRIVER_T A WHERE A.VALID_FLAG = '0') T6,
+		     CLW_XC_SITE_T T7
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T1.ROUTE_ID = T4.ROUTE_ID(+)
+		AND T1.SICHEN_ID = T5.SICHEN_ID(+)
+		AND T1.DRIVER_ID = T6.DRIVER_ID(+)
+		AND T1.SITE_ID = T7.SITE_ID(+)
+		AND T2.VALID_FLAG = '0'	
+		AND T1.VSS_FLAG != '2'
+		AND T1.SITE_FLAG IS NOT NULL
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME LIKE '%' || #stu_name# ||'%' ESCAPE '\'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="stu_school">
+               T2.STU_SCHOOL LIKE '%' || #stu_school# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+               T2.STU_CLASS LIKE '%' || #stu_class# ||'%' ESCAPE '\'
+         </isNotEmpty> 
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T1.VEHICLE_VIN = #VIN#
+         </isNotEmpty>        
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id">
+               T1.ROUTE_ID = #route_id#
+         </isNotEmpty>          
+         <isNotEmpty prepend="AND" property="site_id">
+               T1.SITE_ID = #site_id#
+         </isNotEmpty>         
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getCountStuRideInfoList" parameterClass="rideInfo" resultClass="Integer">
+		SELECT COUNT(T1.TERMINAL_TIME)
+		FROM 
+			(SELECT * FROM CLW_XC_ST_CHECK_RECORD_T A
+						  <dynamic prepend="WHERE"> 
+				          <isNotEmpty property="st_ride_flag">
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0000">
+								   1=2
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1111">
+								   A.SITE_FLAG IS NOT NULL
+							 </isEqual>			           
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1000">
+								   A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0100">
+								   A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0010">
+								   A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0001">
+								   A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL
+							 </isEqual>			 			 			 
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1100">
+								   A.SITE_FLAG='0'
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0011">
+								   A.SITE_FLAG='1'
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1010">
+								   A.ALARM_TYPE_ID IS NULL
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0101">
+								   A.ALARM_TYPE_ID IS NOT NULL
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0110">
+								   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL)
+								   OR
+								   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL)
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1001">
+								   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL)
+								   OR
+								   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL)
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1110">
+								   (A.SITE_FLAG='0')
+								   OR
+								   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL)
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1101">
+								   (A.SITE_FLAG='0')
+								   OR
+								   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL)
+							 </isEqual>	
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="1011">
+								   (A.SITE_FLAG='1')
+								   OR
+								   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL)
+							 </isEqual>
+							 <isEqual prepend="AND" property="st_ride_flag" compareValue="0111">
+								   (A.SITE_FLAG='1')
+								   OR
+								   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL)
+							 </isEqual>			 			 				 
+				         </isNotEmpty> 
+				         </dynamic>		
+						  ) T1,
+		CLW_XC_STUDENT_T T2, 
+		(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0' AND A.DEVICE_TYPE = '0') T3,
+		CLW_XC_SITE_T T7
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T1.SITE_ID = T7.SITE_ID(+)
+		AND T2.VALID_FLAG = '0'
+		AND T1.VSS_FLAG != '2'
+		AND T1.SITE_FLAG IS NOT NULL
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME LIKE '%' || #stu_name# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+               T2.STU_SCHOOL LIKE '%' || #stu_school# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+               T2.STU_CLASS LIKE '%' || #stu_class# ||'%' ESCAPE '\'
+         </isNotEmpty>
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T1.VEHICLE_VIN = #VIN#
+         </isNotEmpty>        
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id">
+               T1.ROUTE_ID = #route_id#
+         </isNotEmpty>          
+         <isNotEmpty prepend="AND" property="site_id">
+               T1.SITE_ID = #site_id#
+         </isNotEmpty>        
+	</select>
+		
+	<!-- 根据路线ID获取车辆信息  -->
+	<select id="getVehByRouteid" parameterClass="rideInfo" resultMap="car_select">
+		SELECT DISTINCT T1.VEHICLE_VIN,T2.VEHICLE_LN 
+		FROM CLW_XC_TRIP_T T1,CLW_CL_BASE_INFO_T T2
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		AND T1.VALID_FLAG='0'
+		AND T2.VALID_FLAG = '0'
+		AND T2.DEVICE_TYPE = '0'
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			T2.ORGANIZATION_ID IN
+			<![CDATA[
+		    		(SELECT ENTERPRISE_ID
+					     FROM CLW_JC_ENTERPRISE_VI
+					     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+					                  FROM CLW_JC_ENTERPRISE_VI
+					                  WHERE ENTERPRISE_ID = #user_organization_id#)
+					     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+					                  FROM CLW_JC_ENTERPRISE_VI
+					                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+					)
+			]]>
+		</isNotEmpty>		
+		<isNotEmpty prepend="AND" property="route_id">
+			T1.ROUTE_ID=#route_id#
+		</isNotEmpty>
+	</select>
+	
+	<!-- 根据线路ID获取站点信息 -->
+	<select id="getSiteByRouteid" parameterClass="rideInfo" resultMap="site_select">
+		select t1.site_id,
+	    	(CASE WHEN t1.site_updown = '0' THEN '上学--' ELSE  '放学--' END)||t2.site_name as site_name
+		from clw_xc_routesite_t t1,clw_xc_site_t t2
+			where t1.site_id = t2.site_id
+			and t2.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="route_id">
+			T1.ROUTE_ID=#route_id#
+		</isNotEmpty>
+			order by t1.site_updown,t1.rs_order asc
+	</select>	
+	
+	<!-- 导出学生乘车记录 -->
+	<select id="exportStuRideInfos" parameterClass="rideInfo" resultMap="infos">
+		SELECT  T1.ID,T1.STU_ID,T2.STU_NAME,T2.STU_CODE,T2.STU_SCHOOL,T2.STU_CLASS,
+	        T3.VEHICLE_LN,T4.ROUTE_NAME,T5.SICHEN_NAME,T6.DRIVER_NAME,T1.MESG_FLAG,
+			CASE 
+			WHEN T1.SITE_FLAG='0' AND T1.ALARM_TYPE_ID IS NULL THEN '上学正常'			
+			WHEN T1.SITE_FLAG='0' AND T1.ALARM_TYPE_ID IS NOT NULL THEN '上学异常'
+			WHEN T1.SITE_FLAG='1' AND T1.ALARM_TYPE_ID IS NULL THEN '放学正常'			
+			WHEN T1.SITE_FLAG='1' AND T1.ALARM_TYPE_ID IS NOT NULL THEN '放学异常'			
+			ELSE '--' END ST_RIDE_FLAG,
+			TO_CHAR(T1.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME,
+			T7.SITE_NAME
+		FROM (SELECT * FROM CLW_XC_ST_CHECK_RECORD_T A
+			  <dynamic prepend="WHERE"> 
+	          <isNotEmpty property="st_ride_flag">
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0000">
+					   1=2
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1111">
+					   A.SITE_FLAG IS NOT NULL
+				 </isEqual>			           
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1000">
+					   A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0100">
+					   A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0010">
+					   A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0001">
+					   A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL
+				 </isEqual>			 			 			 
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1100">
+					   A.SITE_FLAG='0'
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0011">
+					   A.SITE_FLAG='1'
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1010">
+					   A.ALARM_TYPE_ID IS NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0101">
+					   A.ALARM_TYPE_ID IS NOT NULL
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0110">
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL)
+					   OR
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1001">
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL)
+					   OR
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1110">
+					   (A.SITE_FLAG='0')
+					   OR
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1101">
+					   (A.SITE_FLAG='0')
+					   OR
+					   (A.SITE_FLAG='1' AND A.ALARM_TYPE_ID IS NOT NULL)
+				 </isEqual>	
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="1011">
+					   (A.SITE_FLAG='1')
+					   OR
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NULL)
+				 </isEqual>
+				 <isEqual prepend="AND" property="st_ride_flag" compareValue="0111">
+					   (A.SITE_FLAG='1')
+					   OR
+					   (A.SITE_FLAG='0' AND A.ALARM_TYPE_ID IS NOT NULL)
+				 </isEqual>			 			 				 
+	         </isNotEmpty> 
+	         </dynamic>		
+			  ) T1,
+			CLW_XC_STUDENT_T T2,
+			(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0'AND A.DEVICE_TYPE = '0') T3,
+		     (SELECT A.ROUTE_ID,A.ROUTE_NAME FROM CLW_XC_ROUTE_T A WHERE A.VALID_FLAG = '0') T4,
+		     (SELECT A.SICHEN_ID,A.SICHEN_NAME FROM CLW_XC_SICHEN_T A WHERE A.VALID_FLAG = '0') T5,
+		     (SELECT A.DRIVER_ID,A.DRIVER_NAME FROM CLW_YW_DRIVER_T A WHERE A.VALID_FLAG = '0') T6,
+		     CLW_XC_SITE_T T7
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T1.ROUTE_ID = T4.ROUTE_ID(+)
+		AND T1.SICHEN_ID = T5.SICHEN_ID(+)
+		AND T1.DRIVER_ID = T6.DRIVER_ID(+)
+		AND T1.SITE_ID = T7.SITE_ID(+)
+		AND T2.VALID_FLAG = '0'	
+		AND T1.VSS_FLAG != '2'
+		AND T1.SITE_FLAG IS NOT NULL
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME LIKE '%' || #stu_name# ||'%' ESCAPE '\'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="stu_school">
+               T2.STU_SCHOOL LIKE '%' || #stu_school# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+               T2.STU_CLASS LIKE '%' || #stu_class# ||'%' ESCAPE '\'
+         </isNotEmpty> 
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T1.VEHICLE_VIN = #VIN#
+         </isNotEmpty>        
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id">
+               T1.ROUTE_ID = #route_id#
+         </isNotEmpty>          
+         <isNotEmpty prepend="AND" property="site_id">
+               T1.SITE_ID = #site_id#
+         </isNotEmpty>         
+         ORDER BY TERMINAL_TIME desc
+	</select>
+</sqlMap>

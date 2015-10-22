@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="entimanage" namespace="/enti" extends="clw-default">
+		
+		<action name="entimanage" class="entiManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+		</action>
+		<action name="entimanage_goto_add" class="entiManageAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+		</action>
+		<action name="entimanage_do_add" class="entiManageAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="entimanage_goto_edit" class="entiManageAction" method="gotoedit">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage_edit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage_edit.jsp
+			</result>
+		</action>
+		<action name="entimanage_do_edit" class="entiManageAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="entimanage_do_del" class="entiManageAction" method="dodel">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+		</action>
+		<action name="ajax_entiinfo" class="entiManageAction" method="ajax_entiinfo">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/entimanage/entiManage.jsp
+			</result>
+		</action>
+	</package>
+</struts>

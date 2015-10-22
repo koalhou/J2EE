@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TripPatchManage">
+<typeAlias alias="TripSearchVO" type="com.neusoft.clw.trippatch.domain.TripSearchVO"/>
+<typeAlias alias="TripPatch" type="com.neusoft.clw.trippatch.domain.TripPatch"/>
+<!-- 临时派车补录查询列表 -->
+ <select id="getTripPatchList" parameterClass="TripSearchVO" resultClass="TripPatch">
+    select * from (
+	select aa.*,
+	       case when aa.type='1' then bb.route_name else aa.extra_trip_name end route_name,
+	       
+	       case when aa.type = '2' then '' else bb.route_class end route_type
+	  from (
+	select b.patch_id,
+	       a.vehicle_code,
+	       a.vehicle_ln,
+	       c.driver_name,
+	       b.type,
+	       to_char(b.start_time,'yyyy-mm-dd hh24:mi:ss') start_time,
+	       to_char(b.end_time,'yyyy-mm-dd hh24:mi:ss') end_time,
+	       to_char(b.mileage,'999999990D9') mileage,
+	       nvl(b.count,0) count,
+	       b.route_id,
+	       b.extra_trip_name,
+	       b.vehicle_vin,
+	       to_char(b.operate_time,'yyyy-mm-dd hh24:mi:ss') operate_time,
+	       b.update_by
+	  from clw_cl_base_info_t a,
+	       tqc_trip_patch_t b,
+	       clw_yw_driver_t c
+	 where a.vehicle_vin=b.vehicle_vin
+	   and b.driver_id=c.driver_id
+	   and a.valid_flag = '0'
+	   <dynamic>
+	   <isNotEmpty property="vehicle_code">
+	   and a.vehicle_code=#vehicle_code#
+	   </isNotEmpty>
+	   <isNotEmpty property="vehicle_ln">
+	   and a.vehicle_ln=#vehicle_ln#
+	   </isNotEmpty>
+	   <isNotEmpty property="start_time">
+	   <![CDATA[
+	   and trunc(b.start_time) >= to_date(#start_time#,'yyyy-mm-dd')
+	   ]]>
+	   </isNotEmpty>
+	   <isNotEmpty property="end_time">
+	   <![CDATA[
+	   and trunc(b.start_time) <= to_date(#end_time#,'yyyy-mm-dd')
+	   ]]>
+	   </isNotEmpty>
+	   <isNotEmpty property="type">
+	   and b.type=#type#
+	   </isNotEmpty>
+	   <isNotEmpty property="vins">
+	   and b.vehicle_vin in ($vins$)
+	   </isNotEmpty>
+	   </dynamic>
+	       ) aa
+	       left join
+	       clw_xc_route_t bb
+	    on aa.route_id=bb.route_id
+	 <dynamic>
+	 <isNotEmpty property="route_name">
+	 where aa.extra_trip_name like '%'||#route_name#||'%' escape'\'
+	    or bb.route_name like '%'||#route_name#||'%' escape'\'
+	   </isNotEmpty>
+	   ) 
+   	 <isNotEmpty property="sortName">
+	   order by $sortName$ $sortOrder$
+   	 </isNotEmpty>
+   	 <isEmpty property="sortName">
+	   order by start_time desc
+   	 </isEmpty>
+	 </dynamic>
+ </select>
+ <!-- 临时派车补录查询总数 -->
+ <select id="getTripPatchCount" parameterClass="TripSearchVO" resultClass="int">
+	select count(aa.patch_id)
+	  from (
+	select b.patch_id,
+	       a.vehicle_code,
+	       a.vehicle_ln,
+	       c.driver_name,
+	       b.type,
+	       b.start_time,
+	       b.end_time,
+	       b.mileage,
+	       b.count,
+	       b.route_id,
+	       b.extra_trip_name
+	  from clw_cl_base_info_t a,
+	       tqc_trip_patch_t b,
+	       clw_yw_driver_t c
+	 where a.vehicle_vin=b.vehicle_vin
+	   and b.driver_id=c.driver_id
+	   and a.valid_flag = '0'
+	   <dynamic>
+	   <isNotEmpty property="vehicle_code">
+	   and a.vehicle_code=#vehicle_code#
+	   </isNotEmpty>
+	   <isNotEmpty property="vehicle_ln">
+	   and a.vehicle_ln=#vehicle_ln#
+	   </isNotEmpty>
+	   <isNotEmpty property="start_time">
+	   <![CDATA[
+	   and trunc(b.start_time) >= to_date(#start_time#,'yyyy-mm-dd')
+	   ]]>
+	   </isNotEmpty>
+	   <isNotEmpty property="end_time">
+	   <![CDATA[
+	   and trunc(b.start_time) <= to_date(#end_time#,'yyyy-mm-dd')
+	   ]]>
+	   </isNotEmpty>
+	   <isNotEmpty property="type">
+	   and b.type=#type#
+	   </isNotEmpty>
+	   <isNotEmpty property="vins">
+	   and b.vehicle_vin in ($vins$)
+	   </isNotEmpty>
+	   </dynamic>
+	       ) aa
+	       left join
+	       clw_xc_route_t bb
+	    on aa.route_id=bb.route_id
+	 <dynamic>
+	 <isNotEmpty property="route_name">
+	 where aa.extra_trip_name like '%'||#route_name#||'%' escape'\'
+	    or bb.route_name like '%'||#route_name#||'%' escape'\'
+	   </isNotEmpty>
+	 </dynamic>
+ </select>
+ <!-- 根据id查询一条补录信息 -->
+ <select id="getTripPatchById" parameterClass="string" resultClass="TripPatch">
+	select t.patch_id,
+	       t.vehicle_vin,
+	       to_char(t.start_time,'yyyy-mm-dd hh24:mi:ss') start_time,
+	       to_char(t.end_time,'yyyy-mm-dd hh24:mi:ss') end_time,
+	       case when t.end_time is null or t.start_time is null then 0
+	            else round((t.end_time - t.start_time)*24*60)
+		   end use_time,
+	       t.mileage
+	  from tqc_trip_patch_t t
+	 where t.patch_id=#id#
+ </select>
+ <!-- 添加补录信息 -->
+ <insert id="addTripPatch" parameterClass="TripPatch">
+ 	insert into tqc_trip_patch_t
+	(
+	patch_id,
+	vehicle_vin,
+	route_id,
+	type,
+	start_time,
+	end_time,
+	operate_time,
+	update_by,
+	valid_flag,
+	count,
+	driver_id,
+	mileage,
+	extra_trip_name
+	)
+	values
+	(
+	SEQ_TQC_TRIP_PATCH_T.NEXTVAL,
+	#vehicle_vin#,
+	#route_id#,
+	#type#,
+	to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'),
+	to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss'),
+	SYSDATE,
+	#update_by#,
+	0,
+	#count#,
+	#driver_id#,
+	round(#mileage#,1),
+	#extra_trip_name#
+	)
+<!--  	insert into tqc_trip_patch_t -->
+<!-- 	( -->
+<!-- 	patch_id, -->
+<!-- 	vehicle_vin, -->
+<!-- 	route_id, -->
+<!-- 	type, -->
+<!-- 	start_time, -->
+<!-- 	end_time, -->
+<!-- 	operate_time, -->
+<!-- 	update_by, -->
+<!-- 	valid_flag, -->
+<!-- 	count, -->
+<!-- 	driver_id, -->
+<!-- 	mileage, -->
+<!-- 	extra_trip_name, -->
+<!-- 	empty_mileage, -->
+<!-- 	total_mileage -->
+<!-- 	) -->
+<!-- select -->
+<!-- 	SEQ_TQC_TRIP_PATCH_T.NEXTVAL, -->
+<!-- 	#vehicle_vin#, -->
+<!-- 	#route_id#, -->
+<!-- 	#type#, -->
+<!-- 	to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), -->
+<!-- 	to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss'), -->
+<!-- 	SYSDATE, -->
+<!-- 	#update_by#, -->
+<!-- 	0, -->
+<!-- 	#count#, -->
+<!-- 	#driver_id#, -->
+<!-- 	#mileage#, -->
+<!-- 	#extra_trip_name#, -->
+<!-- 	nvl(total_mileage,#mileage#) - #mileage#, -->
+<!-- 	nvl(total_mileage,0)  -->
+<!-- 	from (select max(r.mileage) - min(r.mileage) total_mileage -->
+<!--                 from clw_yw_terminal_record_t r -->
+<!--                where r.vehicle_vin = #vehicle_vin# -->
+<!--                  and #type# = '1' -->
+<!--                	 <![CDATA[ -->
+<!--                  and r.terminal_time >= trunc(to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), 'dd') -->
+<!--                  and r.terminal_time < trunc(to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), 'dd') + 1 -->
+<!--                  and not exists ( select 1 from  tqc_send_passenger s  -->
+<!--                  where  s.vin_code = #vehicle_vin# -->
+<!--                  and s.start_time > trunc(to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), 'dd') -->
+<!--        			 and s.start_time < trunc(to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), 'dd') + 1 -->
+<!--        			 union all -->
+<!--        			 select 1 from  tqc_trip_patch_t tp  -->
+<!--                  where  tp.vehicle_vin = #vehicle_vin# -->
+<!--                  and tp.start_time >= trunc(to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), 'dd') -->
+<!--        			 and tp.start_time < trunc(to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss'), 'dd') + 1 -->
+<!--        			 )) -->
+<!--        			 ]]> -->
+
+ </insert>
+ <!-- 删除 -->
+ <delete id="delTripPatch" parameterClass="string">
+ 	delete from tqc_trip_patch_t t where t.patch_id in ($ids$)
+ </delete>
+ 
+ <!-- 查询车辆树    预留  -->
+ <select id="getVehicleTree" parameterClass="java.util.Map" resultClass="com.neusoft.clw.trippatch.domain.VehicleTree">
+ select * from (
+select DISTINCT 
+       t.ENTERPRISE_ID as id,
+       t.SHORT_NAME as name,
+       t.PARENT_ID as pId,
+       '' vehicle_code,
+       case
+         when t.ENTERPRISE_ID = #org_id# then
+          'true'
+         else
+          'true'
+       end open,
+       'pIcon' as iconSkin,
+       0 limite_number
+  from CLW_JC_ENTERPRISE_T t
+ where 1=1
+  <![CDATA[
+   and t.left_num >= (SELECT LEFT_NUM FROM CLW_JC_ENTERPRISE_VI WHERE ENTERPRISE_ID = #org_id#)
+   and t.right_num <= (SELECT RIGHT_NUM  FROM CLW_JC_ENTERPRISE_VI WHERE ENTERPRISE_ID = #org_id#)
+  ]]>
+   START WITH t.enterprise_id in 
+       (
+       select distinct bus.organization_id
+         from CLW_CL_BASE_INFO_T bus
+        where bus.valid_flag='0'
+         <isNotEmpty property="name">
+         <isEqual property="name" compareValue="外租">
+          and upper(bus.vehicle_type) = '1'
+         </isEqual>
+         <isNotEqual property="name" compareValue="外租">
+          and (
+               upper(bus.vehicle_code) like '%' || upper(#name#) || '%' escape '\'
+               or upper(bus.vehicle_ln) like '%' || upper(#name#) || '%' escape '\'
+              )
+         </isNotEqual>
+         </isNotEmpty>
+       )
+   connect by prior parent_id = enterprise_id
+  union all
+  select distinct 
+  	     a.vehicle_vin id,
+         b.VEHICLE_LN NAME,
+         b.ORGANIZATION_ID PID,
+         b.vehicle_code,
+         'false' AS OPEN,
+         CASE
+           when b.vehicle_type = '1' then
+            'online'
+           WHEN NVL(SUBSTRB(a.STAT_INFO, 32, 1), '1') = '0' AND
+                (SYSDATE - a.TERMINAL_TIME) * 24 * 60 * 60 >=
+                30 * 60 THEN
+            'offline'
+           WHEN NVL(SUBSTRB(a.STAT_INFO, 32, 1), '1') = '1' AND
+                (SYSDATE - a.TERMINAL_TIME) * 24 * 60 * 60 >=
+                5 * 60 THEN
+            'offline'
+           WHEN a.TERMINAL_TIME is null THEN
+            'offline'
+           ELSE
+            'online'
+         END iconSkin,
+         b.limite_number
+    from CLW_JC_TERMINAL_T a,
+         CLW_CL_BASE_INFO_T b
+   where a.vehicle_vin=b.vehicle_vin(+)
+     and b.valid_flag='0'
+     and a.valid_flag='0'
+     and a.device_type='0'
+     and b.valid_flag='0'
+     and a.enterprise_id in 
+         (
+          SELECT ENTERPRISE_ID
+            FROM CLW_JC_ENTERPRISE_VI
+            <![CDATA[
+           WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                                FROM CLW_JC_ENTERPRISE_VI
+                               WHERE ENTERPRISE_ID = #org_id#)
+             AND RIGHT_NUM <= (SELECT RIGHT_NUM
+                                 FROM CLW_JC_ENTERPRISE_VI
+                                WHERE ENTERPRISE_ID = #org_id#)
+            ]]>
+         )
+     <isNotEmpty property="name">
+     <isEqual property="name" compareValue="外租">
+      and upper(b.vehicle_type) = '1'
+     </isEqual>
+     <isNotEqual property="name" compareValue="外租">
+      and (
+           upper(b.vehicle_code) like '%' || upper(#name#) || '%' escape '\'
+           or upper(b.vehicle_ln) like '%' || upper(#name#) || '%' escape '\'
+          )
+     </isNotEqual>
+     </isNotEmpty>
+     )
+    ORDER BY iconskin DESC, NLSSORT(NAME, 'NLS_SORT=SCHINESE_PINYIN_M') ASC
+ </select>
+ 
+ <select id="getTreeNodes" parameterClass="String" resultClass="com.neusoft.clw.trippatch.domain.VehicleTree">
+		SELECT * 
+		  FROM (SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,
+						case when ENTERPRISE_ID=#enterpriseId# then 'true' else 'false' end open,
+						'pIcon' as iconSkin,
+						'' as dvrState,
+						'' vehicle_code,
+						'' vehicle_type,
+						0 limite_number
+				  FROM CLW_JC_ENTERPRISE_T
+			     START WITH ENTERPRISE_ID = #enterpriseId#
+			   CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+				   AND VALID_FLAG='0'
+			     ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC
+			    )
+	    UNION ALL
+	    SELECT CAR_T.VEHICLE_VIN AS ID,
+		       CAR_T.VEHICLE_LN AS NAME,
+		       CAR_T.ORGANIZATION_ID AS PID,
+		       'false' AS OPEN,
+		       CASE
+		         WHEN CAR_T.ONLINE_FLAG = '1' THEN
+		          'online'
+		         ELSE
+		          'offline'
+		       END AS iconSkin,
+		       CASE
+		         WHEN CAR_T.ONDVR_FLAG = '1' THEN
+		          'ondvr'
+		         ELSE
+		          'offdvr'
+		       END AS dvrState,
+		       vehicle_code,
+		       vehicle_type,
+		       limite_number
+		  FROM (SELECT CBI.VEHICLE_VIN,
+		               CBI.VEHICLE_LN,
+		               CBI.ORGANIZATION_ID,
+		               CASE
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                  '0'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                  '0'
+		                  WHEN 
+		                      JT.TERMINAL_TIME is null THEN
+		                  '0'
+		                 ELSE
+		                  '1'
+		               END ONLINE_FLAG,
+		               CASE
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  '0'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  '0'
+		                  WHEN 
+		                      JT.TERMINAL_TIME is null THEN
+		                  '0'
+		                  WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  '0'
+				  		  WHEN 
+		                      NVL(SUBSTRB(JT.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  '0'
+		                 ELSE
+		                  '1'
+		               END ONDVR_FLAG,
+		               CBI.vehicle_type,
+		               CBI.VEHICLE_CODE,
+		               CBI.limite_number
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ORGANIZATION_ID IS NOT NULL
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#))
+		         ORDER BY ONLINE_FLAG DESC,NLSSORT(VEHICLE_LN,'NLS_SORT=SCHINESE_PINYIN_M') ASC) CAR_T
+	</select>
+	<select id="searchTreeNodesByCode" parameterClass="Map" resultClass="com.neusoft.clw.trippatch.domain.VehicleTree">
+		SELECT * 
+		  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+				       SHORT_NAME as name,
+				       PARENT_ID as pId,
+				       case
+				         when ENTERPRISE_ID=#enterpriseId# then
+				          'true'
+				         else
+				          'true'
+				       end open,
+				       'pIcon' as iconSkin,
+				       '' as dvrState,
+				       '' as vehicle_code,
+				       '' vehicle_type,
+				       0 limite_number
+				  FROM CLW_JC_ENTERPRISE_T
+				 WHERE LEFT_NUM &gt;=
+				       (SELECT LEFT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				   AND RIGHT_NUM &lt;=
+				       (SELECT RIGHT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				 START WITH ENTERPRISE_ID IN
+				            (SELECT DISTINCT B.ORGANIZATION_ID ID
+				               FROM CLW_JC_TERMINAL_T   T,
+				                    CLW_CL_BASE_INFO_T  B,
+				                    CLW_CL_SIM_T        S,
+				                    CLW_JC_ENTERPRISE_T E
+				              WHERE B.ORGANIZATION_ID IN
+				                    (SELECT ENTERPRISE_ID
+				                       FROM CLW_JC_ENTERPRISE_VI
+				                      WHERE LEFT_NUM &gt;=
+				                            (SELECT LEFT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#)
+				                        AND RIGHT_NUM &lt;=
+				                            (SELECT RIGHT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#))
+				                AND B.VALID_FLAG = '0'
+				                AND B.FEE_FLAG = '0'
+				                AND S.VALID_FLAG = '0'
+				                AND S.DEVICE_TYPE = '0'
+				                AND T.VALID_FLAG = '0'
+				                AND T.DEVICE_TYPE = '0'
+				                AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				                AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				                AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				                AND (B.VEHICLE_CODE like '%' || upper(#name#) ||'%' escape '\' or upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\'))
+				CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+				       AND VALID_FLAG = '0'
+				  ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC)     
+		UNION ALL
+		SELECT * 
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                'false' AS OPEN,
+		                CASE
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                   'offline'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                   'offline'
+		                   WHEN T.TERMINAL_TIME is null THEN
+		                  			  'offline'
+		                  ELSE
+		                   'online'
+		                END iconSkin,
+		                CASE
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  'offdvr'
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  'offdvr'
+		                  WHEN 
+		                      T.TERMINAL_TIME is null THEN
+		                  'offdvr'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  'offdvr'
+				  		  WHEN 
+		                      NVL(SUBSTRB(T.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  'offdvr'
+		                 ELSE
+		                  'ondvr'
+		               END dvrState,
+		               b.vehicle_code,
+		               b.vehicle_type,
+		               b.limite_number
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E
+				 WHERE ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE LEFT_NUM &gt;=
+				               (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#)
+				           AND RIGHT_NUM &lt;=
+				               (SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#))
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				   AND (B.VEHICLE_CODE like '%' || upper(#name#) ||'%' escape '\' or upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\')
+			 ORDER BY iconskin DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+	</select>
+	
+	<select id="searchTreeNodesByDivisionName" parameterClass="Map" resultClass="com.neusoft.clw.trippatch.domain.VehicleTree">
+		SELECT *
+		  FROM (SELECT *
+				  FROM (SELECT ENTERPRISE_ID as id,
+						       SHORT_NAME as name,
+						       PARENT_ID as pId,
+						       'true' open,
+						       'pIcon' iconSkin,
+						       '' as dvrState,
+						       '' as vehicle_code,
+						       '' as vehicle_type,
+						       0 limite_number
+						  FROM CLW_JC_ENTERPRISE_T
+						 WHERE VALID_FLAG = '0'
+						   AND LEFT_NUM &gt;=
+						       (SELECT LEFT_NUM
+						          FROM CLW_JC_ENTERPRISE_VI
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						   AND RIGHT_NUM &lt;=
+						       (SELECT RIGHT_NUM
+						          FROM CLW_JC_ENTERPRISE_VI
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+						CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+						UNION
+						SELECT ENTERPRISE_ID as id,
+						       SHORT_NAME as name,
+						       PARENT_ID as pId,
+						       'true' open,
+						       'pIcon' iconSkin,
+						       '' as dvrState,
+						       '' as vehicle_code,
+						       '' as vehicle_type
+						  FROM CLW_JC_ENTERPRISE_T
+						 WHERE VALID_FLAG = '0'
+						   AND LEFT_NUM &gt;=
+						       (SELECT LEFT_NUM
+						          FROM CLW_JC_ENTERPRISE_VI
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						   AND RIGHT_NUM &lt;=
+						       (SELECT RIGHT_NUM
+						          FROM CLW_JC_ENTERPRISE_VI
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+						 and PARENT_ID != #enterpriseId#
+						CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+					ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC
+				)
+		UNION ALL
+		SELECT *
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                'false' AS OPEN,
+		                CASE
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                   'offline'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                   'offline'
+		                   WHEN T.TERMINAL_TIME is null THEN
+		                  			  'offline'
+		                  ELSE
+		                   'online'
+		                END iconSkin,
+		                CASE
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  'offdvr'
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  'offdvr'
+		                  WHEN 
+		                      T.TERMINAL_TIME is null THEN
+		                  'offdvr' 
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  'offdvr'
+				  		  WHEN 
+		                      NVL(SUBSTRB(T.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  'offdvr'
+		                 ELSE
+		                  'ondvr'
+		               END dvrState,
+		               b.vehicle_code,
+		               b.vehicle_type
+		               b.limite_number
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E
+				 WHERE ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID as id
+				          FROM CLW_JC_ENTERPRISE_T
+				         WHERE VALID_FLAG = '0'
+				           AND ENTERPRISE_ID IN
+				               (SELECT ENTERPRISE_ID
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE LEFT_NUM &gt;=
+				                       (SELECT LEFT_NUM
+				                          FROM CLW_JC_ENTERPRISE_VI
+				                         WHERE ENTERPRISE_ID =
+				                               #enterpriseId#)
+				                   AND RIGHT_NUM &lt;=
+				                       (SELECT RIGHT_NUM
+				                          FROM CLW_JC_ENTERPRISE_VI
+				                         WHERE ENTERPRISE_ID =
+				                               #enterpriseId#))
+				         START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+				         and PARENT_ID != #enterpriseId#
+				        CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				 ORDER BY iconSkin DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+	</select>
+	
+	<!-- 得到人数 -->
+	<select id="getPersonNum" parameterClass="TripPatch" resultClass="int">
+	 select nvl(count(t.vehicle_vin),0)
+	   from CLW_XC_ST_CHECK_RECORD_T t
+	  where t.vehicle_vin=#vehicle_vin#
+	    <![CDATA[
+	    and t.terminal_time >= to_date(#start_time#, 'yyyy-mm-dd hh24:mi:ss')
+	    and t.terminal_time <= to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+	    ]]>
+	</select>
+	<!-- 得到里程数 -->
+	<select id="getMileage" parameterClass="TripPatch" resultClass="string">
+	select to_char(nvl(max(t.mileage),0)-nvl(min(t.mileage),0),'FM999999990.0') mileage
+	  from clw_yw_terminal_record_t t
+	 where t.vehicle_vin=#vehicle_vin#
+	 <![CDATA[
+	   and t.terminal_time >= to_date(#start_time#, 'yyyy-mm-dd hh24:mi:ss')
+	   and t.terminal_time <= to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')
+	   ]]>
+	</select>
+	<!-- 根据车辆vin得到驾驶员 -->
+	<select id="getDriverByVin" parameterClass="string" resultClass="string">
+	select b.driver_id||','||b.driver_name
+	  from CLW_XC_VEHDRIVER_T a,
+	       clw_yw_driver_t b
+	 where a.driver_id=b.driver_id
+	   and a.vehicle_vin=#vin#
+	</select>
+	<!-- 根据车辆vin和时间段判断是否存在发车数据 -->
+	<select id="getExistTripCount" parameterClass="Map" resultClass="int">
+	select count(1)
+	  from (
+	select t1.vehicle_vin
+	  from tqc_trip_patch_t t1
+	 where t1.valid_flag=0
+	 <dynamic>
+	 <isNotEmpty property="vehicle_vin">
+	 and t1.vehicle_vin=#vehicle_vin#
+	 </isNotEmpty>
+	 <isNotEmpty property="compareTime">
+	 <![CDATA[
+	 and (
+	 (t1.start_time <= to_date(#compareTime#,'yyyy-mm-dd hh24:mi:ss') and t1.end_time   >= to_date(#compareTime#,'yyyy-mm-dd hh24:mi:ss'))
+	  or 
+	  (t1.start_time >= to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss') and t1.end_time   <= to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss'))
+	 )
+	 ]]>
+	 </isNotEmpty>
+	 </dynamic>
+	union all
+	select t.vin_code
+	  from tqc_send_passenger t
+	 where t.valid_flag='0'
+	 <dynamic>
+	 <isNotEmpty property="vehicle_vin">
+	 and t.vin_code=#vehicle_vin#
+	 </isNotEmpty>
+	 <isNotEmpty property="compareTime">
+	 <![CDATA[
+	 and (
+	 (t.start_time <= to_date(#compareTime#,'yyyy-mm-dd hh24:mi:ss') and t.end_time   >= to_date(#compareTime#,'yyyy-mm-dd hh24:mi:ss'))
+	  or 
+	  (t.start_time >= to_date(#start_time#,'yyyy-mm-dd hh24:mi:ss') and t.end_time   <= to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss'))
+	 )
+	 ]]>
+	 </isNotEmpty>
+	 </dynamic>
+	   ) 
+	</select>
+</sqlMap>

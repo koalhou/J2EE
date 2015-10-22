@@ -1,0 +1,126 @@
+@CHARSET "UTF-8";
+/* CSS Document */
+
+
+/* 弹出气泡  样式开始*/
+.balloon{position:absolute; height: 204px; width: 320px;_width:326px;}
+.balloon ul, .balloon li{ list-style: none; margin: 0;}
+.balloon .balloonLeft{
+	background:url(../newimages/qipaoimages/balloons.gif) no-repeat left top;
+	float: left;
+	height: 204px;
+	width: 10px;
+}
+.balloon .balloonRight{
+	background:url(../newimages/qipaoimages/balloons.gif) no-repeat right top;
+	float: left;
+	height: 204px;
+	width: 10px;
+}
+.balloon .balloonMain{
+	background:url(../newimages/qipaoimages/balloons_bg.gif) repeat-x right top;
+	float: left;
+	height: 204px;
+	width: 300px;
+}
+.balloon .balloonTil{
+	color: #222;
+	float: left;
+	height: 42px;
+	width: 100%;
+}
+.balloon a.tabfocus{
+	background: url(../newimages/qipaoimages/balloons_tab.gif) no-repeat left center;
+	color: #fff;
+	display: block;
+	float: left;
+	line-height: 42px;
+	margin-right: 10px;
+	text-align: center;
+	text-decoration: none;
+	width: 70px;
+}
+.balloon a:hover.tab{ text-decoration: underline;}
+.balloon a.tab{
+	color: #222;
+	display: block;
+	float: left;
+	line-height: 42px;
+	margin-right: 10px;
+	text-align: center;
+	text-decoration: none;
+	width: 70px;
+}
+.balloon a.close{
+	background: url(../newimages/qipaoimages/balloons_close.gif) no-repeat left top;
+	display: block;
+	float: right;
+	height: 16px;
+	margin-top: 13px;
+	width: 16px;
+}
+.balloon .data{ border-bottom: 1px solid #ccc; float: left;_float: ; height: 102px; padding-top: 5px; width: 100%;}
+.balloon .toolbarqp{ border-top: 1px solid #fff; float: left;_float: ; height: 44px; text-align: center; padding: 0 0 0 2px;}
+a.tool1, a.tool2, a.tool3,a.tool3h, a.tool4,a.tool4h, a.tool5, a.tool6, a.tool7,a.tool7h{ cursor: pointer; display: block; float: left; height: 30px; margin: 6px 6px 4px 6px; width: 30px; }
+.balloon a.tool1{ background: url(../newimages/qipaoimages/btn_tool5.png) no-repeat center top;}
+.balloon a.tool2{ background: url(../newimages/qipaoimages/btn_tool6.png) no-repeat center top;}
+.balloon a.tool3{ background: url(../newimages/qipaoimages/btn_tool3.png) no-repeat center top;}
+.balloon a.tool3h{ background: url(../newimages/qipaoimages/btn_tool3h.png) no-repeat center top;}
+.balloon a.tool4{ background: url(../newimages/qipaoimages/btn_tool2.png) no-repeat center top;}
+.balloon a.tool4h{ background: url(../newimages/qipaoimages/btn_tool2h.png) no-repeat center top;}
+.balloon a.tool5{ background: url(../newimages/qipaoimages/btn_tool1.png) no-repeat center top;}
+.balloon a.tool6{ background: url(../newimages/qipaoimages/ico_warning.png) no-repeat center top;}
+.balloon a.tool7{ background: url(../newimages/qipaoimages/btn_tool7.png) no-repeat center top;}
+.balloon a.tool7h{ background: url(../newimages/qipaoimages/btn_tool7_1.png) no-repeat center top;}
+.balloon .arrow{ background:url(../newimages/qipaoimages/balloons_arrow.gif) no-repeat top center; float: left; height: 9px; width: 100%;}
+
+
+
+
+.LayerPhotoList {
+	position:absolute;
+	left:5px;
+	top:2px;
+	width:208px;
+	height:38px;
+	line-height:14px;
+	z-index:1;
+	background:#FFFFE1;
+	border:1px solid #ccc;
+	color:#147800;
+	padding-top:5px;
+	padding-left:10px;
+}
+
+
+.refreshAndreset2{ background: #fff  repeat-x left top; float:left; padding-left:25px;border-bottom: 0px solid #b8b8b8;height: 35px; line-height: 35px; padding-top: 12px; width: 90%;}
+
+.refreshAndreset{
+	
+	background:#eeeeee;
+	height:39px;
+	position:relative;
+}
+
+.refreshAndreset2 a.btnRefresh{ color: #2a2a2a; display: block; height: 25px; float: left; line-height: 25px; margin:0 5px; padding-left: 34px; text-decoration: none; width: 48px; }
+.refreshAndreset2 a.btnReset{ color: #2a2a2a; display: block; height: 25px; float: left; line-height: 25px; margin:0 5px; padding-left: 34px; text-decoration: none; width: 48px; }
+a.btnRefresh{ background: url(../newimages/qipaoimages/btn_refresh.png) no-repeat left center; }
+a.btnReset{ background: url(../newimages/qipaoimages/btn_reset.png) no-repeat left center; }
+
+.LayerMsgList {
+
+	position:absolute;
+	left:5px;
+	top:2px;
+	width:208px;
+	height:36px;
+	line-height:14px;
+	z-index:1;
+	background:#FFFFE1;
+	border:1px solid #ccc;
+	color:#147800;
+	padding-top:5px;
+	padding-left:10px;
+
+}
+.LayerMsgList img{margin-top:3px;}

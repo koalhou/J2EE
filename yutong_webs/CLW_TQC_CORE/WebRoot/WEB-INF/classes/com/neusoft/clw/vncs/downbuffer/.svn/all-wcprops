@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/downbuffer
+END
+DownBuffer.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/downbuffer/DownBuffer.java
+END
+ThreadPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/downbuffer/ThreadPool.java
+END
+PooledThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/downbuffer/PooledThread.java
+END

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Sendcmdhis">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="SendCmdHis"
+		type="com.neusoft.clw.businessmanage.sendcommandhis.domain.SendCommandDomain" />
+	<typeAlias alias="user"
+		type="com.neusoft.clw.businessmanage.sendcommandhis.domain.UserListDomain" />	
+	<resultMap id="sendcmdhis-result" class="SendCmdHis">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="id" column="ID" />
+		<result property="deal_state" column="DEAL_STATE" />
+		<result property="operate_time" column="OPERATE_TIME" />
+		<result property="send_type" column="SEND_TYPE" />
+		<result property="operate_user_name" column="OPERATE_USER_NAME" />
+	</resultMap>
+	<resultMap id="user-result" class="user">
+		<result property="user_id" column="USER_ID" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="user_sex" column="USER_SEX" />
+		<result property="user_mobile" column="USER_MOBILE" />
+		<result property="user_email" column="USER_EMAIL" />
+		<result property="organizationName" column="ORGANIZATIONNAME" />
+	</resultMap>
+
+	<select id="getSendcmdCount" parameterClass="SendCmdHis"
+		resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_YW_SEND_COMMAND_T SCT,CLW_JC_CLEN_VI CCBI,CLW_JC_USER_T USR
+		WHERE SCT.VEHICLE_VIN=CCBI.VEHICLE_VIN
+		AND
+		SCT.SEND_TYPE IN ('2001','2002','2202') 
+		AND SCT.OPERATE_USER_ID=USR.USER_ID
+		AND CCBI.ORGANIZATION_ID IN
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			     FROM CLW_JC_ENTERPRISE_VI
+			     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID = #organization_id#)
+			     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		<isNotEmpty prepend="AND" property="vehicle_ln">
+			CCBI.VEHICLE_LN LIKE '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            SCT.OPERATE_TIME >=TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ SCT.OPERATE_TIME <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="send_type">
+               SCT.SEND_TYPE = #send_type#
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="deal_state">
+               SCT.DEAL_STATE in ($deal_state$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="operate_user_name">
+             USR.USER_NAME LIKE '%' || #operate_user_name# ||'%' escape '\'
+          </isNotEmpty>
+	</select>
+	
+	<select id="getSendcmdList" parameterClass="SendCmdHis" resultMap="sendcmdhis-result">
+		SELECT 
+		CCBI.VEHICLE_LN,
+		CCBI.VEHICLE_VIN,
+		SCT.ID,
+		SCT.DEAL_STATE,
+		TO_CHAR(SCT.OPERATE_TIME,'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+		SCT.SEND_TYPE,
+        USR.USER_NAME OPERATE_USER_NAME
+		FROM CLW_YW_SEND_COMMAND_T SCT,CLW_JC_CLEN_VI CCBI,CLW_JC_USER_T USR
+		WHERE SCT.VEHICLE_VIN=CCBI.VEHICLE_VIN
+		AND SCT.SEND_TYPE IN ('2001','2002','2202') 
+    	AND SCT.OPERATE_USER_ID=USR.USER_ID
+    	AND CCBI.ORGANIZATION_ID IN
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			     FROM CLW_JC_ENTERPRISE_VI
+			     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID = #organization_id#)
+			     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+			CCBI.VEHICLE_LN LIKE '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            SCT.OPERATE_TIME >=TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ SCT.OPERATE_TIME <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="send_type">
+             SCT.SEND_TYPE = #send_type#
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="deal_state">
+             SCT.DEAL_STATE in( $deal_state$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="operate_user_name">
+             USR.USER_NAME like LIKE '%' || #operate_user_name# ||'%' escape '\'
+          </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+           <isNotEmpty property="sortname">  
+            $sortname$   $sortorder$  
+        </isNotEmpty>  
+       </dynamic>    
+	</select>
+	
+	<!-- 2.0查询总数 -->
+	<select id="newgetSendcmdCount" parameterClass="SendCmdHis"
+		resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_YW_SEND_COMMAND_T SCT,CLW_JC_CLEN_VI CCBI,CLW_JC_USER_T USR
+		WHERE SCT.VEHICLE_VIN=CCBI.VEHICLE_VIN
+		AND SCT.OPERATE_USER_ID=USR.USER_ID
+		AND CCBI.ORGANIZATION_ID IN
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			     FROM CLW_JC_ENTERPRISE_VI
+			     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID = #organization_id#)
+			     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+			CCBI.VEHICLE_LN LIKE '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            SCT.OPERATE_TIME >=TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ SCT.OPERATE_TIME <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="deal_state">
+               SCT.DEAL_STATE in ($deal_state$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="send_type">
+               SCT.SEND_TYPE in ($send_type$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="operate_user_name">
+             USR.USER_NAME LIKE '%' || #operate_user_name# ||'%' escape '\'
+          </isNotEmpty>
+	</select>
+	
+	<!-- 2.0查询列表 -->
+	<select id="newgetSendcmdList" parameterClass="SendCmdHis" resultMap="sendcmdhis-result">
+		SELECT 
+		CCBI.VEHICLE_LN,
+		CCBI.VEHICLE_VIN,
+		SCT.ID,
+		SCT.DEAL_STATE,
+		TO_CHAR(SCT.OPERATE_TIME,'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+		SCT.SEND_TYPE,
+        USR.USER_NAME OPERATE_USER_NAME
+		FROM CLW_YW_SEND_COMMAND_T SCT,CLW_JC_CLEN_VI CCBI,CLW_JC_USER_T USR
+		WHERE SCT.VEHICLE_VIN=CCBI.VEHICLE_VIN
+    	AND SCT.OPERATE_USER_ID=USR.USER_ID
+    	AND CCBI.ORGANIZATION_ID IN
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			     FROM CLW_JC_ENTERPRISE_VI
+			     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID = #organization_id#)
+			     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_VI
+			                  WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+			CCBI.VEHICLE_LN LIKE '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            SCT.OPERATE_TIME >=TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ SCT.OPERATE_TIME <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="send_type">
+               SCT.SEND_TYPE in ($send_type$)
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="deal_state">
+             SCT.DEAL_STATE in( $deal_state$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="operate_user_name">
+             USR.USER_NAME  LIKE '%' || #operate_user_name# ||'%' escape '\'
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+           <isNotEmpty property="sortname">  
+            $sortname$   $sortorder$  
+        </isNotEmpty>  
+       </dynamic>    
+	</select>
+	
+	<select id="getuserList" parameterClass="user" resultMap="user-result">	
+		SELECT 
+		T.USER_ID,
+		T.USER_NAME,
+		T.USER_SEX,
+		T.USER_MOBILE,
+		T.USER_EMAIL,
+		show_names_fun(T.ENTERPRISE_ID,T.ORGANIZATION_ID) ORGANIZATIONNAME
+		FROM CLW_JC_USER_T T
+		WHERE 
+		T.VALID_FLAG != '1' 
+		and T.USER_TYPE='1'
+ 		and T.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+ 		<isNotEmpty prepend="AND" property="organizidtreeid">
+		 T.ORGANIZATION_ID in 
+			<![CDATA[
+				(select enterprise_id
+				     from clw_jc_enterprise_vi
+				     where left_num >= (select left_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id = #organizidtreeid#)
+				     and right_num <=(select right_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id =#organizidtreeid#)        
+				)
+		     ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="creater">
+				t.creater <![CDATA[ <> ]]> 'yutongsuperadmin'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="user_name">
+		      T.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+			</isNotEmpty>
+		<dynamic prepend="ORDER BY">  
+     	  	<isNotEmpty property="sortname">  
+            	$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		  </dynamic> 
+	</select>
+	<select id="getuserCount" parameterClass="user" resultClass="Integer">
+		SELECT COUNT(USER_ID)
+		FROM CLW_JC_USER_T T
+		WHERE 
+		T.VALID_FLAG != '1' 
+		and T.USER_TYPE='1'
+ 		and T.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+ 		<isNotEmpty prepend="AND" property="organizidtreeid">
+		 T.ORGANIZATION_ID in 
+			<![CDATA[
+				(select enterprise_id
+				     from clw_jc_enterprise_vi
+				     where left_num >= (select left_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id = #organizidtreeid#)
+				     and right_num <=(select right_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id =#organizidtreeid#)        
+				)
+		     ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="creater">
+				t.creater <![CDATA[ <> ]]> 'yutongsuperadmin'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="user_name">
+		      T.USER_NAME LIKE LIKE '%' || #user_name# ||'%' escape '\'
+			</isNotEmpty>
+	</select>
+</sqlMap>

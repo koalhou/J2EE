@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SimBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="SimBrowseInfo" type="com.neusoft.clw.yw.popup.sim.ds.SimBrowseInfo" />
+	
+	<resultMap id="simInfo-result" class="SimBrowseInfo">
+		<result property="simId" column="SIM_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="businessName" column="FULL_NAME" />
+	</resultMap>
+	
+	<select id="getSimInfos" parameterClass="Map" resultMap="simInfo-result">
+		SELECT CS.SIM_ID,
+               CS.SIM_CARD_NUMBER,
+               CS.CELLPHONE,
+               JB.FULL_NAME
+          FROM CLW_CL_SIM_T CS,
+               CLW_JC_BUSINESS_T JB
+         WHERE CS.BUSINESS_ID = JB.BUSINESS_ID
+           AND CS.VALID_FLAG = '0'
+           AND CS.DEVICE_TYPE = '0'
+           AND NOT EXISTS (SELECT 1
+                             FROM CLW_JC_TERMINAL_T JT
+                            WHERE CS.SIM_CARD_NUMBER = JT.SIM_CARD_NUMBER
+                              AND JT.VALID_FLAG = '0'
+                              AND JT.DEVICE_TYPE = '0')
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               CS.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         </isNotEmpty>
+         ORDER BY SIM_CARD_NUMBER
+	</select>
+	
+</sqlMap>

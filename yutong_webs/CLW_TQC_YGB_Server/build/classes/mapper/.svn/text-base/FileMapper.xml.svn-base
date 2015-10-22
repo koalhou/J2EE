@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="File">
+<!-- SEQ_CLW_BSP_UNSTRUCTUR_FILE_ID -->
+	<select id="getSeq" parameterType="string" resultType="int">
+		select ${value}.nextval from dual
+	</select>
+	
+
+	
+	<select id="count" parameterType="string" resultType="int">
+		select count(*)
+	  from CLW_TQC.CLW_BSP_UNSTRUCTUR_FILE_T a where a.file_id = #{value}
+	</select>
+	
+	<select id="get" parameterType="string" resultType="StorageFile">
+		select a.file_id     as id,
+	       a.file_name   as name,
+	       a.file_desc   as description,
+	       a.file_server as server,
+	       a.file_path   as path,
+	       a.file_suffix as suf
+	  from CLW_TQC.CLW_BSP_UNSTRUCTUR_FILE_T a where a.file_id = #{value}
+	</select>
+	
+	<insert id="add" parameterType="StorageFile" >
+		 insert into CLW_TQC.CLW_BSP_UNSTRUCTUR_FILE_T
+		    (file_id,
+		     file_name,
+		     file_desc,
+		     file_server,
+		     file_path,
+		     file_suffix,
+		     file_storage,
+		     file_type,
+		     file_length,
+		     apply_id,
+		     module_id,
+		     creater,
+		     file_dlcount,
+		     create_time)
+		  values
+		    (${id},'${name}','${description}','${server}','${path}','${suf}',0,'${type,jdbcType=VARCHAR}','${len}','${applyId}','${moduleId}','${creater}','${file_dlcount}',sysdate)
+	</insert>
+	
+	<update id="setCount" parameterType="string">
+		update CLW_TQC.CLW_BSP_UNSTRUCTUR_FILE_T set file_dlcount=file_dlcount+1 where file_id=#{id}
+	</update>
+	<update id="updateFile" parameterType="StorageFile">
+		update CLW_TQC.CLW_BSP_UNSTRUCTUR_FILE_T set file_name=#{name},file_suffix=#{suf},path=#{path}, modifier=#{creater},modify_time=sysdate where file_id=#{id}
+	</update>
+	
+</mapper>

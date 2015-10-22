@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="EnterpriseBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="EnterprisePopupInfo" type="com.neusoft.clw.yw.popup.enterprise.ds.EnterprisePopupInfo" />
+	
+	<resultMap id="enterpriseInfo-result" class="EnterprisePopupInfo">
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="enterpriseName" column="FULL_NAME" />
+	</resultMap>
+	
+	<select id="getEnterpriseInfos" parameterClass="Map" resultMap="enterpriseInfo-result">
+		SELECT T.ENTERPRISE_ID,
+		       T.ENTERPRISE_CODE,
+               T.FULL_NAME
+          FROM (SELECT t.enterprise_id,
+				       t.enterprise_code,
+				       t.short_name,
+				       t.left_num,
+				       t.right_num,
+				       treeleve_enterprise_fun(t.enterprise_id) AS treeleve,
+				       t.parent_id,
+				       t.concate_cr_flag,
+				       t.full_name
+				  FROM clw_jc_enterprise_t t
+				 WHERE t.valid_flag = 0
+				 ORDER BY t.enterprise_code) T
+         <dynamic prepend="WHERE">
+         	<isNotEmpty prepend="AND" property="enterpriseName">
+               T.FULL_NAME LIKE '%$enterpriseName$%'
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="enterpriseCode">
+               T.ENTERPRISE_CODE LIKE '%$enterpriseCode$%'
+         	</isNotEmpty>
+         	<isEmpty prepend="AND" property="flag">
+               T.TREELEVE = '2'
+            </isEmpty> 
+         	<isNotEmpty prepend="AND" property="flag">
+               T.ENTERPRISE_ID &lt;&gt; '222'
+           AND T.TREELEVE &lt;= '2'
+        	</isNotEmpty>
+         </dynamic>
+	</select>
+	
+	<select id="getAllEnterpriseInfos" parameterClass="Map" resultMap="enterpriseInfo-result">
+		SELECT T.ENTERPRISE_ID,
+		       T.ENTERPRISE_CODE,
+               T.FULL_NAME
+          FROM (SELECT t.enterprise_id,
+				       t.enterprise_code,
+				       t.short_name,
+				       t.left_num,
+				       t.right_num,
+				       treeleve_enterprise_fun(t.enterprise_id) AS treeleve,
+				       t.parent_id,
+				       t.concate_cr_flag,
+				       t.full_name
+				  FROM clw_jc_enterprise_t t
+				 WHERE t.valid_flag = 0
+				 ORDER BY t.enterprise_code) T
+         WHERE T.TREELEVE &lt;= '2'
+         	<isNotEmpty prepend="AND" property="enterpriseName">
+               T.FULL_NAME LIKE '%$enterpriseName$%'
+         	</isNotEmpty>
+         	<isNotEmpty prepend="AND" property="enterpriseCode">
+               T.ENTERPRISE_CODE LIKE '%$enterpriseCode$%'
+         	</isNotEmpty>
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,131 @@
+h1,h2,h3{
+font-size: 14px;
+}
+
+h4{
+font-size: 14px;
+}
+
+.noticeMsg{
+font-size: 12px;
+color: #CC0000;
+padding: 2px;
+}
+
+.error{
+font-size: 12px;
+color: #CC0000;
+}
+
+.success{
+font-size: 12px;
+color: #009900;
+}
+
+div#message, .message{
+clear: both;
+text-align: center;
+list-style-type: square;
+overflow: hidden;
+}
+
+
+.btn_blue {
+	color:#fff;
+	width:80px;
+	height:26px;
+	line-height:26px;
+	border:0;
+	cursor:pointer;
+	vertical-align:middle;
+	background:url(../images/kcptImages/btn_new.png) 0 0 no-repeat;
+}
+
+.btn_green {
+	color:#fff;
+	width:80px;
+	height:26px;
+	line-height:26px;
+	border:0;
+	cursor:pointer;
+	vertical-align:middle;
+	background:url(../images/kcptImages/btn_new.png) -100px 0px no-repeat;
+}
+
+.btn_red {
+	color:#fff;
+	width:80px;
+	height:26px;
+	line-height:26px;
+	border:0;
+	cursor:pointer;
+	vertical-align:middle;
+	background:url(../images/kcptImages/btn_new.png) -200px 0 no-repeat;
+}
+
+.btn_yellow {
+	color:#fff;
+	width:80px;
+	height:26px;
+	line-height:26px;
+	border:0;
+	cursor:pointer;
+	vertical-align:middle;
+	background:url(../images/kcptImages/btn_new.png) -300px 0px no-repeat;
+}
+
+.btn_blue222 {
+	color:#fff;
+	width:80px;
+	height:26px;
+	line-height:26px;
+	border:0;
+	cursor:pointer;
+	vertical-align:middle;
+	background:url(../images/kcptImages/btn_new.png) -0px -100px no-repeat;
+}
+
+.btn_inquires {
+	width:80px;
+	height:26px;
+	line-height:26px;
+	border:0;
+	cursor:pointer;
+	vertical-align:middle;
+	background:url(../images/kcptImages/btn_new.png) 0 -150px no-repeat;
+}
+.button_green {
+	width:80px;
+	height:26px;
+}
+.button_green a {
+	display:block;
+	color:#fff;
+	text-align:center;
+	height:26px;
+	line-height:26px;
+	background:url(../images/kcptImages/button.png) -100px 0px no-repeat;
+}
+.button_green a:hover {
+	background:url(../images/kcptImages/button.png) -100px -50px no-repeat;
+}
+.button_green a:active {
+	background:url(../images/kcptImages/button.png) -100px -100px no-repeat;
+}
+.divbackimgcheckboxcheck{
+	background:url(../scripts/plugins/ligerUI/skins/Aqua/images/tree/tree.png) -22px -220px;
+	width:15px;
+	height:15px;
+	background-position:-26px -26px;
+	float:left;
+}
+.divbackimgcheckboxuncheck{
+	background:url(../scripts/plugins/ligerUI/skins/Aqua/images/tree/tree.png) -22px -220px;
+	width:15px;
+	height:15px;
+	background-position:-26px -4px;
+	float:left;
+}
+.loading-small {
+	background:url(../images/xiaocheImage/loading-small.gif) no-repeat center;;
+}

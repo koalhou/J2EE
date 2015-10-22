@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="  
+                       http://www.springframework.org/schema/beans  
+                       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                       http://www.springframework.org/schema/context 
+                       http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+                       http://cxf.apache.org/jaxrs  
+                       http://cxf.apache.org/schemas/jaxrs.xsd  
+                       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+
+	<bean id="propertyConfigurer" class="com.yutong.clw.config.Config">
+		<property name="locations">
+			<list>
+			<value>file:${user.dir}/config/clw.properties</value>
+			<value>file:${user.dir}/config/db.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="ClwCommunicateService" class="com.yutong.clw.nio.mina.spring.ClwCommunicateService" init-method="init" destroy-method="destroy">
+	</bean>
+</beans>

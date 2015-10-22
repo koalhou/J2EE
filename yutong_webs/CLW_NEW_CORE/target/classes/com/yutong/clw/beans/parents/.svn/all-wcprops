@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents
+END
+Trip.class
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/Trip.class
+END
+VehicleTripOrbit.class
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleTripOrbit.class
+END
+Vehicle.class
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/Vehicle.class
+END
+VehicleTripStation.class
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleTripStation.class
+END
+VehicleStation.class
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleStation.class
+END
+Station.class
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/Station.class
+END
+VehicleTrackMapItem.class
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleTrackMapItem.class
+END
+AlgorithmVehicle.class
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/AlgorithmVehicle.class
+END
+VehicleRoute.class
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleRoute.class
+END
+StationGenAlgorithmThreshold.class
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/StationGenAlgorithmThreshold.class
+END
+StationStudentCount.class
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/StationStudentCount.class
+END
+StationGenAlgorithmParam.class
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/StationGenAlgorithmParam.class
+END
+VehicleTrack.class
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleTrack.class
+END
+StationCountPair.class
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/StationCountPair.class
+END
+CheckCardRecord.class
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/CheckCardRecord.class
+END
+VehicleStationsPerDayUpOrDown.class
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleStationsPerDayUpOrDown.class
+END
+VehicleStationsPerDay.class
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/VehicleStationsPerDay.class
+END
+TerminalRecord.class
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/parents/TerminalRecord.class
+END

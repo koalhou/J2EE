@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain
+END
+JacksonSerializeException.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/JacksonSerializeException.java
+END
+UploadFileInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/UploadFileInfo.java
+END
+BaseNotification.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/BaseNotification.java
+END
+Theme.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/Theme.java
+END
+PushMessageCls.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/PushMessageCls.java
+END
+ClwJcParamCfgT.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/ClwJcParamCfgT.java
+END
+JacksonDeserializeException.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/JacksonDeserializeException.java
+END
+JacksonUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/JacksonUtils.java
+END
+FeedBackMsg.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/yw/newmodel/domain/FeedBackMsg.java
+END

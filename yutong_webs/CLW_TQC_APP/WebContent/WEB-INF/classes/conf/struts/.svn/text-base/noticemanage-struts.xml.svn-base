@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 公告管理 -->
+<struts>
+	<package name="noticemanage" namespace="/notice" extends="clw-default">
+		<!-- 进入公告列表 -->
+		<action name="noticeManage" class="noticeManageAction" method="init">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/noticemanage/noticemanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/noticemanage/noticemanage.jsp</result>	
+		</action>
+		<!-- 进入添加公告页面 -->
+		<action name="preAddNotice" class="noticeManageAction" method="preAddNotice">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/noticemanage/addnotice.jsp
+				</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">noticeManage</param>
+			</result>	
+		</action>
+		
+		<!-- 添加到数据库 -->
+	   <action name="addNotice" class="noticeManageAction" method="addNotice">
+			<result name="success" type="redirect-action">
+				<param name="actionName">noticeManage</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">preAddNotice</param>
+			</result>		
+		</action>
+		<!-- 查询一个公告 -->
+	   <action name="searchNoticeById" class="noticeManageAction" method="searchNoticeById">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/noticemanage/updatenotice.jsp
+				</param>
+			</result>
+		</action>
+		<action name="addPic" class="noticeManageAction" method="addPic"></action>
+		<!-- 置顶 -->
+		<action name="upFirstNotice" class="noticeManageAction" method="upFirstNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">noticeManage</param>
+			</result>
+		</action>
+		<!-- 修改-->
+	   <action name="updateNotice" class="noticeManageAction" method="updateNotice">
+			<result name="success" type="redirect-action">
+				<param name="actionName">noticeManage</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">preAddNotice</param>
+			</result>		
+		</action>
+	</package>
+	<package name="noticemanageJson" namespace="/notice" extends="json-default">
+		<!-- 查询公告列表信息 -->
+		<action name="noticeManageList" class="noticeManageAction" method="noticeList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+	</package>
+	
+</struts>

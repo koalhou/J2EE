@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StealOilSms">
+	<resultMap id="user-result" class="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="sex" column="USER_SEX" />
+		<result property="birthday" column="USER_BIRTH" />
+		<result property="countyID" column="USER_COUNTRY" />
+		<result property="provinceID" column="USER_PROVINCE" />
+		<result property="cityID" column="USER_CITY" />
+		<result property="moblie" column="USER_MOBILE" />
+		<result property="tel" column="USER_OFFICE_TEL" />
+		<result property="email" column="USER_EMAIL" />
+		<result property="idCard" column="USER_IDT_CARD" />
+		<result property="duty" column="USER_DUTY" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+        <result property="student_pwd" column="STUDENT_PWD" />
+        <result property="student_flag" column="STUDENT_FLAG" />
+		<result property="valideFlg" column="VALID_FLAG" />
+		<result property="vUserID" column="VASET_USER_ID" />
+		<result property="vTime" column="VASET_TIME" />
+		<result property="organizationName" column="ORGANIZATIONNAME" />
+		<result property="remarks" column="REMARKS" />
+	</resultMap>
+	
+	<!-- 防偷油短信数量 -->
+	<select id="getStealOilSmsCount" parameterClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo" resultClass="Integer">
+        SELECT COUNT(1) FROM (
+			SELECT DISTINCT T.STU_ID,T.STU_NAME,T.TELEPHONE,WMSYS.WM_CONCAT(T.ORGANIZATION_ID)  OVER (PARTITION BY T.TELEPHONE) ORGANIZATION_ID,MODIFIE_TIME
+			FROM CLW_YW_STEALOILSMS_T T,CLW_JC_ENTERPRISE_T T1 WHERE T.ORGANIZATION_ID = T1.ENTERPRISE_ID
+			AND T.ORGANIZATION_ID IN
+			<![CDATA[
+				(SELECT ENTERPRISE_ID
+				     FROM CLW_JC_ENTERPRISE_T
+				     WHERE VALID_FLAG = '0'
+				     AND LEFT_NUM >= (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+				     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                  WHERE ENTERPRISE_ID =#organization_id#)        
+				)
+		     ]]>
+		   <isNotEmpty prepend="AND" property="stu_name">
+				T.STU_NAME LIKE '%' || #stu_name# || '%' ESCAPE '\'
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="telephone">
+				T.TELEPHONE LIKE '%' || #telephone# ||'%' ESCAPE '\'
+	       </isNotEmpty>
+	       <isNotEmpty prepend="AND" property="organization_id_s">
+				T.ORGANIZATION_ID IN 
+				<![CDATA[
+				(SELECT ENTERPRISE_ID
+				     FROM CLW_JC_ENTERPRISE_T
+				     WHERE VALID_FLAG = '0'
+				     AND LEFT_NUM >= (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                  WHERE ENTERPRISE_ID = #organization_id_s#)
+				     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                  WHERE ENTERPRISE_ID =#organization_id_s#)        
+				)
+		     ]]>
+	       </isNotEmpty>
+       )
+	</select>
+	
+	<!-- 防偷油短信列表 -->
+	<select id="getStealOilSmsInfos" parameterClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo" resultClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo">
+		SELECT DISTINCT T.STU_ID,T.STU_NAME,T.TELEPHONE,WMSYS.WM_CONCAT(T.ORGANIZATION_ID)  OVER (PARTITION BY T.TELEPHONE) ORGANIZATION_ID,MODIFIE_TIME
+		FROM CLW_YW_STEALOILSMS_T T,CLW_JC_ENTERPRISE_T T1 WHERE T.ORGANIZATION_ID = T1.ENTERPRISE_ID
+		AND T.ORGANIZATION_ID IN
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			     FROM CLW_JC_ENTERPRISE_T
+			     WHERE VALID_FLAG = '0'
+			     AND LEFT_NUM >= (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_T
+			                  WHERE ENTERPRISE_ID = #organization_id#)
+			     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_T
+			                  WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+	   <isNotEmpty prepend="AND" property="stu_name">
+			T.STU_NAME LIKE '%' || #stu_name# || '%' ESCAPE '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="telephone">
+			T.TELEPHONE LIKE '%' || #telephone# ||'%' ESCAPE '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="organization_id_s">
+				T.ORGANIZATION_ID IN 
+				<![CDATA[
+				(SELECT ENTERPRISE_ID
+				     FROM CLW_JC_ENTERPRISE_T
+				     WHERE VALID_FLAG = '0'
+				     AND LEFT_NUM >= (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                  WHERE ENTERPRISE_ID = #organization_id_s#)
+				     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                  WHERE ENTERPRISE_ID =#organization_id_s#)        
+				)
+		     ]]>
+	   </isNotEmpty>
+       <dynamic prepend="ORDER BY">  
+         <isNotEmpty property="sortname">  
+           $sortname$   $sortorder$  
+         </isNotEmpty>  
+       </dynamic>  
+	</select>
+	
+	<select id="getOrganizationName" parameterClass="String" resultClass="String">
+            SELECT T.SHORT_NAME FROM CLW_JC_ENTERPRISE_T  T WHERE T.ENTERPRISE_ID
+	        IN (SELECT ENTERPRISE_ID  FROM CLW_JC_ENTERPRISE_VI  
+	        <![CDATA[	
+	           WHERE LEFT_NUM >= (SELECT LEFT_NUM						
+                  FROM CLW_JC_ENTERPRISE_VI						
+                  WHERE ENTERPRISE_ID = #organization_id# )
+	           AND RIGHT_NUM<= (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                  WHERE ENTERPRISE_ID = #organization_id# ))
+	         ]]>
+	</select>
+	
+	<!-- 员工查询列表 -->
+	<select id="getStaffShow" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" resultClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo">		
+		SELECT ORGANIZATION_ID organizationID,USER_ID userID,USER_NAME userName,USER_MOBILE moblie,REMARKS remarks
+		FROM 
+		(SELECT T.ORGANIZATION_ID,T.USER_ID,T.USER_NAME ,T.REMARKS,T.USER_MOBILE 
+		 FROM CLW_JC_USER_T T
+		 WHERE 
+			T.ENTERPRISE_ID = #entiID#
+		 	AND T.ORGANIZATION_ID IN					
+       		(SELECT ENTERPRISE_ID						
+          		FROM CLW_JC_ENTERPRISE_VI	
+          		<![CDATA[						
+         		WHERE LEFT_NUM >= (SELECT LEFT_NUM						
+                              FROM CLW_JC_ENTERPRISE_VI						
+                             WHERE ENTERPRISE_ID = #organizationID# )
+           		AND RIGHT_NUM <= (SELECT RIGHT_NUM
+                               FROM CLW_JC_ENTERPRISE_VI
+                              WHERE ENTERPRISE_ID = #organizationID# ))	
+            	]]>
+         	AND T.VALID_FLAG = '0'
+         	AND T.USER_ID NOT IN(
+         		SELECT STU_ID FROM CLW_YW_STEALOILSMS_T
+         	)
+       )
+           ORDER BY USER_ID ASC
+	</select>
+	
+	<select id="getStaffCount" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" resultClass="Integer">		
+		SELECT COUNT(1)	
+		FROM 
+		(SELECT T.ORGANIZATION_ID,T.USER_ID,T.USER_NAME ,T.REMARKS,T.USER_MOBILE 
+		 FROM CLW_JC_USER_T T
+		 WHERE 
+			T.ENTERPRISE_ID = #entiID#
+		 	AND T.ORGANIZATION_ID IN					
+       		(SELECT ENTERPRISE_ID						
+          		FROM CLW_JC_ENTERPRISE_VI	
+          		<![CDATA[						
+         		WHERE LEFT_NUM >= (SELECT LEFT_NUM						
+                              FROM CLW_JC_ENTERPRISE_VI						
+                             WHERE ENTERPRISE_ID = #organizationID# )
+           		AND RIGHT_NUM <= (SELECT RIGHT_NUM
+                               FROM CLW_JC_ENTERPRISE_VI
+                              WHERE ENTERPRISE_ID = #organizationID# ))	
+            	]]>
+         	AND T.VALID_FLAG = '0'
+         	AND T.USER_ID NOT IN(
+         		SELECT STU_ID FROM CLW_YW_STEALOILSMS_T
+         	)
+       )
+	</select>
+	
+	<select id="checkTel" parameterClass="Map" resultClass="Integer">		
+		SELECT COUNT(1) TOTAL FROM CLW_YW_STEALOILSMS_T 
+		WHERE TELEPHONE = #telephone#
+        <isNotEqual property="type" compareValue="update">
+			OR STU_ID = #stu_id# 
+ 	    </isNotEqual>
+		<isEqual property="type" compareValue="update">
+			AND STU_ID != #stu_id#
+ 	    </isEqual>
+	</select>
+
+	<insert id="insert_stealoilsms" parameterClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo" >
+		INSERT INTO CLW_YW_STEALOILSMS_T(ID,STU_ID,STU_NAME,TELEPHONE,ENTERPRISE_ID,ORGANIZATION_ID,CREATE_BY,CREATE_TIME,MODIFIE_BY,MODIFIE_TIME,VALID_FLAG)
+        VALUES (#id#, #stu_id#, #stu_name# ,#telephone#,#enterprise_id#,
+        #organization_id#,#create_by#,sysdate,#modifie_by#,sysdate,#valid_flag#)
+	</insert>
+	
+	<select id="getStealOilSmsByStu" parameterClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo" resultClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo">		
+		SELECT DISTINCT T.STU_ID,T.STU_NAME,T.STU_NAME STU_NAME_OLD,T.TELEPHONE,WMSYS.WM_CONCAT(T.ORGANIZATION_ID)  OVER (PARTITION BY T.TELEPHONE) ORGANIZATION_ID,MODIFIE_TIME
+		FROM CLW_YW_STEALOILSMS_T T WHERE STU_ID = #stu_id#
+	</select>
+	
+	<!-- 删除防偷油短信设置 -->
+	<delete id="delete_stealoilsms" parameterClass="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo" >
+		DELETE FROM CLW_YW_STEALOILSMS_T T WHERE T.STU_ID IN ($stu_id$)
+	</delete>
+</sqlMap>

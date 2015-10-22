@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/errorBuffer
+END
+ErrorBuffer.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/errorBuffer/ErrorBuffer.java
+END
+ErrorBufferThreadPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/errorBuffer/ErrorBufferThreadPool.java
+END
+ErrorBufferPooledThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/errorBuffer/ErrorBufferPooledThread.java
+END

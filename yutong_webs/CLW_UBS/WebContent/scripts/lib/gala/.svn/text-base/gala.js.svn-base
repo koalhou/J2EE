@@ -1,0 +1,1 @@
+var Gala = { version : '0.1' };

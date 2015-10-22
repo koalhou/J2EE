@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="VehicleStatus">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="VehicleStatus"
+		type="com.neusoft.clw.safemanage.vehiclesafe.domain.VehicleStatus" />
+	
+	<!-- 2.0 新改逻辑车况监控 -->
+	<select id="newgetvehstatuscount" parameterClass="VehicleStatus" resultClass="Integer">
+	select count(ONLINE_FLAG) from (
+      select VEHICLE_VIN,VEHICLE_LN,TERMINAL_TIME,ONLINE_FLAG,YANZHONGSTATE,
+        zuse,HIGHTEMP,CANGGUI,POTHER,
+        yy||zdqy||zdtpms||konglv||jilv||ranyou||oil_temp||slow_speed_high_temp||cang_temp||water_temp||Battery_voltage||low_water||abs_error||Fuel_warning as VEHSTAT
+         from (
+            SELECT JT.VEHICLE_VIN, CBI.VEHICLE_LN, TO_CHAR(JT.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME,
+    	    CASE 			WHEN JT.TERMINAL_TIME IS NULL THEN '1'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='0' AND (SYSDATE-JT.TERMINAL_TIME)*24*60*60 &lt;= 30*60 THEN '0'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='1' AND (SYSDATE-JT.TERMINAL_TIME)*24*60*60&lt;= 5*60  THEN '0' 
+            ELSE '1' END ONLINE_FLAG,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO, 30, 1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO, 31, 1), '0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO, 28, 1), '0')='0' then '0' ELSE '1' END YANZHONGSTATE,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 30, 1), '0') yy,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 31, 1), '0') zdqy,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 28, 1), '0') zdtpms,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO,27,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,24,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,23,1),'0')='0' then '0' ELSE '1' END zuse,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 27, 1), '0') konglv,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 24, 1), '0') jilv,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 23, 1), '0') ranyou,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO,26,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,22,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,25,1),'0')='0' then '0' ELSE '1' END HIGHTEMP,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,26,1),'0') slow_speed_high_temp,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,22,1),'0') oil_temp,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,25,1),'0') cang_temp,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO, 13, 1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO, 12, 1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,29,1),'0')='0' then '0' ELSE '1' END CANGGUI,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 13, 1), '0') water_temp,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 12, 1), '0') Battery_voltage,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,29,1),'0')  low_water,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO,21,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,11,1),'0')='0' then '0' ELSE '1' END POTHER,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,21,1),'0') Fuel_warning,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,11,1),'0') abs_error     
+            FROM CLW_CL_BASE_INFO_T  CBI,
+                 CLW_JC_TERMINAL_T   JT,
+                 CLW_CL_SIM_T        SIM
+            where CBI.vehicle_vin=JT.vehicle_vin
+            and JT.valid_flag='0'
+            and JT.sim_card_number = SIM.sim_card_number
+            and SIM.valid_flag = '0'
+            and CBI.valid_flag = '0'
+            and CBI.fee_flag = '0'
+            and CBI.device_type='0'
+            and JT.DEVICE_TYPE='0'
+            AND SIM.DEVICE_TYPE='0'
+            AND CBI.ORGANIZATION_ID IN
+            (select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num &gt;= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num &lt;=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+	        )
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+			upper(CBI.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+           </isNotEmpty>
+         ) ) T
+         WHERE T.ONLINE_FLAG='0'
+		   <isNotEmpty prepend="AND" property="searchState">  
+			 <isEqual  property="searchState" compareValue="1">
+				   T.VEHSTAT != '00000000000000'
+			 </isEqual>
+			 <isEqual  property="searchState" compareValue="0">
+				   T.VEHSTAT = '00000000000000'
+			 </isEqual>			   
+		   </isNotEmpty>           
+	</select>
+	
+	<resultMap id="newvehiclestalist-result" class="VehicleStatus">
+		<result property="vin" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="terminalTime" column="TERMINAL_TIME" />
+		<result property="online_flag" column="ONLINE_FLAG" />
+		<result property="yanzhongState" column="YANZHONGSTATE" />
+		<result property="zuse" column="ZUSE" />
+		<result property="highTemp" column="HIGHTEMP" />
+		<result property="canggui" column="CANGGUI" />	
+		<result property="pOther" column="POTHER" />
+		<result property="vehstat" column="VEHSTAT" />
+	</resultMap>
+	
+	<select id="newgetvehstatuslist" parameterClass="VehicleStatus"
+		resultMap="newvehiclestalist-result">
+	 select VEHICLE_VIN,VEHICLE_LN,TERMINAL_TIME,ONLINE_FLAG,YANZHONGSTATE,zuse,HIGHTEMP,CANGGUI,POTHER,VEHSTAT from 
+	 ( select VEHICLE_VIN,VEHICLE_LN,TERMINAL_TIME,ONLINE_FLAG,YANZHONGSTATE,
+        zuse,HIGHTEMP,CANGGUI,POTHER,
+        yy||zdqy||zdtpms||konglv||jilv||ranyou||oil_temp||slow_speed_high_temp||cang_temp||water_temp||Battery_voltage||low_water||abs_error||Fuel_warning as VEHSTAT
+      from (
+      SELECT JT.VEHICLE_VIN, CBI.VEHICLE_LN, TO_CHAR(JT.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME,
+    	    CASE 			WHEN JT.TERMINAL_TIME IS NULL THEN '1'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='0' AND (SYSDATE-JT.TERMINAL_TIME)*24*60*60 &lt;= 30*60 THEN '0'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='1' AND (SYSDATE-JT.TERMINAL_TIME)*24*60*60&lt;= 5*60  THEN '0' 
+            ELSE '1' END ONLINE_FLAG,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO, 30, 1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO, 31, 1), '0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO, 28, 1), '0')='0' then '0' ELSE '1' END YANZHONGSTATE,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 30, 1), '0') yy,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 31, 1), '0') zdqy,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 28, 1), '0') zdtpms,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO,27,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,24,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,23,1),'0')='0' then '0' ELSE '1' END zuse,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 27, 1), '0') konglv,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 24, 1), '0') jilv,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 23, 1), '0') ranyou,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO,26,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,22,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,25,1),'0')='0' then '0' ELSE '1' END HIGHTEMP,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,26,1),'0') slow_speed_high_temp,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,22,1),'0') oil_temp,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,25,1),'0') cang_temp,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO, 13, 1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO, 12, 1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,29,1),'0')='0' then '0' ELSE '1' END CANGGUI,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 13, 1), '0') water_temp,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO, 12, 1), '0') Battery_voltage,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,29,1),'0')  low_water,
+            CASE WHEN NVL(SUBSTRB(JT.ALARM_EXT_INFO,21,1),'0')='0' AND NVL(SUBSTRB(JT.ALARM_EXT_INFO,11,1),'0')='0' then '0' ELSE '1' END POTHER,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,21,1),'0') Fuel_warning,
+            NVL(SUBSTRB(JT.ALARM_EXT_INFO,11,1),'0') abs_error         
+            FROM CLW_CL_BASE_INFO_T  CBI,
+                 CLW_JC_TERMINAL_T   JT,
+                 CLW_CL_SIM_T        SIM
+            where CBI.vehicle_vin=JT.vehicle_vin
+            and JT.valid_flag='0'
+            and JT.sim_card_number = SIM.sim_card_number
+            and SIM.valid_flag = '0'
+            and CBI.valid_flag = '0'
+            and CBI.fee_flag = '0'
+            and CBI.device_type='0'
+            and JT.DEVICE_TYPE='0'
+            AND SIM.DEVICE_TYPE='0'
+            AND CBI.ORGANIZATION_ID IN
+           (select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num &gt;= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num &lt;=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+	       )
+	  <isNotEmpty prepend="AND" property="vehicle_ln">
+			upper(CBI.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+      </isNotEmpty>
+         ) ) T
+       WHERE T.ONLINE_FLAG='0'  
+		   <isNotEmpty prepend="AND" property="searchState">  
+			 <isEqual  property="searchState" compareValue="1">
+				    T.VEHSTAT != '00000000000000'
+			 </isEqual>
+			 <isEqual  property="searchState" compareValue="0">
+				    T.VEHSTAT = '00000000000000'
+			 </isEqual>			   
+		   </isNotEmpty>         
+	    <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		</dynamic>
+      </select>
+	
+</sqlMap>

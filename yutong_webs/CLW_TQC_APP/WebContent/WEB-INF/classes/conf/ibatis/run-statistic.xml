@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RunStatisticManage">
+	<typeAlias alias="runStatisticSearchVO"
+		type="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.RunStatisticSearch" />
+	<typeAlias alias="runStatisticEntity"
+		type="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.RunStatisticEntity" />
+	<typeAlias alias="WorkDetail"
+		type="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.WorkDetail" />
+	<typeAlias alias="PubDetail"
+		type="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.PubDetail" />
+	<typeAlias alias="RepaireDetail"
+		type="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.RepaireDetail" />
+	<typeAlias alias="StCheckEntity"
+		type="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.StCheckEntity" />
+	<!-- 运营统计查询列表 -->
+	<select id="getRunStatisticList" parameterClass="runStatisticSearchVO"
+		resultClass="runStatisticEntity">
+ <![CDATA[
+	select e.short_name,
+	       b.vehicle_vin,
+	       b.vehicle_code,
+	       b.vehicle_ln,
+	       g.driver_name,
+	       decode(b.vehicle_code,'外租','/',to_char(round(nvl(dd.total_mileage,0),1)-round(nvl(aa.load_mileage,0),1),'FM9999990.0')) empty_mileage,
+	       decode(b.vehicle_code,'外租','/',to_char(round(nvl(aa.load_mileage,0),1),'FM9999990.0')) load_mileage,
+	       decode(b.vehicle_code,'外租','/',to_char(round(nvl(dd.total_mileage,0),1),'FM9999990.0')) total_mileage,
+	       decode(b.vehicle_code,'外租','/',to_char(nvl(dd.total_oil,0),'FM9999990.0')) total_oil,
+		   decode(b.vehicle_code,'外租','/',to_char(decode(round(nvl(dd.total_mileage,0),1),0,0,nvl(dd.total_oil, 0)/round(nvl(dd.total_mileage,0),1)*100),'FM9999990.0')) oil_100,
+	       nvl(aa.load_number,0) load_number,
+	       nvl(aa.morning_cnt,0) morning_cnt,
+	       nvl(aa.night_cnt,0) night_cnt,
+	       nvl(aa.total_cnt,0) total_cnt,
+	       decode(b.vehicle_code,'外租','/',nvl(bb.repare_cnt,0)) repare_cnt,
+	       decode(b.vehicle_code,'外租','/',to_char(nvl(bb.cost_component,0),'FM9999990.0')) cost_component,
+	       nvl(cc.p_cnt,0) p_cnt, 
+	       to_char(nvl(cc.p_mileage,0),'FM9999990.0') p_mileage         
+	 from  clw_cl_base_info_t b,
+	 	   clw_xc_vehdriver_t f,
+	       clw_yw_driver_t g,
+	       CLW_JC_ENTERPRISE_T e,
+	       (
+	      select a.vehicle_vin,
+	             sum(a.empty_mileage) empty_mileage,
+                 sum(a.load_mileage) load_mileage,
+	             sum(a.empty_mileage)+sum(a.load_mileage) total_mileage,
+	             sum(a.total_oil) total_oil,
+	             (case when (sum(a.empty_mileage)+sum(a.load_mileage))=0 then 0 else round(sum(a.total_oil)/(sum(a.empty_mileage)+sum(a.load_mileage))*100,2) end) oil_100,
+	             sum(a.load_number) load_number,
+	             sum(case when a.route_class='0' and a.type='1' then 1 else 0 end) morning_cnt,
+	             sum(case when a.route_class='1' and a.type='1' then 1 else 0 end) night_cnt,
+	             sum(case when a.route_class in ('0','1') and a.type='1' then 1 else 0 end) total_cnt
+	        from ( 
+			        select t1.vin_code vehicle_vin,
+		                   (case when t1.empty_mileage is null or t1.empty_mileage<0 then 0 else t1.empty_mileage end) empty_mileage,
+		                   NVL(t1.load_mileage,0) load_mileage,
+		                   t1.total_oil,
+		                   t1.load_number,
+		                   t1.route_class,
+		                   t1.start_time,
+		                   '1' type
+		              from TQC_SEND_PASSENGER t1
+		             union all
+		             select t2.vehicle_vin,
+		                    (case when t2.empty_mileage is null or t2.empty_mileage < 0 then 0 else t2.empty_mileage end) empty_mileage,
+		                    NVL(t2.mileage,0),
+		                    0,
+		                    NVL(t2.count,0),
+		                    t4.route_class,
+		                    t2.start_time,
+		                    t2.type
+		               from TQC_TRIP_PATCH_T_BAK t2,
+		                    clw_xc_route_t t4
+		              where t2.route_id=t4.route_id(+)
+		                and t2.valid_flag=0
+	              ) a
+	       where 1=1
+	      ]]>
+		<dynamic>
+			<isNotEmpty property="vins">
+				and a.vehicle_vin in ($vins$)
+			</isNotEmpty>
+			<isNotEmpty property="vehicle_vin">
+				and a.vehicle_vin like
+				'%$vehicle_vin$%'
+	       </isNotEmpty>
+			<isNotEmpty property="beginTime">
+	       <![CDATA[
+	       	 and a.start_time >= to_date(#beginTime#,'yyyy-mm-dd')
+	       ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endTime">
+	       <![CDATA[
+	         and a.start_time < to_date(#endTime#,'yyyy-mm-dd')+1
+	       ]]>
+			</isNotEmpty>
+		</dynamic>
+		group by a.vehicle_vin
+		) aa,
+
+		(
+		select c.vehicle_vin,
+		count(c.repare_id)
+		repare_cnt,
+		sum(c.cost_component+c.cost_time) cost_component
+		from
+		tqc_repare_record_t c
+		where c.valid_flag=0
+		<isNotEmpty property="vins">
+			and c.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and c.vehicle_vin like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	       	 and trunc(c.update_time) >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and trunc(c.update_time) <= to_date(#endTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		group by c.vehicle_vin
+		) bb,
+
+		(
+		select d.vehicle_vin,
+		count(d.patch_id)
+		p_cnt,
+		sum(d.mileage) p_mileage
+		from TQC_TRIP_PATCH_T_BAK d
+		where
+		d.valid_flag=0
+		and d.type='2'
+		<isNotEmpty property="vins">
+			and d.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and d.vehicle_vin like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	       	 and trunc(d.start_time) >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and trunc(d.start_time) <= to_date(#endTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		group by d.vehicle_vin
+		) cc,
+		(
+		
+		select b.vehicle_vin,sum(b.mileage) total_mileage,sum(b.total_oil) total_oil 
+		from (select t1.vehicle_vin,ROUND(SUM(NVL(t1.mileage, 0)), 1) mileage, ROUND(SUM(NVL(t1.used_oil, 0)), 3) total_oil
+  		from ZSPT_OIL_ANALYS_INFO t1
+ 		where 1 = 1
+ 		
+ 		<isNotEmpty property="vins">
+			and t1.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and t1.vehicle_vin like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	       	 and t1.analys_date >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and t1.analys_date <= to_date(#endTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		GROUP BY t1.vehicle_vin 
+		
+		
+ 		union all
+ 		select t2.vin_code,abs(sum(t2.empty_mileage)) ,0
+ 		from TQC_SEND_PASSENGER t2
+
+ 		where 1 = 1 
+ 		
+ 		<isNotEmpty property="vins">
+			and t2.vin_code in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and t2.vin_code like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	        and t2.start_time >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and t2.start_time < to_date(#endTime#,'yyyy-mm-dd')+1
+	        ]]>
+		</isNotEmpty>
+		 <![CDATA[
+	        and t2.empty_mileage < 0
+	        ]]>
+		
+		group by t2.vin_code
+   
+   
+		union all
+ 		select t3.vehicle_vin,abs(sum(t3.empty_mileage)) ,0
+
+ 		from TQC_TRIP_PATCH_T_BAK t3
+ 		where  1 = 1
+ 		
+ 		<isNotEmpty property="vins">
+			and t3.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and t3.vehicle_vin like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	       	 and t3.start_time >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and t3.start_time < to_date(#endTime#,'yyyy-mm-dd')+1
+	        ]]>
+		</isNotEmpty>
+		 <![CDATA[
+	         and t3.empty_mileage < 0
+	        ]]>
+		GROUP BY t3.vehicle_vin ) b
+   group by b.vehicle_vin ) dd
+		where b.vehicle_vin = aa.vehicle_vin(+)
+		and b.organization_id = e.enterprise_id
+		and b.vehicle_vin = f.vehicle_vin
+		and f.driver_id=g.driver_id
+		and b.vehicle_vin = bb.vehicle_vin(+)
+		and b.vehicle_vin = cc.vehicle_vin(+)
+		and b.vehicle_vin = dd.vehicle_vin(+)
+		and b.valid_flag = '0'
+		<isNotEmpty property="vins">
+			and b.vehicle_vin in ($vins$)
+	       </isNotEmpty>
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+		</isNotEmpty>
+		order by b.vehicle_code asc
+	</select>
+	<select id="getRunStatisticCount" parameterClass="runStatisticSearchVO"
+		resultClass="int">
+<![CDATA[
+select count(1)
+from  clw_cl_base_info_t b,
+	 	   clw_xc_vehdriver_t f,
+	       clw_yw_driver_t g,
+	       CLW_JC_ENTERPRISE_T e,
+	       (
+	      select a.vehicle_vin,
+	             sum(a.empty_mileage) empty_mileage,
+                 sum(a.load_mileage) load_mileage,
+	             sum(a.empty_mileage)+sum(a.load_mileage) total_mileage,
+	             sum(a.total_oil) total_oil,
+	             (case when (sum(a.empty_mileage)+sum(a.load_mileage))=0 then 0 else round(sum(a.total_oil)/(sum(a.empty_mileage)+sum(a.load_mileage))*100,2) end) oil_100,
+	             sum(a.load_number) load_number,
+	             sum(case when a.route_class='0' and a.type='1' then 1 else 0 end) morning_cnt,
+	             sum(case when a.route_class='1' and a.type='1' then 1 else 0 end) night_cnt,
+	             sum(case when a.route_class in ('0','1') and a.type='1' then 1 else 0 end) total_cnt
+	        from ( 
+			        select t1.vin_code vehicle_vin,
+		                   (case when t1.empty_mileage is null or t1.empty_mileage<0 then 0 else t1.empty_mileage end) empty_mileage,
+		                   NVL(t1.load_mileage,0) load_mileage,
+		                   t1.total_oil,
+		                   t1.load_number,
+		                   t1.route_class,
+		                   t1.start_time,
+		                   '1' type
+		              from TQC_SEND_PASSENGER t1
+		             union all
+		             select t2.vehicle_vin,
+		                    (case when t2.empty_mileage is null or t2.empty_mileage < 0 then 0 else t2.empty_mileage end) empty_mileage,
+		                    NVL(t2.mileage,0),
+		                    0,
+		                    NVL(t2.count,0),
+		                    t4.route_class,
+		                    t2.start_time,
+		                    t2.type
+		               from TQC_TRIP_PATCH_T_BAK t2,
+		                    clw_xc_route_t t4
+		              where t2.route_id=t4.route_id(+)
+		                and t2.valid_flag=0
+	              ) a
+	       where 1=1
+	      ]]>
+		<dynamic>
+			<isNotEmpty property="vins">
+				and a.vehicle_vin in ($vins$)
+			</isNotEmpty>
+			<isNotEmpty property="vehicle_vin">
+				and a.vehicle_vin like
+				'%$vehicle_vin$%'
+	       </isNotEmpty>
+			<isNotEmpty property="beginTime">
+	       <![CDATA[
+	       	 and a.start_time >= to_date(#beginTime#,'yyyy-mm-dd')
+	       ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endTime">
+	       <![CDATA[
+	         and a.start_time < to_date(#endTime#,'yyyy-mm-dd')+1
+	       ]]>
+			</isNotEmpty>
+		</dynamic>
+		group by a.vehicle_vin
+		) aa,
+
+		(
+		select c.vehicle_vin,
+		count(c.repare_id)
+		repare_cnt,
+		sum(c.cost_component) cost_component
+		from
+		tqc_repare_record_t c
+		where c.valid_flag=0
+		<isNotEmpty property="vins">
+			and c.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and c.vehicle_vin like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	       	 and trunc(c.update_time) >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and trunc(c.update_time) <= to_date(#endTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		group by c.vehicle_vin
+		) bb,
+
+		(
+		select d.vehicle_vin,
+		count(d.patch_id)
+		p_cnt,
+		sum(d.mileage) p_mileage
+		from TQC_TRIP_PATCH_T_BAK d
+		where
+		d.valid_flag=0
+		and d.type='2'
+		<isNotEmpty property="vins">
+			and d.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty property="vehicle_vin">
+			and d.vehicle_vin like
+			'%$vehicle_vin$%'
+	        </isNotEmpty>
+		<isNotEmpty property="beginTime">
+	        <![CDATA[
+	       	 and trunc(d.start_time) >= to_date(#beginTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		<isNotEmpty property="endTime">
+	        <![CDATA[
+	         and trunc(d.start_time) <= to_date(#endTime#,'yyyy-mm-dd')
+	        ]]>
+		</isNotEmpty>
+		group by d.vehicle_vin
+		) cc
+		where b.vehicle_vin = aa.vehicle_vin(+)
+		and
+		b.organization_id = e.enterprise_id
+		and b.vehicle_vin = f.vehicle_vin
+		and f.driver_id=g.driver_id
+		and b.vehicle_vin=bb.vehicle_vin(+)
+		and
+		b.vehicle_vin=cc.vehicle_vin(+)
+		and b.valid_flag = '0'
+		<isNotEmpty property="vins">
+			and b.vehicle_vin in ($vins$)
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+		</isNotEmpty>
+		<!-- <![CDATA[ -->
+		<!-- select count(aa.vehicle_vin) -->
+		<!-- from ( -->
+		<!-- select b.vehicle_vin, -->
+		<!-- b.vehicle_code, -->
+		<!-- b.vehicle_ln -->
+		<!-- from ( -->
+		<!-- select t1.vin_code, -->
+		<!-- (case when t1.empty_mileage is null or t1.empty_mileage<0 then 0 else 
+			t1.empty_mileage end) empty_mileage, -->
+		<!-- NVL(t1.load_mileage,0) load_mileage, -->
+		<!-- t1.total_oil, -->
+		<!-- t1.load_number, -->
+		<!-- t1.route_class, -->
+		<!-- t1.start_time -->
+		<!-- from TQC_SEND_PASSENGER t1 -->
+		<!-- union all -->
+		<!-- select t2.vehicle_vin, -->
+		<!-- 0, -->
+		<!-- NVL(t2.mileage,0), -->
+		<!-- 0, -->
+		<!-- NVL(t2.count,0), -->
+		<!-- t4.route_class, -->
+		<!-- t2.start_time -->
+		<!-- from TQC_TRIP_PATCH_T_BAK t2, -->
+		<!-- clw_yw_driver_t t3, -->
+		<!-- clw_xc_route_t t4 -->
+		<!-- where t2.driver_id=t3.driver_id(+) -->
+		<!-- and t2.route_id=t4.route_id(+) -->
+		<!-- and t2.valid_flag=0 -->
+		<!-- ) a, -->
+		<!-- clw_cl_base_info_t b -->
+		<!-- where a.vin_code=b.vehicle_vin -->
+		<!-- ]]> -->
+		<!-- <dynamic> -->
+		<!-- <isNotEmpty property="vins"> -->
+		<!-- and a.vin_code in ($vins$) -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="vehicle_vin"> -->
+		<!-- and a.vin_code like '%$vehicle_vin$%' -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="beginTime"> -->
+		<!-- <![CDATA[ -->
+		<!-- and a.start_time >= to_date(#beginTime#,'yyyy-mm-dd') -->
+		<!-- ]]> -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="endTime"> -->
+		<!-- <![CDATA[ -->
+		<!-- and a.start_time < to_date(#endTime#,'yyyy-mm-dd')+1 -->
+		<!-- ]]> -->
+		<!-- </isNotEmpty> -->
+		<!-- </dynamic> -->
+		<!-- group by b.vehicle_vin,b.vehicle_code,b.vehicle_ln -->
+		<!-- ) aa -->
+		<!-- left join -->
+		<!-- ( -->
+		<!-- select c.vehicle_vin, -->
+		<!-- count(c.repare_id) repare_cnt, -->
+		<!-- sum(c.cost_component) cost_component -->
+		<!-- from tqc_repare_record_t c -->
+		<!-- where c.valid_flag=0 -->
+		<!-- <isNotEmpty property="vins"> -->
+		<!-- and c.vehicle_vin in ($vins$) -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="vehicle_vin"> -->
+		<!-- and c.vehicle_vin like '%$vehicle_vin$%' -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="beginTime"> -->
+		<!-- <![CDATA[ -->
+		<!-- and trunc(c.update_time) >= to_date(#beginTime#,'yyyy-mm-dd') -->
+		<!-- ]]> -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="endTime"> -->
+		<!-- <![CDATA[ -->
+		<!-- and trunc(c.update_time) <= to_date(#endTime#,'yyyy-mm-dd') -->
+		<!-- ]]> -->
+		<!-- </isNotEmpty> -->
+		<!-- group by c.vehicle_vin -->
+		<!-- ) bb -->
+		<!-- on aa.vehicle_vin=bb.vehicle_vin -->
+		<!-- left join -->
+		<!-- ( -->
+		<!-- select d.vehicle_vin, -->
+		<!-- count(d.patch_id) p_cnt, -->
+		<!-- sum(d.mileage) p_mileage -->
+		<!-- from TQC_TRIP_PATCH_T_BAK d -->
+		<!-- where d.valid_flag=0 -->
+		<!-- and d.type='2' -->
+		<!-- <isNotEmpty property="vins"> -->
+		<!-- and d.vehicle_vin in ($vins$) -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="vehicle_vin"> -->
+		<!-- and d.vehicle_vin like '%$vehicle_vin$%' -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="beginTime"> -->
+		<!-- <![CDATA[ -->
+		<!-- and trunc(d.start_time) >= to_date(#beginTime#,'yyyy-mm-dd') -->
+		<!-- ]]> -->
+		<!-- </isNotEmpty> -->
+		<!-- <isNotEmpty property="endTime"> -->
+		<!-- <![CDATA[ -->
+		<!-- and trunc(d.start_time) <= to_date(#endTime#,'yyyy-mm-dd') -->
+		<!-- ]]> -->
+		<!-- </isNotEmpty> -->
+		<!-- group by d.vehicle_vin -->
+		<!-- ) cc -->
+		<!-- on aa.vehicle_vin=cc.vehicle_vin -->
+	</select>
+	<!-- 出勤明细 -->
+	<select id="getWorkDetail" parameterClass="WorkDetail"
+		resultClass="WorkDetail">
+		select * from (
+  <![CDATA[
+  	select b.route_name,
+	       a.route_class,
+	       a.load_number,
+	       c.limite_number,
+	       to_char(a.start_time,'yyyy-mm-dd hh24:mi:ss') start_time,
+	       to_char(a.end_time,'yyyy-mm-dd hh24:mi:ss') end_time,
+	       round((a.empty_mileage+a.load_mileage),1) total_mileage,
+	       a.driver_name
+	  from ( 
+	        select t1.vin_code,
+                   t1.driver_name,
+                   (case when t1.empty_mileage is null or t1.empty_mileage<0 then 0 else t1.empty_mileage end) empty_mileage,
+                   NVL(t1.load_mileage,0) load_mileage,
+                   t1.load_number,
+                   t1.route_class,
+                   t1.create_time,
+                   t1.start_time,
+                   t1.end_time,
+                   t1.route_id
+              from TQC_SEND_PASSENGER t1
+             union all
+             select t2.vehicle_vin,
+                    t3.driver_name,
+                    0,
+                    NVL(t2.mileage,0),
+                    NVL(t2.count,0),
+                    t4.route_class,
+                    t2.operate_time,
+                    t2.start_time,
+                    t2.end_time,
+                    t2.route_id
+               from TQC_TRIP_PATCH_T_BAK t2,
+                    clw_yw_driver_t t3,
+                    clw_xc_route_t t4
+              where t2.driver_id=t3.driver_id(+)
+                and t2.route_id=t4.route_id(+)
+                and t2.valid_flag=0
+                and t2.type='1'
+             ) a,
+	       clw_xc_route_t b,
+	       clw_cl_base_info_t c
+	 where a.route_id=b.route_id
+	   and a.vin_code=c.vehicle_vin
+	   and a.route_class in ('0','1')
+  ]]>
+		<dynamic>
+			<isNotEmpty property="vehicle_vin">
+				and a.vin_code=#vehicle_vin#
+			</isNotEmpty>
+			<isNotEmpty property="route_class">
+				and a.route_class=#route_class#
+			</isNotEmpty>
+			<isNotEmpty property="route_name">
+				<!--and b.route_name like '%$route_name$%' -->
+				AND instr(b.route_name,'$route_name$') > 0
+			</isNotEmpty>
+			<isNotEmpty property="start_time">
+    <![CDATA[
+    and trunc(a.start_time) >= to_date(#start_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+   <![CDATA[
+    and trunc(a.start_time) <= to_date(#end_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			)
+			<isNotEmpty property="sortName">
+				order by $sortName$ $sortOrder$
+			</isNotEmpty>
+			<isEmpty property="sortName">
+				order by start_time desc
+   </isEmpty>
+		</dynamic>
+	</select>
+	<!-- 出勤明细,总记录数 -->
+	<select id="getWorkDetailCount" parameterClass="WorkDetail"
+		resultClass="int">
+  <![CDATA[
+  	select count(1)
+	  from ( 
+	        select t1.vin_code,
+                   t1.driver_name,
+                   (case when t1.empty_mileage is null or t1.empty_mileage<0 then 0 else t1.empty_mileage end) empty_mileage,
+                   NVL(t1.load_mileage,0) load_mileage,
+                   t1.load_number,
+                   t1.route_class,
+                   t1.create_time,
+                   t1.start_time,
+                   t1.end_time,
+                   t1.route_id
+              from TQC_SEND_PASSENGER t1
+             union all
+             select t2.vehicle_vin,
+                    t3.driver_name,
+                    0,
+                    NVL(t2.mileage,0),
+                    NVL(t2.count,0),
+                    t4.route_class,
+                    t2.operate_time,
+                    t2.start_time,
+                    t2.end_time,
+                    t2.route_id
+               from TQC_TRIP_PATCH_T_BAK t2,
+                    clw_yw_driver_t t3,
+                    clw_xc_route_t t4
+              where t2.driver_id=t3.driver_id(+)
+                and t2.route_id=t4.route_id(+)
+                and t2.valid_flag=0
+                and t2.type='1'
+             ) a,
+	       clw_xc_route_t b,
+	       clw_cl_base_info_t c
+	 where a.route_id=b.route_id
+	   and a.vin_code=c.vehicle_vin
+	   and a.route_class in ('0','1')
+  ]]>
+		<dynamic>
+			<isNotEmpty property="vehicle_vin">
+				and a.vin_code=#vehicle_vin#
+			</isNotEmpty>
+			<isNotEmpty property="route_class">
+				and a.route_class=#route_class#
+			</isNotEmpty>
+			<isNotEmpty property="route_name">
+				and b.route_name like
+				'%$route_name$%'
+   </isNotEmpty>
+			<isNotEmpty property="start_time">
+    <![CDATA[
+    and trunc(a.start_time) >= to_date(#start_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+   <![CDATA[
+    and trunc(a.start_time) <= to_date(#end_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 公差明细 -->
+	<select id="getPubDetail" parameterClass="PubDetail"
+		resultClass="PubDetail">
+		select * from (
+		select a.extra_trip_name route_name,
+		a.count,
+		c.limite_number,
+		to_char(a.start_time,'yyyy-mm-dd hh24:mi:ss')
+		start_time,
+		to_char(a.end_time,'yyyy-mm-dd hh24:mi:ss') end_time,
+		a.mileage,
+		d.driver_name
+		from TQC_TRIP_PATCH_T_BAK a,
+		clw_cl_base_info_t
+		c,
+		clw_yw_driver_t d
+		where a.vehicle_vin=c.vehicle_vin(+)
+		and
+		a.driver_id=d.driver_id(+)
+		and a.type='2'
+		and a.valid_flag=0
+		<dynamic>
+			<isNotEmpty property="start_time">
+    <![CDATA[
+    and trunc(a.start_time) >= to_date(#start_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+   <![CDATA[
+    and trunc(a.start_time) <= to_date(#end_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="vehicle_vin">
+				and a.vehicle_vin=#vehicle_vin#
+			</isNotEmpty>
+			)
+			<isNotEmpty property="sortName">
+				order by $sortName$ $sortOrder$
+			</isNotEmpty>
+			<isEmpty property="sortName">
+				order by start_time desc
+   </isEmpty>
+		</dynamic>
+	</select>
+	<!-- 公差明细,总记录数 -->
+	<select id="getPubDetailCount" parameterClass="PubDetail"
+		resultClass="int">
+		select count(1)
+		from TQC_TRIP_PATCH_T_BAK a,
+		clw_cl_base_info_t c,
+		clw_yw_driver_t d
+		where a.vehicle_vin=c.vehicle_vin(+)
+		and
+		a.driver_id=d.driver_id(+)
+		and a.type='2'
+		and a.valid_flag=0
+		<dynamic>
+			<isNotEmpty property="start_time">
+    <![CDATA[
+    and trunc(a.start_time) >= to_date(#start_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+   <![CDATA[
+    and trunc(a.start_time) <= to_date(#end_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="vehicle_vin">
+				and a.vehicle_vin=#vehicle_vin#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 维修明细 -->
+	<select id="getRepaireDetail" parameterClass="RepaireDetail"
+		resultClass="RepaireDetail">
+		select * from (
+		select to_char(a.update_time,'yyyy-mm-dd') update_time,
+		a.fault_desc,
+		a.fault_type,
+		a.fix_flag,
+		a.fix_type,
+		a.owner driver_name,
+		a.cost_time
+		workTimeFee,
+		a.cost_component partFee,
+		to_char(a.cost_time + a.cost_component,'FM999999990.0') totalFee
+		from TQC_REPARE_RECORD_T a
+		where a.valid_flag=0
+		<dynamic>
+			<isNotEmpty property="start_time">
+    <![CDATA[
+    and trunc(a.update_time) >= to_date(#start_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+   <![CDATA[
+    and trunc(a.update_time) <= to_date(#end_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="vehicle_vin">
+				and a.vehicle_vin=#vehicle_vin#
+			</isNotEmpty>
+			<isNotEmpty property="fix_flag">
+				and a.fix_flag=#fix_flag#
+			</isNotEmpty>
+			)
+			<isNotEmpty property="sortName">
+				order by $sortName$ $sortOrder$
+			</isNotEmpty>
+			<isEmpty property="sortName">
+				order by update_time desc
+   </isEmpty>
+		</dynamic>
+	</select>
+	<!-- 维修明细,总记录数 -->
+	<select id="getRepaireDetailCount" parameterClass="RepaireDetail"
+		resultClass="int">
+		select count(1)
+		from TQC_REPARE_RECORD_T a
+		where a.valid_flag=0
+		<dynamic>
+			<isNotEmpty property="start_time">
+    <![CDATA[
+    and trunc(a.update_time) >= to_date(#start_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+   <![CDATA[
+    and trunc(a.update_time) <= to_date(#end_time#,'yyyy-mm-dd')
+    ]]>
+			</isNotEmpty>
+			<isNotEmpty property="vehicle_vin">
+				and a.vehicle_vin=#vehicle_vin#
+			</isNotEmpty>
+			<isNotEmpty property="fix_flag">
+				and a.fix_flag=#fix_flag#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 员工刷卡记录统计 -->
+	<select id="getStckeckList" parameterClass="StCheckEntity"
+		resultClass="StCheckEntity">
+		select * from (
+		select aa.*,
+		nvl(bb.route_name,'/') route_name,
+		nvl(cc.site_name,'/') site_name
+		from (
+		select b.emp_name emp_name,
+		b.emp_code emp_code,
+		a.stu_card_id emp_card_id,
+		b.emp_depart org_name,
+		c.vehicle_code,
+		c.vehicle_ln,
+		d.driver_name,
+		a.route_id,
+		a.site_id,
+		to_char(a.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time,
+		a.zonename location
+		from CLW_XC_ST_CHECK_RECORD_T a,
+		clw_tqc_ygb.clw_tqc_emp_t b,
+		clw_cl_base_info_t c,
+		clw_yw_driver_t d
+		where a.stu_card_id=b.emp_card_id
+		and a.vehicle_vin=c.vehicle_vin(+)
+		and a.driver_id=d.driver_id(+)
+		<dynamic>
+			<isNotEmpty property="emp_name">
+				and b.emp_name like '%'||#emp_name#||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty property="emp_code">
+				and b.emp_code like '%'||#emp_code#||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty property="start_time">
+       	<![CDATA[
+       and trunc(a.terminal_time) >= to_date(#start_time#,'yyyy-mm-dd')
+       	]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+       	<![CDATA[
+       and trunc(a.terminal_time) <= to_date(#end_time#,'yyyy-mm-dd')
+       	]]>
+			</isNotEmpty>
+			<isNotEmpty property="vins">
+       	<![CDATA[
+       	and a.vehicle_vin in ($vins$)
+       	]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="organization_id">
+				c.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)        
+								)
+				]]>
+			</isNotEmpty>
+		</dynamic>
+		) aa
+		left join
+		clw_xc_route_t bb
+		on aa.route_id=bb.route_id
+		left join
+		clw_xc_site_t cc
+		on aa.site_id=cc.site_id
+		)
+		<dynamic>
+			<isNotEmpty property="sortName">
+				order by $sortName$ $sortOrder$
+			</isNotEmpty>
+			<isEmpty property="sortName">
+				order by terminal_time desc
+   	    </isEmpty>
+		</dynamic>
+	</select>
+	<!-- 员工刷卡记录统计 -->
+	<select id="getStckeckCount" parameterClass="StCheckEntity"
+		resultClass="int">
+		select count(a.STU_CARD_ID)
+		from CLW_XC_ST_CHECK_RECORD_T a,
+		clw_tqc_ygb.clw_tqc_emp_t b,
+		clw_cl_base_info_t c,
+		clw_yw_driver_t d
+		where a.stu_card_id=b.emp_card_id
+		and a.vehicle_vin=c.vehicle_vin(+)
+		and a.driver_id=d.driver_id(+)
+		<dynamic>
+			<isNotEmpty property="emp_name">
+				and b.emp_name like '%'||#emp_name#||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty property="emp_code">
+				and b.emp_code like '%'||#emp_code#||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty property="start_time">
+       	<![CDATA[
+       and trunc(a.terminal_time) >= to_date(#start_time#,'yyyy-mm-dd')
+       	]]>
+			</isNotEmpty>
+			<isNotEmpty property="end_time">
+       	<![CDATA[
+       and trunc(a.terminal_time) <= to_date(#end_time#,'yyyy-mm-dd')
+       	]]>
+			</isNotEmpty>
+			<isNotEmpty property="vins">
+       	<![CDATA[
+       	and a.vehicle_vin in ($vins$)
+       	]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="organization_id">
+				c.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)        
+								)
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+</sqlMap>

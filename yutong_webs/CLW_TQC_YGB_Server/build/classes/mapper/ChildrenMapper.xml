@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Child">
+
+	
+	<select id="getSeq" parameterType="string" resultType="int">
+		select ${value}.nextval from dual
+	</select>
+	
+	<select id="countStudentByParentID" parameterType="string" resultType="int">
+		 select count(*) from CLW_JZ_JZSTU_T a where a.par_id=#{value}  
+	</select>
+	
+	<select id="countStudent" parameterType="string" resultType="int">
+		select  count(*)      
+		  from CLW_JZ_STUDENT_T 
+		 where   stu_id=#{id}  
+	</select>
+	
+	<select id="getSatus" parameterType="string" resultType="string">
+		select  nvl(STU_STATE,-1)     
+		  from CLW_JZ_STUDENT_T 
+		 where   stu_id=#{id}  
+	</select>
+	
+	<select id="getBoundChildren4Reg" parameterType="string" resultType="Child">
+		select a.stu_id as id, a.stu_name as name,b.par_id pid 
+		  from CLW_XC_STUDENT_T a,CLW_JZ_JZSTU_T b
+		 where a.stu_id=b.stu_id(+) and  a.RELATIVE_TEL = #{phone} 
+	</select>
+	
+	<select id="getBoundChildren" parameterType="map" resultType="Child">
+		select a.stu_id as id, a.stu_name as name,b.par_id pid 
+		  from CLW_XC_STUDENT_T a,CLW_JZ_JZSTU_T b
+		 where a.stu_id=b.stu_id(+) and  a.RELATIVE_TEL = #{phone} and a.relative_name=#{name}
+	</select>
+	
+	<select id="getChildren" parameterType="string" resultType="Child">
+		select a.stu_id       as id,
+			   a.stu_code     as no,
+		       a.stu_name     as name,
+		       a.stu_card_id  as cardNo,
+		       a.stu_sex      as sex,
+		       a.stu_address  as addr,
+		       a.stu_school   as school,
+		       a.stu_class    as className,
+		       a.teacher_name as adviser,
+		       a.teacher_tel  as adviserPhone,
+		       c.stu_alias  as alias,
+		       b.ismain       as main
+		  from CLW_XC_STUDENT_T a,CLW_JZ_JZSTU_T b,CLW_JZ_STUDENT_T c
+		 where  a.stu_id=b.stu_id and  c.stu_id=b.stu_id and  b.par_id=#{value}
+	</select>
+	
+	<select id="getChildrenInfo" parameterType="Child" resultType="Child">
+		select b.stu_id       as id,
+		       b.relation     as relation,
+		       c.file_id      as photo,
+		       c.img_path     as bg,
+		       c.sound_path   as audio,
+		       c.stu_alias    as alias,
+		       c.color        as color
+		  from CLW_JZ_JZSTU_T b,CLW_JZ_STUDENT_T c
+		 where   c.stu_id=b.stu_id and  b.stu_id=#{id} and b.par_id=#{pid} 
+	</select>
+	
+
+	<update id="updateRelation" parameterType="Child"  >
+		update CLW_JZ_JZSTU_T a set a.relation=#{relation} where a.par_id=#{pid} and a.stu_id=#{id}
+	</update>
+	
+	<update id="updateChildInfo" parameterType="Child"  >
+		update CLW_JZ_STUDENT_T a set a.stu_alias=#{alias},a.color=#{color}, 
+		 a.file_id=#{photo,jdbcType=VARCHAR} , a.img_path=#{bg,jdbcType=VARCHAR} , a.sound_path=#{audio,jdbcType=VARCHAR} 
+		where a.stu_id=#{id}  and a.stu_id in ( select b.stu_id from CLW_JZ_JZSTU_T b where b.par_id=#{pid}  )
+	</update>
+	
+	<select id="getAuthed" parameterType="map" resultType="UserInfo">
+		  select distinct a.par_id    as id,
+                d.account_phone  as phone,
+                c.user_name as xinming,
+                nvl(a.ismain,0)    main,
+                c.file_id   photo,
+                d.account_name   name
+		  from CLW_JZ_JZSTU_T a, CLW_JZ_USER_T c,CLW_BSP_ACCOUNT_T d
+		 where a.par_id = c.account_id and d.account_id=c.account_id and
+		   <if test="cld_id != null">  a.stu_id=#{cld_id} </if>
+		   <if test="cld_id == null"> a.stu_id in (select stu_id from CLW_JZ_JZSTU_T where par_id = #{usr_id})  </if>
+	</select> 
+	
+	<select id="getToAuth" parameterType="string" resultType="UserInfo">
+		select a.account_id    as id,
+		       a.account_name  as name,
+		       a.account_phone as phone,
+		       a.account_code  no,
+		       b.sex,
+		       b.user_name as xinming,
+		       b.file_id       photo
+		  from CLW_BSP_ACCOUNT_T a, CLW_JZ_USER_T b
+		 where a.account_id = b.account_id and
+		 (a.account_name=#{account_name} or a.account_phone = #{account_name}   or to_char(a.account_code) =#{account_name})  
+	</select>
+	
+	
+	<insert id="deleteParentStudent" parameterType="Child">
+		delete from  CLW_JZ_JZSTU_T where par_id=#{pid} and stu_id=#{id}
+	</insert>
+	
+	<select id="getCityBySid" parameterType="string" resultType="string">
+		select  c.zone_name
+		  from clw_xc_student_t a, clw_jc_enterprise_t b, clw_jc_zone_t c
+		 where a.enterprise_id = b.enterprise_id and c.zone_id=b.enterprise_city 
+		   and a.stu_id = #{value}
+	</select>
+	
+</mapper>

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ServiceActivity">
+	
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="meta" type="com.neusoft.clw.yw.ub.custom.ds.Meta" />
+	<typeAlias alias="summary" type="com.neusoft.clw.yw.ub.srv.ds.Summary" />
+	<typeAlias alias="serviceInfo" type="com.neusoft.clw.yw.ub.srv.ds.ServiceInfo" />
+	
+	
+	<select id="getServiceList" parameterClass="Map" resultClass="serviceInfo">
+		select t.service_id as id,t.service_name as name,t.system_type as type,release_time as releaseTime from CLW_JC_SERVICE_T t
+		where   1=1
+		<isNotEmpty prepend="and" property="srvID">
+			t.service_id=#srvID#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="srvType">
+			t.SYSTEM_TYPE=#srvType#
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="endDay">
+			<![CDATA[t.release_time<=to_date(#endDay#,'yyyy-MM-dd')]]>
+		</isNotEmpty>
+		<isEmpty prepend="and" property="endDay">
+			<![CDATA[ t.release_time<sysdate ]]>
+		</isEmpty>
+	</select>
+	
+	<!-- ================================================================ -->
+	<!-- ====================汇总数据查询=========================== -->
+	<!-- ================================================================ -->
+	<select id="getSummary" parameterClass="Map" resultClass="summary">
+		select 
+				  <isEqual   compareValue="web" property="plat" >
+		       			nvl(sum(a.web_allvis),0) as vis,
+				        nvl(sum(a.web_vis_cnt),0) as dayVis
+		          </isEqual>
+		          <isEqual   compareValue="app" property="plat" >
+		       			nvl(sum(a.app_allvis),0) as vis,
+				        nvl(sum(a.app_vis_cnt),0) as dayVis
+		          </isEqual>
+		  from clw_ub_service_day_t a
+		 where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')
+		  	   and 	a.service_id=#id#
+	</select>
+	<select id="getVisEnt" parameterClass="Map" resultClass="Integer">
+		select count(distinct a.enterprise_id)
+		  from clw_ub_entservice_day_t a,CLW_JC_SERVICE_T b
+		 where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd') and a.service_id=b.service_id and  a.is_holiday='0'
+       		  <isNotEqual prepend="and" compareValue="0" property="id">
+		  		 a.service_id=#id#
+       		  </isNotEqual>
+       		  <isEqual compareValue="web" property="plat">
+       		   and 	b.SYSTEM_TYPE='1' and  <![CDATA[a.web_allvis<>0 ]]>
+       		  </isEqual>
+       		  <isEqual compareValue="app" property="plat">
+       		  	and b.SYSTEM_TYPE='2' and  <![CDATA[a.app_allvis<>0 ]]>
+       		  </isEqual>
+	</select>	
+
+
+	<select id="getOpenEnt" parameterClass="Map" resultClass="Integer">
+		select 
+				<isEqual   compareValue="app" property="plat" >
+		       			nvl(a.app_open_ep,0) as openEntCnt
+		          </isEqual>
+		          <isEqual   compareValue="web" property="plat" >
+		       			nvl(a.web_open_ep,0) as openEntCnt
+		          </isEqual>
+		
+		  from clw_ub_service_day_t a
+		 where a.report_day = to_date(#endDay#, 'yyyy-MM-dd')
+		  		and a.service_id=#id#
+	</select>
+		
+	<select id="get100Vis" parameterClass="Map" resultClass="Integer">
+		select 
+		          <isEqual   compareValue="web" property="plat">
+		       			nvl(sum(a.web_vis_cnt),0) 
+		          </isEqual>
+		          <isEqual   compareValue="app" property="plat">
+		       			nvl(sum(a.app_vis_cnt),0)  
+		          </isEqual>
+		         as cnt
+		  from clw_ub_service_day_t a 
+		  where a.service_id = #id# and a.is_holiday='0' 
+			   <![CDATA[
+			   and a.report_day <=  to_date(#endDay#, 'yyyy-MM-dd') 
+			   ]]>
+	</select>
+	
+	<select id="get90Vis" parameterClass="Map" resultClass="Integer">
+		select 
+			<isEqual   compareValue="web" property="plat">
+			  decode(nvl(a.web_open_ep,0),0,0,round(nvl(a.web_vis_ep,0)/nvl(a.web_open_ep,0),3)*100) as     visActivity
+		     </isEqual>
+		     <isEqual   compareValue="app" property="plat">  
+			  decode(nvl(a.app_open_ep,0),0,0,round(nvl(a.app_vis_ep,0)/nvl(a.app_open_ep,0),3)*100) as     visActivity
+		      </isEqual>
+
+		  from clw_ub_service_month_t a
+		 where  a.service_id = #id#
+			    <![CDATA[
+			   and a.MONTH_BEGIN >= to_date(#startDay#, 'yyyy-MM-dd') and a.MONTH_END <=
+		       to_date(#endDay#, 'yyyy-MM-dd') 
+		  ]]> 
+		order by a.month_begin
+	</select>
+	<!-- ================================================================ -->
+	<!-- ====================各个服务的图表、表格=========================== -->
+	<!-- ================================================================ -->
+	<!-- 各个服务的统计Bar图 -->
+		<select id="getServiceVisChart" parameterClass="Map" resultClass="serviceInfo">
+			select d.service_id id, d.service_name name,d.Release_Time as releaseTime , nvl(c.vis,0) as vis
+			  from (select 
+			  				a.service_id,
+			  			<isEqual   compareValue="web" property="plat">	
+			  				nvl(sum(a.web_allvis),0) as vis
+			  			</isEqual>
+			  			<isEqual   compareValue="app" property="plat">	
+			  				nvl(sum(a.app_allvis),0) as vis
+			  			</isEqual>
+			          from clw_ub_service_day_t a
+			         where a.IS_HOLIDAY = '0' and 
+			         <![CDATA[   a.service_id<>0  ]]>
+					   and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+				       to_date(#endDay#, 'yyyy-MM-dd')
+				       
+			         group by a.service_id) c,
+			       CLW_JC_SERVICE_T d
+			 where d.service_id = c.service_id(+) and
+			 		<isEqual   compareValue="web" property="plat" >
+		       			d.SYSTEM_TYPE='1'
+		          </isEqual>
+			 		<isEqual   compareValue="app" property="plat" >
+		       			d.SYSTEM_TYPE='2'
+		          </isEqual>
+	</select>
+	<!-- 各个服务的统计表格 -->
+		<select id="getServiceVisGrid" parameterClass="Map" resultClass="summary">
+			select 
+					(select count(distinct a.enterprise_id)
+		  from clw_ub_entservice_day_t a,CLW_JC_SERVICE_T b
+		 where a.report_day between to_date(#startDay#, 'yyyy-MM-dd')  and
+		       to_date(#endDay#, 'yyyy-MM-dd') and a.service_id=b.service_id and  a.is_holiday='0' 
+       		  <isNotEqual prepend="and" compareValue="0" property="id">
+		  		 a.service_id=#id#
+       		  </isNotEqual>
+       		  <isEqual compareValue="web" property="plat">
+       		   and 	b.SYSTEM_TYPE='1' and  <![CDATA[a.web_allvis<>0 ]]>
+       		  </isEqual>
+       		  <isEqual compareValue="app" property="plat">
+       		  	and b.SYSTEM_TYPE='2' and  <![CDATA[a.app_allvis<>0 ]]>
+       		  </isEqual>) as visEntCnt,
+       		  (select 
+					<isEqual   compareValue="app" property="plat" >
+			       			nvl(a.app_open_ep,0) as openEntCnt
+			          </isEqual>
+			          <isEqual   compareValue="web" property="plat" >
+			       			nvl(a.web_open_ep,0) as openEntCnt
+			          </isEqual>
+			
+			  from clw_ub_service_day_t a
+			 where a.report_day = to_date(#endDay#, 'yyyy-MM-dd')
+			  		and a.service_id=#id#) as openEntCnt 
+			          from dual
+	</select>
+	<!-- 单个服务的月度活跃度 -->
+		<select id="getSingleServiceAc" parameterClass="Map" resultClass="summary">
+			select 
+				to_char(a.month_begin,'yyyy/MM') as reportDate,
+			<isEqual   compareValue="web" property="plat">
+		           decode(nvl(a.web_open_ep, 0),0,0,round(nvl(a.web_vis_ep, 0) / a.web_open_ep,
+			                     3) * 100) visActivity
+		     </isEqual>
+		     <isEqual   compareValue="app" property="plat">  
+			      decode(nvl(a.app_open_ep, 0),0,0,round(nvl(a.app_vis_ep, 0) / a.app_open_ep,
+			                     3) * 100) visActivity
+		      </isEqual>
+		  from clw_ub_service_month_t a
+		 where 1=1
+			    <![CDATA[
+			   and a.MONTH_BEGIN >= to_date(#startDay#, 'yyyy-MM-dd') and a.MONTH_END <=
+		       to_date(#endDay#, 'yyyy-MM-dd')
+		        and  a.service_id = #id# order by a.month_begin 
+		  ]]> 
+	</select>
+
+	<!-- 单个服务的省份访问排名 -->
+		<select id="getSingleServicePieGrid" parameterClass="Map" resultClass="summary">
+			    select g.area, g.province, nvl(f.vis, 0) as vis 
+			   from (select e.region_name as area,
+			                c.zone_name   as province,
+			                d.province_id
+			           from CLW_JC_ZONE_T         c,
+			                clw_m_area_province_t d,
+			                clw_m_area_info_t     e
+			          where c.zone_id = d.province_id
+			            and d.region_id = e.region_id) g,
+			        (select b.enterprise_province,
+			                <isEqual   compareValue="web" property="plat">
+					                nvl(sum(a.web_allvis), 0) as vis
+					         </isEqual>
+					         <isEqual   compareValue="app" property="plat">
+					           nvl(sum(a.app_allvis),0) as vis
+					         </isEqual>
+					           from clw_ub_entservice_day_t a, CLW_JC_ENTERPRISE_T b
+					          where a.enterprise_id = b.enterprise_id
+					               and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') 
+					               and  to_date(#endDay#, 'yyyy-MM-dd')
+					            and a.service_id =  #id#
+					          group by b.enterprise_province) f
+			  where f.enterprise_province(+) = g.province_id
+			  order by  vis desc
+	</select>
+	
+	
+	<!-- ================================================================ -->
+	<!-- ====================服务访问情况（日、周、月）：表格、图标、指标================ -->
+	<!-- ================================================================ -->
+	<select id="getDayVisList" parameterClass="Map" resultClass="summary">
+	select * from (select s.*, rownum as rownum_2 from (
+			select to_char(a.report_day,'yyyy/MM/dd')   reportDate,
+			        IS_HOLIDAY  as holiday,
+			<isEqual   compareValue="web" property="plat">
+		       nvl(a.web_allvis,0)     as vis,
+		       nvl(a.web_vis_ep ,0)    as visEntCnt,
+		       nvl(a.web_open_ep,0)   as openEntCnt,
+		       decode(nvl(a.web_open_ep,0),0,0,round(nvl(a.web_vis_ep,0)/a.web_open_ep,3)*100)   visActivity
+		     </isEqual>
+		     <isEqual   compareValue="app" property="plat">  
+		       		nvl(a.app_allvis,0)    as vis,
+			       nvl(a.app_vis_ep,0)    as visEntCnt,
+			       nvl(a.app_open_ep,0)   as openEntCnt,
+			      decode(nvl(a.app_open_ep,0),0,0,round(nvl(a.app_vis_ep,0)/a.app_open_ep,3)*100) visActivity
+		      </isEqual>
+		  from clw_ub_service_day_t a
+		 where  a.service_id = #id#
+			   and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd') order by a.report_day $sortOrder$ 
+			) s 
+				<isNotEmpty prepend="where" property="rowEnd">
+			    <![CDATA[  rownum<= #rowEnd#]]>  
+				</isNotEmpty>
+			 )
+			 <isNotEmpty prepend="where" property="rowEnd">
+		    <![CDATA[  rownum_2 > #rowStart#]]>  
+			</isNotEmpty>
+	</select>
+	<select id="getDayVisListCnt" parameterClass="Map" resultClass="Integer">
+			select count(*)
+		  from clw_ub_service_day_t a
+		 where  a.service_id = #id#
+			   and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd') 
+	</select>
+	
+
+	<select id="getWeekVisList" parameterClass="Map" resultClass="summary">
+			select to_char(WEEK_BEGIN,'yyyy/MM/dd')||'-'||to_char(WEEK_END,'yyyy/MM/dd') as reportDate,
+			<isEqual   compareValue="web" property="plat">
+		       nvl(a.web_allvis,0)    as vis,
+		       nvl(a.web_vis_ep ,0)   as visEntCnt,
+		       nvl(a.web_open_ep,0)   as openEntCnt,
+		       decode(nvl(a.web_open_ep,0),0,0,round(nvl(a.web_vis_ep,0)/a.web_open_ep,3)*100) visActivity
+		     </isEqual>
+		     <isEqual   compareValue="app" property="plat">  
+		       		nvl(a.app_allvis,0)    as vis,
+			       nvl(a.app_vis_ep,0)    as visEntCnt,
+			       nvl(a.app_open_ep,0)   as openEntCnt,
+			       decode(nvl(a.app_open_ep,0),0,0,round(nvl(a.app_vis_ep,0)/a.app_open_ep,3)*100) visActivity
+		      </isEqual>
+
+		  from clw_ub_service_week_t a
+		 where  a.service_id = #id#
+		 <![CDATA[
+			   and a.WEEK_BEGIN >= to_date(#startDay#, 'yyyy-MM-dd') and a.WEEK_END <=
+		       to_date(#endDay#, 'yyyy-MM-dd')  order by a.WEEK_BEGIN
+		  ]]>     
+	</select>
+	<select id="getMonthVisList" parameterClass="Map" resultClass="summary">
+			select to_char(MONTH_BEGIN,'yyyy/MM/dd')||'-'||to_char(MONTH_END,'yyyy/MM/dd') as reportDate,
+			<isEqual   compareValue="web" property="plat">
+		       nvl(a.web_allvis,0)    as vis,
+		       nvl(a.web_vis_ep ,0)   as visEntCnt,
+		       nvl(a.web_open_ep,0)   as openEntCnt,
+		       decode(nvl(a.web_open_ep,0),0,0,round(nvl(a.web_vis_ep,0)/a.web_open_ep,3)*100) visActivity
+		     </isEqual>
+		     <isEqual   compareValue="app" property="plat">  
+		       		nvl(a.app_allvis,0)    as vis,
+			       nvl(a.app_vis_ep,0)    as visEntCnt,
+			       nvl(a.app_open_ep,0)   as openEntCnt,
+			       decode(nvl(a.app_open_ep,0),0,0,round(nvl(a.app_vis_ep,0)/a.app_open_ep,3)*100) visActivity
+		      </isEqual>
+
+		  from clw_ub_service_month_t a
+		 where  a.service_id = #id#
+			    <![CDATA[
+			   and a.MONTH_BEGIN >= to_date(#startDay#, 'yyyy-MM-dd') and a.MONTH_END <=
+		       to_date(#endDay#, 'yyyy-MM-dd') order by a.MONTH_BEGIN
+		  ]]> 
+	</select>
+	<!-- 头尾天数的统计 -->
+	<select id="getDayVisSum" parameterClass="Map" resultClass="summary">
+			select 
+			<isEqual   compareValue="web" property="plat">
+		       nvl(sum(a.web_allvis),0)    as vis
+		     </isEqual>
+		     <isEqual   compareValue="app" property="plat">  
+		       	  nvl(sum(a.app_allvis),0)    as vis
+		      </isEqual>
+		  from clw_ub_service_day_t a
+		 where a.IS_HOLIDAY = '0' and a.service_id = #id# 
+			   and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')
+	</select>
+</sqlMap>

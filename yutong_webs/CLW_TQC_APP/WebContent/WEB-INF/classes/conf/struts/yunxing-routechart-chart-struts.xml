@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="routechart" namespace="/routechart" extends="clw-default">
+		<!-- 进入初始化页面 -->
+		<action name="readyrc" class="routeChartAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/yunxing/routemonitor/routemonitor.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/routemonitor/routemonitor.jsp</result>	
+		</action>
+		<action name="ready2" class="routeChartAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/yunxing/routemonitor/routemonitor.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/routemonitor/routemonitor.jsp</result>	
+		</action>
+	</package>
+	<package name="routeChart-json" namespace="/route_chart" extends="json-default">
+		<action name="routeList" class="routeChartAction" method="getLeftRouteList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+		<action name="stuList" class="routeChartAction" method="getStuListBySite">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="route_add_car" class="routeChartAction" method="route_add_car_info">
+       </action>
+       <action name="patch_route_add_car" class="routeChartAction" method="patch_route_add_car_info">
+       </action>
+       <action name="route_add_car_p" class="routeChartAction" method="route_add_car_info_p">
+       </action>
+       <action name="route_del_car" class="routeChartAction" method="route_del_car_info">
+       </action>
+	</package>
+</struts>

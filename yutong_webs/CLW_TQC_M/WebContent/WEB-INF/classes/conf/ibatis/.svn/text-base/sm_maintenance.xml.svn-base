@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="LuxuryCarSet">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="LuxuryCar" type="com.neusoft.clw.yw.sm.maitenance.ds.LuxuryCar" />
+	 <typeAlias alias="Maintenance" type="com.neusoft.clw.yw.sm.maitenance.ds.Maintenance" />
+	 
+	 <resultMap id="luxuryCar-result" class="LuxuryCar">
+	 	<result property="luxury_car_id" column="vehicle_id" />
+		<result property="vehicle_number" column="vehicle_number" />
+		<result property="vehicle_vin" column="vehicle_vin" />
+		<result property="vehicle_type_name" column="vehicle_type_name" />
+		<result property="create_time" column="create_time" />
+		<result property="modify_time" column="modify_time" />
+		<result property="creater_id" column="creater_id" />
+		<result property="modifier_id" column="modifier_id" />
+	</resultMap>
+	
+	 <resultMap id="luxuryCarByVinNumber-result" class="LuxuryCar">
+	 	<result property="luxury_car_id" column="vehicle_id" />
+	 	<result property="vehicle_number" column="vehicle_number" />
+		<result property="vehicle_vin" column="vehicle_vin" />
+	</resultMap>	
+	
+	<resultMap id="maintenance-result" class="Maintenance">
+		<result property="conditionNewCar" column="CONDITION" />
+		<result property="conditionRemindNewCar" column="REMIND_CONDITION" />
+		<result property="condition_luxury" column="LUXURY_CAR_TIMES" />
+		<result property="type_id" column="TYPE_ID" />
+		<result property="type_name" column="TYPE_NAME" />
+		<result property="item_id" column="CONFIG_ID" />
+	</resultMap>
+	<!-- 根据车工号,到车辆基本信息表中查询信息 -->
+	<select id="getLuxuryCarByVinNumber" parameterClass="LuxuryCar" resultMap="luxuryCarByVinNumber-result">
+		SELECT 
+			t.VEHICLE_ID AS VEHICLE_ID,
+			t.VEHICLE_NUMBER AS VEHICLE_NUMBER,
+			t.VEHICLE_VIN AS VEHICLE_VIN
+		FROM CLW_CL_BASE_INFO_T t
+		WHERE t.VEHICLE_NUMBER=#vehicle_number#
+	</select>
+	<!-- 高档车设置-查询 -->
+	<select id="getLuxuryCarCount" parameterClass="LuxuryCar" resultClass="Integer">
+		SELECT 
+			COUNT(1)
+		FROM CLW_JC_LUXURY_CAR_T t,CLW_CL_BASE_INFO_T bi,CLW_JC_CODEDEF_T c
+		WHERE t.VEHICLE_NUMBER=bi.VEHICLE_NUMBER 
+		AND c.CODE_ID=bi.VEHICLE_TYPE_ID
+		<isNotEmpty prepend="AND" property="vehicle_number">
+			t.VEHICLE_NUMBER LIKE '%$vehicle_number$%'
+        </isNotEmpty>
+	</select>
+	<select id="getLuxuryCarList" parameterClass="LuxuryCar" resultMap="luxuryCar-result">
+		SELECT 
+			t.VEHICLE_ID AS VEHICLE_ID,
+			t.VEHICLE_NUMBER AS VEHICLE_NUMBER,
+			c.CODE_NAME AS VEHICLE_TYPE_NAME,
+			TO_CHAR(t.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME,
+			TO_CHAR(t.MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') AS MODIFY_TIME,
+			t.CREATER_ID AS CREATER_ID,
+			t.VEHICLE_VIN AS VEHICLE_VIN,
+			t.MODIFIER_ID AS MODIFIER_ID
+		FROM CLW_JC_LUXURY_CAR_T t,CLW_CL_BASE_INFO_T bi,CLW_JC_CODEDEF_T c
+		WHERE t.VEHICLE_NUMBER=bi.VEHICLE_NUMBER 
+		AND c.CODE_ID=bi.VEHICLE_TYPE_ID
+		<isNotEmpty prepend="AND" property="vehicle_number">
+			t.VEHICLE_NUMBER LIKE '%$vehicle_number$%'
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>	
+	</select>
+	<!-- 添加高档车前检查车工号是否存在 -->
+	<select id="getLuxuryCarCountByVNumber" parameterClass="LuxuryCar" resultClass="Integer">
+		SELECT 
+			COUNT(1)
+		FROM CLW_JC_LUXURY_CAR_T 
+		WHERE VEHICLE_NUMBER=#vehicle_number#
+	</select>
+	<!-- 添加高档车信息 -->
+	 <insert id="insertLuxuryCar" parameterClass="LuxuryCar">
+ 		INSERT INTO CLW_JC_LUXURY_CAR_T t
+		  (t.VEHICLE_ID,t.VEHICLE_NUMBER,t.VEHICLE_VIN, t.CREATER_ID,t.CREATE_TIME)
+		VALUES
+		  (#luxury_car_id#,#vehicle_number#,#vehicle_vin#, #creater_id#,SYSDATE)
+ 	</insert>
+ 	<!-- 修改高档车信息 -->
+	 <update id="updateLuxuryCar" parameterClass="LuxuryCar">
+	 	UPDATE CLW_JC_LUXURY_CAR_T t SET 
+	 	t.VEHICLE_NUMBER=#vehicle_number#,
+	 	t.MODIFIER_ID=#modifier_id#,
+	 	t.MODIFY_TIME=SYSDATE
+	 	WHERE t.VEHICLE_ID=#luxury_car_id#
+ 	</update>
+ 	<!-- 删除高档车信息 -->
+	 <delete id="deleteLuxuryCar" parameterClass="LuxuryCar">
+	 	DELETE FROM CLW_JC_LUXURY_CAR_T t
+	 	WHERE t.VEHICLE_ID=#luxury_car_id#
+ 	</delete>
+ 	<!-- 根据车工号,查单条数据 -->
+ 	<select id="getLuxuryCar" parameterClass="LuxuryCar" resultClass="LuxuryCar">
+		SELECT 
+			t.VEHICLE_ID AS VEHICLE_ID,
+			t.VEHICLE_NUMBER AS VEHICLE_NUMBER,
+			c.CODE_NAME AS VEHICLE_TYPE_NAME,
+			TO_CHAR(t.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME,
+			TO_CHAR(t.MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') AS MODIFY_TIME,
+			t.CREATER_ID AS CREATER_ID,
+			t.VEHICLE_VIN AS VEHICLE_VIN,
+			t.MODIFIER_ID AS MODIFIER_ID
+		FROM CLW_JC_LUXURY_CAR_T t,CLW_CL_BASE_INFO_T bi,CLW_JC_CODEDEF_T c
+		WHERE t.VEHICLE_ID=#luxury_car_id# 
+		AND t.VEHICLE_NUMBER=bi.VEHICLE_NUMBER 
+		AND c.CODE_ID=bi.VEHICLE_TYPE_ID
+	</select>
+	
+	
+
+	<!-- 三包维保设置 -->
+	<select id="getMaintenanceList" parameterClass="Maintenance" resultMap="maintenance-result">
+		SELECT 
+			CONDITION as CONDITION,
+			REMIND_CONDITION as REMIND_CONDITION,
+			LUXURY_CAR_TIMES as LUXURY_CAR_TIMES,
+			TYPE_ID as TYPE_ID,
+			TYPE_NAME as TYPE_NAME,
+			CONFIG_ID as CONFIG_ID
+		FROM CLW_JC_THREE_MAINT_CONFIG_T
+	</select>
+	<!-- 
+	<resultMap id="maintenance-result" class="Maintenance">
+		<result property="conditionNewCar" column="CONDITION" />
+		<result property="conditionRemindNewCar" column="REMIND_CONDITION" />
+		<result property="condition_luxury" column="LUXURY_CAR_TIMES" />
+		<result property="type_id" column="TYPE_ID" />
+		<result property="type_name" column="TYPE_NAME" />
+		<result property="item_id" column="CONFIG_ID" />
+		<result property="modify_time" column="MODIFY_TIME" />
+		<result property="modifier_id" column="MODIFIER" />
+	</resultMap>
+	 -->
+ 	<!-- 修改三包维保设置 -->
+	 <update id="updateMaintenance" parameterClass="Maintenance">
+	 	UPDATE CLW_JC_THREE_MAINT_CONFIG_T t SET 
+	 	t.CONDITION=#conditionNewCar#,
+	 	t.REMIND_CONDITION=#conditionRemindNewCar#,
+	 	t.LUXURY_CAR_TIMES=#condition_luxury#,
+	 	t.MODIFY_TIME=SYSDATE,
+	 	t.MODIFIER=#modifier_id#
+	 	WHERE t.CONFIG_ID=#item_id#
+ 	</update>
+ 	
+	<resultMap id="maintenanceQuery-result" class="Maintenance">
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="type_name" column="code_name" />
+		<result property="vehicle_number" column="vehicle_number" />
+		<result property="vehicle_vin" column="vehicle_vin" />
+		<result property="config_id" column="type_name" />
+		<result property="conditionNewCar" column="condition" />
+		<result property="conditionRemindNewCar" column="remind_condition" />
+		<result property="condition_luxury" column="luxury_condition" />
+		<result property="remind_flag" column="remind_flag" />
+		<result property="item_id" column="item_id" />
+	</resultMap>
+	<select id="getMaintenanceQueryList" parameterClass="Maintenance" resultMap="maintenanceQuery-result">
+		SELECT 
+			bi.vehicle_ln,
+			code.code_name,
+			bi.vehicle_number,
+			bi.vehicle_vin,
+			case tmc.type_id 
+				when '1' then '新车报到' 
+				when '2' then '走保' 
+				when '3' then '强保'
+				when '4' then '高档车强保'
+			end as type_name,
+			tmc.condition,
+			tmc.remind_condition,
+			case tmc.type_id 
+				when '4' then tmc.luxury_car_times
+				else ''
+			end as luxury_condition,
+			case tmi.client_remind_flag
+            	when '1' then '1'
+			else 
+            	case tmi.remind_flag
+                	when '0' then '0'
+                	else '1'
+           		end
+			end as remind_flag,
+			tmi.item_id
+		FROM 
+    		CLW_YW_THREE_MAINT_ITEM_T tmi JOIN CLW_JC_THREE_MAINT_CONFIG_T tmc ON tmi.config_id=tmc.config_id
+    		JOIN CLW_CL_BASE_INFO_T bi ON tmi.vehicle_id = bi.vehicle_id
+    		JOIN CLW_JC_ENTERPRISE_T e ON e.enterprise_id = bi.enterprise_id
+    		JOIN CLW_JC_CODEDEF_T code ON bi.vehicle_type_id = code.code_id
+    	WHERE 1=1
+    	<isNotEmpty prepend="AND" property="enterprise_id">
+			bi.enterprise_id=#enterprise_id#
+        </isNotEmpty>
+    	<isNotEmpty prepend="AND" property="vehicle_vin">
+			bi.vehicle_vin LIKE '%$vehicle_vin$%'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="type_name">
+			code.code_name LIKE '%$type_name$%'
+        </isNotEmpty>
+    	<isNotEmpty prepend="AND" property="vehicle_number">
+			bi.vehicle_number LIKE '%$vehicle_number$%'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicle_ln">
+			bi.vehicle_ln LIKE '%$vehicle_ln$%'
+        </isNotEmpty>
+	</select>
+	<select id="getMaintenanceQueryCount" parameterClass="Maintenance" resultClass="Integer">
+		SELECT 
+			COUNT(1)
+		FROM 
+    		CLW_YW_THREE_MAINT_ITEM_T tmi JOIN CLW_JC_THREE_MAINT_CONFIG_T tmc ON tmi.config_id=tmc.config_id
+    		JOIN CLW_CL_BASE_INFO_T bi ON tmi.vehicle_id = bi.vehicle_id
+    		JOIN CLW_JC_ENTERPRISE_T e ON e.enterprise_id = bi.enterprise_id
+    		JOIN CLW_JC_CODEDEF_T code ON bi.vehicle_type_id = code.code_id
+    	WHERE 1=1
+    	<isNotEmpty prepend="AND" property="enterprise_id">
+			bi.enterprise_id=#enterprise_id#
+        </isNotEmpty>
+    	<isNotEmpty prepend="AND" property="vehicle_vin">
+			bi.vehicle_vin LIKE '%$vehicle_vin$%'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="type_name">
+			code.code_name LIKE '%$type_name$%'
+        </isNotEmpty>
+    	<isNotEmpty prepend="AND" property="vehicle_number">
+			bi.vehicle_number LIKE '%$vehicle_number$%'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicle_ln">
+			bi.vehicle_ln LIKE '%$vehicle_ln$%'
+        </isNotEmpty>
+	</select>
+	 <!-- 三包维保,提醒设置 -->
+	 <update id="updateMaintenanceRemindState" parameterClass="Maintenance">
+	 	UPDATE CLW_YW_THREE_MAINT_ITEM_T t SET 
+	 	t.CLIENT_REMIND_FLAG=#remind_flag#
+	 	<isNotEmpty prepend="," property="validate_flag">
+	 		t.REMIND_FLAG=#validate_flag#
+	 	</isNotEmpty>
+	 	WHERE t.ITEM_ID=#item_id#
+ 	</update>
+</sqlMap>

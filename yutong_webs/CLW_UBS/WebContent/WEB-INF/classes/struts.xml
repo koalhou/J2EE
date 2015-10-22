@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.action.extension" value="shtml" />
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.ui.theme" value="simple" />
+	<constant name="struts.multipart.saveDir" value="/tmp" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.multipart.maxSize" value="104857600" />
+	<constant name="struts.custom.i18n.resources" value="ApplicationResources" />
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.url.includeParams" value="none" />
+	<constant name="struts.serve.static.browserCache" value="true" />
+	
+    <constant name="struts.i18n.encoding" value="UTF-8" />
+	<include file="struts-default.xml" />
+	
+	<!-- 默认 -->
+	<include file="conf/struts/clw_default.xml" />
+	
+	<!-- 权限管理 -->
+	<include file="conf/struts/clw_qx.xml" />
+	
+	<!-- 终端管理 -->
+	<include file="conf/struts/clw_zd.xml" />
+	
+	<!-- 传输管理 -->
+	<include file="conf/struts/clw_cs.xml" />
+	
+	<!-- 车辆管理 -->
+	<include file="conf/struts/clw_cl.xml" />
+	
+	<!-- 系统设置 -->
+	<include file="conf/struts/clw_xs.xml" />
+	
+	<!-- 系统监控 -->
+	<include file="conf/struts/clw_xj.xml" />
+	
+	<!-- popup子页面 -->
+	<include file="conf/struts/clw_popup.xml" />
+	
+	<!-- 服务管理 -->
+	<include file="conf/struts/clw_sm.xml" />
+	
+	<!-- 终端管理【新】 -->
+	<include file="conf/struts/clw_zdnew.xml" />
+<!-- 用户行为统计start -->
+
+	<!-- 企业客户活跃度 -->
+	<include file="conf/struts/ub_custom.xml" />
+	
+	<!-- 服务活跃度 -->
+	<include file="conf/struts/ub_service.xml" />
+	
+	<!-- 被动活跃度 -->
+	<include file="conf/struts/ub_passivity.xml" />
+	
+	<!-- 系统环境 -->
+	<include file="conf/struts/ub_system.xml" />
+	
+	<!-- 登录次数 -->
+	<include file="conf/struts/ub_login.xml" />
+	
+	<!-- 节假日维护 -->
+	<include file="conf/struts/ub_holiday.xml" />
+	<!-- 首页 -->
+	<include file="conf/struts/ub_index.xml" />
+	<!-- 市场看板 -->
+	<include file="conf/struts/ub_market.xml" />
+	
+<!-- 用户行为统计start -->
+</struts>

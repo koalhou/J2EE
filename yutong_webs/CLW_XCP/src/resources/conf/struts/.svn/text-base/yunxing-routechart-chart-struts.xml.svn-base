@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="routechart" namespace="/routechart" extends="clw-default">
+		<!-- 进入初始化页面 -->
+		<action name="ready" class="routeChartAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/yunxing/routemonitor/routemonitor.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/routemonitor/routemonitor.jsp</result>	
+		</action>
+	</package>
+	<package name="routeChart-json" namespace="/route_chart" extends="json-default">
+		<action name="routeList" class="routeChartAction" method="getLeftRouteList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+		<action name="stuList" class="routeChartAction" method="getStuListBySite">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>               
+	</package>
+</struts>

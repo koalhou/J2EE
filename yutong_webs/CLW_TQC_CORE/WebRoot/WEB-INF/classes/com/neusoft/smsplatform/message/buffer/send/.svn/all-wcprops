@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/buffer/send
+END
+SendBuffer.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/buffer/send/SendBuffer.java
+END
+SendPooledThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/buffer/send/SendPooledThread.java
+END
+SendThreadPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/buffer/send/SendThreadPool.java
+END

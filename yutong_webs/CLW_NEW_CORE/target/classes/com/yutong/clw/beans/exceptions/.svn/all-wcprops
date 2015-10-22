@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions
+END
+VspeOilBusinessException.class
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/VspeOilBusinessException.class
+END
+DBErrorException.class
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/DBErrorException.class
+END
+InvalidXmlFormatException.class
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/InvalidXmlFormatException.class
+END
+JacksonSerializeException.class
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/JacksonSerializeException.class
+END
+ConnUnavailableException.class
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/ConnUnavailableException.class
+END
+SendInfoException.class
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/SendInfoException.class
+END
+BusyAnalyzeException.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/BusyAnalyzeException.class
+END
+JacksonDeserializeException.class
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/JacksonDeserializeException.class
+END
+ParseException.class
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/ParseException.class
+END
+HandleException.class
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/HandleException.class
+END
+InvalidMessageException.class
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/beans/exceptions/InvalidMessageException.class
+END

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="HolidayManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="holidayinfo" type="com.neusoft.clw.infomanage.holidaymanage.domain.HolidayInfo" />
+	<typeAlias alias="holidaySelectStudent" type="com.neusoft.clw.infomanage.studentmanage.domain.StudentInfo" />
+	  
+    <select id="getCount" parameterClass="holidayinfo" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM CLW_XC_QXJIA_T XQ, 
+		       CLW_XC_STUDENT_T XS
+		 WHERE XQ.STU_ID = XS.STU_ID
+		   AND XS.VALID_FLAG = '0'
+		   AND XS.ORGANIZATION_ID in
+		   <![CDATA[
+		       (SELECT ENTERPRISE_ID
+		          FROM CLW_JC_ENTERPRISE_VI
+		         WHERE LEFT_NUM >=
+		               (SELECT LEFT_NUM
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE ENTERPRISE_ID = #organization_id#)
+		           AND RIGHT_NUM <=
+		               (SELECT RIGHT_NUM
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE ENTERPRISE_ID = #organization_id#))
+		   ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               XS.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               XS.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="holiday_flag">
+               XQ.FLAG = #holiday_flag#
+         </isNotEmpty>
+	</select>
+	
+	<resultMap class="holidayinfo" id="holidayinfos-result">
+       <result property="holiday_id" column="QXJIA_ID"/>
+       <result property="student_code" column="STU_CODE"/>
+       <result property="student_name" column="STU_NAME"/>
+       <result property="holiday_start_time" column="START_TIME"/>
+       <result property="holiday_end_time" column="END_TIME"/>
+       <result property="holiday_reason" column="REASON"/>
+       <result property="holiday_flag" column="FLAG"/>
+       <result property="modifier" column="MODIFIER"/>
+       <result property="modify_time" column="MODIFY_TIME"/>
+       <result property="vehicleLn" column="VEHICLE_LN"/>
+       <result property="routeName" column="ROUTE_NAME"/>
+    </resultMap> 
+	
+	<select id="getInfos" parameterClass="holidayinfo" resultMap="holidayinfos-result">
+		SELECT XQ.QXJIA_ID,
+		       XS.STU_CODE,
+		       XS.STU_NAME,
+		       TO_CHAR(XQ.START_TIME, 'YYYY-MM-DD HH24:MI:SS') AS START_TIME,
+		       TO_CHAR(XQ.END_TIME, 'YYYY-MM-DD HH24:MI:SS') AS END_TIME,
+		       XQ.REASON,
+		       XQ.FLAG,
+		       XQ.MODIFIER,
+		       TO_CHAR(XQ.MODIFY_TIME, 'YYYY-MM-DD HH24:MI:SS') AS MODIFY_TIME,
+		       VEHICLE_T.VEHICLE_LN AS VEHICLE_LN,
+		       ROUTE_T.ROUTE_NAME AS ROUTE_NAME
+		  FROM CLW_XC_QXJIA_T XQ,
+		       CLW_XC_STUDENT_T XS,
+		       (SELECT CXV.STUDENT_ID AS STU_ID,
+		               WM_CONCAT(DISTINCT CBI.VEHICLE_LN) AS VEHICLE_LN
+		          FROM CLW_XC_VSS_T CXV, CLW_CL_BASE_INFO_T CBI
+		         WHERE CXV.VEHICLE_VIN = CBI.VEHICLE_VIN
+		           AND CBI.VALID_FLAG = '0'
+		           AND CBI.ORGANIZATION_ID IN
+		           <![CDATA[
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID = #organization_id#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE VALID_FLAG = '0'
+		                           AND ENTERPRISE_ID = #organization_id#))
+		                 ]]>
+		         GROUP BY CXV.STUDENT_ID) VEHICLE_T,
+		       (SELECT CXV.STUDENT_ID AS STU_ID,
+		               WM_CONCAT(DISTINCT XR.ROUTE_NAME) AS ROUTE_NAME
+		          FROM CLW_XC_VSS_T CXV, CLW_XC_ROUTE_T XR
+		         WHERE CXV.ROUTE_ID = XR.ROUTE_ID
+		           AND XR.VALID_FLAG = '0'
+		           AND XR.ROUTE_ORGANIZATION_ID IN
+		           <![CDATA[
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID = #organization_id#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE VALID_FLAG = '0'
+		                           AND ENTERPRISE_ID = #organization_id#))
+		             ]]>
+		         GROUP BY CXV.STUDENT_ID) ROUTE_T
+		 WHERE XQ.STU_ID = XS.STU_ID
+		   AND XQ.STU_ID = VEHICLE_T.STU_ID(+)
+		   AND XQ.STU_ID = ROUTE_T.STU_ID(+)
+		   AND XS.VALID_FLAG = '0'
+		   AND XS.ORGANIZATION_ID IN
+		   <![CDATA[
+		       (SELECT ENTERPRISE_ID
+		          FROM CLW_JC_ENTERPRISE_VI
+		         WHERE LEFT_NUM >=
+		               (SELECT LEFT_NUM
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE ENTERPRISE_ID = #organization_id#)
+		           AND RIGHT_NUM <=
+		               (SELECT RIGHT_NUM
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE ENTERPRISE_ID = #organization_id#))
+		   ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               XS.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               XS.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="holiday_flag">
+               XQ.FLAG = #holiday_flag#
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getCountStuInfos" parameterClass="holidaySelectStudent" resultClass="Integer">
+	  SELECT COUNT(1)
+		FROM CLW_XC_STUDENT_T T1
+		WHERE T1.ENTERPRISE_ID=#enterprise_id# 
+		  AND T1.VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="organization_id">
+			   T1.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+         AND EXISTS (SELECT 1 FROM CLW_XC_VSS_T T2 WHERE T2.STUDENT_ID = T1.STU_ID)
+         AND NOT EXISTS (SELECT 1 FROM CLW_XC_QXJIA_T WHERE STU_ID = T1.STU_ID AND FLAG = '0')
+		 <isNotEmpty prepend="AND" property="student_code">
+               T1.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               T1.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               T1.STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               T1.STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<resultMap class="holidaySelectStudent" id="students-result">
+		<result property="student_id" column="STU_ID" />
+		<result property="student_code" column="STU_CODE" />
+		<result property="student_name" column="STU_NAME" />
+		<result property="student_school" column="STU_SCHOOL" />
+		<result property="student_class" column="STU_CLASS" />
+	</resultMap>
+	
+	<select id="getStudentInfos" parameterClass="holidaySelectStudent" resultMap="students-result">
+		SELECT T1.STU_ID, T1.STU_CODE, T1.STU_NAME, T1.STU_SCHOOL, T1.STU_CLASS
+		FROM CLW_XC_STUDENT_T T1
+		WHERE T1.ENTERPRISE_ID=#enterprise_id# 
+		  AND T1.VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="organization_id">
+			   T1.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+         AND EXISTS (SELECT 1 FROM CLW_XC_VSS_T T2 WHERE T2.STUDENT_ID = T1.STU_ID)
+         AND NOT EXISTS (SELECT 1 FROM CLW_XC_QXJIA_T WHERE STU_ID = T1.STU_ID AND FLAG = '0')
+		 <isNotEmpty prepend="AND" property="student_code">
+               T1.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               T1.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               T1.STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               T1.STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>         
+	</select>
+	
+	<resultMap class="holidayinfo" id="vehicleInfo-result">
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="route_id" column="ROUTE_ID" />
+	</resultMap>
+	
+	<select id="getVehicleInfo" parameterClass="String" resultMap="vehicleInfo-result">
+		SELECT T1.VEHICLE_VIN, T1.SIM_CARD_NUMBER, T2.ROUTE_ID
+		  FROM CLW_JC_TERMINAL_T T1,
+		       (SELECT VEHICLE_VIN, MAX(ROUTE_ID) AS ROUTE_ID
+		          FROM CLW_XC_VSS_T
+		         WHERE STUDENT_ID = #value#
+		         GROUP BY VEHICLE_VIN) T2
+		 WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		   AND T1.VALID_FLAG = '0'
+	</select>
+	
+	<insert id="insertHolidayInfo" parameterClass="holidayinfo">
+		INSERT INTO CLW_XC_QXJIA_T
+		  (QXJIA_ID,
+		   STU_ID,
+		   START_TIME,
+		   END_TIME,
+		   FLAG,
+		   REASON,
+		   CREATER,
+		   CREATE_TIME,
+		   MODIFIER,
+		   MODIFY_TIME)
+		VALUES
+		  (SEQ_XC_QXJIA_T.NEXTVAL,
+		   #student_id#,
+		   TO_DATE(#holiday_start_time#, 'YYYY-MM-DD HH24:MI:SS'),
+		   TO_DATE(#holiday_end_time#, 'YYYY-MM-DD HH24:MI:SS'),
+		   '0',
+		   #holiday_reason#,
+		   #creater#,
+		   SYSDATE,
+		   #modifier#,
+		   SYSDATE)
+	</insert>
+	
+	<resultMap class="holidayinfo" id="holidayinfo-result">
+       <result property="holiday_id" column="QXJIA_ID"/>
+       <result property="student_id" column="STU_ID"/>
+       <result property="student_code" column="STU_CODE"/>
+       <result property="student_name" column="STU_NAME"/>
+       <result property="holiday_start_time" column="START_TIME"/>
+       <result property="holiday_end_time" column="END_TIME"/>
+       <result property="holiday_reason" column="REASON"/>
+       <result property="holiday_flag" column="FLAG"/>
+    </resultMap>
+	
+	<select id="getHolidayInfo" parameterClass="holidayinfo" resultMap="holidayinfo-result">
+		SELECT XQ.QXJIA_ID,
+		       XS.STU_ID,
+		       XS.STU_CODE,
+		       XS.STU_NAME,
+		       TO_CHAR(XQ.START_TIME, 'YYYY-MM-DD HH24:MI:SS') AS START_TIME,
+		       TO_CHAR(XQ.END_TIME, 'YYYY-MM-DD HH24:MI:SS') AS END_TIME,
+		       XQ.REASON,
+		       XQ.FLAG
+		  FROM CLW_XC_QXJIA_T XQ, CLW_XC_STUDENT_T XS
+		 WHERE XQ.STU_ID = XS.STU_ID
+		   AND XQ.QXJIA_ID=#holiday_id# 
+	</select>
+	
+	<update id="updateHolidayTimebyHolidayId" parameterClass="holidayinfo">
+	    UPDATE CLW_XC_QXJIA_T
+		   SET START_TIME    = TO_DATE(#holiday_start_time#, 'YYYY-MM-DD HH24:MI:SS'),
+		       END_TIME = TO_DATE(#holiday_end_time#, 'YYYY-MM-DD HH24:MI:SS'),
+		       REASON = #holiday_reason#
+		 WHERE QXJIA_ID = #holiday_id#
+	</update>
+	
+	<update id="cancelByHolidayId" parameterClass="holidayinfo">
+	   UPDATE CLW_XC_QXJIA_T 
+	      SET FLAG='1',
+	          MODIFIER       = #modifier#,
+		      MODIFY_TIME    = SYSDATE
+	    WHERE QXJIA_ID = #holiday_id#
+	</update>
+	
+    <select id="getStunameById" parameterClass="String" resultClass="String">
+        select t.stu_name from clw_xc_student_t t where t.stu_id = #value#
+    </select>
+    	
+</sqlMap>

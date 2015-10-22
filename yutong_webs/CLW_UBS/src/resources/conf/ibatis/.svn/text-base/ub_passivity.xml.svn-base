@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="PassivityActivity">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="gatherQues" type="com.neusoft.clw.yw.ub.passivity.ds.Gather" />
+	<typeAlias alias="question" type="com.neusoft.clw.yw.ub.passivity.ds.Question" />
+	
+	<select id="gather" parameterClass="Map" resultClass="gatherQues">
+		select 
+		       nvl(sum(a.app_open_ep),0) as openEp,
+		       nvl(sum(a.app_vis_ep),0)  as visEp,
+		       nvl(sum(a.vis),0)         as vis,
+		       decode(nvl(sum(a.app_open_ep),0),0,0,round(sum(a.app_vis_ep) / sum(a.app_open_ep),3))*100 as  visPercent
+		  from clw_ub_quesvisit_day_t a
+		  where a.ques_id=#id# and a.report_day  between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')
+	</select>
+	
+	<select id="linesDay" parameterClass="Map" resultClass="gatherQues">
+		select to_char(a.report_day,'yyyy/MM/dd')  as reportDate,
+		       nvl(a.app_vis_ep,0)  as visEp,
+		       nvl(a.vis,0)         as vis,
+		       is_Holiday  as isHoliday
+		  from clw_ub_quesvisit_day_t a
+		  where a.ques_id=#id# and a.report_day  between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')  order by a.report_day 
+	</select>
+	<select id="linesDayPage" parameterClass="Map" resultClass="gatherQues">
+		select * from (select s.*, rownum as rownum_2 from (
+		select to_char(a.report_day,'yyyy/MM/dd')  as reportDate,
+		       nvl(a.app_vis_ep,0)  as visEp,
+		       nvl(a.vis,0)         as vis
+		  from clw_ub_quesvisit_day_t a
+		  where a.ques_id=#id# and a.report_day  between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')  order by a.report_day desc
+		<![CDATA[
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</select>
+	<select id="linesDayCnt" parameterClass="Map" resultClass="Integer">
+		select count(*)
+		  from clw_ub_quesvisit_day_t a
+		  where a.ques_id=#id# and a.report_day  between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')  order by a.report_day 
+	</select>
+	<select id="linesRang" parameterClass="Map" resultClass="gatherQues">
+	
+		select to_char(to_date(#startDay#,'yyyy-MM-dd'),'yyyy/MM/dd')||'-'||to_char(to_date(#endDay#,'yyyy-MM-dd'),'yyyy/MM/dd')  as reportDate,
+		       nvl(sum(a.app_vis_ep),0)  as visEp,
+		       nvl(sum(a.vis),0)         as vis
+		  from clw_ub_quesvisit_day_t a
+		  where a.ques_id=#id# and a.report_day  between to_date(#startDay#, 'yyyy-MM-dd') and
+		       to_date(#endDay#, 'yyyy-MM-dd')   order by a.report_day 
+	</select>
+	<select id="linesWeek" parameterClass="Map" resultClass="gatherQues">
+		select to_char(a.WEEK_BEGIN,'yyyy/MM/dd')||'-'||to_char(a.WEEK_END,'yyyy/MM/dd')  as reportDate,
+		       nvl(a.app_vis_ep,0)  as visEp,
+		       nvl(a.vis,0)         as vis
+		  from clw_ub_quesvisit_week_t a
+		  where a.ques_id=#id# 
+ 		<![CDATA[
+			   and a.WEEK_BEGIN >= to_date(#startDay#, 'yyyy-MM-dd') and a.WEEK_END <=
+		       to_date(#endDay#, 'yyyy-MM-dd')  order by a.WEEK_BEGIN
+		  ]]>  
+	</select>
+	<select id="linesMonth" parameterClass="Map" resultClass="gatherQues">
+		select to_char(a.MONTH_BEGIN,'yyyy/MM/dd')||'-'||to_char(a.MONTH_END,'yyyy/MM/dd')  as reportDate,
+		       nvl(a.app_vis_ep,0)  as visEp,
+		       nvl(a.vis,0)         as vis
+		  from clw_ub_quesvisit_month_t a
+		  where a.ques_id=#id# 
+ 		<![CDATA[
+			    and a.MONTH_BEGIN >= to_date(#startDay#, 'yyyy-MM-dd') and a.MONTH_END <=
+		       to_date(#endDay#, 'yyyy-MM-dd') order by a.MONTH_BEGIN
+		  ]]>  
+	</select>
+	
+	
+		<select id="questionCnt" parameterClass="Map" resultClass="Integer">
+			select count(*)
+		   from clw_ub_quesvisit_statsum_t a, clw_m_q_question_t b
+		  where  a.ques_id = b.ques_id and
+		<![CDATA[
+		    ((to_date(#startDay#, 'yyyy-MM-dd') between b.publish_time and b.end_time)
+		       or 
+		      (to_date(#endDay#, 'yyyy-MM-dd') between  b.publish_time and b.end_time))
+		]]>
+	</select>
+		<select id="questionPage" parameterClass="Map" resultClass="question">
+		select * from (select s.*, rownum as rownum_2 from (
+			select a.ques_id as id,
+		        b.ques_content as name,
+		        to_char(a.publish_time,'yyyy-MM-dd') as pubTime,
+		        to_char(a.end_time,'yyyy-MM-dd') as endTime,
+		        a.app_open_ep as openEp,
+		        a.app_vis_ep as visEp,
+		        a.vis as vis,
+		        decode(nvl(a.app_open_ep,0),0,0,round(a.app_vis_ep / a.app_open_ep,3))*100 as visPercent
+		   from clw_ub_quesvisit_statsum_t a, clw_m_q_question_t b
+		  where  a.ques_id = b.ques_id and 
+		<![CDATA[
+		    ((to_date(#startDay#, 'yyyy-MM-dd') between b.publish_time and b.end_time)
+		       or 
+		      (to_date(#endDay#, 'yyyy-MM-dd') between  b.publish_time and b.end_time))
+		  order by a.end_time desc
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</select>
+	
+	<select id="getQuestion" parameterClass="Map" resultClass="question">
+			select b.ques_id as id,
+		        b.ques_content as name
+		   from clw_m_q_question_t b
+		  where  b.ques_id = #id#
+	</select>
+</sqlMap>

@@ -1,0 +1,31 @@
+<script>
+  var obj1;
+  $(function() {
+    obj1 = mapInit('map');
+  });
+</script>
+<!-- 不同内容 -->
+  <div class="warn">
+    <h2>超速告警</h2>
+    <span class="times">2012-12-12 00:00:00</span>
+    <div class="wait"><strong>120</strong>条未处理告警</div>
+        <table class="table" width="470" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <th>车速：</th>
+                <td>120</td>
+                <th>驾驶员：</th>
+                <td>李三三</td>
+                <th>电话：</th>
+                <td>15966666666</td>
+            </tr>
+        </table>
+  </div>
+  <div id="map"  style="width:100%; height:280px;">
+  </div>
+  <div class="sub-form">
+      <form action="#">
+          <textarea rows="3"></textarea>
+          <span class="warn-history"><a href="#">查看历史告警</a></span>
+          <input class="btn-blue" type="submit" value="解除"/>
+      </form>
+  </div>

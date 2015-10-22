@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg
+END
+CoreMsgInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/CoreMsgInfo.class
+END
+MsgMoldResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/MsgMoldResp.class
+END
+FindMsgMoldResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/FindMsgMoldResp.class
+END
+SendPhotoResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/SendPhotoResp.class
+END
+MsgMoldInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/MsgMoldInfo.class
+END
+TerminalViBean.class
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/TerminalViBean.class
+END
+DiaoduInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/DiaoduInfo.class
+END
+ResultSendPhoto.class
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/ResultSendPhoto.class
+END
+SendTtMsgResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/SendTtMsgResp.class
+END
+PicCommandInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/PicCommandInfo.class
+END
+ResultSendTtMsg.class
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/ResultSendTtMsg.class
+END
+PushMsgReceivedInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/PushMsgReceivedInfo.class
+END
+MsgMoldReq.class
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/msg/MsgMoldReq.class
+END

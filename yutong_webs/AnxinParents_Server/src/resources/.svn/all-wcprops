@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources
+END
+applicationContext-datasource.xml
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources/applicationContext-datasource.xml
+END
+logback.xml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources/logback.xml
+END
+applicationContext-rest-services.xml
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources/applicationContext-rest-services.xml
+END
+systemConfig.properties
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources/systemConfig.properties
+END
+applicationContext-memcached.xml
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources/applicationContext-memcached.xml
+END
+jdbc.properties
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/resources/jdbc.properties
+END

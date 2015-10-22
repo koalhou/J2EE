@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OperatingReport">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="TotalReportInfo" type="com.neusoft.clw.yw.xj.operatingreport.ds.TotalReportInfo" />
+	<typeAlias alias="UnnormalVehicleInfo" type="com.neusoft.clw.yw.xj.operatingreport.ds.UnnormalVehicleInfo" />
+	
+	<resultMap id="operatingInfo-result" class="TotalReportInfo">
+		<result property="enterpriseCnt" column="ENTERPRISE_CNT" />
+		<result property="registeredVehicleCnt" column="REGISTERED_CNT" />
+		<result property="currentOnlineCnt" column="ONLINE_CNT" />
+		<result property="onlineRate" column="ONLINE_RATE" />
+		<result property="offlineCnt" column="OFFLINE_CNT" />
+		<result property="normalCnt" column="NORMAL_CNT" />
+		<result property="unnormalCnt" column="UNNORMAL_CNT" />
+	</resultMap>
+	
+	<resultMap id="unnormalVehicleInfo-result" class="UnnormalVehicleInfo">
+		<result property="vehicleId" column="VEHICLE_ID" />
+		<result property="salesOrder" column="SELL_ORDER_NUM" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="oilWarn" column="OIL_WARN_STATUS" />
+		<result property="oilInstant" column="OIL_INSTANT_STATUS" />
+		<result property="frontGate" column="FRONT_GATE_STATUS" />
+		<result property="gpsState" column="GPS_STATUS" />
+	</resultMap>
+	
+	<select id="getOperatingInfos" resultMap="operatingInfo-result">
+		SELECT ENTERPRISE_T.ENTERPRISE_CNT AS ENTERPRISE_CNT, 
+               VEHICLE_STATUS_T.REGISTERED_CNT AS REGISTERED_CNT, 
+               VEHICLE_STATUS_T.ONLINE_CNT AS ONLINE_CNT, 
+               VEHICLE_STATUS_T.ONLINE_CNT * 100 / VEHICLE_STATUS_T.REGISTERED_CNT AS ONLINE_RATE, 
+               VEHICLE_STATUS_T.OFFLINE_CNT AS OFFLINE_CNT, 
+               VEHICLE_STATUS_T.NORMAL_CNT AS NORMAL_CNT, 
+               VEHICLE_STATUS_T.REGISTERED_CNT - VEHICLE_STATUS_T.NORMAL_CNT AS UNNORMAL_CNT 
+          FROM (SELECT COUNT(1) AS ENTERPRISE_CNT
+                  FROM CLW_JC_ENTERPRISE_T JE
+                 WHERE JE.VALID_FLAG = '0'
+                   AND JE.PARENT_ID = '111') ENTERPRISE_T,
+               (SELECT COUNT(1) AS REGISTERED_CNT, 
+                       SUM(CASE
+                             WHEN TRUNC(JT.TERMINAL_TIME, 'DD') = TRUNC(SYSDATE, 'DD') THEN
+                               1
+                             ELSE
+                               0
+                           END) AS ONLINE_CNT, 
+                       SUM(CASE
+                             WHEN TRUNC(JT.TERMINAL_TIME, 'DD') != TRUNC(SYSDATE, 'DD') AND
+                                  JT.TERMINAL_TIME IS NOT NULL THEN
+                               1
+                             ELSE
+                               0
+                           END) AS OFFLINE_CNT, 
+                       SUM(CASE
+                             WHEN CBI.OIL_WARN_STATUS != '0' AND
+                                  CBI.OIL_INSTANT_STATUS != '0' AND
+                                  CBI.FRONT_GATE_STATUS != '0' AND 
+                                  CBI.GPS_STATUS != '0' THEN
+                               1
+                             ELSE
+                               0
+                           END) AS NORMAL_CNT
+                  FROM CLW_JC_TERMINAL_T JT, CLW_CL_BASE_INFO_T CBI, CLW_CL_SIM_T CS
+                 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+                   AND JT.VALID_FLAG = '0'
+                   AND CBI.VALID_FLAG = '0'
+                   AND CS.VALID_FLAG = '0'
+                   AND JT.VEHICLE_VIN IS NOT NULL
+                   AND JT.SIM_CARD_NUMBER IS NOT NULL
+                   AND JT.TERMINAL_ID IS NOT NULL) VEHICLE_STATUS_T
+	</select>
+	
+	<select id="getUnnormalCarsCount" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T JT, CLW_CL_BASE_INFO_T CBI, CLW_CL_SIM_T CS
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND (CBI.FRONT_GATE_STATUS = '0' OR CBI.GPS_STATUS = '0' OR
+                CBI.OIL_WARN_STATUS = '0' OR CBI.OIL_INSTANT_STATUS = '0')
+	</select>
+	
+	<select id="getUnnormalVehicle" parameterClass="Map" resultMap="unnormalVehicleInfo-result">
+		SELECT CBI.VEHICLE_ID,
+               CBI.SELL_ORDER_NUM,
+               CBI.VEHICLE_VIN,
+               CBI.OIL_WARN_STATUS,
+               CBI.OIL_INSTANT_STATUS,
+               CBI.FRONT_GATE_STATUS,
+               CBI.GPS_STATUS
+          FROM CLW_JC_TERMINAL_T JT, CLW_CL_BASE_INFO_T CBI, CLW_CL_SIM_T CS
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND (CBI.FRONT_GATE_STATUS = '0' OR CBI.GPS_STATUS = '0' OR
+                CBI.OIL_WARN_STATUS = '0' OR CBI.OIL_INSTANT_STATUS = '0')
+        <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		       $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+</sqlMap>

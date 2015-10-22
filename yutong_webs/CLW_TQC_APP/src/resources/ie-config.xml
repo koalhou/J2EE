@@ -1,0 +1,1321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE ie-configs SYSTEM "ie-config.dtd">
+
+<ie-configs>
+	<sheets>
+		<sheet id="alarmExport" properties="9" memo="告警管理" 
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.AlarmManage">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="vehicle_code" type="string" memo="车辆编码">
+			</property>
+			<property name="route_name" type="string" memo="线路">
+			</property> 
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property> 
+			<property name="alarm_type_name" type="string" memo="事件名称">
+			</property> 
+			<property name="speeding" type="string" memo="速度">
+			</property>
+			<property name="alarm_time" type="string" memo="开始时间">
+			</property>
+			<property name="alarm_end_time" type="string" memo="结束时间">
+			</property> 
+			<property name="keeptime" type="string" memo="持续时间">
+			</property>
+		</sheet>
+
+		<sheet id="humanBadDriveCarExport" properties="6" memo="超速统计" class="com.neusoft.clw.safemanage.humanmanage.baddriving.domain.HumanBadDrivDay">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="speeding_num" type="string" memo="超速次数(次)">
+			</property>
+			<property name="speeding_time" type="string" memo="超速时长(秒)">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="short_allname" type="string" memo="所属部门">
+			</property>
+		</sheet>
+		
+		<sheet id="humanBadDriveTypeExport" properties="8" memo="安全驾驶"
+			class="com.neusoft.clw.safemanage.humanmanage.baddriving.domain.HumanBadDrivDay">
+			<property name="code_name" type="string" memo="车型">
+			</property>
+			<property name="speeding_num" type="string" memo="超速(次)">
+			</property>
+			<property name="speeding_time" type="string" memo="超速时间">
+			</property>
+			<property name="gear_glide_num" type="string" memo="空档滑行(次)">
+			</property>
+			<property name="gear_glide_time" type="string" memo="空档滑行时间">
+			</property>
+			<property name="fatigue_driving_num" type="string" memo="疲劳驾驶(次)">
+			</property>
+			<property name="fatigue_driving_time" type="string" memo="疲劳驾驶时间">
+			</property>
+			<property name="urgent_speed_num" type="string" memo="急加速/减速(次)">
+			</property>
+		</sheet>
+		<sheet id="humanBadDriveTeamExport" properties="8" memo="安全驾驶"
+			class="com.neusoft.clw.safemanage.humanmanage.baddriving.domain.HumanBadDrivDay">
+			<property name="short_allname" type="string" memo="所属部门">
+			</property>
+			<property name="speeding_num" type="string" memo="超速(次)">
+			</property>
+			<property name="speeding_time" type="string" memo="超速时间">
+			</property>
+			<property name="gear_glide_num" type="string" memo="空档滑行(次)">
+			</property>
+			<property name="gear_glide_time" type="string" memo="空档滑行时间">
+			</property>
+			<property name="fatigue_driving_num" type="string" memo="疲劳驾驶(次)">
+			</property>
+			<property name="fatigue_driving_time" type="string" memo="疲劳驾驶时间">
+			</property>
+			<property name="urgent_speed_num" type="string" memo="急加速/减速(次)">
+			</property>
+		</sheet>
+		
+		<sheet id="badDriveCarExport" properties="9" memo="节油驾驶"
+			class="com.neusoft.clw.itsmanage.oilmanage.baddriving.domain.BadDrivDay">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="speeding_num" type="string" memo="超速(次)">
+			</property>
+			<property name="speeding_time" type="string" memo="超速时间">
+			</property>
+			<property name="rpm_num" type="string" memo="超转(次)">
+			</property>
+			<property name="rpm_time" type="string" memo="超转时间">
+			</property>
+			<property name="long_idle_num" type="string" memo="超长怠速(次)">
+			</property>
+			<property name="long_idle_time" type="string" memo="超长怠速时间">
+			</property>
+			<property name="air_condition_time" type="string" memo="怠速空调时间">
+			</property>
+			<property name="engineRotateTime" type="string" memo="超经济区运行时长">
+			</property>
+		</sheet>
+		<sheet id="badDriveTypeExport" properties="12" memo="节油驾驶"
+			class="com.neusoft.clw.itsmanage.oilmanage.baddriving.domain.BadDrivDay">
+			<property name="code_name" type="string" memo="车型">
+			</property>
+			<property name="speeding_num" type="string" memo="超速(次)">
+			</property>
+			<property name="speeding_time" type="string" memo="超速时间">
+			</property>
+			<property name="rpm_num" type="string" memo="超转(次)">
+			</property>
+			<property name="rpm_time" type="string" memo="超转时间">
+			</property>
+			<property name="gear_glide_num" type="string" memo="空档滑行(次)">
+			</property>
+			<property name="gear_glide_time" type="string" memo="空档滑行时间">
+			</property>
+			<property name="long_idle_num" type="string" memo="超长怠速(次)">
+			</property>
+			<property name="long_idle_time" type="string" memo="超长怠速时间">
+			</property>
+			<property name="urgent_speed_num" type="string" memo="急加速/减速(次)">
+			</property>
+			<property name="air_condition_time" type="string" memo="怠速空调时间">
+			</property>
+			<property name="economic_run_per" type="string" memo="超经济区运行比例(%)">
+			</property>
+		</sheet>
+		<sheet id="badDriveTeamExport" properties="12" memo="节油驾驶"
+			class="com.neusoft.clw.itsmanage.oilmanage.baddriving.domain.BadDrivDay">
+			<property name="short_allname" type="string" memo="所属部门">
+			</property>
+			<property name="speeding_num" type="string" memo="超速(次)">
+			</property>
+			<property name="speeding_time" type="string" memo="超速时间">
+			</property>
+			<property name="rpm_num" type="string" memo="超转(次)">
+			</property>
+			<property name="rpm_time" type="string" memo="超转时间">
+			</property>
+			<property name="gear_glide_num" type="string" memo="空档滑行(次)">
+			</property>
+			<property name="gear_glide_time" type="string" memo="空档滑行时间">
+			</property>
+			<property name="long_idle_num" type="string" memo="超长怠速(次)">
+			</property>
+			<property name="long_idle_time" type="string" memo="超长怠速时间">
+			</property>
+			<property name="urgent_speed_num" type="string" memo="急加速/减速(次)">
+			</property>
+			<property name="air_condition_time" type="string" memo="怠速空调时间">
+			</property>
+			<property name="economic_run_per" type="string" memo="超经济区运行比例(%)">
+			</property>
+		</sheet>
+		
+		<sheet id="studentInfo" properties="15" memo="学生信息" 
+			class="com.neusoft.clw.infomanage.studentmanage.domain.StudentInfo">
+			<property name="student_code" type="string" memo="学号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+				</validate>
+			</property>
+			<property name="student_card" type="string" memo="学生卡号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+					<unique value="true" message="卡号必须唯一"/>
+				</validate>
+			</property>
+			<property name="student_name" type="string" memo="姓名">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="student_sex" type="string" memo="性别">
+				<validate>
+					<scope value="0,1" message="只能取[0,1]这几个值"/>
+				</validate>
+			</property>
+            <property name="student_school" type="string" memo="学校">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="student_class" type="string" memo="班级">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="student_birth" type="string" memo="出生日期">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^(((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)))?$" message="不是有效的日期格式" />
+				</validate>
+			</property>
+			<property name="student_address" type="string" memo="家庭住址">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="remarks" type="string" memo="备注">
+				<validate>
+					<max value="50" message="最大位数50"/>
+				</validate>
+			</property>
+			<property name="siteDesc" type="string" memo="站点描述">
+				<validate>
+					<max value="20" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="teacher_name" type="string" memo="班主任姓名">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="teacher_tel" type="string" memo="班主任电话">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="relative_name" type="string" memo="家长姓名">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="relative_type" type="string" memo="所属关系">
+				<validate>
+					<scope value="0,1,2,3,4,5,6" message="只能取[0-6]这几个值"/>
+				</validate>
+			</property>
+			<property name="relative_tel" type="string" memo="家长电话">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="employeeInfo" properties="4" memo="员工信息导入" 
+			class="com.neusoft.clw.sysmanage.datamanage.employeemanage.domain.EmployeeInfo" title="员工信息导入">
+			<property name="employee_name" type="string" memo="">
+				<validate>
+					<require value="true" message="员工姓名必填字段"/>
+					<max value="16" message="最大位数16"/>
+				</validate>
+			</property>
+			<property name="employee_code" type="string" memo="">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="14" message="最大位数14"/>
+					<unique value="true" message="员工号必须唯一"/>
+				</validate>
+			</property>
+			<property name="employee_card" type="string" memo="">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="14" message="最大位数14"/>
+					<unique value="true" message="卡号必须唯一"/>
+				</validate>
+			</property>
+			<property name="remarks" type="string" memo="">
+				<validate>
+					<max value="40" message="最大位数40"/>
+				</validate>
+			</property>
+
+		</sheet> 
+		
+		<sheet id="studentInfoExport" properties="18" memo="学生信息" 
+			class="com.neusoft.clw.infomanage.studentmanage.domain.StudentInfo">
+			<property name="student_code" type="string" memo="学号">
+			</property>
+			<property name="student_card" type="string" memo="学生卡号">
+			</property>
+			<property name="student_name" type="string" memo="姓名">
+			</property>
+			<property name="student_sex" type="string" memo="性别">
+			</property>
+            <property name="student_school" type="string" memo="学校">
+			</property>
+			<property name="student_class" type="string" memo="班级">
+			</property>
+			<property name="student_birth" type="string" memo="出生日期">
+			</property>
+			<property name="studentProvince" type="string" memo="所属省">
+			</property>
+			<property name="studentCity" type="string" memo="所属市">
+			</property>
+			<property name="studentDistrict" type="string" memo="所属县区">
+			</property>
+			<property name="student_address" type="string" memo="家庭住址">
+			</property>
+			<property name="remarks" type="string" memo="备注">
+			</property>
+			<property name="siteDesc" type="string" memo="站点描述">
+			</property>
+			<property name="teacher_name" type="string" memo="班主任姓名">
+			</property>
+			<property name="teacher_tel" type="string" memo="班主任电话">
+			</property>
+			<property name="relative_name" type="string" memo="家长姓名">
+			</property>
+			<property name="relative_type" type="string" memo="所属关系">
+			</property>
+			<property name="relative_tel" type="string" memo="家长电话">
+			</property>
+		</sheet> 
+		<sheet id="employeeInfoExport" properties="5" memo="员工信息" 
+			class="com.neusoft.clw.infomanage.studentmanage.domain.StudentInfo">
+			<property name="student_name" type="string" memo="姓名">
+			</property>
+			<property name="student_code" type="string" memo="员工号">
+			</property>
+			<property name="student_card" type="string" memo="卡号">
+			</property>
+			<property name="short_name" type="string" memo="所属组织">
+			</property>
+			<property name="remarks" type="string" memo="备注">
+			</property>
+		</sheet> 
+		
+		<sheet id="driverInfo" properties="8" memo="驾驶员信息" 
+			class="com.neusoft.clw.sysmanage.datamanage.drivermanage.domain.DriverInfo">
+			<property name="driver_name" type="string" memo="姓名">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="16" message="--驾驶员姓名--不能超过16位"/>
+				</validate>
+			</property>
+			<property name="driver_license" type="string" memo="驾驶证号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="--驾驶员证号--不能超过32位"/>
+					<unique value="true" message="驾驶员证号必须唯一"/>
+				</validate>
+			</property>
+			<property name="driver_sex" type="string" memo="性别">
+				<validate>
+					<scope value="0,1" message="--性别--只能取[0,1]这几个值"/>
+				</validate>
+			</property>
+			<property name="driver_card" type="string" memo="卡号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="--驾驶员卡号--不能超过32位"/>
+					<unique value="true" message="卡号必须唯一"/>
+				</validate>
+			</property>
+			<property name="driver_birth" type="string" memo="出生日期">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^(((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)))?$" message="不是有效的日期格式" />
+				</validate>
+			</property>
+			<property name="cell_number" type="string" memo="联系电话">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="--联系电话--不能超过20位"/>
+					<regxp value="^1[2-9]\d{9}$" message="不是有效的联系电话格式" />
+				</validate>
+			</property>
+			<property name="driver_address" type="string" memo="家庭住址">
+				<validate>
+					<max value="40" message="--家庭住址--不能超过40位"/>
+				</validate>
+			</property>
+			<property name="remarks" type="string" memo="备注">
+				<validate>
+					<max value="40" message="--备注--不能超过40位"/>
+				</validate>
+			</property>
+		</sheet> 
+		<sheet id="driverInfoExport" properties="8" memo="驾驶员信息" 
+			class="com.neusoft.clw.sysmanage.datamanage.drivermanage.domain.DriverInfo">
+			<property name="driver_name" type="string" memo="姓名">
+			</property>
+			<property name="driver_license" type="string" memo="驾驶证号">
+			</property>
+			<property name="driver_card" type="string" memo="卡号">
+			</property>
+			<property name="driver_sex" type="string" memo="性别">
+			</property>
+			<property name="driver_birth" type="string" memo="出生日期">
+			</property>
+			<property name="driver_address" type="string" memo="家庭住址">
+			</property>
+			<property name="cell_number" type="string" memo="联系电话">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车辆">
+			</property>
+		</sheet> 
+		
+		
+		<sheet id="checkOilSetExportSheet" properties="17" memo="考核油耗设置" 
+			class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckOilSetInfo">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="vehicle_vin" type="string" memo="车辆VIN">
+			</property>
+			<property name="vehicle_type" type="string" memo="车型">
+			</property>
+			<property name="checkYear" type="string" memo="考核年份">
+			</property>
+			<property name="january" type="string" memo="1月">
+			</property>
+			<property name="february" type="string" memo="2月">
+			</property>
+			<property name="march" type="string" memo="3月">
+			</property>
+			<property name="april" type="string" memo="4月">
+			</property>
+			<property name="may" type="string" memo="5月">
+			</property>
+			<property name="june" type="string" memo="6月">
+			</property>
+			<property name="july" type="string" memo="7月">
+			</property>
+			<property name="august" type="string" memo="8月">
+			</property>
+			<property name="september" type="string" memo="9月">
+			</property>
+			<property name="october" type="string" memo="10月">
+			</property>
+			<property name="november" type="string" memo="11月">
+			</property>			
+			<property name="december" type="string" memo="12月">
+			</property>
+<!--			<property name="creater" type="string" memo="创建人">-->
+<!--			</property>-->
+<!--			<property name="create_time" type="string" memo="创建时间">-->
+<!--			</property>-->
+<!--			<property name="modifier" type="string" memo="最后修改人">-->
+<!--			</property>-->
+<!--			<property name="modify_time" type="string" memo="最后修改时间">-->
+<!--			</property>-->
+		</sheet> 
+		
+		
+		
+		
+		<sheet id="importCheckOilSetInfoSheet" properties="16" memo="考核油耗设置" 
+			class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckOilSetInfo">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="vehicle_vin" type="string" memo="车辆VIN">
+			</property>
+			<property name="vehicle_type" type="string" memo="车型">
+			</property>
+			<property name="checkYear" type="string" memo="考核年份">
+			</property>
+			<property name="january" type="string" memo="1月">
+			</property>
+			<property name="february" type="string" memo="2月">
+			</property>
+			<property name="march" type="string" memo="3月">
+			</property>
+			<property name="april" type="string" memo="4月">
+			</property>
+			<property name="may" type="string" memo="5月">
+			</property>
+			<property name="june" type="string" memo="6月">
+			</property>
+			<property name="july" type="string" memo="7月">
+			</property>
+			<property name="august" type="string" memo="8月">
+			</property>
+			<property name="september" type="string" memo="9月">
+			</property>
+			<property name="october" type="string" memo="10月">
+			</property>
+			<property name="november" type="string" memo="11月">
+			</property>			
+			<property name="december" type="string" memo="12月">
+			</property>		
+		</sheet> 
+		
+		
+		
+		<sheet id="stewardInfo" properties="8" memo="跟车老师信息" 
+			class="com.neusoft.clw.infomanage.stewardmanage.domain.StewardInfo">
+			<property name="steward_name" type="string" memo="姓名">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="steward_ID_Card" type="string" memo="身份证号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+				</validate>
+			</property>
+			<property name="steward_sex" type="string" memo="性别">
+				<validate>
+					<scope value="0,1" message="只能取[0,1]这几个值"/>
+				</validate>
+			</property>
+			<property name="steward_card" type="string" memo="卡号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+					<unique value="true" message="卡号必须唯一"/>
+				</validate>
+			</property>
+			<property name="steward_birth" type="string" memo="出生日期">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^(((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)))?$" message="不是有效的日期格式" />
+				</validate>
+			</property>
+			<property name="cell_number" type="string" memo="联系电话">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="steward_address" type="string" memo="家庭住址">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="remarks" type="string" memo="备注">
+				<validate>
+					<max value="50" message="最大位数50"/>
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="stewardInfoExport" properties="8" memo="跟车老师信息" 
+			class="com.neusoft.clw.infomanage.stewardmanage.domain.StewardInfo">
+			<property name="steward_name" type="string" memo="姓名">
+			</property>
+			<property name="steward_ID_Card" type="string" memo="身份证号">
+			</property>
+			<property name="steward_sex" type="string" memo="性别">
+			</property>
+			<property name="steward_card" type="string" memo="卡号">
+			</property>
+			<property name="steward_birth" type="string" memo="出生日期">
+			</property>
+			<property name="cell_number" type="string" memo="联系电话">
+			</property>
+			<property name="steward_address" type="string" memo="家庭住址">
+			</property>
+			<property name="remarks" type="string" memo="备注">
+			</property>
+		</sheet> 
+		 <!-- add by jinp begin -->
+		 <sheet id="runHistoryExport" properties="13" memo="车辆运行日志" 
+			class="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunHistory">
+			<property name="route_name" type="string" memo="行驶线路">
+			</property>
+			<property name="realityInTime" type="string" memo="到站时间">
+			</property>
+			<property name="site_name" type="string" memo="途径站点">
+			</property>
+			<property name="site_updown" type="string" memo="状态">
+			</property>	
+			<property name="stopingtime" type="string" memo="停留时间">
+			</property>	
+			<property name="inoutremark" type="string" memo="进出站状况">
+			</property>						
+			<property name="bindUpNum" type="string" memo="应上车人数">
+			</property>			
+			<property name="upNum" type="string" memo="实上车人数">
+			</property>
+			<property name="bindDownNum" type="string" memo="应下车人数">
+			</property>			
+			<property name="downNum" type="string" memo="实下车人数">
+			</property>
+			<property name="qjia_num" type="string" memo="请假人数">
+			</property>			
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="sichen_name" type="string" memo="跟车老师">
+			</property>
+		</sheet>
+		<sheet id="averagefuelExport" properties="13" memo="发车统计" 
+			class="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunHistory">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="route_name" type="string" memo="行驶线路">
+			</property>
+			<property name="route_class" type="string" memo="线路类型">
+			</property>
+			<property name="load_number" type="string" memo="乘车人数">
+			</property>
+			<property name="limite_number" type="string" memo="核载人数">
+			</property>
+			<property name="start_time" type="string" memo="开始时间">
+			</property>
+			<property name="end_time" type="string" memo="结束时间">
+			</property>
+			<!--  <property name="idle_oil" type="string" memo="怠速油耗">
+			</property>	-->
+<!-- 			<property name="total_oil" type="string" memo="总油耗（L）"> -->
+<!-- 			</property>	 -->
+			<property name="empty_mileage" type="string" memo="空驶里程（km）">
+			</property>						
+			<property name="load_mileage" type="string" memo="载重里程（km）">
+			</property>			
+			<property name="total_mileage" type="string" memo="总里程（km）">
+			</property>
+			<property name="empty_load" type="string" memo="空驶率（%）"> 
+ 			</property> 
+<!--  			<property name="idle_oil" type="string" memo="怠速总油耗（L）">  -->
+<!--  			</property>  -->
+		</sheet>
+		
+		<sheet id="exportDriveRunRecordExport" properties="7" memo="行车记录" 
+			class="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunHistory">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+<!-- 			<property name="driver_name" type="string" memo="驾驶员"> -->
+<!-- 			</property> -->
+
+			<property name="start_time" type="string" memo="开始时间">
+			</property>
+			<property name="end_time" type="string" memo="结束时间">
+			</property>
+
+			<property name="run_time" type="string" memo="点火时长（min）">
+			</property>						
+<!-- 			<property name="idle_time" type="string" memo="怠速时长（min）"> -->
+<!-- 			</property> -->
+			<property name="spd_oil" type="string" memo="怠速油耗（L）">
+			</property>		
+			<property name="total_mileage" type="string" memo="总里程（km）">
+			</property>
+
+		</sheet>
+		
+		
+		<sheet id="driverecordExport" properties="5" memo="驾驶员刷卡统计" 
+			class="com.neusoft.clw.infomanage.driverecord.domain.TqcDriverCard">
+			<property name="driver_name" type="string" memo="姓名">
+			</property>
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="route_name" type="string" memo="线路名称">
+			</property>
+			<property name="terminal_time" type="string" memo="刷卡时间">
+			</property>
+		</sheet>
+		
+		<sheet id="empCheckExport" properties="11" memo="员工刷卡记录" 
+			class="com.neusoft.clw.itsmanage.oilmanage.runstatistic.domain.StCheckEntity">
+	
+			<property name="emp_name" type="string" memo="姓名">
+			</property>
+			<property name="emp_code" type="string" memo="员工号">
+			</property>
+			<property name="emp_card_id" type="string" memo="卡号">
+			</property>
+			<property name="org_name" type="string" memo="部门">
+			</property>
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="route_name" type="string" memo="乘车线路">
+			</property>
+			<property name="site_name" type="string" memo="乘车站点">
+			</property>
+			<property name="terminal_time" type="string" memo="刷卡时间">
+			</property>
+			<property name="location" type="string" memo="刷卡位置">
+			</property>
+		</sheet>
+		
+		<sheet id="exportFtlyInfo" properties="8" memo="油量变动记录" 
+			class="com.neusoft.clw.yw.ftly.ds.ZsptFtlyInfo">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicleLn" type="string" memo="车牌号">
+			</property>
+			<property name="oilboxLevel" type="string" memo="变动前油量(L)">
+			</property>
+			<property name="addOill" type="string" memo="变动油量(L)">
+			</property>
+			<property name="oilboxMass" type="string" memo="变动后油量(L)">
+			</property>
+			<property name="oilboxState" type="string" memo="变动形式">
+			</property>
+			<property name="reportTimeString" type="string" memo="变动时间">
+			</property>
+			<property name="zonename" type="string" memo="位置">
+			</property>
+		</sheet>
+		
+		<sheet id="rideProExport" properties="7" memo="上座率统计" 
+			class="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="route_name" type="string" memo="线路">
+			</property>
+			<property name="limite_number" type="string" memo="载荷人数">
+			</property>
+			<property name="planUpPre" type="string" memo="上学规划上座率">
+			</property>
+			<property name="upNumPre" type="string" memo="上学实际上座率">
+			</property>
+			<property name="planDownPre" type="string" memo="放学规划上座率">
+			</property>
+			<property name="downNumPre" type="string" memo="放学实际上座率">
+			</property>
+		</sheet>
+		<sheet id="stRideExport" properties="11" memo="员工刷卡记录" 
+			class="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart">
+			<property name="stu_name" type="string" memo="姓名">
+			</property>
+			<property name="stu_code" type="string" memo="员工号">
+			</property>	
+			<property name="stu_card_id" type="string" memo="卡号">
+			</property>	
+			<property name="short_name" type="string" memo="所属组织">
+			</property>								
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>	
+			<property name="planVeh" type="string" memo="应乘车辆">
+			</property>	
+			<property name="strideState" type="string" memo="乘车状态">
+			</property>	
+			<property name="terminal_time" type="string" memo="刷卡时间">
+			</property>
+			<property name="zonename" type="string" memo="刷卡地点">
+			</property>
+		</sheet>
+		<sheet id="rideAlarmSumExport" properties="5" memo="异常乘车统计" 
+			class="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="no_up_num" type="string" memo="未刷卡上车(次)">
+			</property>
+			<property name="no_down_num" type="string" memo="未刷卡下车(次)">
+			</property>
+			<property name="nofix_up_num" type="string" memo="未在规定站点上车(次)">
+			</property>
+			<property name="nofix_down_num" type="string" memo="未在规定站点下车(次)">
+			</property>		
+		</sheet>
+		<!-- BEGIN ADD BY CHENGJIN FOR OILUSER EXPORT -->
+		<sheet id="oilUsedCarExport" properties="14" memo="油耗与里程统计"	class="com.neusoft.clw.itsmanage.oilmanage.oilused.domain.OilUsedExport">
+		    <property name="rn" type="string" memo="节油排名">
+			</property>
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="vehicle_vin" type="string" memo="车辆VIN">
+			</property>
+			<property name="driverName" type="string" memo="驾驶员">
+			</property>
+			<property name="checkValue" type="number" memo="考核百公里油耗(L/100km)">
+			</property>
+			<property name="hkmOilUsed" type="number" memo="实际百公里油耗(L/100km)">
+			</property>
+			<property name="minusOil" type="number" memo="燃油差距(L/100km)">
+			</property>
+			<property name="countOilTotal" type="number" memo="总耗油量(L)">
+			</property>
+			<property name="checkValueMile" type="number" memo="标准耗油量(L)">
+			</property>
+			<property name="maxOil" type="number" memo="允许最高耗油量(L)">
+			</property>
+			<property name="saveStandard" type="string" memo="节标准">
+			</property>
+			<property name="overStandard" type="string" memo="超标准">
+			</property>
+			<property name="countMileage" type="number" memo="总里程(km)">
+			</property>
+		</sheet>
+		<!-- END ADD BY CHENGJIN FOR OILUSER EXPORT -->
+		
+		<!-- BEGIN ADD BY CHENGJIN FOR OILUSER EXPORT 泰安-->
+		<sheet id="oilUsedCarExportNew" properties="7" memo="油耗与里程统计"	class="com.neusoft.clw.itsmanage.oilmanage.oilused.domain.OilUsedExport">
+<!-- 		    <property name="rn" type="string" memo="节油排名"> -->
+<!-- 			</property> -->
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+<!-- 			<property name="vehicle_vin" type="string" memo="车辆VIN"> -->
+<!-- 			</property> -->
+<!-- 			<property name="driverName" type="string" memo="驾驶员"> -->
+<!-- 			</property> -->
+			<property name="checkValue" type="string" memo="考核百公里油耗(L/100km)">
+			</property>
+			<property name="hkmOilUsed" type="string" memo="实际百公里油耗(L/100km)">
+			</property>
+			<property name="minusOil" type="string" memo="燃油差距(L/100km)">
+			</property>
+			<property name="countOilTotal" type="string" memo="总耗油量(L)">
+			</property>
+<!-- 			<property name="checkValueMile" type="string" memo="标准耗油量(L)"> -->
+<!-- 			</property> -->
+<!-- 			<property name="maxOil" type="string" memo="允许最高耗油量(L)"> -->
+<!-- 			</property> -->
+<!-- 			<property name="saveStandard" type="string" memo="节标准"> -->
+<!-- 			</property> -->
+<!-- 			<property name="overStandard" type="string" memo="超标准"> -->
+<!-- 			</property> -->
+			<property name="countMileage" type="string" memo="总里程(km)">
+			</property>
+		</sheet>
+		<!-- END ADD BY CHENGJIN FOR OILUSER EXPORT -->	
+			
+		<!-- BEGIN ADD BY CHENGJIN FOR ALARM EXPORT -->
+		<sheet id="oilalramExport" properties="7" memo="油量告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.AlarmManage">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicleLn" type="string" memo="车牌号">
+			</property>
+			<property name="alarmTypeName" type="string" memo="告警类型">
+			</property>
+			<property name="isValid" type="string" memo="处理状态">
+			</property>
+			<property name="reportTimeString" type="string" memo="告警时间">
+			</property>
+			<property name="addOill" type="string" memo="变动油量(L)">
+			</property>
+			<property name="zonename" type="string" memo="地理位置">
+			</property>
+		</sheet>
+		<sheet id="sosalramExport" properties="8" memo="紧急告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.AlarmManage">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="deal_flag" type="string" memo="处理状态">
+			</property>
+			<property name="alarm_time" type="string" memo="告警时间">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+<!-- 			<property name="sichen_name" type="string" memo="跟车老师"> -->
+<!-- 			</property> -->
+			<property name="stu_num" type="string" memo="核载人数">
+			</property>
+			<property name="zonename" type="string" memo="地理位置">
+			</property>
+		</sheet>
+		<sheet id="otheralramExport" properties="8" memo="车辆告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.AlarmManage">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="deal_flag" type="string" memo="处理状态">
+			</property>
+			<property name="alarm_time" type="string" memo="告警时间">
+			</property>
+			<property name="speeding" type="string" memo="速度">
+			</property>
+<!-- 			<property name="engine_rotate_speed" type="string" memo="转速"> -->
+<!-- 			</property> -->
+			<property name="mileage" type="string" memo="里程">
+			</property>
+			<property name="zonename" type="string" memo="地理位置">
+			</property>
+		</sheet>
+		<sheet id="stualramExport" properties="10" memo="异常乘车"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.StuAlarm">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="route_name" type="string" memo="线路名称">
+			</property>
+			<property name="site_name" type="string" memo="站点">
+			</property>
+			<property name="stu_name" type="string" memo="姓名">
+			</property>
+			<property name="student_code" type="string" memo="学号">
+			</property>
+			<property name="stu_school" type="string" memo="学校">
+			</property>
+			<property name="stu_class" type="string" memo="班级">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="operate_flag" type="string" memo="处理状态">
+			</property>
+			<property name="terminal_time" type="string" memo="告警时间">
+			</property>
+		</sheet>
+		<sheet id="nontimealramExport" properties="11" memo="非时发车告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.TqcAlarm">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="operate_flag" type="string" memo="处理状态">
+			</property>
+			<property name="route_name" type="string" memo="行驶路线">
+			</property>
+			<property name="alarm_date" type="string" memo="告警时间">
+			</property>
+			<property name="site_name" type="string" memo="非时发车站点">
+			</property>
+			<property name="send_time" type="string" memo="计划发车时间">
+			</property>
+			<property name="terminal_time" type="string" memo="实际发车时间">
+			</property>
+			<property name="time_dis" type="string" memo="发车时间差">
+			</property>
+<!-- 			<property name="empty_num" type="string" memo="空座数"> -->
+<!-- 			</property> -->
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+<!-- 			<property name="driver_tel" type="string" memo="联系方式"> -->
+<!-- 			</property> -->
+			
+		</sheet>
+		
+		<sheet id="nofullalramExport" properties="11" memo="未满发车告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.TqcAlarm">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="operate_flag" type="string" memo="处理状态">
+			</property>
+			<property name="alarm_date" type="string" memo="告警时间">
+			</property>
+			<property name="route_name" type="string" memo="行驶线路">
+			</property>
+			<property name="site_name" type="string" memo="未满发车站点">
+			</property>
+			<property name="standard_cnt" type="string" memo="核载人数">
+			</property>
+			<property name="real_cnt" type="string" memo="实载人数">
+			</property>
+			<property name="empty_num" type="string" memo="空座数">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+<!-- 			<property name="driver_tel" type="string" memo="联系方式"> -->
+<!-- 			</property> -->
+			
+		</sheet>
+		
+		<sheet id="opendooralramExport" properties="10" memo="非站点开门告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.TqcAlarm">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="operate_flag" type="string" memo="处理状态">
+			</property>
+			<property name="route_name" type="string" memo="行驶线路">
+			</property>
+			<property name="alarm_date" type="string" memo="告警时间">
+			</property>
+			<property name="zone_name" type="string" memo="告警位置">
+			</property>
+			<property name="upSite" type="string" memo="上一站点">
+			</property>
+			<property name="downSite" type="string" memo="下一点站">
+			</property>
+<!-- 			<property name="site_name" type="string" memo="距离最近的站点"> -->
+<!-- 			</property> -->
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+<!-- 			<property name="driver_tel" type="string" memo="联系方式"> -->
+<!-- 			</property> -->
+			
+		</sheet>
+		<sheet id="latealramExport" properties="10" memo="迟到告警"
+			class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.TqcAlarm">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="alarm_type_name" type="string" memo="告警类型">
+			</property>
+			<property name="operate_flag" type="string" memo="处理状态">
+			</property>
+			<property name="alarm_date" type="string" memo="告警时间">
+			</property>
+			<property name="route_name" type="string" memo="行驶线路">
+			</property>
+			<property name="site_name" type="string" memo="终站点">
+			</property>
+			<property name="terminal_time" type="string" memo="实际到达时间">
+			</property>
+			<property name="time_dis" type="string" memo="迟到时长(分)">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+<!-- 			<property name="driver_tel" type="string" memo="联系方式"> -->
+<!-- 			</property> -->
+			
+		</sheet>
+			
+		<!-- END ADD BY CHENGJIN FOR ALARM EXPORT -->	
+		<!-- BEGIN ADD BY CHENGJIN FOR OVERLOAD -->
+			<sheet id="overloadExport" properties="5" memo="超载记录"
+			class="com.neusoft.clw.businessmanage.overload.domain.OverloadInfo">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="user_name" type="string" memo="操作人">
+			</property>
+			<property name="flag_time" type="string" memo="巡检时间">
+			</property>
+			<property name="photo_time" type="string" memo="拍照时间">
+			</property>
+			<property name="photo_desc" type="string" memo="描述信息">
+			</property>
+	      </sheet>
+		<sheet id="runoilrecordExport" properties="6" memo="日行车记录"
+			class="com.neusoft.clw.itsmanage.oilmanage.carrun.domain.RunOilRecord">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="on_date" type="string" memo="点火时间">
+			</property>
+			<property name="off_date" type="string" memo="熄火时间">
+			</property>
+			<property name="spd_oil" type="string" memo="怠速油耗(L)">
+			</property>
+			<property name="oil" type="string" memo="油耗(L)">
+			</property>
+			<property name="mileage" type="string" memo="里程(Km)">
+			</property>
+		</sheet>	
+		
+		<sheet id="stushuakaExport" properties="7" memo="学生刷卡记录" 
+			class="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart">
+			<property name="stu_name" type="string" memo="姓名">
+			</property>
+			<property name="st_ride_flag" type="string" memo="状态">
+			</property>
+			<property name="terminal_time" type="string" memo="刷卡时间">
+			</property>
+			<property name="stu_code" type="string" memo="学号">
+			</property>
+			<property name="stu_school" type="string" memo="学校">
+			</property>
+			<property name="stu_class" type="string" memo="班级">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+		</sheet> 
+		
+		<sheet id="illExportSheet" properties="9" memo="异常用车列表" 
+			class="com.neusoft.clw.check.domain.AlarmEntity">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="driver_tel" type="string" memo="联系方式">
+			</property>
+			<property name="effect_time" type="string" memo="授权运行时间">
+			</property>
+			<property name="alarm_time" type="string" memo="开始时间">
+			</property>
+			<property name="alarm_end_time" type="string" memo="结束时间">
+			</property>
+			<property name="use_time" type="string" memo="用车时长(min)">
+			</property>
+			<property name="mileage" type="string" memo="行驶里程(km)">
+			</property>
+		</sheet>
+		
+		<sheet id="operatedExportSheet" properties="13" memo="处理记录列表" 
+			class="com.neusoft.clw.check.domain.AlarmEntity">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="driver_tel" type="string" memo="联系方式">
+			</property>
+			<property name="effect_time" type="string" memo="授权运行时间">
+			</property>
+			<property name="alarm_time" type="string" memo="开始时间">
+			</property>
+			<property name="alarm_end_time" type="string" memo="结束时间">
+			</property>
+			<property name="use_time" type="string" memo="用车时长(min)">
+			</property>
+			<property name="mileage" type="string" memo="行驶里程(km)">
+			</property>
+			<property name="operate_type" type="string" memo="类别">
+			</property>
+			<property name="opeerate_desc" type="string" memo="处理意见">
+			</property>
+			<property name="user_name" type="string" memo="处理人">
+			</property>
+			<property name="confirm_time" type="string" memo="处理日期">
+			</property>
+		</sheet>
+		
+		<sheet id="tripPatchExportSheet" properties="12" memo="临时派车补录列表" 
+			class="com.neusoft.clw.trippatch.domain.TripPatch">
+			<property name="vehicle_code" type="string" memo="班车号">
+			</property>
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="driver_name" type="string" memo="驾驶员">
+			</property>
+			<property name="type" type="string" memo="用车类型">
+			</property>
+			<property name="route_name" type="string" memo="行驶线路">
+			</property>
+			<property name="route_type" type="string" memo="线路类别">
+			</property>
+			<property name="start_time" type="string" memo="开始时间">
+			</property>
+			<property name="end_time" type="string" memo="结束时间">
+			</property>
+			<property name="mileage" type="string" memo="行驶里程(km)">
+			</property>
+			<property name="count" type="string" memo="乘车人数">
+			</property>
+			<property name="update_by" type="string" memo="操作人">
+			</property>
+			<property name="operate_time" type="string" memo="最后修改时间">
+			</property>
+		</sheet>				
+	</sheets>
+
+	<excels>
+		<workbook id="exportAlarm"> 
+			<import depends="alarmExport" />
+		</workbook>
+
+		<workbook id="exporthumanBadDriveCar">
+			<import depends="humanBadDriveCarExport" />
+		</workbook>
+		<workbook id="exporthumanBadDriveType">
+			<import depends="humanBadDriveTypeExport" />
+		</workbook>
+		<workbook id="exporthumanBadDriveTeam">
+			<import depends="humanBadDriveTeamExport" />
+		</workbook>
+		<workbook id="exportbadDriveCar">
+			<import depends="badDriveCarExport" />
+		</workbook>
+		<workbook id="exportbadDriveType">
+			<import depends="badDriveTypeExport" />
+		</workbook>
+		<workbook id="exportbadDriveTeam">
+			<import depends="badDriveTeamExport" />
+		</workbook>
+		
+		<workbook id="importStudent">
+			<import depends="studentInfo" />
+		</workbook>
+		
+		<workbook id="importEmployee">
+			<import depends="employeeInfo" />
+		</workbook>
+		
+		<workbook id="exportStudent">
+			<import depends="studentInfoExport" />
+		</workbook>
+		
+		<workbook id="exportEmployee">
+			<import depends="employeeInfoExport" />
+		</workbook>
+		
+		<workbook id="importDriver">
+			<import depends="driverInfo" />
+		</workbook>
+		<workbook id="importCheckOilSetInfo">
+			<import depends="importCheckOilSetInfoSheet" />
+		</workbook>
+		<workbook id="exportDriver">
+			<import depends="driverInfoExport" />
+		</workbook>
+		
+		<workbook id="importSteward">
+			<import depends="stewardInfo" />
+		</workbook>
+		<workbook id="exportSteward">
+			<import depends="stewardInfoExport" />
+		</workbook>
+		<workbook id="exportRunHistory">
+			<import depends="runHistoryExport" />
+		</workbook>
+		<workbook id="exportRanking">
+			<import depends="averagefuelExport" />
+		</workbook>
+		<workbook id="exportDriveRunRecord">
+			<import depends="exportDriveRunRecordExport" />
+		</workbook>
+		<workbook id="exportDriveRecord">
+			<import depends="driverecordExport" />
+		</workbook>
+		
+		<workbook id="stCheckExport">
+			<import depends="empCheckExport" />
+		</workbook>
+		
+		<workbook id="exportFtlyInfoWear">
+			<import depends="exportFtlyInfo" />
+		</workbook>
+		<workbook id="exportRidePro">
+			<import depends="rideProExport" />
+		</workbook>
+		<workbook id="exportStRide">
+			<import depends="stRideExport" />
+		</workbook>
+		<workbook id="exportRideAlarmSum">
+			<import depends="rideAlarmSumExport" />
+		</workbook>	
+		
+		<!-- BEGIN ADD BY CHENGJIN FOR OILUSED EXPORT -->
+		<workbook id="exportoilUsedbyCar">
+			<import depends="oilUsedCarExport" />
+		</workbook>
+		<workbook id="exportoilUsedbyCarNew">
+			<import depends="oilUsedCarExportNew" />
+		</workbook>		
+		<!-- END ADD BY CHENGJIN FOR OILUSED EXPORT -->	
+		<!-- BEGIN ADD BY CHENGJIN FOR ALARM -->
+		<workbook id="exportoilalarm">
+			<import depends="oilalramExport" />
+		</workbook>	
+		<workbook id="exportsosalarm">
+			<import depends="sosalramExport" />
+		</workbook>	
+		<workbook id="exportotheralarm">
+			<import depends="otheralramExport" />
+		</workbook>	
+		<workbook id="exportstualarm">
+			<import depends="stualramExport" />
+		</workbook>	
+		<workbook id="exportnontimealarm">
+			<import depends="nontimealramExport" />
+		</workbook>	
+		<workbook id="exportnofullalarm">
+			<import depends="nofullalramExport" />
+		</workbook>
+		<workbook id="exportopendooralarm">
+			<import depends="opendooralramExport" />
+		</workbook>
+		<workbook id="exportlatealarm">
+			<import depends="latealramExport" />
+		</workbook>			
+		
+		<!-- END ADD BY CHENGJIN FOR ALARM  -->	
+		<!-- BEGIN ADD BY CHENGJIN FOR ALARM -->	
+		<workbook id="exportOverload">
+			<import depends="overloadExport" />
+		</workbook>	
+		<!-- BEGIN ADD BY CHENGJIN FOR ALARM -->	
+		<workbook id="exportRunOilRecord">
+			<import depends="runoilrecordExport" />
+		</workbook>	
+		<workbook id="exportStushuaka">
+			<import depends="stushuakaExport" />
+		</workbook>	
+		<workbook id="checkOilSetExport">
+			<import depends="checkOilSetExportSheet" />
+		</workbook>			
+		<!-- 异常用车列表导出 -->
+		<workbook id="illListExport">
+			<import depends="illExportSheet" />
+		</workbook>	
+		
+		<!-- 处理记录列表导出 -->
+		<workbook id="operatedExport">
+			<import depends="operatedExportSheet" />
+		</workbook>	
+		
+		<!-- 临时派车补录列表导出 -->
+		<workbook id="tripPatchExport">
+			<import depends="tripPatchExportSheet" />
+		</workbook>	
+	</excels>
+
+	<csvs />
+
+	<global-property-validate />
+
+	<global-object-validate />
+
+	<global-regxp-validate />
+
+	<global-dynamic-filter />
+</ie-configs>

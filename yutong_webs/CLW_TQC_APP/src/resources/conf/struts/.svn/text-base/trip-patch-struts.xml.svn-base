@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 临时派车补录 -->
+<struts>
+	<package name="tripPatch" namespace="/tripPatch" extends="clw-default">
+		<!-- 进入临时派车补录列表页面-->
+		<action name="tripPatchManage" class="tripPatchAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/trippatch/trippatchList.jsp</result>
+			<result name="success">/WEB-INF/jsp/trippatch/trippatchList.jsp</result>	
+		</action>
+		<!--临时派车补录导出  -->
+		<action name="exportTripPatchList" class="tripPatchAction" method="exportTripPatchList">
+			<result name="error" type="redirect-action">
+				<param name="actionName">tripPatchManage</param>
+			</result>
+		</action>
+		<!-- 弹出地图对话框 -->
+		<action name="showMapPage" class="tripPatchAction" method="showMapPage">
+			<result name="success">/WEB-INF/jsp/trippatch/mapshow.jsp</result>	
+		</action>
+		<!-- 加载地图页面的引用页 -->
+		<action name="loadIframe" class="tripPatchAction" method="loadIframe">
+			<result name="success">/WEB-INF/jsp/trippatch/iframeArea.jsp</result>	
+		</action>
+		<!-- 添加补录信息页面 -->
+		<action name="showAddPage" class="tripPatchAction" method="showAddPage">
+			<result name="success">/WEB-INF/jsp/trippatch/addTripPatch.jsp</result>	
+		</action>
+		<!-- 临时派车补录保存到数据库 -->
+		<action name="addTripPatch" class="tripPatchAction" method="addTripPatch">
+			<result name="success" type="redirect">
+				<param name="location">tripPatchManage.shtml?message=${message}</param>
+				<param name="encode">true</param>
+			</result>	
+			<result name="error">/WEB-INF/jsp/trippatch/addTripPatch.jsp</result>
+		</action>
+		<!-- 选择车辆列表页面 -->
+		<action name="chooseVehicle" class="tripPatchAction" method="chooseVehicle">
+			<result name="success">/WEB-INF/jsp/trippatch/vehicleTree.jsp</result>	
+		</action>
+		<!-- 选择驾驶员列表页面 -->
+		<action name="chooseDriver" class="tripPatchAction" method="chooseDriver">
+			<result name="success">/WEB-INF/jsp/trippatch/driverList.jsp</result>	
+		</action>
+		<!-- 选择线路列表页面 -->
+		<action name="chooseRoute" class="tripPatchAction" method="chooseRoute">
+			<result name="success">/WEB-INF/jsp/trippatch/routeTree.jsp</result>	
+		</action>
+		<!-- 删除 -->
+		<action name="delTripPatch" class="tripPatchAction" method="delTripPatch">
+		</action>
+		<action name="getDriverByVin" class="tripPatchAction" method="getDriverByVin">
+		</action>
+		<!-- 根据车辆vin和时间段判断发车行程里里是否存在发车记录 -->
+		<action name="isExistTrip" class="tripPatchAction" method="isExistTrip">
+		</action>
+	</package>
+	<package name="tripPatchJson" namespace="/tripPatchList" extends="json-default">
+		<!-- 查询临时派车补录列表信息 -->
+		<action name="tripPatchList" class="tripPatchAction" method="tripPatchList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+		<!-- 查询车辆树 -->
+		<action name="getTreeNodes" class="tripPatchAction" method="getTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeNodes" class="tripPatchAction" method="searchTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+	</package>
+	
+</struts>

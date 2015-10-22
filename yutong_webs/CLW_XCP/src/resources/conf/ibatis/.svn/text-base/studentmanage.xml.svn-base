@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StudentManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="Map" type="java.util.Map" />
+    <typeAlias alias="studentsInfo" type="com.neusoft.clw.infomanage.studentmanage.domain.StudentInfo" />
+    <typeAlias alias="messageTypeInfo" type="com.neusoft.clw.infomanage.studentmanage.domain.MessageTypeInfo" />
+    
+	<select id="checkUser" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM CLW_JC_USER_T T
+		 WHERE T.USER_ID = #userId#
+		   AND T.STUDENT_PWD = #studentPwd#
+	</select>
+	
+	<select id="checkStudentCard" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(CARD_ID)
+          FROM (SELECT STU_CARD_ID AS CARD_ID
+                  FROM CLW_XC_STUDENT_T
+                 WHERE STU_CARD_ID = #value#
+                   AND VALID_FLAG = '0'
+                UNION ALL
+                SELECT DRIVER_CARD_ID AS CARD_ID
+                  FROM CLW_YW_DRIVER_T
+                 WHERE DRIVER_CARD_ID = #value#
+                   AND VALID_FLAG = '0'
+                UNION ALL
+                SELECT SICHEN_CARD_ID AS CARD_ID
+                  FROM CLW_XC_SICHEN_T
+                 WHERE SICHEN_CARD_ID = #value#
+                   AND VALID_FLAG = '0') CARD_T
+	</select>
+	
+	<select id="getCount" parameterClass="studentsInfo" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM CLW_XC_STUDENT_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND VALID_FLAG = '0'
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<resultMap class="studentsInfo" id="studentInfos-result">
+       <result property="student_id" column="STU_ID"/>
+       <result property="student_code" column="STU_CODE"/>
+       <result property="student_card" column="STU_CARD_ID"/>
+       <result property="student_name" column="STU_NAME"/>
+       <result property="student_school" column="STU_SCHOOL"/>
+       <result property="student_class" column="STU_CLASS"/>
+       <result property="student_sex" column="STU_SEX"/>
+       <result property="student_birth" column="STU_BIRTH"/>
+       <result property="student_address" column="STU_ADDRESS"/>
+       <result property="teacher_name" column="TEACHER_NAME"/>
+       <result property="teacher_tel" column="TEACHER_TEL"/>
+       <result property="relative_name" column="RELATIVE_NAME"/>
+       <result property="relative_type" column="RELATIVE_TYPE"/>
+       <result property="relative_tel" column="RELATIVE_TEL"/>
+       <result property="photo_name" column="PHOTO_NAME"/>
+       <result property="remarks" column="STU_REMARK"/>
+    </resultMap>
+	
+	<select id="getInfos" parameterClass="studentsInfo" resultMap="studentInfos-result">
+		SELECT STU_ID,
+		       STU_CODE,
+		       STU_CARD_ID,
+		       STU_NAME,
+		       STU_SCHOOL,
+		       STU_CLASS,
+		       STU_SEX,
+		       TO_CHAR(STU_BIRTH, 'YYYY-MM-DD') AS STU_BIRTH,
+		       STU_ADDRESS,
+		       TEACHER_NAME,
+		       TEACHER_TEL,
+		       RELATIVE_NAME,
+		       RELATIVE_TYPE,
+		       RELATIVE_TEL,
+		       PHOTO_NAME,
+		       STU_REMARK
+	      FROM CLW_XC_STUDENT_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND VALID_FLAG = '0'
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$ $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<resultMap class="studentsInfo" id="exportStudentInfos-result">
+       <result property="student_id" column="STU_ID"/>
+       <result property="student_code" column="STU_CODE"/>
+       <result property="student_card" column="STU_CARD_ID"/>
+       <result property="student_name" column="STU_NAME"/>
+       <result property="student_school" column="STU_SCHOOL"/>
+       <result property="student_class" column="STU_CLASS"/>
+       <result property="student_sex" column="STU_SEX"/>
+       <result property="student_birth" column="STU_BIRTH"/>
+       <result property="studentProvince" column="STU_PROVINCE_NAME"/>
+       <result property="studentCity" column="STU_CITY_NAME"/>
+       <result property="studentDistrict" column="STU_DISTRICT_NAME"/>
+       <result property="siteDesc" column="SITE_DESC"/>
+       <result property="student_address" column="STU_ADDRESS"/>
+       <result property="teacher_name" column="TEACHER_NAME"/>
+       <result property="teacher_tel" column="TEACHER_TEL"/>
+       <result property="relative_name" column="RELATIVE_NAME"/>
+       <result property="relative_type" column="RELATIVE_TYPE"/>
+       <result property="relative_tel" column="RELATIVE_TEL"/>
+       <result property="photo_name" column="PHOTO_NAME"/>
+       <result property="remarks" column="STU_REMARK"/>
+    </resultMap>
+	
+	<select id="exportStudentInfos" parameterClass="studentsInfo" resultMap="exportStudentInfos-result">
+		SELECT STU_ID,
+		       STU_CODE,
+		       STU_CARD_ID,
+		       STU_NAME,
+		       STU_SCHOOL,
+		       STU_CLASS,
+		       CASE
+                 WHEN STU_SEX = '0' THEN
+                  '男'
+                 ELSE
+                  '女'
+               END AS STU_SEX,
+		       TO_CHAR(STU_BIRTH, 'YYYY-MM-DD') AS STU_BIRTH,
+		       (SELECT T.REGION_NAME
+                  FROM CLW_JC_GEOGRAPHY_T T
+                 WHERE T.REGION_ID = STU_PROVINCE) AS STU_PROVINCE_NAME,
+               (SELECT T.REGION_NAME
+                  FROM CLW_JC_GEOGRAPHY_T T
+                 WHERE T.REGION_ID = STU_CITY) AS STU_CITY_NAME, 
+               (SELECT T.REGION_NAME
+                  FROM CLW_JC_GEOGRAPHY_T T
+                 WHERE T.REGION_ID = STU_DISTRICT) AS STU_DISTRICT_NAME,
+               SITE_DESC,    
+		       STU_ADDRESS,
+		       TEACHER_NAME,
+		       TEACHER_TEL,
+		       RELATIVE_NAME,
+		       CASE RELATIVE_TYPE
+		         WHEN '0' THEN '父亲'
+		         WHEN '1' THEN '母亲'
+		         WHEN '2' THEN '爷爷'
+		         WHEN '3' THEN '奶奶'
+		         WHEN '4' THEN '外公'
+		         WHEN '5' THEN '外婆'
+		         WHEN '6' THEN '其他'
+		         ELSE '其他' 
+		       END AS RELATIVE_TYPE,
+		       RELATIVE_TEL,
+		       PHOTO_NAME,
+		       STU_REMARK
+	      FROM CLW_XC_STUDENT_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND VALID_FLAG = '0'
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$ $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<update id="mergeStudentInfo" parameterClass="studentsInfo">
+		MERGE INTO CLW_XC_STUDENT_T XS
+		USING DUAL
+		ON (XS.STU_CARD_ID = #student_card# AND XS.VALID_FLAG = '0')
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET STU_CODE        = #student_code#,
+		         STU_NAME        = #student_name#,
+		         STU_SEX         = #student_sex#,
+		         STU_BIRTH       = TO_DATE(#student_birth#, 'YYYY-MM-DD'),
+		         STU_ADDRESS     = #student_address#,
+		         STU_SCHOOL      = #student_school#,
+		         STU_CLASS       = #student_class#,
+		         STU_REMARK      = #remarks#,
+		         TEACHER_NAME    = #teacher_name#,
+		         TEACHER_TEL     = #teacher_tel#,
+		         RELATIVE_NAME   = #relative_name#,
+		         RELATIVE_TEL    = #relative_tel#,
+		         RELATIVE_TYPE   = #relative_type#,
+		         ENTERPRISE_ID   = #enterprise_id#,
+		         ORGANIZATION_ID = #organization_id#,
+		         MODIFIER        = #modifier#,
+		         MODIFY_TIME     = SYSDATE,
+		         SITE_DESC       = #siteDesc#,
+		         STU_PROVINCE    = #studentProvince#,
+		         STU_CITY        = #studentCity#,
+		         STU_DISTRICT    = #studentDistrict#
+		WHEN NOT MATCHED THEN
+		  INSERT
+		    (STU_ID,
+		     STU_CARD_ID,
+		     STU_CODE,
+		     STU_NAME,
+		     STU_SEX,
+		     STU_BIRTH,
+		     STU_ADDRESS,
+		     STU_SCHOOL,
+		     STU_CLASS,
+		     STU_REMARK,
+		     TEACHER_NAME,
+		     TEACHER_TEL,
+		     RELATIVE_NAME,
+		     RELATIVE_TEL,
+		     RELATIVE_TYPE,
+		     ENTERPRISE_ID,
+		     ORGANIZATION_ID,
+		     CREATER,
+		     CREATE_TIME,
+		     MODIFIER,
+		     MODIFY_TIME,
+		     VALID_FLAG,
+		     SITE_DESC,
+		     STU_PROVINCE,
+		     STU_CITY,
+		     STU_DISTRICT)
+		  VALUES
+		    (SEQ_XC_STUDENT_T.NEXTVAL,
+		     #student_card#,
+		     #student_code#,
+		     #student_name#,
+		     #student_sex#,
+		     TO_DATE(#student_birth#, 'YYYY-MM-DD'),
+		     #student_address#,
+		     #student_school#,
+		     #student_class#,
+		     #remarks#,
+		     #teacher_name#,
+		     #teacher_tel#,
+		     #relative_name#,
+		     #relative_tel#,
+		     #relative_type#,
+		     #enterprise_id#,
+		     #organization_id#,
+		     #creater#,
+		     sysdate,
+		     #modifier#,
+		     sysdate,
+		     '0',
+		     #siteDesc#,
+		     #studentProvince#,
+		     #studentCity#,
+		     #studentDistrict#)
+	</update>
+	
+	<insert id="insertStudentInfo" parameterClass="studentsInfo">
+		  INSERT INTO CLW_XC_STUDENT_T XS
+		    (STU_ID,
+		     STU_CARD_ID,
+		     STU_CODE,
+		     STU_NAME,
+		     STU_SEX,
+		     STU_BIRTH,
+		     STU_ADDRESS,
+		     STU_SCHOOL,
+		     STU_CLASS,
+		     STU_REMARK,
+		     TEACHER_NAME,
+		     TEACHER_TEL,
+		     RELATIVE_NAME,
+		     RELATIVE_TEL,
+		     RELATIVE_TYPE,
+		     ENTERPRISE_ID,
+		     ORGANIZATION_ID,
+		     CREATER,
+		     CREATE_TIME,
+		     MODIFIER,
+		     MODIFY_TIME,
+		     VALID_FLAG,
+		     PHOTO_NAME,
+		     STU_PHOTO,
+		     SITE_DESC,
+		     STU_PROVINCE,
+		     STU_CITY,
+		     STU_DISTRICT)
+		  VALUES
+		    (SEQ_XC_STUDENT_T.NEXTVAL,
+		     #student_card#,
+		     #student_code#,
+		     #student_name#,
+		     #student_sex#,
+		     TO_DATE(#student_birth#, 'YYYY-MM-DD'),
+		     #student_address#,
+		     #student_school#,
+		     #student_class#,
+		     #remarks#,
+		     #teacher_name#,
+		     #teacher_tel#,
+		     #relative_name#,
+		     #relative_tel#,
+		     #relative_type#,
+		     #enterprise_id#,
+		     #organization_id#,
+		     #creater#,
+		     sysdate,
+		     #modifier#,
+		     sysdate,
+		     '0',
+		     #photo_name#,
+		     #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+		     #siteDesc#,
+		     #studentProvince#,
+		     #studentCity#,
+		     #studentDistrict#)
+	</insert>
+	
+	<resultMap class="studentsInfo" id="studentInfo-result">
+       <result property="student_id" column="STU_ID"/>
+       <result property="student_code" column="STU_CODE"/>
+       <result property="student_card" column="STU_CARD_ID"/>
+       <result property="student_name" column="STU_NAME"/>
+       <result property="student_school" column="STU_SCHOOL"/>
+       <result property="student_class" column="STU_CLASS"/>
+       <result property="student_sex" column="STU_SEX"/>
+       <result property="student_birth" column="STU_BIRTH"/>
+       <result property="student_address" column="STU_ADDRESS"/>
+       <result property="teacher_name" column="TEACHER_NAME"/>
+       <result property="teacher_tel" column="TEACHER_TEL"/>
+       <result property="relative_name" column="RELATIVE_NAME"/>
+       <result property="relative_type" column="RELATIVE_TYPE"/>
+       <result property="relative_tel" column="RELATIVE_TEL"/>
+       <result property="remarks" column="STU_REMARK"/>
+       <result property="photo_name" column="PHOTO_NAME"/>
+       <result property="photoContent" column="STU_PHOTO" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler"/>
+       <result property="siteDesc" column="SITE_DESC"/>
+       <result property="studentProvince" column="STU_PROVINCE"/>
+       <result property="studentCity" column="STU_CITY"/>
+       <result property="studentDistrict" column="STU_DISTRICT"/>
+       <result property="short_allname" column="ENTERPRISE_NAME"/>
+       <result property="vehicle_ln" column="VEHICLE_LN"/>
+    </resultMap>
+	
+	<select id="getStudentInfo" parameterClass="studentsInfo" resultMap="studentInfo-result">
+		SELECT STU_ID,
+		       STU_CODE,
+		       STU_CARD_ID,
+		       STU_NAME,
+		       STU_SCHOOL,
+		       STU_CLASS,
+		       STU_SEX,
+		       TO_CHAR(STU_BIRTH, 'YYYY-MM-DD') AS STU_BIRTH,
+		       STU_ADDRESS,
+		       TEACHER_NAME,
+		       TEACHER_TEL,
+		       RELATIVE_NAME,
+		       RELATIVE_TYPE,
+		       RELATIVE_TEL,
+		       STU_REMARK,
+		       PHOTO_NAME,
+		       STU_PHOTO,
+		       SITE_DESC,
+		       STU_PROVINCE,
+		       STU_CITY,
+		       STU_DISTRICT,
+		       (SELECT WM_CONCAT(PATH)
+				  FROM (SELECT REPLACE(SYS_CONNECT_BY_PATH(SHORT_NAME, '/@'), '/@', '') AS PATH,
+				               ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_T
+				         START WITH PARENT_ID = '111'
+				        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID) T
+				 WHERE EXISTS (SELECT ORGANIZATION_ID
+				          FROM CLW_CL_BASE_INFO_T CBI
+				         WHERE EXISTS (SELECT VEHICLE_VIN
+				                  FROM CLW_XC_VSS_T
+				                 WHERE STUDENT_ID = #student_id#
+				                   AND VEHICLE_VIN = CBI.VEHICLE_VIN)
+				           AND VALID_FLAG = '0'
+				           AND ORGANIZATION_ID = T.ENTERPRISE_ID)) AS ENTERPRISE_NAME,
+		       (SELECT WM_CONCAT(CBI.VEHICLE_LN)
+				  FROM CLW_CL_BASE_INFO_T CBI
+				 WHERE EXISTS (SELECT 1
+				          FROM CLW_XC_VSS_T
+				         WHERE STUDENT_ID = #student_id#
+				           AND VEHICLE_VIN = CBI.VEHICLE_VIN
+				           AND CBI.VALID_FLAG = '0')) AS VEHICLE_LN
+		  FROM CLW_XC_STUDENT_T
+		 WHERE STU_ID=#student_id# 
+	</select>
+	
+	<update id="updateInfoAndPhotobyStudentId" parameterClass="studentsInfo">
+	    UPDATE CLW_XC_STUDENT_T
+		   SET STU_CODE = #student_code#,
+		       STU_CARD_ID = #student_card#,
+		       STU_NAME = #student_name#,
+		       STU_SCHOOL = #student_school#,
+		       STU_CLASS = #student_class#,
+		       STU_SEX = #student_sex#,
+		       STU_BIRTH = TO_DATE(#student_birth#, 'YYYY-MM-DD'),
+		       STU_ADDRESS = #student_address#,
+		       TEACHER_NAME = #teacher_name#,
+		       TEACHER_TEL = #teacher_tel#,
+		       RELATIVE_NAME = #relative_name#,
+		       RELATIVE_TYPE = #relative_type#,
+		       RELATIVE_TEL = #relative_tel#,
+		       STU_REMARK = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       PHOTO_NAME     = #photo_name#,
+		       STU_PHOTO   = #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+		       SITE_DESC = #siteDesc#,
+		       STU_PROVINCE = #studentProvince#,
+		       STU_CITY = #studentCity#,
+		       STU_DISTRICT = #studentDistrict#
+		 WHERE STU_ID = #student_id#
+	</update>
+	
+	<update id="updateInfoDelPhotobyStudentId" parameterClass="studentsInfo">
+	    UPDATE CLW_XC_STUDENT_T
+		   SET STU_CODE = #student_code#,
+		       STU_CARD_ID = #student_card#,
+		       STU_NAME = #student_name#,
+		       STU_SCHOOL = #student_school#,
+		       STU_CLASS = #student_class#,
+		       STU_SEX = #student_sex#,
+		       STU_BIRTH = TO_DATE(#student_birth#, 'YYYY-MM-DD'),
+		       STU_ADDRESS = #student_address#,
+		       TEACHER_NAME = #teacher_name#,
+		       TEACHER_TEL = #teacher_tel#,
+		       RELATIVE_NAME = #relative_name#,
+		       RELATIVE_TYPE = #relative_type#,
+		       RELATIVE_TEL = #relative_tel#,
+		       STU_REMARK = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       PHOTO_NAME     = NULL,
+		       STU_PHOTO   = NULL,
+		       SITE_DESC = #siteDesc#,
+		       STU_PROVINCE = #studentProvince#,
+		       STU_CITY = #studentCity#,
+		       STU_DISTRICT = #studentDistrict#
+		 WHERE STU_ID = #student_id#
+	</update>
+	
+	<update id="updateInfoOnlybyStudentId" parameterClass="studentsInfo">
+	    UPDATE CLW_XC_STUDENT_T
+		   SET STU_CODE = #student_code#,
+		       STU_CARD_ID = #student_card#,
+		       STU_NAME = #student_name#,
+		       STU_SCHOOL = #student_school#,
+		       STU_CLASS = #student_class#,
+		       STU_SEX = #student_sex#,
+		       STU_BIRTH = TO_DATE(#student_birth#, 'YYYY-MM-DD'),
+		       STU_ADDRESS = #student_address#,
+		       TEACHER_NAME = #teacher_name#,
+		       TEACHER_TEL = #teacher_tel#,
+		       RELATIVE_NAME = #relative_name#,
+		       RELATIVE_TYPE = #relative_type#,
+		       RELATIVE_TEL = #relative_tel#,
+		       STU_REMARK = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       SITE_DESC = #siteDesc#,
+		       STU_PROVINCE = #studentProvince#,
+		       STU_CITY = #studentCity#,
+		       STU_DISTRICT = #studentDistrict#
+		 WHERE STU_ID = #student_id#
+	</update>
+	
+	<select id="getInUseCount" parameterClass="studentsInfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_XC_VSS_T T WHERE T.STUDENT_ID = #student_id#   
+	</select>
+	
+	<update id="deletebyStudentId" parameterClass="studentsInfo">
+	   UPDATE CLW_XC_STUDENT_T 
+		  SET VALID_FLAG='1',
+		      VASET_USER_ID=#vaset_user_id#,
+		      MODIFY_TIME    = SYSDATE,
+		      VASET_TIME=SYSDATE
+	    WHERE STU_ID = #student_id#
+	</update>
+	
+	<update id="updateStudentCardById" parameterClass="Map">
+	    UPDATE CLW_XC_STUDENT_T
+		   SET STU_CARD_ID = #studentCard#,
+		       MODIFY_TIME    = SYSDATE
+		 WHERE STU_ID = #studentId#
+	</update>
+</sqlMap>

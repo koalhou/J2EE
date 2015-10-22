@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Account">
+
+	
+	<select id="getSeq" parameterType="string" resultType="int">
+		select ${value}.nextval from dual
+	</select>
+	
+	<select id="verifyPhone" parameterType="string" resultType="int">
+		select count(*) from CLW_BSP_ACCOUNT_T a where a.account_phone=#{value}
+	</select>
+	
+	<select id="verifyEmail" parameterType="string" resultType="int">
+		select count(*) from CLW_BSP_ACCOUNT_T a where a.account_email=#{value}
+	</select>
+	
+	<select id="verifyAccountName" parameterType="string" resultType="int">
+		select count(*) from CLW_BSP_ACCOUNT_T a where a.account_name=#{value}
+	</select>
+
+	<!-- 添加用户 -->
+	<insert id="addAccount" parameterType="UserInfo"  >
+		insert into CLW_BSP_ACCOUNT_T(ACCOUNT_ID,ACCOUNT_PWD,ACCOUNT_PHONE,ACCOUNT_NAME,ACCOUNT_CODE) values (#{id},#{pwd},#{phone},#{name}, #{no})
+	</insert>
+	<!-- 添加家长 -->
+	<select id="getParentsOrgInfo" parameterType="string"  resultType="UserInfo">
+		select a.stu_address as addr,a.relative_name xinming from CLW_XC_STUDENT_T a  where  a.relative_tel=#{value}
+	</select>
+	<insert id="addParents" parameterType="UserInfo" >
+		insert into CLW_JZ_USER_T (ACCOUNT_ID,TELE_NO,USER_NAME,ADDRESS) values (#{id},#{phone},#{xinming,jdbcType=VARCHAR},#{addr,jdbcType=VARCHAR})
+	</insert>
+	<!-- 添加学生 -->
+	<insert id="addStudent" parameterType="string">
+		insert into CLW_JZ_STUDENT_T (stu_id)  values (#{id})
+	</insert>
+	<!-- 添加用户学生关系 -->
+	<insert id="addParentStudent" parameterType="Child">
+		insert into CLW_JZ_JZSTU_T (RELATION_ID,PAR_ID,STU_ID,ISMAIN)   values (seq_clw_jz_jzstu_t_id.nextval,#{pid},#{id},#{addr,jdbcType=VARCHAR})
+	</insert>
+	<!-- 检查密码 -->
+	<select id="countByPwd" parameterType="UserInfo" resultType="int">
+		select count(*) from  CLW_BSP_ACCOUNT_T where ACCOUNT_PWD=#{pwd} and ACCOUNT_ID=#{id} 
+	</select>
+		<!-- 重置密码 -->
+	<insert id="resetPwd" parameterType="UserInfo">
+		update CLW_BSP_ACCOUNT_T set ACCOUNT_PWD=#{pwd} 
+		where <if test="phone != null">ACCOUNT_PHONE=#{phone}</if>  <if test="email != null">ACCOUNT_EMAIL=#{email}</if> 
+	</insert>
+	<!-- 设置新密码 -->
+	<update id="updatePwd" parameterType="UserInfo">
+		update CLW_BSP_ACCOUNT_T set ACCOUNT_PWD=#{pwd} where ACCOUNT_ID=#{id}  and ACCOUNT_PWD=#{alias}
+	</update>	
+	
+	
+	<update id="updateUser" parameterType="UserInfo" >
+		update CLW_JZ_USER_T a set a.sex=#{sex,jdbcType=VARCHAR},a.address=#{addr,jdbcType=VARCHAR},a.user_name=#{xinming,jdbcType=VARCHAR},
+		a.email=#{email,jdbcType=VARCHAR},a.file_id=#{photo,jdbcType=VARCHAR}
+		where a.account_id=#{id}
+	</update>
+	
+	
+	
+	<!-- 根据token查找用户  -->
+	<select id="getIDByToken"  parameterType="string"  resultType="UserSeesion">
+		 select a.account_id as id, a.refresh_token as refreshToken,a.token_expire_time  expireTime, to_number(a.token_expire_time-sysdate) * 24 * 60   as expire   from CLW_JZ_USERPUSH_T  a
+		  where a.able=1 and a.access_token=#{accessToken}
+	</select>
+	
+	<insert id="addToken" parameterType="UserInfo">
+		insert into CLW_JZ_USERPUSH_T values (#{id},#{accessToken},#{refreshToken},#{expireTime},1,null,sysdate,null)
+	</insert>
+	<update id="updateToken" parameterType="UserInfo">
+		update CLW_JZ_USERPUSH_T d set   
+			modify_time=sysdate,
+			<if test="accessToken != null" >d.access_token =#{accessToken},</if>
+			<if test="refreshToken != null">d.refresh_token = #{refreshToken},</if>
+			<if test="expireTime != null">d.token_expire_time = #{expireTime},</if>
+			<if test="able != null">d.able = #{able}</if>
+	     where   d.account_id=#{id}
+	</update>
+	<update id="refreshToken" parameterType="UserInfo">
+		update CLW_JZ_USERPUSH_T  set   
+			modify_time=sysdate,token_expire_time = #{expireTime}
+	     where   access_token=#{accessToken} and able=1 and refresh_token = #{refreshToken}
+	</update>
+	<update id="bindClient" parameterType="UserInfo">
+		update CLW_JZ_USERPUSH_T  set   
+			modify_time=sysdate,client_id = #{clientID}
+	     where   account_id=#{id} and able=1 
+	</update>
+
+	
+	<!-- 登陆时获取用户信息 -->
+	<select id="login" parameterType="UserInfo" resultType="UserInfo">
+		select 
+         a.account_id as id,
+         a.account_code as no,
+         a.account_name as name,
+         b.user_name as xinming,
+         b.sex,
+         b.file_id as  photo,
+         a.account_phone as phone,
+         a.account_email as email,
+         b.address as addr
+  
+    from CLW_BSP_ACCOUNT_T a, CLW_JZ_USER_T b
+	 where a.account_id = b.account_id
+	   and  a.account_pwd=#{pwd} 
+		   and (  a.account_phone=#{alias} or a.account_name=#{alias}  or to_char(a.account_code)= #{alias})
+	</select>
+	<!-- 根据登陆id获取用户信息 -->
+	<select id="getLoginByID" parameterType="string" resultType="UserInfo">
+		select  distinct
+	         a.account_id as id,
+	         a.account_code as no,
+	         a.account_alias as alias,
+	         b.user_name as xinming,
+	         b.sex,
+	         b.file_id as  photo,
+	         a.account_phone as phone,
+	         a.account_email as email,
+	          a.account_name  as name,
+	         b.address as addr
+	  
+	    from CLW_BSP_ACCOUNT_T a, CLW_JZ_USER_T b
+	   where a.account_id = b.account_id and a.account_id=#{value} 
+	    
+	</select>
+	<!-- 获取授权的主账号 -->
+	<select id="getMainPareant" parameterType="string" resultType="Account">
+		select  b.account_id as id,b.account_code as code, b.account_name as name
+		  from CLW_JZ_JZSTU_T a, CLW_BSP_ACCOUNT_T b
+		 where a.par_id = b.account_id
+		   and a.stu_id = (select stu_id from CLW_JZ_JZSTU_T where par_id = #{value})
+		   and a.ismain = 1
+	</select>
+	<!-- 用户反馈 -->
+	<insert id="insertAdviseInfo" parameterType="UserInfo">
+        INSERT INTO CLW_JZ_PROPOSE_T (
+			ID,
+  			USER_ID,
+  			CREATE_TIME,
+  			CONT)  
+        VALUES   (SEQ_CLW_JZ_PROPOSE_T.nextval,
+        		  #{id},
+                  sysdate,
+                  #{alias})
+	</insert>
+</mapper>

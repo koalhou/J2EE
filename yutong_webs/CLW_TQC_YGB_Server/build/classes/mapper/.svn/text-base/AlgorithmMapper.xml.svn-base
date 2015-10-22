@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Algorithm">
+
+	<select id="getStationGenAlgorithmParamByVin" parameterType="String" resultType="com.yutong.axxc.tqc.entity.distance.StationGenAlgorithmParam">
+		select param_name paramName, param_desc paramDesc,
+		param_value paramValue,
+		enterprise_id enterpriseId, organization_id
+		organizationId,
+		Vehicle_Vin vin
+		from CLW_JZ_SITE_CALC_PARAM_T where
+		Vehicle_Vin = #{vin}
+	</select>
+
+	<select id="getStationGenAlgorithmParamByOrganization" parameterType="String" resultType="com.yutong.axxc.tqc.entity.distance.StationGenAlgorithmParam">
+		select param_name paramName,
+		param_desc paramDesc,
+		param_value paramValue,
+		enterprise_id
+		enterpriseId, organization_id
+		organizationId,
+		Vehicle_Vin vin
+		from
+		CLW_JZ_SITE_CALC_PARAM_T where
+		organization_id = #{organizationId}
+	</select>
+
+	<select id="getStationGenAlgorithmParamByDefault" resultType="com.yutong.axxc.tqc.entity.distance.StationGenAlgorithmParam">
+		select param_name paramName, param_desc paramDesc,
+		param_value
+		paramValue, enterprise_id enterpriseId, organization_id
+		organizationId, Vehicle_Vin vin
+		from CLW_JZ_SITE_CALC_PARAM_T where
+		enterprise_id =
+		'00000000-0000-0000-0000-000000000000'
+	</select>
+
+	<select id="getStationGenAlgorithmParamByEnterprise" parameterType="String" resultType="com.yutong.axxc.tqc.entity.distance.StationGenAlgorithmParam">
+		select param_name paramName,
+		param_desc paramDesc,
+		param_value paramValue, enterprise_id
+		enterpriseId, organization_id
+		organizationId, Vehicle_Vin vin
+		from
+		CLW_JZ_SITE_CALC_PARAM_T where
+		enterprise_id = #{enterpriseId}
+	</select>
+
+<!-- 	<select id="getSitesByStuId" parameterType="map" resultType="com.yutong.axxc.tqc.entity.distance.Site">
+		select
+		s.site_id,S.SITE_LATITUDE,S.SITE_LONGITUDE,S.SITE_REMARK,S.SITE_NAME,S.CONTROL_STATION,
+		rs.rs_order from clw_xc_vss_t v
+		inner join clw_xc_site_t s on v.site_id
+		= s.site_id
+		inner join clw_xc_routesite_T rs on rs.site_id = s.site_Id
+		and rs.route_id
+		= v.route_id
+		where v.student_id = #{stuId} and
+		s.CONTROL_STATION = #{controlStation} and
+		s.valid_flag = 0 order by
+		CONTROL_STATION, rs.rs_order
+	</select> -->
+
+	<select id="getVehicleByStuId" parameterType="int" resultType="com.yutong.axxc.tqc.entity.distance.Vehicle">
+		select b.Vehicle_Vin vin, B.VEHICLE_LN ln,B.ENTERPRISE_ID
+		enterpriseid,B.ORGANIZATION_ID organizationid from
+		(select Vehicle_Vin
+		from (select Vehicle_Vin,modify_time from
+		CLW_XC_VSS_T where STUDENT_ID
+		= #{stuId} order by modify_time desc)
+		where rownum = 1) v
+		inner join
+		CLW_CL_BASE_INFO_T b on v.vehicle_vin = b.vehicle_vin
+	</select>
+
+	<select id="getVehicle" parameterType="String" resultType="com.yutong.axxc.tqc.entity.distance.Vehicle">
+		select vehicle_vin Vin,vehicle_ln Ln, c.enterprise_id
+		enterpriseid,C.ORGANIZATION_ID organizationid from clw_cl_base_info_t
+		c inner join clw_jc_enterprise_t e on c.enterprise_id =
+		e.enterprise_id where c.valid_flag = 0 and e.valid_flag = 0 and
+		c.vehicle_vin = #{vin}
+	</select>
+
+	<select id="getLastCheckRecordSampleDate" parameterType="map" resultType="Date">
+		select terminal_date from (select
+		distinct(trunc(terminal_time))
+		terminal_date from
+		CLW_XC_ST_CHECK_RECORD_T where vehicle_vin = #{vin}
+		and
+		terminal_time <![CDATA[<]]>
+		trunc(#{date}) and longitude != 'FFFF' and latitude != 'FFFF' and
+		longitude is not null and Latitude is not null order by
+		terminal_date
+		desc) where rownum = 1
+	</select>
+
+	<select id="getTerminalRecordDetail" parameterType="map" resultType="com.yutong.axxc.tqc.entity.distance.VehicleTrack">
+		select vehicle_vin vin, longitude,latitude, mileage,terminal_time
+		terminalTime from CLWXC.CLW_YW_TERMINAL_RECORD_T
+		partition(terminal_record_#{partition})
+		where Mileage is not null and
+		vehicle_vin = #{vin} and
+		<if test="type == 0">
+			to_number(to_char(terminal_time,'hh24')) <![CDATA[<]]>
+			#{upOrDownHour}
+		</if>
+		<if test="type == 1">
+			to_number(to_char(terminal_time,'hh24')) <![CDATA[>=]]>
+			#{upOrDownHour}
+		</if>
+		and longitude is not null and latitude is not null and
+		longitude !=
+		'FFFF' and latitude != 'FFFF' order by terminalTime
+	</select>
+
+	<select id="executeSql" parameterType="map" resultType="com.yutong.axxc.tqc.entity.distance.VehicleTrack">
+		${sql}
+	</select>
+
+	<select id="getVehicleTrack" parameterType="map" resultType="com.yutong.axxc.tqc.entity.distance.VehicleTrack">
+		select trip_id tripId, type, vehicle_vin vin,
+		longitude,latitude,
+		Mileage,orbit_time terminalTime, create_time
+		createdate from
+		CLW_JZ_TripOrbit_T where vehicle_vin = #{vin} and type
+		= #{type}
+	</select>
+
+	<select id="getStudentState" parameterType="int" resultType="int">
+		select STU_STATE from CLw_JZ_STUDENT_T where STU_ID = #{stuId}
+	</select>
+
+	<select id="getVehicleRealtimeInfo" parameterType="map"	resultType="VehicleReal">
+		with trip_exe as
+		 (select distinct e.vehicle_vin,e.route_id
+		    from clw_tqc.tqc_trip_execute e
+		   where e.route_id = ${LINE_ID}
+		     and e.vehicle_vin = '${VEHICLE_VIN}'
+		     and e.exe_date = trunc(sysdate,'dd')
+		     and e.status = 1)
+		SELECT t.VEHICLE_VIN,
+		       c.vehicle_code as vehicle_number,
+		       t.LATITUDE,
+		       t.LONGITUDE,
+		       t.DIRECTION,
+		       to_char(t.update_time, 'yyyymmddhh24miss') as update_time,
+		       t.fire_up_state,
+		       decode(vehicle_speed, null, gps_speeding, vehicle_speed) speed,
+		       stat_info as status
+		  FROM  trip_exe,clw_tqc.CLW_JC_TERMINAL_T t,clw_tqc.clw_cl_base_info_t c 
+		 WHERE t.vehicle_vin = '${VEHICLE_VIN}'
+		   and t.vehicle_vin = c.vehicle_vin
+		   and t.vehicle_vin = trip_exe.vehicle_vin
+		   and t.route_id = trip_exe.route_id
+		   and t.LATITUDE is not null
+		   and t.LONGITUDE is not null
+	</select>
+	<select id="getDriverByVehicleAndLine" parameterType="map"	resultType="Driver">
+		with trip_exe as
+		 (select distinct e.vehicle_vin,e.route_id,e.driver_id
+		    from clw_tqc.tqc_trip_execute e
+       where e.route_id = '${LINE_ID}'
+         and e.vehicle_vin = '${VEHICLE_VIN}'
+         and e.exe_date = trunc(sysdate,'dd'))
+    SELECT d.driver_id,
+    	   trip_exe.VEHICLE_VIN,
+           c.vehicle_code as vehicle_number,
+           d.driver_name,
+           d.driver_tel,
+           d.photo_name as url,
+           d.driver_license as emp_code,
+           d.driver_photo as photoContent
+      FROM  trip_exe ,clw_tqc.clw_cl_base_info_t c ,clw_tqc.clw_yw_driver_t d
+     WHERE trip_exe.vehicle_vin = c.vehicle_vin
+     and   trip_exe.driver_id = d.driver_id
+     and   c.valid_flag = '0'
+	</select>
+
+</mapper>

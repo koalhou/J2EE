@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="messagemanage" namespace="/message" extends="clw-default">
+		<!-- 2.0历史消息入口 -->
+		<action name="initmessage" class="messageSendAction" method="init">
+			<result name="error">/WEB-INF/jsp/sysmanage/systools/messagesend/newmessageList.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/systools/messagesend/newmessageList.jsp</result>	
+		</action>
+	</package>
+
+	
+	<package name="messagepkg" namespace="/messagepkg" extends="json-default">
+       <!-- 2.0下发消息列表 -->
+       <action name="newmessagesendflexgrid" class="messageSendAction"  method="newmessageSendList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       
+       
+       <action name="exportMessage" class="messageSendAction" method="exportMessage">   
+		</action>
+	</package>
+
+</struts>

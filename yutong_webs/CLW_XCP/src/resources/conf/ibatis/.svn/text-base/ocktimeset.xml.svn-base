@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OckTimeSet">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="ocktimeset"
+		type="com.neusoft.clw.sysmanage.sysset.ocktimeset.domain.OckTimeSet" />
+   
+     <resultMap class="ocktimeset" id="ocktimeset-result">
+       <result property="check_time_id" column="CHECK_TIME_ID"/>
+       <result property="check_time_code" column="CHECK_TIME_CODE"/>
+       <result property="check_time_desc" column="CHECK_TIME_DESC"/>
+       <result property="start_time" column="START_TIME"/>
+       <result property="end_time" column="END_TIME"/>
+       <result property="creater" column="CREATER"/>
+       <result property="create_time" column="CREATE_TIME"/>
+       <result property="modifier" column="MODIFIER"/>
+       <result property="modify_time" column="MODIFY_TIME"/>
+       <result property="valid_flag" column="VALID_FLAG"/>
+       <result property="vaset_user_id" column="VASET_USER_ID"/>
+       <result property="vaset_time" column="VASET_TIME"/>
+ 	   <result property="enterprise_id" column="ENTERPRISE_ID"/>
+    </resultMap>
+    
+	<!-- 获取考核油耗月度数量 -->
+    <select id="getCount" parameterClass="ocktimeset" resultClass="Integer">
+   		 SELECT COUNT(1)	FROM CLW_YW_OCKTIME_T 
+		   WHERE ENTERPRISE_ID=#enterprise_id# AND VALID_FLAG='0'
+		 <isNotEmpty prepend="AND" property="check_time_code">
+			CHECK_TIME_CODE like '%$check_time_code$%'
+         </isNotEmpty>
+	</select>
+	
+	<!-- 获取考核油耗月度列表 -->
+	<select id="getInfos" parameterClass="ocktimeset" resultMap="ocktimeset-result">
+		SELECT check_time_id, CHECK_TIME_CODE, CHECK_TIME_DESC, TO_CHAR(START_TIME,'YYYY-MM-DD HH24:MI:SS') START_TIME,
+  		TO_CHAR(END_TIME,'YYYY-MM-DD HH24:MI:SS') END_TIME, CREATER, TO_CHAR(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') CREATE_TIME,
+  		MODIFIER,TO_CHAR(MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') MODIFY_TIME,VALID_FLAG,VASET_USER_ID,
+  		TO_CHAR(VASET_TIME,'YYYY-MM-DD HH24:MI:SS') VASET_TIME,ENTERPRISE_ID
+  		FROM CLW_YW_OCKTIME_T 
+		WHERE ENTERPRISE_ID=#enterprise_id# AND VALID_FLAG='0'
+		 <isNotEmpty prepend="AND" property="check_time_code">
+			CHECK_TIME_CODE like '%$check_time_code$%'
+         </isNotEmpty>
+        <dynamic prepend="ORDER BY">  
+        	<isNotEmpty property="sortname">  
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		</dynamic>  
+	</select>
+	
+	<insert id="insertOckTimeSetInfo" parameterClass="ocktimeset">
+		INSERT INTO CLW_YW_OCKTIME_T(
+	    CHECK_TIME_ID, ENTERPRISE_ID, CHECK_TIME_CODE,CHECK_TIME_DESC, START_TIME,
+	    END_TIME, CREATER,CREATE_TIME, VALID_FLAG )
+	  	VALUES
+	  	(#check_time_id#,#enterprise_id#,#check_time_code#,#check_time_desc#,TO_DATE(#start_time#||'00:00:00','YYYY-MM-DD HH24:MI:SS'),
+	  	TO_DATE(#end_time#||'23:59:59','YYYY-MM-DD HH24:MI:SS'),#creater#,SYSDATE,'0')
+	</insert>
+	
+	<select id="getOckTimeSetInfo" parameterClass="String" resultMap="ocktimeset-result">
+		SELECT check_time_id, CHECK_TIME_CODE, CHECK_TIME_DESC, TO_CHAR(START_TIME,'YYYY-MM-DD') START_TIME,
+  		TO_CHAR(END_TIME,'YYYY-MM-DD') END_TIME, CREATER, TO_CHAR(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') CREATE_TIME,
+  		MODIFIER,TO_CHAR(MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') MODIFY_TIME,VALID_FLAG,VASET_USER_ID,
+  		TO_CHAR(VASET_TIME,'YYYY-MM-DD HH24:MI:SS') VASET_TIME,ENTERPRISE_ID
+  		FROM CLW_YW_OCKTIME_T 
+		WHERE CHECK_TIME_ID=#value#
+	</select>
+	
+	<update id="updatebyOckTimeSetid" parameterClass="ocktimeset">
+		UPDATE CLW_YW_OCKTIME_T
+		SET CHECK_TIME_CODE= #check_time_code#,
+		CHECK_TIME_DESC = #check_time_desc#,
+		START_TIME = TO_DATE(#start_time#||'00:00:00','YYYY-MM-DD HH24:MI:SS'),
+		END_TIME = TO_DATE(#end_time#||'23:59:59','YYYY-MM-DD HH24:MI:SS'),
+		MODIFIER= #modifier#,
+		MODIFY_TIME=SYSDATE
+	   	WHERE  CHECK_TIME_ID=#check_time_id#
+	</update>
+		
+	<update id="deletebyOckTimeSetid" parameterClass="ocktimeset">
+	   UPDATE CLW_YW_OCKTIME_T 
+	   SET VALID_FLAG='1',
+	   VASET_USER_ID= #vaset_user_id#,
+	   VASET_TIME=SYSDATE
+	   WHERE CHECK_TIME_ID=#check_time_id#
+	</update>
+	
+	<!-- 检查考核油耗月度唯一 -->
+    <select id="getCountforcode" parameterClass="ocktimeset" resultClass="Integer">
+   		 SELECT COUNT(1)	FROM CLW_YW_OCKTIME_T 
+		WHERE ENTERPRISE_ID=#enterprise_id# AND VALID_FLAG='0'
+		      and CHECK_TIME_CODE=#check_time_code#
+	</select>
+	
+	 <select id="getCountforoil" parameterClass="ocktimeset" resultClass="Integer">
+   		 select count(1) from clw_yw_ocktime_t yot,clw_yw_oil_check_t  yoc
+               where yot.check_time_id=yoc.check_time_code
+               and yoc.check_time_code=#check_time_id#
+               and yoc.valid_flag='0'
+	</select>
+		
+</sqlMap>

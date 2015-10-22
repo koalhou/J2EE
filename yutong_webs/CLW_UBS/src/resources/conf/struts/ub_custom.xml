@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	 
+	<!-- 企业客户活跃度action start -->
+	
+	
+	<package name="custom" namespace="/ub/custom" extends="clw-default">
+		
+		<!-- 初始化 -->
+		<action name="init" class="customerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/custom/custom.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/custom/custom.jsp
+			</result>
+		</action>
+		<action name="gotoSearch" class="customerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/custom/customResult.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/custom/customResult.jsp
+			</result>
+		</action>
+		<action name="entoverall" class="customerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/custom/entoverall.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/custom/entoverall.jsp
+			</result>
+		</action>
+		<action name="entaccount" class="customerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/custom/entaccount.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/custom/entaccount.jsp
+			</result>
+		</action>
+		<action name="entaccountsrv" class="customerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/custom/entaccount_srv.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/custom/entaccount_srv.jsp
+			</result>
+		</action>
+		<action name="entsrv" class="customerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/custom/entsrv.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/custom/entsrv.jsp
+			</result>
+		</action>
+	</package>
+	<package name="customjson" namespace="/ub/custom/json" extends="json-default">
+		<action name="getProvinceByArea" class="customerAction" method="getProvinceByArea">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<action name="getCityByProvince" class="customerAction" method="getCityByProvince">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 所有企业的服务柱状图 -->
+		<action name="getServiceVisBars" class="customerAction" method="getServiceVisBars">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 所有企业的服务表格 -->
+		<action name="getServiceVisGrid" class="customerAction" method="getServiceVisGrid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 企业的统计区域 -->
+		<action name="gatherAll" class="customerAction" method="gatherAll">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 企业的趋势图 -->
+		<action name="getLineChart" class="customerAction" method="getLineChart">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 所有企业的汇总表格 -->
+		<action name="getGrid" class="customerAction" method="getGrid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 各个企业访问情况列表 -->
+		<action name="getEveryEntInfo" class="customerAction" method="getEveryEntInfo">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 根据企业名称和编码搜索企业的访问情况 -->
+		<action name="search" class="customerAction" method="search">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个企业的gather -->
+		<action name="getOneGather" class="customerAction" method="getOneGather">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个企业的趋势图 -->
+		<action name="getOneLines" class="customerAction" method="getOneLines">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个企业的表格 -->
+		<action name="getOneGrid" class="customerAction" method="getOneGrid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 各个账户的统计表格 -->
+		<action name="getAccountGrid" class="customerAction" method="getAccountGrid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个账户的统计表格 -->
+		<action name="getOneAccountGrid" class="customerAction" method="getOneAccountGrid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个账户的柱状图 -->
+		<action name="getOneAccountBars" class="customerAction" method="getOneAccountBars">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个企业服务的柱状图 -->
+		<action name="getServiceVisBars4One" class="customerAction" method="getServiceVisBars4One">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+	</package>
+ 
+	<!-- 企业客户活跃度action end -->
+	 
+	
+</struts>

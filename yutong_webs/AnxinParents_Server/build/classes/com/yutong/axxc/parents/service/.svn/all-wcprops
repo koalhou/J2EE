@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service
+END
+BaseService.class
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/BaseService.class
+END
+DistanceService.class
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/DistanceService.class
+END
+AccountService.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/AccountService.class
+END
+RemindService.class
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/RemindService.class
+END
+EtagService.class
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/EtagService.class
+END
+LogService.class
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/LogService.class
+END
+SessionService.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/SessionService.class
+END
+ResourceService.class
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/ResourceService.class
+END
+RuleService.class
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/service/RuleService.class
+END

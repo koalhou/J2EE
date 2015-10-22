@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="overload">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="overloadInfo"
+		type="com.neusoft.clw.businessmanage.overload.domain.OverloadInfo" />
+
+
+	<!-- 获取超载列表条数 -->
+	<select id="getOverloadCount" parameterClass="overloadInfo"
+		resultClass="Integer">
+		SELECT COUNT(1)
+		from CLW_YW_PHOTO_T B, CLW_CL_BASE_INFO_T C,CLW_JC_USER_T USR
+		where C.VALID_FLAG = '0'
+		AND C.DEVICE_TYPE = '0'
+		AND B.VEHICLE_VIN = C.VEHICLE_VIN
+		AND B.PHOTO_FALG='1'
+		AND B.FLAG_USER=USR.USER_ID(+)
+		AND C.ORGANIZATION_ID IN
+		(SELECT ENTERPRISE_ID
+		FROM CLW_JC_ENTERPRISE_VI
+		WHERE LEFT_NUM >=
+		(SELECT LEFT_NUM
+		FROM CLW_JC_ENTERPRISE_VI
+		WHERE ENTERPRISE_ID = #organization_id#)
+		AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+		)
+		<isNotEmpty prepend="AND" property="vehicle_ln">
+			upper(C.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+            B.FLAG_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            B.FLAG_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="user_name">
+             USR.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+          </isNotEmpty>
+	</select>
+	
+	<!-- 获取超载列表 -->
+	<select id="getoverloadList" parameterClass="overloadInfo" resultClass="overloadInfo">
+      SELECT 
+      B.PHOTO_ID,
+      B.VEHICLE_VIN,
+      C.VEHICLE_LN,
+      TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+      TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME,
+      B.PHOTO_DESC,
+      B.PHOTO_FILE,
+      D.USER_NAME
+      FROM CLW_YW_PHOTO_T        B,
+           CLW_CL_BASE_INFO_T    C,
+           CLW_JC_USER_T         D
+      WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+       AND C.VALID_FLAG = '0'
+       AND C.DEVICE_TYPE = '0'
+       AND B.PHOTO_FALG='1'
+       AND B.FLAG_USER = D.USER_ID(+)
+       AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+              upper(C.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="end_time">
+            b.FLAG_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            b.FLAG_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="user_name">
+             D.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+         </isNotEmpty>
+	  <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>  
+	</select>
+	
+	<!-- 导出超载列表 -->
+	<select id="expoverloadList" parameterClass="overloadInfo" resultClass="overloadInfo">
+      SELECT 
+      C.VEHICLE_LN,
+      TO_CHAR(B.FLAG_TIME, 'YYYY-MM-DD HH24:MI:SS') FLAG_TIME,
+      TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+      B.PHOTO_DESC,
+      D.USER_NAME
+      FROM CLW_YW_PHOTO_T        B,
+           CLW_CL_BASE_INFO_T    C,
+           CLW_JC_USER_T         D
+      WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+       AND C.VALID_FLAG = '0'
+       AND C.DEVICE_TYPE = '0'
+       AND B.PHOTO_FALG='1'
+       AND B.FLAG_USER = D.USER_ID(+)
+       AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+              upper(C.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="end_time">
+            b.FLAG_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            b.FLAG_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="user_name">
+              D.USER_NAME LIKE '%' || #user_name# ||'%' escape '\'
+         </isNotEmpty>
+	  <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>  
+	</select>
+	
+	
+	<!-- 获取拍照列表 -->
+	<select id="getPhotoView" parameterClass="java.util.Map" resultClass="photoMonitorInfo">
+      select b.vehicle_vin,
+       c.vehicle_ln,
+       c.vehicle_code,
+       b.CHANNEL_NUMBER as chanle_code,
+       to_char(b.photo_time, 'yyyy-mm-dd hh24:mi:ss') photo_time,
+       b.photo_event,
+       b.photo_file,
+       b.photo_falg,
+       b.photo_desc
+  from CLW_YW_PHOTO_T        B,
+       CLW_CL_BASE_INFO_T    C
+ where B.vehicle_vin = c.vehicle_vin
+   AND B.PHOTO_ID=#photo_id#
+	</select>
+	
+	</sqlMap>

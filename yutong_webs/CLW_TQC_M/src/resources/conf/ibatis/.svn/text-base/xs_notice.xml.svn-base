@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NoticeManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="NoticeMana" type="com.neusoft.clw.yw.xs.noticemanage.domain.AjtNotice" />
+	<typeAlias alias="AccessoryInfo" type="com.neusoft.clw.yw.common.ds.AccessoryInfo" />
+	
+    <resultMap class="NoticeMana" id="notict_result">
+       <result property="notice_theme" column="NOTICE_THEME"/>
+       <result property="notice_type" column="NOTICE_TYPE"/>
+       <result property="publish_user" column="USER_NAME"/>
+       <result property="publish_time" column="PUBLISH_TIME"/>
+       <result property="notice_status" column="NOTICE_STATUS"/>
+       <result property="notice_id" column="NOTICE_ID"/>
+    </resultMap>
+    
+    <resultMap class="NoticeMana" id="notict_result_byid">
+       <result property="notice_theme" column="NOTICE_THEME"/>
+       <result property="notice_type" column="NOTICE_TYPE"/>
+       <result property="notice_content" column="NOTICE_CONTENT"/>
+       <result property="notice_status" column="NOTICE_STATUS"/>
+       <result property="publish_user" column="USER_NAME"/>
+       <result property="publish_time" column="PUBLISH_TIME"/>
+       <result property="creater" column="CREATER"/>
+    </resultMap>
+    
+    <resultMap class="AccessoryInfo" id="notict_accessories_byid">
+       <result property="accessoryName" column="ACCESSORY_NAME"/>
+       <result property="accessoryId" column="ACCESSORY_ID"/>
+    </resultMap>
+    
+    <resultMap class="AccessoryInfo" id="notict_accessoriescontent_byid">
+       <result property="accessoryName" column="ACCESSORY_NAME"/>
+       <result property="accessoryContent" column="ACCESSORY_CONTENT" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler" />
+    </resultMap>
+    <!-- 企业公告列表条数 -->
+    <select id="getNoticeCount" parameterClass="NoticeMana" resultClass="Integer">
+		SELECT count(1) FROM (
+		SELECT
+			cyen.NOTICE_ID,
+		    cyen.NOTICE_THEME ,
+		    cyen.NOTICE_TYPE ,
+		    cju.USER_NAME ,
+		    to_char (
+		        cyen.PUBLISH_TIME ,
+		        'yyyy-MM-dd HH24:MI:SS'
+		    ) PUBLISH_TIME ,
+		    cyen.NOTICE_STATUS
+		FROM
+		    CLW_YW_AJT_NOTICE_T cyen ,
+		    CLW_JC_USER_T cju
+		WHERE
+		    cyen.PUBLISH_USER = cju.USER_ID
+		    and cyen.PUBLISH_USER=#publish_user#
+		    and cyen.VALID_FLAG='0'
+		    <isNotEmpty prepend="AND" property="publish_time">
+				to_char(cyen.PUBLISH_TIME,'yyyy-mm-dd')=#publish_time#
+			</isNotEmpty>		    
+		UNION 
+		SELECT
+			cyen.NOTICE_ID,
+		    cyen.NOTICE_THEME ,
+		    cyen.NOTICE_TYPE ,
+		    cju.USER_NAME ,
+		    to_char (
+		        cyen.PUBLISH_TIME ,
+		        'yyyy-MM-dd HH24:MI:SS'
+		    ) PUBLISH_TIME ,
+		    cyen.NOTICE_STATUS
+		FROM
+		    CLW_YW_AJT_NOTICE_T cyen ,
+		    CLW_JC_USER_T cju
+		WHERE
+		    cyen.PUBLISH_USER = cju.USER_ID
+		    and cyen.NOTICE_STATUS='1'
+		    and cyen.VALID_FLAG='0'
+		    <isNotEmpty prepend="AND" property="publish_time">
+				to_char(cyen.PUBLISH_TIME,'yyyy-mm-dd')=#publish_time#
+			</isNotEmpty>		    
+		)
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="notice_theme">
+			NOTICE_THEME like '%$notice_theme$%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="notice_type">
+			NOTICE_TYPE=#notice_type#
+		</isNotEmpty>
+	</select>
+	<!-- 企业公告列表信息-->
+	<select id="getNoticeInfos" parameterClass="NoticeMana" resultMap="notict_result">
+		SELECT NOTICE_ID,NOTICE_THEME,NOTICE_TYPE,USER_NAME,PUBLISH_TIME,NOTICE_STATUS FROM (
+		SELECT
+			cyen.NOTICE_ID,
+		    cyen.NOTICE_THEME ,
+		    cyen.NOTICE_TYPE ,
+		    cju.USER_NAME ,
+		    to_char (
+		        cyen.PUBLISH_TIME ,
+		        'yyyy-MM-dd HH24:MI:SS'
+		    ) PUBLISH_TIME ,
+		    cyen.NOTICE_STATUS
+		FROM
+		    CLW_YW_AJT_NOTICE_T cyen ,
+		    CLW_JC_USER_T cju
+		WHERE
+		    cyen.PUBLISH_USER = cju.USER_ID
+		    and cyen.PUBLISH_USER=#publish_user#
+		    and cyen.VALID_FLAG='0'
+		    <isNotEmpty prepend="AND" property="publish_time">
+				to_char(cyen.PUBLISH_TIME,'yyyy-mm-dd')=#publish_time#
+			</isNotEmpty>		    
+		UNION 
+		SELECT
+			cyen.NOTICE_ID,
+		    cyen.NOTICE_THEME ,
+		    cyen.NOTICE_TYPE ,
+		    cju.USER_NAME ,
+		    to_char (
+		        cyen.PUBLISH_TIME ,
+		        'yyyy-MM-dd HH24:MI:SS'
+		    ) PUBLISH_TIME ,
+		    cyen.NOTICE_STATUS
+		FROM
+		    CLW_YW_AJT_NOTICE_T cyen ,
+		    CLW_JC_USER_T cju
+		WHERE
+		    cyen.PUBLISH_USER = cju.USER_ID
+		    and cyen.NOTICE_STATUS='1'
+		    and cyen.VALID_FLAG='0'
+		    <isNotEmpty prepend="AND" property="publish_time">
+				to_char(cyen.PUBLISH_TIME,'yyyy-mm-dd')=#publish_time#
+			</isNotEmpty>		    
+		)
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="notice_theme">
+			NOTICE_THEME like '%$notice_theme$%'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="notice_type">
+			NOTICE_TYPE=#notice_type#
+		</isNotEmpty>
+	  	<dynamic prepend="ORDER BY">  
+	     <isNotEmpty property="sortname">  
+	      $sortname$   $sortorder$  
+	     </isNotEmpty>  
+	    </dynamic>    
+	</select>
+	<!-- 发布企业公告 -->
+	<insert id="saveNoticePublishInfos" parameterClass="NoticeMana">
+		INSERT INTO CLW_YW_AJT_NOTICE_T
+		(NOTICE_ID,NOTICE_TYPE,NOTICE_THEME,NOTICE_CONTENT,
+		NOTICE_STATUS,PUBLISH_USER,PUBLISH_TIME,ACCESSORY_FLAG,
+		CREATER,CREATE_TIME,CREATE_SYSTEM,VALID_FLAG)
+		VALUES
+		(#notice_id#,#notice_type#,#notice_theme#,#notice_content,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+		 '1',#publish_user#,SYSDATE,'0',#creater#,SYSDATE,'0','0')
+	</insert>
+	<!-- 暂存布企业公告 -->
+	<insert id="saveNoticeUnPublishInfos" parameterClass="NoticeMana">
+		INSERT INTO CLW_YW_AJT_NOTICE_T
+		(NOTICE_ID,NOTICE_TYPE,NOTICE_THEME,
+		NOTICE_CONTENT,NOTICE_STATUS,PUBLISH_USER,
+		ACCESSORY_FLAG,CREATER,CREATE_TIME,CREATE_SYSTEM,VALID_FLAG)
+		VALUES
+		(#notice_id#,#notice_type#,#notice_theme#,#notice_content,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+		'0',#publish_user#,'0',#creater#,SYSDATE,'0','0')
+	</insert>
+	<!-- 添加企业公告附件 -->
+	<insert id="saveNoticeAccessories" parameterClass="AccessoryInfo">
+		INSERT INTO CLW_YW_ACCESSORY_T T
+          (T.ACCESSORY_ID,
+           T.NOTICE_ID,
+           T.ACCESSORY_NAME,
+           T.ACCESSORY_CONTENT,
+           T.ACCESSORY_TYPE)
+        VALUES
+          (#accessoryId#, 
+           #noticeId#, 
+           #accessoryName#, 
+           #accessoryContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#, 
+           '0')
+	</insert>
+	
+	<!-- 取消企业公告（删除附件） -->
+	<delete id="deleteNoticeAccessoriesByID" parameterClass="String">
+		DELETE
+		FROM
+		    CLW_YW_ACCESSORY_T
+		WHERE
+		    NOTICE_ID = #noticeId#
+	</delete>
+	
+	<!-- 根据公告ID查询企业公告信息 -->
+	<select id="getNoticeInfosByID" parameterClass="String" resultMap="notict_result_byid">
+    	SELECT
+		    cyen.NOTICE_THEME ,
+		    cyen.NOTICE_CONTENT ,
+		    cyen.NOTICE_TYPE ,
+		    cju.USER_NAME ,
+		    to_char (
+		        cyen.PUBLISH_TIME ,
+		        'yyyy-MM-dd  HH24:MI:SS'
+		    ) PUBLISH_TIME ,
+		    cyen.NOTICE_STATUS,
+		    cyen.CREATER
+		FROM
+		    CLW_YW_AJT_NOTICE_T cyen ,
+		    CLW_JC_USER_T cju
+		WHERE
+		    cyen.PUBLISH_USER = cju.USER_ID
+		    and cyen.NOTICE_ID = #notice_id#
+	</select>
+	<!-- 根据公告ID查询企业公告附件 -->
+	<select id="getNoticeAccessoriesByID" parameterClass="String" resultMap="notict_accessories_byid">
+		SELECT
+			    ACCESSORY_ID,
+			    ACCESSORY_NAME
+		FROM
+			    CLW_YW_ACCESSORY_T
+		WHERE
+    		NOTICE_ID = #noticeId#
+	</select>
+	<!-- 根据附件ID查询附件信息 -->
+	<select id="getAccessoriesContent" parameterClass="String" resultMap="notict_accessoriescontent_byid">
+		SELECT
+				ACCESSORY_NAME,
+			    ACCESSORY_CONTENT
+		FROM
+			    CLW_YW_ACCESSORY_T
+		WHERE
+    		ACCESSORY_ID = #accessoryId#
+	</select>
+	
+	<!-- 编辑页面下发布企业公告 -->
+	<update id="updateNoticePublishInfos" parameterClass="NoticeMana">
+		UPDATE CLW_YW_AJT_NOTICE_T 
+	   	SET NOTICE_TYPE=#notice_type#,
+		   	NOTICE_THEME=#notice_theme#,
+		   	NOTICE_CONTENT=#notice_content,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+		   	NOTICE_STATUS='1',
+		   	PUBLISH_USER=#publish_user#,
+		   	PUBLISH_TIME=SYSDATE,
+		   	ACCESSORY_FLAG='0',
+		   	MODIFIER=#modifier#,
+		    MODIFY_TIME=SYSDATE
+	    WHERE NOTICE_ID=#notice_id#
+	</update>
+	<!-- 编辑页面下暂存布企业公告 -->
+	<update id="updateNoticeUnPublishInfos" parameterClass="NoticeMana">
+		UPDATE CLW_YW_AJT_NOTICE_T 
+	   	SET NOTICE_TYPE=#notice_type#,
+		   	NOTICE_THEME=#notice_theme#,
+		   	NOTICE_CONTENT=#notice_content,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+		   	NOTICE_STATUS='0',
+		   	PUBLISH_USER=#publish_user#,
+		   	ACCESSORY_FLAG='0',
+		   	MODIFIER=#modifier#,
+		    MODIFY_TIME=SYSDATE
+	    WHERE NOTICE_ID=#notice_id#
+	</update>
+	<!-- 编辑页面下删除企业公告 -->
+	<update id="deleteNoticePublishInfos" parameterClass="NoticeMana">
+		UPDATE CLW_YW_AJT_NOTICE_T 
+		   	SET VALID_FLAG='1',
+	 		VASET_USER_ID=#vaset_user_id#,
+		    VASET_TIME=SYSDATE
+	    WHERE NOTICE_ID=#notice_id#
+	</update>
+	<!-- 根据公告ID查询企业公告附件ID(用于取消操作，记录原公告已上传附件ID) -->
+	<select id="getEditAccessoriesByID" parameterClass="String" resultClass="String">
+		SELECT
+			    wm_concat(ACCESSORY_ID) edit_accessory_ids
+		FROM
+			    CLW_YW_ACCESSORY_T
+		WHERE
+    		NOTICE_ID = #noticeId#
+	</select>
+	
+	<!-- 编辑页取消企业公告（删除附件） -->
+	<delete id="deleteEditNoticeAccessoriesByID" parameterClass="NoticeMana">
+		DELETE
+		FROM
+		    CLW_YW_ACCESSORY_T cyat
+		WHERE
+			NOTICE_ID = #notice_id#
+		    and  not exists
+		    ( select '1' from (SELECT
+				    DISTINCT CASE
+				        WHEN instr (
+				            #edit_accessory_ids# ,
+				            ACCESSORY_ID
+				        ) > 0
+				        THEN ACCESSORY_ID
+				    END edit_accessory_ids
+				FROM
+				    CLW_YW_ACCESSORY_T) cyatd  where cyatd.edit_accessory_ids=cyat.ACCESSORY_ID)
+	</delete>
+		
+	<!-- DWR删除附件 -->
+	<delete id="deleteAccessoriesByID" parameterClass="String">
+		DELETE
+		FROM
+		    CLW_YW_ACCESSORY_T
+		WHERE
+		    ACCESSORY_ID = #accessoryId#
+	</delete>
+	
+	<!-- 废弃企业公告 -->
+	<update id="validNoticeByID" parameterClass="NoticeMana">
+	   UPDATE CLW_YW_AJT_NOTICE_T 
+	   SET NOTICE_STATUS='2',
+	       MODIFIER=#modifier#,
+	       MODIFY_TIME=SYSDATE
+	    WHERE NOTICE_ID=#notice_id#
+	</update>
+
+	<delete id="deleteAccessories" parameterClass="NoticeMana">
+		DELETE FROM CLW_YW_ACCESSORY_T T
+         WHERE T.ACCESSORY_ID IN ($delAccessoryIds$)
+	</delete>
+	
+</sqlMap>

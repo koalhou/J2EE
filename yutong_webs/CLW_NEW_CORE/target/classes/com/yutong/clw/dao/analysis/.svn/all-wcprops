@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis
+END
+TerminalInfoDAO.class
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/TerminalInfoDAO.class
+END
+SendCommandDAO.class
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/SendCommandDAO.class
+END
+VehicInfoDAO.class
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/VehicInfoDAO.class
+END
+ReportDAO.class
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/ReportDAO.class
+END
+AbstractDaoManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/AbstractDaoManager.class
+END
+AppDAO.class
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/AppDAO.class
+END
+TerminalBizDAO.class
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/dao/analysis/TerminalBizDAO.class
+END

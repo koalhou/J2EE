@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="drivermanage" namespace="/driver" extends="clw-default">
+		
+		<action name="drivermanage" class="driverAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/drivermanage/drivermanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/drivermanage/drivermanage.jsp</result>	
+		</action>
+		<action name="addriverbefore" class="driverAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/drivermanage/adddriver.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="driver_add" class="driverAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/adddriver.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addriverbefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>		
+		</action>
+		<action name="driver_edit_form" class="driverAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/drivermanage/alterdriver.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		
+		<action name="show_pic" class="driverAction" method="showDriverPhoto">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="driver_edit" class="driverAction" method="updateDriver">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/alterdriver.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/alterdriver.jsp
+			</result>			
+		</action>
+		<action name="driver_delete" class="driverAction" method="deleteDriver">
+			<result name="success" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="forbid" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/alterdriver.jsp
+			</result>			
+		</action>
+		
+		<action name="importDriverBefore" class="driverAction" method="importDriverBefore">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/driverImport.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<action name="importDriver" class="driverAction" method="importDriver">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/driverImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/drivermanage/driverImport.jsp
+			</result>
+		</action>
+		
+		<action name="exportDriver" class="driverAction" method="exportDriver">
+			<result name="error" type="redirect-action">
+				<param name="actionName">drivermanage</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		
+	</package>
+	<package name="driverGrid" namespace="/driverGrid" extends="json-default">
+		<action name="driverList" class="driverAction"  method="driverBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

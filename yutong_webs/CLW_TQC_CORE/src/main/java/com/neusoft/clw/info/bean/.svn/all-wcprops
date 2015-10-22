@@ -1,0 +1,179 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean
+END
+VehicHistoryTime.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/VehicHistoryTime.java
+END
+ClStatisticsBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/ClStatisticsBean.java
+END
+VehicleSpeed.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/VehicleSpeed.java
+END
+HisOverSpeed.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/HisOverSpeed.java
+END
+SendReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SendReq.java
+END
+RealTimeRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/RealTimeRecord.java
+END
+HisCalRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/HisCalRecord.java
+END
+CommandBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/CommandBean.java
+END
+AppBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/AppBean.java
+END
+BaddrivingDate.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/BaddrivingDate.java
+END
+SendLineReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SendLineReq.java
+END
+DayReport.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/DayReport.java
+END
+TerminalRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/TerminalRecord.java
+END
+SendLockReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SendLockReq.java
+END
+ClwSecData.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/ClwSecData.java
+END
+SendExceptionSettingReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SendExceptionSettingReq.java
+END
+RequestBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/RequestBean.java
+END
+TerminalBizRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/TerminalBizRecord.java
+END
+RotateSpeed.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/RotateSpeed.java
+END
+Minute5Data.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/Minute5Data.java
+END
+MobileInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/MobileInfo.java
+END
+ResponseBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/ResponseBean.java
+END
+RapidBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/RapidBean.java
+END
+SendNextHolesReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SendNextHolesReq.java
+END
+SummaryRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SummaryRecord.java
+END
+SmsData.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SmsData.java
+END
+SendHolesReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/SendHolesReq.java
+END
+VehicRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/VehicRecord.java
+END
+OnOffBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/bean/OnOffBean.java
+END

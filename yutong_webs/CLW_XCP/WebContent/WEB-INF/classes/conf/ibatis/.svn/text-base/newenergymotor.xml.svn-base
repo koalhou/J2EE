@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    <!-- 数据挖掘新__能源故障表 -->
+<sqlMap namespace="energyMotor">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="newEnergyMotor"
+		type="com.neusoft.clw.newenergy.newEnergyMotor.domain.EnergyMotor" />
+
+	<resultMap id="motor-result" class="newEnergyMotor">
+		<result property="dataId" column="id" />
+		<result property="vehicleVin" column="vehicle_vin" />
+		<result property="vehicleln" column="vehicle_ln" />
+		<result property="terminalTime" column="terminal_time" />
+		<result property="routeName" column="route_name" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="speed" column="speed" />
+	</resultMap>
+	<resultMap id="motorControl-result" class="newEnergyMotor" extends="motor-result">
+		<result property="mainMode" column="MAIN_MODE" />
+		<result property="mainTorqueOut" column="MAIN_TORQUE_OUT" />
+		<result property="mainRatote" column="MAIN_RATOTE" />
+		<result property="mainTemp" column="MAIN_TEMP"/>
+		<result property="mainControllerTemp" column="MAIN_CONTROLLER_TEMP" />
+		<result property="mainControllerC" column="MAIN_CONTROLLER_C"/>
+		<result property="mainControllerV" column="MAIN_CONTROLLER_V"/>
+		<result property="mainControllerTorqueIn" column="MAIN_CONTROLLER_TORQUE_IN"/>
+	</resultMap>
+	<!-- 新能源主电机控制器状态查询 -->
+	<select id="energyMotorControlList" parameterClass="Map" resultMap="motorControl-result">
+		 select motor.id,info.vehicle_ln,info.vehicle_vin,route.route_name,
+		 	case when instr(motor.MAIN_MODE,'F',1,1)>0
+		 	then '-'
+		 	else motor.MAIN_MODE
+		 	end MAIN_MODE,
+		 	case when instr(MAIN_TORQUE_OUT,'F',1,1)>0
+		 	then '-' else MAIN_TORQUE_OUT end MAIN_TORQUE_OUT,
+		 	case when instr(motor.MAIN_RATOTE,'F',1,1)>0
+		 	then '-' else motor.MAIN_RATOTE end MAIN_RATOTE,
+		 	case when instr(motor.MAIN_TEMP,'F',1,1)>0
+		 	then '-' else motor.MAIN_TEMP end MAIN_TEMP,
+		 	case when instr(motor.MAIN_CONTROLLER_TEMP,'F',1,1)>0
+		 	then '-' else motor.MAIN_CONTROLLER_TEMP end MAIN_CONTROLLER_TEMP,
+		 	case when instr(motor.MAIN_CONTROLLER_C,'F',1,1)>0
+		 	then '-' else motor.MAIN_CONTROLLER_C end MAIN_CONTROLLER_C,
+         	case when instr(motor.MAIN_CONTROLLER_V,'F',1,1)>0
+         	then '-' else motor.MAIN_CONTROLLER_V end MAIN_CONTROLLER_V,
+         	case when instr(motor.MAIN_CONTROLLER_TORQUE_IN,'F',1,1)>0
+         	then '-' else motor.MAIN_CONTROLLER_TORQUE_IN end MAIN_CONTROLLER_TORQUE_IN,
+         	to_char(terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time,
+         	motor.longitude,motor.latitude,motor.speed
+         from clw_newenergy_motor_t motor,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and motor.vehicle_vin = info.vehicle_vin(+) and motor.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             motor.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             motor.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ motor.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	motor.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = motor.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	<!-- 新能源主电机控制器状态查询总数量 -->
+	<select id="energyMotorControlListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		select info.vehicle_ln,info.vehicle_vin,motor.MAIN_MODE,motor.MAIN_TORQUE_OUT,
+			motor.MAIN_RATOTE,MAIN_TEMP,motor.MAIN_CONTROLLER_TEMP,motor.MAIN_CONTROLLER_C,
+			motor.MAIN_CONTROLLER_V,motor.MAIN_CONTROLLER_TORQUE_IN,motor.terminal_time,
+			motor.longitude,motor.latitude
+         from clw_newenergy_motor_t motor,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1 
+          and motor.vehicle_vin = info.vehicle_vin(+) and motor.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	         route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             motor.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             motor.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ motor.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	motor.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = motor.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+	
+	<resultMap id="motorISG-result" class="newEnergyMotor" extends="motor-result">
+		<result property="isgMode" column="ISG_MODE" />
+		<result property="isgTorqueOut" column="ISG_TORQUE_OUT" />
+		<result property="isgRatote" column="ISG_RATOTE" />
+		<result property="isgTemp" column="ISG_TEMP"/>
+		<result property="isgControllerTemp" column="ISG_CONTROLLER_TEMP" />
+		<result property="isgControllerC" column="ISG_CONTROLLER_C"/>
+		<result property="isgControllerV" column="ISG_CONTROLLER_V"/>
+		<result property="isgControllerTroqueIn" column="ISG_CONTROLLER_TORQUE_IN"/>
+	</resultMap>
+	<!-- 新能源ISG电机状态查询 -->
+	<select id="energyMotorISGList" parameterClass="Map" resultMap="motorISG-result">
+		 select motor.id,info.vehicle_ln,info.vehicle_vin,route.route_name,
+		 		case when instr(motor.ISG_MODE,'F',1,1)>0
+		 		then '-' else motor.ISG_MODE end ISG_MODE,
+		 		case when instr(motor.ISG_TORQUE_OUT,'F',1,1)>0
+		 		then '-' else motor.ISG_TORQUE_OUT end ISG_TORQUE_OUT,
+		 		case when instr(motor.ISG_RATOTE,'F',1,1)>0
+		 		then '-' else motor.ISG_RATOTE end ISG_RATOTE,
+		 		case when instr(motor.ISG_TEMP,'F',1,1)>0
+		 		then '-' else motor.ISG_TEMP end ISG_TEMP,
+		 		case when instr(motor.ISG_CONTROLLER_TEMP,'F',1,1)>0
+		 		then '-' else motor.ISG_CONTROLLER_TEMP end ISG_CONTROLLER_TEMP,
+		 		case when instr(motor.ISG_CONTROLLER_C,'F',1,1)>0
+		 		then '-' else motor.ISG_CONTROLLER_C end ISG_CONTROLLER_C,
+		 		case when instr(motor.ISG_CONTROLLER_V,'F',1,1)>0
+		 		then '-' else motor.ISG_CONTROLLER_V end ISG_CONTROLLER_V,
+		 		case when instr(motor.ISG_CONTROLLER_TORQUE_IN,'F',1,1)>0
+		 		then '-' else motor.ISG_CONTROLLER_TORQUE_IN end ISG_CONTROLLER_TORQUE_IN,
+		 		motor.longitude,motor.latitude,motor.speed,
+		 		to_char(motor.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_motor_t motor,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and motor.vehicle_vin = info.vehicle_vin(+) and motor.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             motor.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             motor.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ motor.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	motor.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = motor.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	<!-- ISG电机状态信息总数 -->
+	<select id="energyMotorISGListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		 select motor.id,info.vehicle_ln,info.vehicle_vin,route.route_name,motor.ISG_MODE,motor.ISG_TORQUE_OUT,
+		 		motor.ISG_RATOTE,motor.ISG_TEMP,motor.ISG_CONTROLLER_TEMP,motor.ISG_CONTROLLER_C,
+		 		motor.ISG_CONTROLLER_V,motor.ISG_CONTROLLER_TORQUE_IN,motor.longitude,motor.latitude,motor.speed,
+		 		to_char(motor.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_motor_t motor,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and motor.vehicle_vin = info.vehicle_vin(+) and motor.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             motor.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             motor.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ motor.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	motor.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = motor.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+	
+	<resultMap id="motorBMS-result" class="newEnergyMotor" extends="motor-result">
+		<result property="batResistance" column="BAT_RESISTANCE" />
+		<result property="batResistanceA" column="BAT_RESISTANCE_A" />
+		<result property="batResistanceN" column="BAT_RESISTANCE_N" />
+		<result property="capResistance" column="CAP_RESISTANCE"/>
+		<result property="capResistanceA" column="CAP_RESISTANCE_A" />
+		<result property="capResistanceN" column="CAP_RESISTANCE_N"/>
+	</resultMap>
+	
+	<!-- 新能源BMS和CMS绝缘电阻查询 -->
+	<select id="energyMotorBMSList" parameterClass="Map" resultMap="motorBMS-result">
+		 select motor.id,info.vehicle_ln,info.vehicle_vin,route.route_name,
+		 		case when instr(motor.BAT_RESISTANCE,'F',1,1)>0
+		 		then '-' else motor.BAT_RESISTANCE end BAT_RESISTANCE,
+		 		case when instr(motor.BAT_RESISTANCE_A,'F',1,1)>0
+		 		then '-' else motor.BAT_RESISTANCE_A end BAT_RESISTANCE_A,
+		 		case when instr(motor.BAT_RESISTANCE_N,'F',1,1)>0
+		 		then '-' else motor.BAT_RESISTANCE_N end BAT_RESISTANCE_N,
+		 		case when instr(motor.CAP_RESISTANCE,'F',1,1)>0
+		 		then '-' else motor.CAP_RESISTANCE end CAP_RESISTANCE,
+		 		case when instr(motor.CAP_RESISTANCE_A,'F',1,1)>0
+		 		then '-' else motor.CAP_RESISTANCE_A end CAP_RESISTANCE_A,
+		 		case when instr(motor.CAP_RESISTANCE_N,'F',1,1)>0
+		 		then '-' else motor.CAP_RESISTANCE_N end CAP_RESISTANCE_N,
+		 		motor.longitude,motor.latitude,motor.speed,
+		 		to_char(motor.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_motor_t motor,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and motor.vehicle_vin = info.vehicle_vin(+) and motor.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             motor.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             motor.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ motor.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	motor.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = motor.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	<!-- 新能源BMS和CMS绝缘电阻查询总数 -->
+	<select id="energyMotorBMSListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		 select motor.id,info.vehicle_ln,info.vehicle_vin,route.route_name,motor.BAT_RESISTANCE,
+		 		motor.BAT_RESISTANCE_A,motor.BAT_RESISTANCE_N,motor.CAP_RESISTANCE,motor.CAP_RESISTANCE_A,
+		 		motor.CAP_RESISTANCE_N,motor.longitude,motor.latitude,motor.speed,
+		 		to_char(motor.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_motor_t motor,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and motor.vehicle_vin = info.vehicle_vin(+) and motor.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             motor.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             motor.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ motor.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	motor.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = motor.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+	
+	<resultMap id="tipData-result" class="newEnergyMotor">
+		<result property="tipData" column="tip_data" />
+	</resultMap>
+	
+	<select id="addTipFlashData" parameterClass="Map" resultMap="tipData-result">
+		 select a.db||','||c.db tip_data from (
+			 select * from (
+			 select case when instr(t.main_ratote,'F',1,1)>0
+			 		then '-' else to_char(trunc(t.main_ratote,1)) end
+			 		||'!'||
+			 		case when instr(t.main_controller_v,'F',1,1)>0
+			 		then '-' else to_char(trunc(t.main_controller_v,1)) end
+			 		||'!'||
+			 		case when instr(t.main_controller_c,'F',1,1)>0
+			 		then '-' else to_char(trunc(t.main_controller_c,1)) end
+			 		||'!'||
+			 		case when instr(t.MAIN_CONTROLLER_TEMP,'F',1,1)>0
+			 		then '-' else to_char(trunc(t.MAIN_TEMP,1))end  db,
+			 		rownum from clw_newenergy_motor_t t
+			        where 1=1 and t.vehicle_vin=#vehicleVin# 
+<!-- 			        and 10 >= (sysdate-terminal_time)*24*60*60 -->
+			        order by t.terminal_time desc) where rownum = 1
+			  ) a,(
+			 select * from (
+			        select 
+			        case when instr(b.bat_soc,'F',1,1)>0
+			        then '-' else to_char(trunc(b.bat_soc,1)) end
+			        ||'!'||
+			        case when instr(b.bat_voltage,'F',1,1)>0
+			        then '-' else to_char(trunc(b.bat_voltage,1)) end
+			        ||'!'||
+			        case when instr(b.bat_current,'F',1,1)>0
+			        then '-' else to_char(trunc(b.bat_current,1)) end db,
+			        rownum from clw_newenergy_battery_t b
+			        where 1=1 and b.vehicle_vin=#vehicleVin# 
+<!-- 			        and 10 >= (sysdate-terminal_time)*24*60*60 -->
+			        order by b.terminal_time desc
+			 ) where rownum=1) c
+	</select>
+	
+</sqlMap>

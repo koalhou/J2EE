@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" maxRequests="15" maxSessions="10"
+		maxTransactions="5" useStatementNamespaces="true" />
+		
+	<!-- 基础类 -->	
+	<!-- 日志过滤器 -->
+	<sqlMap resource="conf/ibatis/com_logfilter.xml"/>
+	<!-- 初始化参数 -->	
+	<sqlMap resource="conf/ibatis/com_appconfig.xml"/>	
+	<!-- 基础信息 -->	
+	<sqlMap resource="conf/ibatis/com_baseInfo.xml"/>
+		
+	<!-- 权限管理类 -->
+	<!-- 安全认证 -->	
+	<sqlMap resource="conf/ibatis/qx_security.xml" />
+	<!-- 角色管理 -->
+	<sqlMap resource="conf/ibatis/qx_rolemanage.xml" />
+	<!-- 企业管理 -->
+	<sqlMap resource="conf/ibatis/qx_entimanage.xml" />
+	<!-- 用户管理 -->
+	<sqlMap resource="conf/ibatis/qx_usermanage.xml" />
+	<!-- 修改密码 -->
+	<sqlMap resource="conf/ibatis/qx_modifypassword.xml" />
+	
+	<!-- 终端管理类 -->
+	<!-- 终端厂家管理 -->
+	<sqlMap resource="conf/ibatis/zd_oemmanage.xml" />
+	<!-- 终端型号管理 -->
+	<sqlMap resource="conf/ibatis/zd_devicemanage.xml" />
+	<!-- 终端协议管理 -->
+	<sqlMap resource="conf/ibatis/zd_protocalmanage.xml" />
+	<!-- 终端管理 -->
+	<sqlMap resource="conf/ibatis/zd_terminalmanage.xml" />
+	
+	<!-- 传输管理类 -->
+	<!-- 运营商管理 -->
+	<sqlMap resource="conf/ibatis/cs_businessmanage.xml" />
+	<!-- SIM卡管理 -->
+	<sqlMap resource="conf/ibatis/cs_simmanage.xml" />
+	<!-- SIM卡流量管理 -->
+	<sqlMap resource="conf/ibatis/cs_simfluxmanage.xml" />
+	
+	<!-- 车辆管理类 -->
+	<!-- 车辆注册 -->
+	<sqlMap resource="conf/ibatis/cl_vehicleregister.xml" />
+	<!-- 车辆信息管理 -->
+	<sqlMap resource="conf/ibatis/cl_carbase.xml" />
+	<!-- 不良驾驶定义 -->
+	<sqlMap resource="conf/ibatis/cl_illdrive.xml" />
+	<!-- 手持设备注册 -->
+	<sqlMap resource="conf/ibatis/cl_handhelddevice.xml" />
+	
+	<!-- 系统设置类 -->
+	<!-- 省市信息管理 -->
+	<sqlMap resource="conf/ibatis/xs_zonemanage.xml" />
+	<!-- 基础信息管理 -->
+	<sqlMap resource="conf/ibatis/xs_baseinfomanage.xml" />
+	<!-- 服务点管理 -->
+	<sqlMap resource="conf/ibatis/xs_poimanage.xml" />
+	<!-- 版本维护 -->
+	<sqlMap resource="conf/ibatis/xs_version.xml" />
+	<!-- 信息反馈 -->
+	<sqlMap resource="conf/ibatis/xs_informationmanage.xml" />
+	<!-- 公告管理 -->
+	<sqlMap resource="conf/ibatis/xs_notice.xml" />
+	
+	<!-- 系统监控类 -->
+	<!-- 访问统计、系统日志 -->
+	<sqlMap resource="conf/ibatis/xj_statistic.xml" />
+	<!-- 终端监控 -->
+	<sqlMap resource="conf/ibatis/xj_terminalmonitor.xml" />
+	<sqlMap resource="conf/ibatis/xj_terminalauthentication.xml" />
+	<!-- 单终端监控 -->
+	<sqlMap resource="conf/ibatis/xj_terminalmonitorsingle.xml" />
+	<!-- 运营报表分析 -->
+	<sqlMap resource="conf/ibatis/xj_operationsReport.xml" />
+	<!-- 运营报表分析(new) -->
+	<sqlMap resource="conf/ibatis/xj_operatingReport.xml" />
+	<!-- 行车记录查询 -->
+	<sqlMap resource="conf/ibatis/xj_drivingRecords.xml" />
+	<!-- 终端参数 -->
+	<sqlMap resource="conf/ibatis/xj_xcterminalparams.xml" />
+	<!-- 终端远程升级 -->
+	<sqlMap resource="conf/ibatis/xj_xcterminalRomoteUpdate.xml" />	
+	<!-- popup类 -->
+	<!-- 企业选择 -->
+	<sqlMap resource="conf/ibatis/popup_enterprise.xml" />
+	<!-- 车主选择 -->
+	<sqlMap resource="conf/ibatis/popup_owner.xml" />
+	<!-- 车辆选择 -->
+	<sqlMap resource="conf/ibatis/popup_vehicle.xml" />
+	<!-- 终端选择 -->
+	<sqlMap resource="conf/ibatis/popup_terminal.xml" />
+	<!-- SIM卡选择 -->
+	<sqlMap resource="conf/ibatis/popup_sim.xml" />
+	<!-- 用户选择 -->
+	<sqlMap resource="conf/ibatis/popup_user.xml" />
+	<!-- 角色选择 -->
+	<sqlMap resource="conf/ibatis/popup_role.xml" />
+	<!-- 已注册车辆选择 -->
+	<sqlMap resource="conf/ibatis/popup_registevehicle.xml" />
+	<!-- 三包设置 -->
+	<sqlMap resource="conf/ibatis/sm_maintenance.xml" />
+	
+	<!-- 终端管理【新】终端参数设置 -->
+	<sqlMap resource="conf/ibatis/zdnew_terminalparams.xml" />
+	<!-- 终端管理【新】终端 版本信息 -->
+	<sqlMap resource="conf/ibatis/zdnew_terminalversion.xml" />	
+	<!-- 终端管理【新】终端远程升级 -->
+	<sqlMap resource="conf/ibatis/zdnew_terminalupdate.xml" />
+	<!-- 终端管理【新】车速监控 -->
+	<sqlMap resource="conf/ibatis/zdnew_speedmonitoring.xml" />
+	<!-- 终端管理【新】终端设备状态 -->
+	<sqlMap resource="conf/ibatis/zdnew_terminaldevicestatus.xml" />
+	<!-- 终端管理【新】油量监控参数-->
+	<sqlMap resource="conf/ibatis/zdnew_ftlyparam.xml" />
+	<!-- 新模块 apk上传 和参数设置 -->
+	<sqlMap resource="conf/ibatis/feedbackMessage.xml" />
+	<sqlMap resource="conf/ibatis/fileupload.xml" />
+	<sqlMap resource="conf/ibatis/paramSet.xml" />
+	<!-- 登陆统计模块 -->
+	<sqlMap resource="conf/ibatis/loginstatistic.xml" />
+	
+	
+	<sqlMap resource="conf/ibatis/theme_set.xml" />
+</sqlMapConfig>

@@ -1,0 +1,3420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CarRunHistory">
+    <typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="historyInfo"
+		type="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunHistory" />
+	<typeAlias alias="vehcileBean"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+		
+	<resultMap class="historyInfo" id="infos">
+		<result property="vehicle_code" column="VEHICLE_CODE"/>
+		<result property="vehicle_ln" column="VEHICLE_NO" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="load_number" column="LOAD_NUMBER" />
+		<result property="start_time" column="START_TIME" />
+		<result property="end_time" column="END_TIME" />
+		<result property="idle_oil" column="IDLE_OIL" />
+		<result property="total_oil" column="TOTAL_OIL" />
+		<result property="empty_mileage" column="EMPTY_MILEAGE" />
+		<result property="load_mileage" column="LOAD_MILEAGE" />
+		<result property="total_mileage" column="TOTAL_MILEAGE" />
+		<result property="empty_load" column="EMPTY_LOAD" />
+		<result property="route_class" column="ROUTE_CLASS" />
+		<result property="limite_number" column="LIMITE_NUMBER" />
+	</resultMap>
+	
+	
+	<resultMap class="historyInfo" id="total">
+		<result property="spd_oil" column="SPD_OIL" />
+		<result property="total_oil" column="TOTAL_OIL" />
+		<result property="empty_mileage" column="EMPTY_MILEAGE" />
+		<result property="load_mileage" column="LOAD_MILEAGE" />
+		<result property="total_mileage" column="TOTAL_MILEAGE" />
+		<result property="empty_load" column="EMPTY_LOAD" />
+
+	</resultMap>
+	
+	<resultMap class="historyInfo" id="todayinfos">
+	    <result property="id" column="INOUT_ID" />
+		<result property="VIN" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="realityInTime" column="REALITY_IN_TIME" />
+		<result property="realityInTimeStr" column="REALITY_IN_TIME_STR" />
+		<result property="realityOutTime" column="REALITY_OUT_TIME" />
+		<result property="upNum" column="REALITY_UP_NUM" />	
+		<result property="bindUpNum" column="PLAN_UP_NUM" />
+		<result property="downNum" column="REALITY_DOWN_NUM" />
+		<result property="bindDownNum" column="PLAN_DOWN_NUM" />
+		<result property="planInTime" column="PLAN_IN_TIME" />
+		<result property="planOutTime" column="PLAN_OUT_TIME" />
+		<result property="stopingtime" column="STOPINGTIME" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="inoutremark" column="INOUTREMARK" />
+		<result property="no_up_num" column="NO_UP_NUM" />
+		<result property="no_down_num" column="NO_DOWN_NUM" />
+		<result property="qjia_num" column="QJIA_NUM" />
+	</resultMap>
+	
+	<resultMap class="vehcileBean" id="carinfos">
+       <result property="vehicle_vin" column="VEHICLE_VIN"/>
+       <result property="vehicle_ln" column="VEHICLE_LN"/>
+       <result property="sim_card_number" column="CELLPHONE"/>
+       <result property="route_name" column="ROUTE_NAME"/>
+    </resultMap>				
+	
+	<select id="getCountHistoryInfos" parameterClass="historyInfo" resultClass="Integer">
+	    select sum(cnt) from (
+		SELECT COUNT(1) cnt
+          from
+        tqc_send_passenger t2,
+        clw_cl_base_info_t t3,
+        clw_xc_route_t t4
+			where t2.route_id=t4.route_id
+			and t2.vin_code=t3.vehicle_vin
+			and t2.route_class != 2
+			and t3.valid_flag = '0'
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T2.vin_code = #VIN#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_class">
+              t2.route_class = #route_class#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id_string">
+              t2.route_id = #route_id_string#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="begintime">
+               T2.start_time &gt;= TO_DATE(#begintime#,'yyyy-mm-dd') 
+		 </isNotEmpty>
+         <isNotEmpty prepend="AND" property="endtime"> 
+               T2.end_time &lt; TO_DATE(#endtime#,'yyyy-mm-dd')+1
+		 </isNotEmpty>
+       <isNotEmpty prepend="AND" property="user_organization_id">
+			   t2.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>			
+         </isNotEmpty>
+         UNION ALL
+         select count(a.patch_id) cnt
+		   from tqc_trip_patch_t_bak a,
+		       clw_cl_base_info_t b,
+		       clw_yw_driver_t c,
+		       clw_xc_route_t d
+		 where a.vehicle_vin=b.vehicle_vin
+		   and a.driver_id=c.driver_id
+		   and a.route_id=d.route_id
+		   and a.type = '1'
+		   and b.valid_flag = '0'
+		   and d.route_class != 2
+		   <isNotEmpty prepend="AND" property="VIN">
+               a.vehicle_vin = #VIN#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_class">
+               d.ROUTE_class = #route_class#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id_string">
+               a.ROUTE_ID = #route_id_string#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="begintime">
+               a.start_time &gt;= TO_DATE(#begintime#,'yyyy-mm-dd') 
+		 </isNotEmpty>
+         <isNotEmpty prepend="AND" property="endtime"> 
+               a.end_time &lt; TO_DATE(#endtime#,'yyyy-mm-dd')+1
+		 </isNotEmpty>
+       <isNotEmpty prepend="AND" property="user_organization_id">
+			   b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>			
+         </isNotEmpty>
+         )
+	</select>
+	
+	
+	<!-- SELECT T1.INOUT_ID,T2.SITE_NAME,T3.SICHEN_NAME,T4.DRIVER_NAME,
+			    NVL(TRUNC(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24),0)||'时'||NVL(TRUNC(MOD(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*86400,3600)/60),0)||'分'||NVL(TRUNC(MOD(MOD(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*86400,3600),60)),0)||'秒' INOFFSET,
+			    TO_CHAR(T1.REALITY_OUT_TIME,'HH24:mi:ss') REALITY_OUT_TIME,TO_CHAR(T1.PLAN_OUT_TIME,'HH24:mi:ss') PLAN_OUT_TIME,
+			    NVL(TRUNC(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24),0)||'时'||NVL(TRUNC(MOD(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*86400,3600)/60),0)||'分'||NVL(TRUNC(MOD(MOD(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*86400,3600),60)),0)||'秒' OUTOFFSET,
+			    T1.REALITY_UP_NUM, T1.PLAN_UP_NUM,NVL(ABS(T1.REALITY_UP_NUM-T1.PLAN_UP_NUM),0) UPOFFSET,
+			    T1.REALITY_DOWN_NUM,T1.PLAN_DOWN_NUM,NVL(ABS(T1.REALITY_DOWN_NUM-T1.PLAN_DOWN_NUM),0) DOWNOFFSET,
+			    T1.ST_NUM,(CASE WHEN T1.SITE_UPDOWN='0' THEN '上学' ELSE '放学' END) SITE_UPDOWN
+		FROM CLW_XC_INOUTSITE_T T1,
+			 (SELECT A.SITE_ID,A.SITE_NAME FROM CLW_XC_SITE_T A WHERE A.VALID_FLAG = '0') T2,
+			 (SELECT A.SICHEN_ID,A.SICHEN_NAME FROM CLW_XC_SICHEN_T A WHERE A.VALID_FLAG = '0') T3,
+			 (SELECT A.DRIVER_ID,A.DRIVER_NAME FROM CLW_YW_DRIVER_T A WHERE A.VALID_FLAG = '0') T4			 
+		WHERE T1.SITE_ID = T2.SITE_ID(+)
+		 AND T1.SICHEN_ID = T3.SICHEN_ID(+)
+		 AND T1.DRIVER_ID = T4.DRIVER_ID(+)
+		 AND T1.INOUT_FLAG = '1' -->
+	<select id="getHistoryInfos" parameterClass="historyInfo" resultMap="infos">	
+	   select * from (
+		<![CDATA[
+		SELECT 
+			   t3.vehicle_code,
+			   t2.vehicle_no,
+			   t2.driver_name,
+			   t4.route_name,
+			   t2.load_number,
+			   t3.limite_number,
+			   t2.route_class,
+			   TO_CHAR(t2.start_time,'yyyy-mm-dd HH24:mi:ss') start_time,
+			   TO_CHAR(t2.end_time,'yyyy-mm-dd HH24:mi:ss') end_time,
+			   ROUND(t2.idle_oil,2) idle_oil,
+			   ROUND(t2.total_oil,2) total_oil,
+			   case when t2.empty_mileage < 0 or t2.empty_mileage is null then 0 else ROUND(t2.empty_mileage,2) end empty_mileage,
+			   ROUND(nvl(t2.load_mileage,0),2) load_mileage,
+			   case when t2.empty_mileage < 0 or t2.empty_mileage is null then ROUND(nvl(t2.load_mileage,0),2) else ROUND(t2.empty_mileage,2)+ROUND(nvl(t2.load_mileage,0),2) end total_mileage,
+			   ROUND(DECODE(t2.total_mileage,null,'0.00','0','0.00',t2.empty_mileage/t2.total_mileage)*100,2) empty_load
+		from
+        tqc_send_passenger t2,
+        clw_cl_base_info_t t3,
+        clw_xc_route_t t4
+			where t2.route_id=t4.route_id
+			and t2.vin_code=t3.vehicle_vin
+			and t2.route_class != 2
+			and t3.valid_flag = '0'
+		]]>
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T2.vin_code = #VIN#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_class">
+              t2.route_class = #route_class#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id_string">
+              t2.route_id = #route_id_string#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="begintime">
+               T2.start_time &gt;= TO_DATE(#begintime#,'yyyy-mm-dd') 
+		 </isNotEmpty>
+         <isNotEmpty prepend="AND" property="endtime"> 
+               T2.end_time &lt; TO_DATE(#endtime#,'yyyy-mm-dd')+1
+		 </isNotEmpty>
+       <isNotEmpty prepend="AND" property="user_organization_id">
+			   t2.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>			
+         </isNotEmpty>
+         UNION ALL
+        select b.vehicle_code,
+		       b.vehicle_ln,
+		       c.driver_name,
+		       d.route_name,
+		       a.count,
+		       b.limite_number,
+<!-- 		       a.route_type, -->
+			   d.route_class,
+		       to_char(a.start_time, 'yyyy-mm-dd HH24:mi:ss') start_time,
+		       to_char(a.end_time, 'yyyy-mm-dd HH24:mi:ss') end_time,
+		       0 idle_oil,
+		       0 total_oil,
+		       decode(sign(nvl(a.empty_mileage,0)),1,nvl(a.empty_mileage,0),0) empty_mileage,
+		       nvl(a.mileage,0) load_mileage,
+		       decode(sign(nvl(a.empty_mileage,0)),1,nvl(a.empty_mileage,0),0)+nvl(a.mileage,0) total_mileage,
+		       0 empty_load
+		  from tqc_trip_patch_t_bak a,
+		       clw_cl_base_info_t b,
+		       clw_yw_driver_t c,
+		       clw_xc_route_t d
+		 where a.vehicle_vin=b.vehicle_vin
+		   and a.driver_id=c.driver_id
+		   and a.route_id=d.route_id
+		   and a.type = '1'
+		   and b.valid_flag = '0'
+		   and d.route_class != 2
+		   <isNotEmpty prepend="AND" property="VIN">
+               a.vehicle_vin = #VIN#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_class">
+               d.ROUTE_class = #route_class#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="route_id_string">
+               a.ROUTE_ID = #route_id_string#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="begintime">
+               a.start_time &gt;= TO_DATE(#begintime#,'yyyy-mm-dd') 
+		 </isNotEmpty>
+         <isNotEmpty prepend="AND" property="endtime"> 
+               a.end_time &lt; TO_DATE(#endtime#,'yyyy-mm-dd')+1
+		 </isNotEmpty>
+       <isNotEmpty prepend="AND" property="user_organization_id">
+			   b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>			
+         </isNotEmpty>
+         )
+         <dynamic prepend="ORDER BY">  
+       <isNotEmpty property="sortname">  
+        $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	
+	
+	<select id="getSumList" parameterClass="historyInfo" resultMap="total"> 
+
+		select round(SUM(aa.spd_oil),2) spd_oil,
+		SUM(bb.total_oil) total_oil,
+		SUM(bb.empty_mileage) empty_mileage,
+		SUM(bb.load_mileage) load_mileage,
+		SUM(bb.total_mileage) total_mileage,
+		ROUND(DECODE(SUM(bb.total_mileage),'0','0',SUM(bb.empty_mileage) / SUM(bb.total_mileage)) * 100, 2) empty_load 
+		from
+		(
+			select b.vehicle_vin,SUM(b.spd_oil) spd_oil
+       		from clw_cl_base_info_t a,clw_xc_run_record_t b
+       		where a.vehicle_vin=b.vehicle_vin
+       		and a.valid_flag = '0'
+       		and b.on_date  between to_date(#begintime#,'yyyy-mm-dd') and to_date(#endtime#,'yyyy-mm-dd')+1
+       		group by b.vehicle_vin
+		) aa RIGHT JOIN
+
+		(
+			SELECT (select t2.vin_code from clw_yw_driver_t t3,clw_xc_vehdriver_t T1 where t3.driver_id=T1.driver_id and T1.vehicle_vin=t2.vin_code and rownum=1) as vehicle_vin,
+       		ROUND(SUM(t2.total_oil), 2) total_oil,
+       		ROUND(SUM(decode(sign(t2.empty_mileage),-1,0,t2.empty_mileage)), 2)  empty_mileage,
+       		ROUND(SUM(t2.load_mileage), 2)  load_mileage,
+       		ROUND(SUM(decode(sign(t2.empty_mileage),-1,0,t2.empty_mileage)), 2) + ROUND(SUM(t2.load_mileage), 2)   total_mileage, 
+       		ROUND(DECODE((ROUND(SUM(decode(sign(t2.empty_mileage),-1,0,t2.empty_mileage)), 2) + ROUND(SUM(t2.load_mileage), 2)),0,0,ROUND(SUM(decode(sign(t2.empty_mileage),-1,0,t2.empty_mileage)), 2)/(ROUND(SUM(decode(sign(t2.empty_mileage),-1,0,t2.empty_mileage)), 2) + ROUND(SUM(t2.load_mileage), 2)))*100,2) empty_load 
+  			from 
+       	    tqc_send_passenger t2,
+       		clw_xc_route_t t4,
+       		clw_cl_base_info_t b
+      
+ 			where t2.route_id = t4.route_id
+ 			and t2.vin_code = b.vehicle_vin
+ 			and b.valid_flag = '0'
+			and t2.route_class != 2			 
+ 		<isNotEmpty prepend="AND" property="VIN">
+               T2.vin_code = #VIN# 
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="route_class">
+              t2.route_class = #route_class#
+         </isNotEmpty>		 
+		<isNotEmpty prepend="AND" property="begintime">
+               T2.start_time &gt;= TO_DATE(#begintime#,'yyyy-mm-dd') 
+		 </isNotEmpty>	 
+         <isNotEmpty prepend="AND" property="endtime"> 
+               T2.end_time &lt; TO_DATE(#endtime#,'yyyy-mm-dd')+1
+		 </isNotEmpty> 
+		  <isNotEmpty prepend="AND" property="user_organization_id">
+			   t2.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>			
+         </isNotEmpty>
+  			group by t2.vin_code
+  			
+  			union all
+  			
+  			SELECT (select p.vehicle_vin from clw_yw_driver_t t3,clw_xc_vehdriver_t T1 where t3.driver_id=T1.driver_id and T1.vehicle_vin=p.vehicle_vin and rownum=1) as vehicle_vin,
+       		0.00 total_oil,
+       		 ROUND(SUM(decode(sign(nvl(p.empty_mileage, 0)),-1,0,nvl(p.empty_mileage, 0))),2) empty_mileage,
+       		ROUND(SUM(decode(sign(nvl(p.mileage, 0)),-1,0,nvl(p.mileage, 0))),2) load_mileage,
+       		ROUND(SUM(decode(sign(nvl(p.empty_mileage, 0)),-1,0,nvl(p.empty_mileage, 0))),2) + ROUND(SUM(decode(sign(nvl(p.mileage, 0)),-1,0,nvl(p.mileage, 0))),2) total_mileage, 
+       		
+       		round(decode(sign((ROUND(SUM(decode(sign(nvl(p.empty_mileage, 0)),-1,0,nvl(p.empty_mileage, 0))),2) + ROUND(SUM(decode(sign(nvl(p.mileage, 0)),-1,0,nvl(p.mileage, 0))),2))),0,0,(ROUND(SUM(decode(sign(nvl(p.empty_mileage, 0)),-1,0,nvl(p.empty_mileage, 0))),2))/(ROUND(SUM(decode(sign(nvl(p.empty_mileage, 0)),-1,0,nvl(p.empty_mileage, 0))),2) + ROUND(SUM(decode(sign(nvl(p.mileage, 0)),-1,0,nvl(p.mileage, 0))),2))*100),2)  empty_load
+       		
+       		 
+          from tqc_trip_patch_t_bak p, clw_xc_route_t r,clw_cl_base_info_t b
+         where p.route_id = r.route_id
+           and p.vehicle_vin = b.vehicle_vin
+           and b.valid_flag = '0'
+           and p.type = '1'
+           and r.route_class != 2
+           <isNotEmpty prepend="AND" property="VIN">
+               p.vehicle_vin =  #VIN# 
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="route_class">
+              r.route_class = #route_class#
+         </isNotEmpty> 		 
+		<isNotEmpty prepend="AND" property="begintime">
+               p.start_time &gt;= TO_DATE(#begintime#,'yyyy-mm-dd') 
+		 </isNotEmpty>	 
+         <isNotEmpty prepend="AND" property="endtime"> 
+               p.end_time &lt; TO_DATE(#endtime#,'yyyy-mm-dd')+1
+		 </isNotEmpty> 
+
+		  <isNotEmpty prepend="AND" property="user_organization_id">
+			   b.organization_id IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>			
+         </isNotEmpty>
+  			group by p.vehicle_vin
+   		) bb
+   		ON aa.vehicle_vin=bb.vehicle_vin
+		
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               bb.VEHICLE_VIN = #VIN#
+         </isNotEmpty>
+       
+	</select>
+	
+	
+	<select id="getCountTodayInfosBySite" parameterClass="historyInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_XC_INOUTSITE_T T1,	CLW_CL_BASE_INFO_T T2		 
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		 AND T2.VALID_FLAG = '0'
+		 AND T2.DEVICE_TYPE = '0'
+		 AND T1.INOUT_FLAG = '1'
+ 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+               upper(T2.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T1.VEHICLE_VIN = #VIN#
+         </isNotEmpty>         
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+				T2.ORGANIZATION_ID IN
+				<![CDATA[
+			    		(SELECT ENTERPRISE_ID
+						     FROM CLW_JC_ENTERPRISE_T
+						     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                  FROM CLW_JC_ENTERPRISE_T
+						                  WHERE ENTERPRISE_ID = #user_organization_id#)
+						     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+						                  FROM CLW_JC_ENTERPRISE_T
+						                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+						)
+				]]>
+		 </isNotEmpty>         
+ 		 <isNotEmpty prepend="AND" property="route_id">
+               T1.ROUTE_ID = #route_id#
+         </isNotEmpty>
+         <!--  
+ 		 <isNotEmpty prepend="AND" property="route_id">
+               T2.ROUTE_ID = #route_id#
+         </isNotEmpty>  
+         -->       
+ 		 <isNotEmpty prepend="AND" property="site_id">
+               T1.SITE_ID = #site_id#
+         </isNotEmpty>                  
+		AND T1.TERMINAL_TIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE)+1
+	</select>
+	
+		<select id="getTodayInfosBySite" parameterClass="historyInfo" resultMap="todayinfos">
+	<![CDATA[
+		SELECT T1.INOUT_ID,T2.VEHICLE_LN,T1.VEHICLE_VIN,
+				TO_CHAR(T1.REALITY_IN_TIME,'HH24:mi') REALITY_IN_TIME_STR,
+			    TO_CHAR(T1.REALITY_IN_TIME,'HH24:mi:ss') REALITY_IN_TIME,
+			    TO_CHAR(T1.REALITY_OUT_TIME,'HH24:mi:ss') REALITY_OUT_TIME,
+			    TO_CHAR(T1.PLAN_IN_TIME,'HH24:mi:ss') PLAN_IN_TIME,
+			    TO_CHAR(T1.PLAN_OUT_TIME,'HH24:mi:ss') PLAN_OUT_TIME,
+			    NVL(T1.REALITY_UP_NUM,-1) REALITY_UP_NUM, NVL(T1.PLAN_UP_NUM,-1) PLAN_UP_NUM,
+			    NVL(T1.REALITY_DOWN_NUM,-1) REALITY_DOWN_NUM,NVL(T1.PLAN_DOWN_NUM,-1) PLAN_DOWN_NUM,
+			    S.DRIVER_NAME,
+				NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.REALITY_OUT_TIME)*24*60*60,0))/60),0)||':'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.REALITY_OUT_TIME)*24*60*60,0)),60),0) STOPINGTIME,
+				(CASE WHEN T1.REALITY_IN_TIME-T1.PLAN_IN_TIME>0  THEN '晚到站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0)),60),0)||'秒'
+					  WHEN T1.REALITY_IN_TIME-T1.PLAN_IN_TIME<0  THEN '早到站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0)),60),0)||'秒'
+				ELSE '准点到站' 
+				END) ||','||
+				(CASE WHEN T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME>0  THEN '晚出站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0)),60),0)||'秒'
+					  WHEN T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME<0  THEN '早出站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0)),60),0)||'秒'
+				ELSE '准点出站' 
+				END) INOUTREMARK, NVL(T1.QJIA_NUM,-1) QJIA_NUM, NVL(T1.NO_UP_NUM,-1) NO_UP_NUM, NVL(T1.NO_DOWN_NUM,-1) NO_DOWN_NUM  
+		FROM CLW_XC_INOUTSITE_T T1,	CLW_CL_BASE_INFO_T T2,CLW_YW_DRIVER_T S		 
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		 AND T2.VALID_FLAG = '0'
+		 AND T2.DEVICE_TYPE = '0'		
+		 AND T1.INOUT_FLAG = '1'
+		 AND T1.DRIVER_ID=to_char(S.DRIVER_ID(+))
+	]]>
+ 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+               upper(T2.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+ 		 <isNotEmpty prepend="AND" property="VIN">
+               T1.VEHICLE_VIN = #VIN#
+         </isNotEmpty>          
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			T2.ORGANIZATION_ID IN
+			<![CDATA[
+		    		(SELECT ENTERPRISE_ID
+					     FROM CLW_JC_ENTERPRISE_T
+					     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+					                  FROM CLW_JC_ENTERPRISE_T
+					                  WHERE ENTERPRISE_ID = #user_organization_id#)
+					     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+					                  FROM CLW_JC_ENTERPRISE_T
+					                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+					)
+			]]>
+		 </isNotEmpty>         
+ 		 <isNotEmpty prepend="AND" property="route_id">
+               T1.ROUTE_ID = #route_id#
+         </isNotEmpty>      
+ 		 <isNotEmpty prepend="AND" property="site_id">
+               T1.SITE_ID = #site_id#
+         </isNotEmpty>
+         AND T1.TERMINAL_TIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE)+1
+         ORDER BY REALITY_IN_TIME DESC
+	</select>
+	
+<!-- 
+	<select id="getTodayInfosBySite" parameterClass="historyInfo" resultMap="todayinfos">
+	<![CDATA[
+		SELECT T1.INOUT_ID,T2.VEHICLE_LN,T1.VEHICLE_VIN,
+			    TO_CHAR(T1.REALITY_IN_TIME,'HH24:mi:ss') REALITY_IN_TIME,
+			    TO_CHAR(T1.REALITY_OUT_TIME,'HH24:mi:ss') REALITY_OUT_TIME,
+			    TO_CHAR(T1.PLAN_IN_TIME,'HH24:mi:ss') PLAN_IN_TIME,
+			    TO_CHAR(T1.PLAN_OUT_TIME,'HH24:mi:ss') PLAN_OUT_TIME,
+			    T1.REALITY_UP_NUM, T1.PLAN_UP_NUM,
+			    T1.REALITY_DOWN_NUM,T1.PLAN_DOWN_NUM,
+			    S.DRIVER_NAME,
+				NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.REALITY_OUT_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.REALITY_OUT_TIME)*24*60*60,0)),60),0)||'秒' STOPINGTIME,
+				(CASE WHEN T1.REALITY_IN_TIME-T1.PLAN_IN_TIME>0  THEN '晚到站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0)),60),0)||'秒'
+					  WHEN T1.REALITY_IN_TIME-T1.PLAN_IN_TIME<0  THEN '早到站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_IN_TIME-T1.PLAN_IN_TIME)*24*60*60,0)),60),0)||'秒'
+				ELSE '准点到站' 
+				END) ||','||
+				(CASE WHEN T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME>0  THEN '晚出站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0)),60),0)||'秒'
+					  WHEN T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME<0  THEN '早出站'||NVL(TRUNC(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0))/60),0)||'分'||NVL(MOD(TO_NUMBER(ROUND(ABS(T1.REALITY_OUT_TIME-T1.PLAN_OUT_TIME)*24*60*60,0)),60),0)||'秒'
+				ELSE '准点出站' 
+				END) INOUTREMARK, T1.QJIA_NUM, T1.NO_UP_NUM, T1.NO_DOWN_NUM  
+		FROM CLW_XC_INOUTSITE_T T1,	CLW_CL_BASE_INFO_T T2,CLW_YW_DRIVER_T S		 
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		 AND T2.VALID_FLAG = '0'
+		 AND T2.DEVICE_TYPE = '0'		
+		 AND T1.INOUT_FLAG = '1'
+		 AND T1.DRIVER_ID=to_char(S.DRIVER_ID(+))
+	]]>
+ 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+               upper(T2.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			T2.ORGANIZATION_ID IN
+			<![CDATA[
+		    		(SELECT ENTERPRISE_ID
+					     FROM CLW_JC_ENTERPRISE_VI
+					     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+					                  FROM CLW_JC_ENTERPRISE_VI
+					                  WHERE ENTERPRISE_ID = #user_organization_id#)
+					     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+					                  FROM CLW_JC_ENTERPRISE_VI
+					                  WHERE ENTERPRISE_ID =#user_organization_id#)        
+					)
+			]]>
+		 </isNotEmpty>         
+ 		 <isNotEmpty prepend="AND" property="route_id">
+               T1.ROUTE_ID = #route_id#
+         </isNotEmpty>       
+ 		 <isNotEmpty prepend="AND" property="site_id">
+               T1.SITE_ID = #site_id#
+         </isNotEmpty>
+         AND T1.TERMINAL_TIME BETWEEN TRUNC(SYSDATE) AND TRUNC(SYSDATE)+1
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+ -->
+
+	<select id="getCountVehInfos" parameterClass="vehcileBean" resultClass="Integer">
+		SELECT COUNT(1) 
+		FROM 
+		(
+			SELECT T.VEHICLE_VIN,T.VEHICLE_LN,S.CELLPHONE 
+			FROM CLW_CL_BASE_INFO_T T,
+			(
+				SELECT B.VEHICLE_VIN,A.CELLPHONE 
+				FROM CLW_CL_SIM_T A,CLW_JC_TERMINAL_T B
+				WHERE A.SIM_CARD_NUMBER = B.SIM_CARD_NUMBER
+				AND A.VALID_FLAG='0'
+				AND A.DEVICE_TYPE='0'
+				AND B.VALID_FLAG='0'
+				AND B.DEVICE_TYPE='0'		
+			) S
+			WHERE T.VEHICLE_VIN = S.VEHICLE_VIN(+)
+			AND T.ORGANIZATION_ID IN 
+				(SELECT ENTERPRISE_ID
+		         FROM CLW_JC_ENTERPRISE_T
+		         <![CDATA[WHERE LEFT_NUM >= (SELECT LEFT_NUM
+		                      FROM CLW_JC_ENTERPRISE_T
+		                      WHERE ENTERPRISE_ID = #organization_id#)
+		         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+		                      FROM CLW_JC_ENTERPRISE_T
+		                      WHERE ENTERPRISE_ID = #organization_id#)
+		         ]]>
+				)
+			AND T.VALID_FLAG = '0'
+			AND T.DEVICE_TYPE = '0'
+		) M
+		<dynamic prepend="WHERE">
+		<isNotEmpty prepend="OR" property="vehicle_vin">
+		 	M.VEHICLE_VIN LIKE '%' || #vehicle_vin# ||'%' ESCAPE '\'
+		</isNotEmpty>
+		<isNotEmpty prepend="OR" property="vehicle_ln">
+		 	upper(M.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+		</isNotEmpty>
+		<isNotEmpty prepend="OR" property="sim_card_number">
+		 	M.CELLPHONE LIKE '%' || #sim_card_number# ||'%' ESCAPE '\'
+		</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getVehInfos" parameterClass="vehcileBean" resultMap="carinfos">
+		SELECT M.VEHICLE_VIN,M.VEHICLE_LN,M.CELLPHONE,M.ROUTE_NAME
+		FROM 
+		(
+			SELECT T.VEHICLE_VIN,T.VEHICLE_LN,S.CELLPHONE,NVL(R.ROUTE_NAME,0) ROUTE_NAME 
+			FROM CLW_CL_BASE_INFO_T T,
+			(
+				SELECT B.VEHICLE_VIN,A.CELLPHONE 
+				FROM CLW_CL_SIM_T A,CLW_JC_TERMINAL_T B
+				WHERE A.SIM_CARD_NUMBER = B.SIM_CARD_NUMBER
+				AND A.VALID_FLAG='0'
+				AND A.DEVICE_TYPE='0'
+				AND B.VALID_FLAG='0'
+				AND B.DEVICE_TYPE='0'		
+			) S,
+			(
+				 SELECT T.VEHICLE_VIN, COUNT(T.TRIP_ID) ROUTE_NAME FROM CLW_XC_TRIP_T T 
+				 WHERE T.VALID_FLAG='0' GROUP BY T.VEHICLE_VIN
+			) R
+			WHERE T.VEHICLE_VIN = S.VEHICLE_VIN(+)
+			AND T.VEHICLE_VIN = R.VEHICLE_VIN(+)
+			AND T.ORGANIZATION_ID IN 
+				(SELECT ENTERPRISE_ID
+		         FROM CLW_JC_ENTERPRISE_T
+		         <![CDATA[WHERE LEFT_NUM >= (SELECT LEFT_NUM
+		                      FROM CLW_JC_ENTERPRISE_T
+		                      WHERE ENTERPRISE_ID = #organization_id#)
+		         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+		                      FROM CLW_JC_ENTERPRISE_T
+		                      WHERE ENTERPRISE_ID = #organization_id#)
+		         ]]>
+				)
+			AND T.VALID_FLAG = '0'
+			AND T.DEVICE_TYPE = '0'
+		) M
+		<dynamic prepend="WHERE">
+		<isNotEmpty prepend="OR" property="vehicle_vin">
+		 	M.VEHICLE_VIN LIKE '%' || #vehicle_vin# ||'%' ESCAPE '\'
+		</isNotEmpty>
+		<isNotEmpty prepend="OR" property="vehicle_ln">
+		 	upper(M.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+		</isNotEmpty>
+		<isNotEmpty prepend="OR" property="sim_card_number">
+		 	M.CELLPHONE LIKE '%' || #sim_card_number# ||'%' ESCAPE '\'
+		</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="ORDER BY">  
+		  <isNotEmpty property="sortname">  
+		   $sortname$   $sortorder$  
+		  </isNotEmpty>  
+		</dynamic>  
+	</select>	
+	
+	<!-- add by jinp begin -->
+	<typeAlias alias="CarRunTreeNode" type="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunTreeNode" />
+	<typeAlias alias="CarRunTreeNodeAttri" type="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunTreeNodeAttri" />
+	
+	<resultMap class="CarRunTreeNodeAttri" id="carnumber_list">
+       <result property="carnum" column="carnum"/>
+       <result property="enterpriseId" column="enterprise_id"/>
+    </resultMap>
+	
+	<select id="getCarnumberByEnterprise" parameterClass="String" resultMap="carnumber_list">
+		SELECT parent_id as enterprise_id, CONCAT(CONCAT(SUM(ONNUM), '/'), SUM(CARNUM)) as carnum
+		  FROM (SELECT car_count_t.carnum,
+		               connect_by_root enterprise_id parent_id,ONNUM
+		          FROM (SELECT T.enterprise_id,
+		                       0 AS CARNUM,
+		                       CASE
+		                         WHEN T.ENTERPRISE_ID=#enterpriseId# THEN
+		                          NULL
+		                         ELSE
+		                          T.parent_id
+		                       END AS parent_id,
+		                       0 AS ONNUM
+		                  FROM CLW_JC_ENTERPRISE_T T
+		                 WHERE LEFT_NUM &gt;=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #value#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #value#)
+		                   AND ENTERPRISE_ID NOT IN
+		                       (select DISTINCT T.organization_id
+		                          from clw_jc_vehicle_baseinfo_vi t
+		                         WHERE T.enterprise_id =
+		                               #value#
+		                           AND T.organization_id IS NOT NULL)
+		                UNION ALL
+		                SELECT CBI.ORGANIZATION_ID AS enterprise_id,
+		                       COUNT(1) AS CARNUM,
+		                       (select CASE
+		                                 WHEN ENTERPRISE_ID=#enterpriseId# THEN
+		                                  NULL
+		                                 ELSE
+		                                  parent_id
+		                               END AS parent_id
+		                          from clw_jc_enterprise_t
+		                         where enterprise_id = CBI.ORGANIZATION_ID) as parent_id
+		                       ,
+		                       SUM(CASE
+		                             WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                                  (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;=
+		                                  30 * 60 THEN
+		                              '0'
+		                             WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                                  (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;=
+		                                  5 * 60 THEN
+		                              '0'
+		                              WHEN JT.TERMINAL_TIME is null THEN
+		                  			  '0'
+		                             ELSE
+		                              '1'
+		                           END) AS ONNUM
+		                  FROM CLW_JC_TERMINAL_T   JT,
+		                       CLW_CL_BASE_INFO_T  CBI,
+		                       CLW_CL_SIM_T        CS,
+		                       CLW_JC_ENTERPRISE_T JE
+		                 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		                   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		                   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		                   AND JT.TERMINAL_ID IS NOT NULL
+		                   AND JT.VEHICLE_VIN IS NOT NULL
+		                   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		                   AND JT.VALID_FLAG = '0'
+		                   AND CBI.VALID_FLAG = '0'
+		                   AND CS.VALID_FLAG = '0'
+		                   AND JT.DEVICE_TYPE = '0'
+		                   AND CBI.DEVICE_TYPE = '0'
+		                   AND CS.DEVICE_TYPE = '0'
+		                   AND CBI.ORGANIZATION_ID IS NOT NULL
+		                   AND CBI.ORGANIZATION_ID IN
+		                       (SELECT ENTERPRISE_ID
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE LEFT_NUM &gt;=
+		                               (SELECT LEFT_NUM
+		                                  FROM CLW_JC_ENTERPRISE_T
+		                                 WHERE ENTERPRISE_ID =
+		                                       #value#)
+		                           AND RIGHT_NUM &lt;=
+		                               (SELECT RIGHT_NUM
+		                                  FROM CLW_JC_ENTERPRISE_T
+		                                 WHERE ENTERPRISE_ID =
+		                                       #value#))
+		                 GROUP BY CBI.ORGANIZATION_ID) car_count_t
+		         START WITH car_count_t.enterprise_id IN
+		                    (SELECT ENTERPRISE_ID
+		                       FROM CLW_JC_ENTERPRISE_T
+		                      WHERE LEFT_NUM &gt;=
+		                            (SELECT LEFT_NUM
+		                               FROM CLW_JC_ENTERPRISE_T
+		                              WHERE ENTERPRISE_ID =
+		                                    #value#)
+		                        AND RIGHT_NUM &lt;=
+		                            (SELECT RIGHT_NUM
+		                               FROM CLW_JC_ENTERPRISE_T
+		                              WHERE ENTERPRISE_ID =
+		                                    #value#))
+		        CONNECT BY PRIOR car_count_t.enterprise_id = car_count_t.parent_id)
+		 GROUP BY parent_id
+	</select>
+	
+	
+	<select id="getCarnumberByEnterpriseRepare" parameterClass="String" resultMap="carnumber_list">
+		SELECT parent_id as enterprise_id, CONCAT(CONCAT(SUM(ONNUM), '/'), SUM(CARNUM)) as carnum
+		  FROM (SELECT car_count_t.carnum,
+		               connect_by_root enterprise_id parent_id,ONNUM
+		          FROM (SELECT T.enterprise_id,
+		                       0 AS CARNUM,
+		                       CASE
+		                         WHEN T.ENTERPRISE_ID=#enterpriseId# THEN
+		                          NULL
+		                         ELSE
+		                          T.parent_id
+		                       END AS parent_id,
+		                       0 AS ONNUM
+		                  FROM CLW_JC_ENTERPRISE_T T
+		                 WHERE LEFT_NUM &gt;=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #value#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #value#)
+		                   AND ENTERPRISE_ID NOT IN
+		                       (select DISTINCT T.organization_id
+		                          from clw_jc_vehicle_baseinfo_vi t
+		                         WHERE T.enterprise_id =
+		                               #value#
+		                           AND T.organization_id IS NOT NULL)
+		                UNION ALL
+		                SELECT CBI.ORGANIZATION_ID AS enterprise_id,
+		                       COUNT(1) AS CARNUM,
+		                       (select CASE
+		                                 WHEN ENTERPRISE_ID=#enterpriseId# THEN
+		                                  NULL
+		                                 ELSE
+		                                  parent_id
+		                               END AS parent_id
+		                          from clw_jc_enterprise_t
+		                         where enterprise_id = CBI.ORGANIZATION_ID) as parent_id
+		                       ,
+		                       SUM(CASE
+		                             WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                                  (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;=
+		                                  30 * 60 THEN
+		                              '0'
+		                             WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                                  (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;=
+		                                  5 * 60 THEN
+		                              '0'
+		                              WHEN JT.TERMINAL_TIME is null THEN
+		                  			  '0'
+		                             ELSE
+		                              '1'
+		                           END) AS ONNUM
+		                  FROM CLW_JC_TERMINAL_T   JT,
+		                       CLW_CL_BASE_INFO_T  CBI,
+		                       CLW_CL_SIM_T        CS,
+		                       CLW_JC_ENTERPRISE_T JE
+		                 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		                   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		                   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		                   AND JT.TERMINAL_ID IS NOT NULL
+		                   AND JT.VEHICLE_VIN IS NOT NULL
+		                   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		                   AND JT.VALID_FLAG = '0'
+		                   AND CBI.VALID_FLAG = '0'
+		                   AND CS.VALID_FLAG = '0'
+		                   AND JT.DEVICE_TYPE = '0'
+		                   AND CBI.DEVICE_TYPE = '0'
+		                    AND CBI.VEHICLE_TYPE = '0'
+		                   AND CS.DEVICE_TYPE = '0'
+		                   AND CBI.ORGANIZATION_ID IS NOT NULL
+		                   AND CBI.ORGANIZATION_ID IN
+		                       (SELECT ENTERPRISE_ID
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE LEFT_NUM &gt;=
+		                               (SELECT LEFT_NUM
+		                                  FROM CLW_JC_ENTERPRISE_T
+		                                 WHERE ENTERPRISE_ID =
+		                                       #value#)
+		                           AND RIGHT_NUM &lt;=
+		                               (SELECT RIGHT_NUM
+		                                  FROM CLW_JC_ENTERPRISE_T
+		                                 WHERE ENTERPRISE_ID =
+		                                       #value#))
+		                 GROUP BY CBI.ORGANIZATION_ID) car_count_t
+		         START WITH car_count_t.enterprise_id IN
+		                    (SELECT ENTERPRISE_ID
+		                       FROM CLW_JC_ENTERPRISE_T
+		                      WHERE LEFT_NUM &gt;=
+		                            (SELECT LEFT_NUM
+		                               FROM CLW_JC_ENTERPRISE_T
+		                              WHERE ENTERPRISE_ID =
+		                                    #value#)
+		                        AND RIGHT_NUM &lt;=
+		                            (SELECT RIGHT_NUM
+		                               FROM CLW_JC_ENTERPRISE_T
+		                              WHERE ENTERPRISE_ID =
+		                                    #value#))
+		        CONNECT BY PRIOR car_count_t.enterprise_id = car_count_t.parent_id)
+		 GROUP BY parent_id
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<resultMap class="CarRunTreeNode" id="treeNodes">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+       <result property="vehicle_code" column="vehicle_code"/>
+       <result property="driver_name" column="driver_name"/>
+       <result property="driver_id" column="driver_id"/>
+    </resultMap>
+    
+	<select id="getTreeNodes" parameterClass="String" resultMap="treeNodes">
+		SELECT * 
+		  FROM (SELECT ENTERPRISE_ID as id,
+		  			   SHORT_NAME as name,
+		  			   PARENT_ID as pId,
+					   case when ENTERPRISE_ID=#enterpriseId# then 'true' else 'false' end open,
+					   'pIcon' as iconSkin,
+		               '' vehicle_code,
+		               '' driver_name,
+		               '' driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+			     START WITH ENTERPRISE_ID = #enterpriseId#
+			   CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+				   AND VALID_FLAG='0'
+			     ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC
+			    )
+	    UNION ALL
+	    SELECT CAR_T.VEHICLE_VIN AS ID,
+		       CAR_T.VEHICLE_LN AS NAME,
+		       CAR_T.ORGANIZATION_ID AS PID,
+		       'false' AS OPEN,
+		       CASE
+		         WHEN CAR_T.ONLINE_FLAG = '1' THEN
+		          'online'
+		         ELSE
+		          'offline'
+		       END AS iconSkin,
+		       decode(vehicle_type,null,'','1','外租','0',nvl(vehicle_code,'')),
+       			driver_name,to_char(driver_id)
+		  FROM (SELECT CBI.VEHICLE_CODE,
+		  				cbi.vehicle_type,
+		  				CBI.VEHICLE_VIN,
+		               CBI.VEHICLE_LN,
+		               CBI.ORGANIZATION_ID,
+		               CASE
+<!-- 		               when CBI.vehicle_type = '1' then -->
+<!--                             '1' -->
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  '0'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  '0'
+		                 WHEN JT.TERMINAL_TIME is null THEN
+		                  '0'
+		                 ELSE
+		                  '1'
+		               END ONLINE_FLAG,
+		               (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_name) as driver_name,
+		               s.driver_id
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE,
+               			clw_xc_vehdriver_t S
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		         	and JT.vehicle_vin = s.vehicle_vin(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ORGANIZATION_ID IS NOT NULL
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE LEFT_NUM &gt;=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#))
+		         ORDER BY ONLINE_FLAG DESC,NLSSORT(VEHICLE_LN,'NLS_SORT=SCHINESE_PINYIN_M') ASC) CAR_T
+	</select>
+	
+	
+	
+	
+	<select id="getRepareTreeNodes" parameterClass="String" resultMap="treeNodes">
+		SELECT * 
+		  FROM (SELECT ENTERPRISE_ID as id,
+		  			   SHORT_NAME as name,
+		  			   PARENT_ID as pId,
+					   case when ENTERPRISE_ID=#enterpriseId# then 'true' else 'false' end open,
+					   'pIcon' as iconSkin,
+		               '' vehicle_code,
+		               '' driver_name,
+		               '' driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+			     START WITH ENTERPRISE_ID = #enterpriseId#
+			   CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+				   AND VALID_FLAG='0'
+			     ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC
+			    )
+	    UNION ALL
+	    SELECT CAR_T.VEHICLE_VIN AS ID,
+		       CAR_T.VEHICLE_LN AS NAME,
+		       CAR_T.ORGANIZATION_ID AS PID,
+		       'false' AS OPEN,
+		       CASE
+		         WHEN CAR_T.ONLINE_FLAG = '1' THEN
+		          'online'
+		         ELSE
+		          'offline'
+		       END AS iconSkin,
+		       decode(vehicle_type,null,'','1','外租','0',nvl(vehicle_code,'')),
+       			driver_name,to_char(driver_id)
+		  FROM (SELECT CBI.VEHICLE_CODE,
+		  				cbi.vehicle_type,
+		  				CBI.VEHICLE_VIN,
+		               CBI.VEHICLE_LN,
+		               CBI.ORGANIZATION_ID,
+		               CASE
+		               when CBI.vehicle_type = '1' then
+                            '1'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  '0'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  '0'
+		                 WHEN JT.TERMINAL_TIME is null THEN
+		                  '0'
+		                 ELSE
+		                  '1'
+		               END ONLINE_FLAG,
+		               (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_name) as driver_name,
+		               s.driver_id
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE,
+               			clw_xc_vehdriver_t S
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		         	and JT.vehicle_vin = s.vehicle_vin(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CBI.VEHICLE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ORGANIZATION_ID IS NOT NULL
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE LEFT_NUM &gt;=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#))
+		         ORDER BY ONLINE_FLAG DESC,NLSSORT(VEHICLE_LN,'NLS_SORT=SCHINESE_PINYIN_M') ASC) CAR_T
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<resultMap class="CarRunTreeNode" id="searchTreeNodes">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+       <result property="vehicle_code" column="vehicle_code"/>
+<result property="driver_name" column="driver_name"/>
+<result property="driver_id" column="driver_id"/>
+    </resultMap>
+	
+	<select id="searchTreeNodesByName" parameterClass="Map" resultMap="searchTreeNodes">
+		SELECT * 
+		  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+				       SHORT_NAME as name,
+				       PARENT_ID as pId,
+				       case
+				         when ENTERPRISE_ID=#enterpriseId# then
+				          'true'
+				         else
+				          'true'
+				       end open,
+				       'pIcon' as iconSkin,
+				        '' vehicle_code,
+				        '' driver_name,
+				        '' driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+				 WHERE LEFT_NUM &gt;=
+				       (SELECT LEFT_NUM
+				          FROM CLW_JC_ENTERPRISE_T
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				   AND RIGHT_NUM &lt;=
+				       (SELECT RIGHT_NUM
+				          FROM CLW_JC_ENTERPRISE_T
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				 START WITH ENTERPRISE_ID IN
+				            (SELECT DISTINCT B.ORGANIZATION_ID ID
+				               FROM CLW_JC_TERMINAL_T   T,
+				                    CLW_CL_BASE_INFO_T  B,
+				                    CLW_CL_SIM_T        S,
+				                    CLW_JC_ENTERPRISE_T E
+				              WHERE B.ORGANIZATION_ID IN
+				                    (SELECT ENTERPRISE_ID
+				                       FROM CLW_JC_ENTERPRISE_T
+				                      WHERE LEFT_NUM &gt;=
+				                            (SELECT LEFT_NUM
+				                               FROM CLW_JC_ENTERPRISE_T
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#)
+				                        AND RIGHT_NUM &lt;=
+				                            (SELECT RIGHT_NUM
+				                               FROM CLW_JC_ENTERPRISE_T
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#))
+				                AND B.VALID_FLAG = '0'
+				                AND B.FEE_FLAG = '0'
+				                AND S.VALID_FLAG = '0'
+				                AND S.DEVICE_TYPE = '0'
+				                AND T.VALID_FLAG = '0'
+				                AND T.DEVICE_TYPE = '0'
+				                AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				                AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				                AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				                AND upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\')
+				CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+				       AND VALID_FLAG = '0'
+				  ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC)     
+		UNION ALL
+		SELECT * 
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                'false' AS OPEN,
+		                'online' AS iconSkin,
+		                decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE,
+		                <!-- nvl(B.VEHICLE_CODE,'') VEHICLE_CODE, -->
+		                (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=T.driver_id group by cydt.driver_name) as driver_name,
+		                to_char(T.driver_id) driver_id
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E
+				 WHERE ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_T
+				         WHERE LEFT_NUM &gt;=
+				               (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                 WHERE ENTERPRISE_ID = #enterpriseId#)
+				           AND RIGHT_NUM &lt;=
+				               (SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_T
+				                 WHERE ENTERPRISE_ID = #enterpriseId#))
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				   AND upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\'
+			 ORDER BY NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+	</select>
+	<select id="searchTreeNodesByCode" parameterClass="Map" resultMap="searchTreeNodes">
+		SELECT * 
+		  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+				       SHORT_NAME as name,
+				       PARENT_ID as pId,
+				       case
+				         when ENTERPRISE_ID=#enterpriseId# then
+				          'true'
+				         else
+				          'true'
+				       end open,
+				       'pIcon' as iconSkin,
+				       '' as dvrState,
+				       '' as oilState,
+				       '' as vehicle_code,
+				       '' as driver_name,
+				       '' as driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+				 WHERE LEFT_NUM &gt;=
+				       (SELECT LEFT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				   AND RIGHT_NUM &lt;=
+				       (SELECT RIGHT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				 START WITH ENTERPRISE_ID IN
+				            (SELECT DISTINCT B.ORGANIZATION_ID ID
+				               FROM CLW_JC_TERMINAL_T   T,
+				                    CLW_CL_BASE_INFO_T  B,
+				                    CLW_CL_SIM_T        S,
+				                    CLW_JC_ENTERPRISE_T E
+				              WHERE B.ORGANIZATION_ID IN
+				                    (SELECT ENTERPRISE_ID
+				                       FROM CLW_JC_ENTERPRISE_VI
+				                      WHERE LEFT_NUM &gt;=
+				                            (SELECT LEFT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#)
+				                        AND RIGHT_NUM &lt;=
+				                            (SELECT RIGHT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#))
+				                AND B.VALID_FLAG = '0'
+				                AND B.FEE_FLAG = '0'
+				                AND S.VALID_FLAG = '0'
+				                AND S.DEVICE_TYPE = '0'
+				                AND T.VALID_FLAG = '0'
+				                AND T.DEVICE_TYPE = '0'
+				                AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				                AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				                AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				                AND (
+					                	upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\'
+				                		OR
+				                		B.VEHICLE_CODE like '%' || #name# ||'%' escape '\'
+				                	)
+				                )
+				CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+				       AND VALID_FLAG = '0'
+				  ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC)     
+		UNION ALL
+		SELECT id,name,pid,OPEN,iconSkin,dvrState,oilState ,vehicle_code,driver_name,to_char(driver_id) driver_id
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                B.vehicle_code,
+		                'false' AS OPEN,
+		                CASE
+		                when B.vehicle_type = '1' then
+                            'online'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                   'offline'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                   'offline'
+		                   WHEN T.TERMINAL_TIME is null THEN
+		                  			  'offline'
+		                  ELSE
+		                   'online'
+		                END iconSkin,
+		                CASE
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  'offdvr'
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  'offdvr'
+		                  WHEN 
+		                      T.TERMINAL_TIME is null THEN
+		                  'offdvr'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  'offdvr'
+				  		  WHEN 
+		                      NVL(SUBSTRB(T.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  'offdvr'
+		                 ELSE
+		                  'ondvr'
+		               END dvrState,
+		               '' as oilState,
+			               (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=St.driver_id group by cydt.driver_name) as driver_name,
+		               St.driver_id
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E,
+               			clw_xc_vehdriver_t St
+				 WHERE t.vehicle_vin = st.vehicle_vin(+)
+		           AND B.ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE LEFT_NUM &gt;=
+				               (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#)
+				           AND RIGHT_NUM &lt;=
+				               (SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#))
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				   AND (
+					   		upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\'
+							OR
+				            B.VEHICLE_CODE like '%' || #name# ||'%' escape '\'				   		
+				   		)
+			 ORDER BY iconskin DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+			 
+	</select>
+	
+	
+	
+	
+	<select id="searchTreeNodesByCodeRepare" parameterClass="Map" resultMap="searchTreeNodes">
+		SELECT * 
+		  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+				       SHORT_NAME as name,
+				       PARENT_ID as pId,
+				       case
+				         when ENTERPRISE_ID=#enterpriseId# then
+				          'true'
+				         else
+				          'true'
+				       end open,
+				       'pIcon' as iconSkin,
+				       '' as dvrState,
+				       '' as oilState,
+				       '' as vehicle_code,
+				       '' as driver_name,
+				       '' as driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+				 WHERE LEFT_NUM &gt;=
+				       (SELECT LEFT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				   AND RIGHT_NUM &lt;=
+				       (SELECT RIGHT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				 START WITH ENTERPRISE_ID IN
+				            (SELECT DISTINCT B.ORGANIZATION_ID ID
+				               FROM CLW_JC_TERMINAL_T   T,
+				                    CLW_CL_BASE_INFO_T  B,
+				                    CLW_CL_SIM_T        S,
+				                    CLW_JC_ENTERPRISE_T E
+				              WHERE B.ORGANIZATION_ID IN
+				                    (SELECT ENTERPRISE_ID
+				                       FROM CLW_JC_ENTERPRISE_VI
+				                      WHERE LEFT_NUM &gt;=
+				                            (SELECT LEFT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#)
+				                        AND RIGHT_NUM &lt;=
+				                            (SELECT RIGHT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#))
+				                AND B.VALID_FLAG = '0'
+				                AND B.FEE_FLAG = '0'
+				                AND S.VALID_FLAG = '0'
+				                and b.vehicle_type='0'
+				                AND S.DEVICE_TYPE = '0'
+				                AND T.VALID_FLAG = '0'
+				                AND T.DEVICE_TYPE = '0'
+				                AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				                AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				                AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				                AND (
+					                	upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\'
+				                		OR
+				                		B.VEHICLE_CODE like '%' || #name# ||'%' escape '\'
+				                	)
+				                )
+				CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+				       AND VALID_FLAG = '0'
+				  ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC)     
+		UNION ALL
+		SELECT id,name,pid,OPEN,iconSkin,dvrState,oilState ,vehicle_code,driver_name,to_char(driver_id) driver_id
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                B.vehicle_code,
+		                'false' AS OPEN,
+		                CASE
+		                when B.vehicle_type = '1' then
+                            'online'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                   'offline'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                   'offline'
+		                   WHEN T.TERMINAL_TIME is null THEN
+		                  			  'offline'
+		                  ELSE
+		                   'online'
+		                END iconSkin,
+		                CASE
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  'offdvr'
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  'offdvr'
+		                  WHEN 
+		                      T.TERMINAL_TIME is null THEN
+		                  'offdvr'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  'offdvr'
+				  		  WHEN 
+		                      NVL(SUBSTRB(T.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  'offdvr'
+		                 ELSE
+		                  'ondvr'
+		               END dvrState,
+		               '' as oilState,
+			               (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=St.driver_id group by cydt.driver_name) as driver_name,
+		               St.driver_id
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E,
+               			clw_xc_vehdriver_t St
+				 WHERE t.vehicle_vin = st.vehicle_vin(+)
+		           AND B.ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE LEFT_NUM &gt;=
+				               (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#)
+				           AND RIGHT_NUM &lt;=
+				               (SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#))
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND B.VEHICLE_TYPE='0'
+				   AND S.VALID_FLAG = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				   AND (
+					   		upper(B.VEHICLE_LN) like '%' || upper(#name#) ||'%' escape '\'
+							OR
+				            B.VEHICLE_CODE like '%' || #name# ||'%' escape '\'				   		
+				   		)
+			 ORDER BY iconskin DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+			 
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<select id="searchTreeNodesByCode_noself" parameterClass="Map" resultMap="searchTreeNodes">
+		SELECT * 
+		  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+				       SHORT_NAME as name,
+				       PARENT_ID as pId,
+				       case
+				         when ENTERPRISE_ID=#enterpriseId# then
+				          'true'
+				         else
+				          'true'
+				       end open,
+				       'pIcon' as iconSkin,
+				       '' as dvrState,
+				       '' as oilState,
+				       '' as vehicle_code,
+				       '' as driver_name,
+				       '' as driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+				 WHERE LEFT_NUM &gt;=
+				       (SELECT LEFT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				   AND RIGHT_NUM &lt;=
+				       (SELECT RIGHT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				 START WITH ENTERPRISE_ID IN
+				            (SELECT DISTINCT B.ORGANIZATION_ID ID
+				               FROM CLW_JC_TERMINAL_T   T,
+				                    CLW_CL_BASE_INFO_T  B,
+				                    CLW_CL_SIM_T        S,
+				                    CLW_JC_ENTERPRISE_T E
+				              WHERE B.ORGANIZATION_ID IN
+				                    (SELECT ENTERPRISE_ID
+				                       FROM CLW_JC_ENTERPRISE_VI
+				                      WHERE LEFT_NUM &gt;=
+				                            (SELECT LEFT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#)
+				                        AND RIGHT_NUM &lt;=
+				                            (SELECT RIGHT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#))
+				                AND B.VALID_FLAG = '0'
+				                AND B.FEE_FLAG = '0'
+				                AND S.VALID_FLAG = '0'
+				                AND S.DEVICE_TYPE = '0'
+				                AND T.VALID_FLAG = '0'
+				                AND T.DEVICE_TYPE = '0'
+				                AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				                AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				                AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				                AND upper(B.VEHICLE_type) = '1'
+				                )
+				CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+				       AND VALID_FLAG = '0'
+				  ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC)     
+		UNION ALL
+		SELECT id,name,pid,OPEN,iconSkin,dvrState,oilState ,vehicle_code,driver_name,to_char(driver_id) driver_id
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                B.vehicle_code,
+		                'false' AS OPEN,
+		                CASE
+		                	when B.vehicle_type = '1' then
+                            'online'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                   'offline'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                   'offline'
+		                   WHEN T.TERMINAL_TIME is null THEN
+		                  			  'offline'
+		                  ELSE
+		                   'online'
+		                END iconSkin,
+		                CASE
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  'offdvr'
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  'offdvr'
+		                  WHEN 
+		                      T.TERMINAL_TIME is null THEN
+		                  'offdvr'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  'offdvr'
+				  		  WHEN 
+		                      NVL(SUBSTRB(T.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  'offdvr'
+		                 ELSE
+		                  'ondvr'
+		               END dvrState,
+		               '' as oilState,
+			               (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=St.driver_id group by cydt.driver_name) as driver_name,
+		               St.driver_id
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E,
+               			clw_xc_vehdriver_t St
+				 WHERE t.vehicle_vin = st.vehicle_vin(+)
+		           AND B.ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE LEFT_NUM &gt;=
+				               (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#)
+				           AND RIGHT_NUM &lt;=
+				               (SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#))
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   <isNotEmpty prepend="and" property="ftlyFlag">
+						T.FTLY_FLAG = #ftlyFlag#
+					</isNotEmpty>
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				   AND upper(B.VEHICLE_type) = '1'
+			 ORDER BY iconskin DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+			 
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<select id="searchTreeNodesByCode_noselfRepare" parameterClass="Map" resultMap="searchTreeNodes">
+		SELECT * 
+		  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+				       SHORT_NAME as name,
+				       PARENT_ID as pId,
+				       case
+				         when ENTERPRISE_ID=#enterpriseId# then
+				          'true'
+				         else
+				          'true'
+				       end open,
+				       'pIcon' as iconSkin,
+				       '' as dvrState,
+				       '' as oilState,
+				       '' as vehicle_code,
+				       '' as driver_name,
+				       '' as driver_id
+				  FROM CLW_JC_ENTERPRISE_T
+				 WHERE LEFT_NUM &gt;=
+				       (SELECT LEFT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				   AND RIGHT_NUM &lt;=
+				       (SELECT RIGHT_NUM
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE ENTERPRISE_ID = #enterpriseId#)
+				 START WITH ENTERPRISE_ID IN
+				            (SELECT DISTINCT B.ORGANIZATION_ID ID
+				               FROM CLW_JC_TERMINAL_T   T,
+				                    CLW_CL_BASE_INFO_T  B,
+				                    CLW_CL_SIM_T        S,
+				                    CLW_JC_ENTERPRISE_T E
+				              WHERE B.ORGANIZATION_ID IN
+				                    (SELECT ENTERPRISE_ID
+				                       FROM CLW_JC_ENTERPRISE_VI
+				                      WHERE LEFT_NUM &gt;=
+				                            (SELECT LEFT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#)
+				                        AND RIGHT_NUM &lt;=
+				                            (SELECT RIGHT_NUM
+				                               FROM CLW_JC_ENTERPRISE_VI
+				                              WHERE ENTERPRISE_ID =
+				                                    #enterpriseId#))
+				                AND B.VALID_FLAG = '0'
+				                and b.vehicle_type='0'
+				                AND B.FEE_FLAG = '0'
+				                AND S.VALID_FLAG = '0'
+				                AND S.DEVICE_TYPE = '0'
+				                AND T.VALID_FLAG = '0'
+				                AND T.DEVICE_TYPE = '0'
+				                AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				                AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				                AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				                AND upper(B.VEHICLE_type) = '1'
+				                )
+				CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+				       AND VALID_FLAG = '0'
+				  ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC)     
+		UNION ALL
+		SELECT id,name,pid,OPEN,iconSkin,dvrState,oilState ,vehicle_code,driver_name,to_char(driver_id) driver_id
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                B.vehicle_code,
+		                'false' AS OPEN,
+		                CASE
+		                	when B.vehicle_type = '1' then
+                            'online'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                   'offline'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                   'offline'
+		                   WHEN T.TERMINAL_TIME is null THEN
+		                  			  'offline'
+		                  ELSE
+		                   'online'
+		                END iconSkin,
+		                CASE
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  'offdvr'
+		                 WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  'offdvr'
+		                  WHEN 
+		                      T.TERMINAL_TIME is null THEN
+		                  'offdvr'
+		                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  'offdvr'
+				  		  WHEN 
+		                      NVL(SUBSTRB(T.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  'offdvr'
+		                 ELSE
+		                  'ondvr'
+		               END dvrState,
+		               '' as oilState,
+			               (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=St.driver_id group by cydt.driver_name) as driver_name,
+		               St.driver_id
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E,
+               			clw_xc_vehdriver_t St
+				 WHERE t.vehicle_vin = st.vehicle_vin(+)
+		           AND B.ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID
+				          FROM CLW_JC_ENTERPRISE_VI
+				         WHERE LEFT_NUM &gt;=
+				               (SELECT LEFT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#)
+				           AND RIGHT_NUM &lt;=
+				               (SELECT RIGHT_NUM
+				                  FROM CLW_JC_ENTERPRISE_VI
+				                 WHERE ENTERPRISE_ID = #enterpriseId#))
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND B.VEHICLE_TYPE='0'
+				   AND S.VALID_FLAG = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   <isNotEmpty prepend="and" property="ftlyFlag">
+						T.FTLY_FLAG = #ftlyFlag#
+					</isNotEmpty>
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				   AND upper(B.VEHICLE_type) = '1'
+			 ORDER BY iconskin DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+			 
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<resultMap class="CarRunTreeNode" id="searchTreeNodesByDivision">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+       <result property="vehicle_code" column="vehicle_code"/>
+    </resultMap>
+    
+	<select id="searchTreeNodesByDivisionName" parameterClass="Map" resultMap="searchTreeNodesByDivision">
+		SELECT *
+		  FROM (SELECT *
+				  FROM (SELECT ENTERPRISE_ID as id,
+						       SHORT_NAME as name,
+						       PARENT_ID as pId,
+						       'true' open,
+						       'pIcon' iconSkin,
+						       '' vehicle_code
+						  FROM CLW_JC_ENTERPRISE_T
+						 WHERE VALID_FLAG = '0'
+						   AND LEFT_NUM &gt;=
+						       (SELECT LEFT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						   AND RIGHT_NUM &lt;=
+						       (SELECT RIGHT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+						CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+						UNION
+						SELECT ENTERPRISE_ID as id,
+						       SHORT_NAME as name,
+						       PARENT_ID as pId,
+						       'true' open,
+						       'pIcon' iconSkin,
+						       '' vehicle_code
+						  FROM CLW_JC_ENTERPRISE_T
+						 WHERE VALID_FLAG = '0'
+						   AND LEFT_NUM &gt;=
+						       (SELECT LEFT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						   AND RIGHT_NUM &lt;=
+						       (SELECT RIGHT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+						<!-- and PARENT_ID != #enterpriseId#-->
+						CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+					ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC
+				)
+		UNION ALL
+		SELECT ID,NAME,PID,OPEN,
+		      CASE
+		       WHEN ONLINE_FLAG = '1' THEN
+		        'online'
+		       ELSE
+		        'offline'
+		      END AS iconSkin
+		      ,vehicle_code
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                'false' AS OPEN,
+		                CASE
+                         WHEN NVL(SUBSTRB(t.STAT_INFO, 32, 1), '1') = '0' AND
+                              (SYSDATE - t.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+                          '0'
+                         WHEN NVL(SUBSTRB(t.STAT_INFO, 32, 1), '1') = '1' AND
+                              (SYSDATE - t.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+                          '0'
+                         WHEN t.TERMINAL_TIME is null THEN
+                          '0'
+                         ELSE
+                          '1'
+                       END ONLINE_FLAG,
+                       decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE
+		               <!--  nvl(B.vehicle_code,'') vehicle_code -->
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E
+				 WHERE ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID as id
+				          FROM CLW_JC_ENTERPRISE_T
+				         WHERE VALID_FLAG = '0'
+				           AND ENTERPRISE_ID IN
+				               (SELECT ENTERPRISE_ID
+				                  FROM CLW_JC_ENTERPRISE_T
+				                 WHERE LEFT_NUM &gt;=
+				                       (SELECT LEFT_NUM
+				                          FROM CLW_JC_ENTERPRISE_T
+				                         WHERE ENTERPRISE_ID =
+				                               #enterpriseId#)
+				                   AND RIGHT_NUM &lt;=
+				                       (SELECT RIGHT_NUM
+				                          FROM CLW_JC_ENTERPRISE_T
+				                         WHERE ENTERPRISE_ID =
+				                               #enterpriseId#))
+				         START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+				       <!-- and PARENT_ID != #enterpriseId#-->
+				        CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+				   AND B.VALID_FLAG = '0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				 ORDER BY ONLINE_FLAG DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+	</select>
+	
+	
+	<select id="searchTreeNodesByDivisionNameRepare" parameterClass="Map" resultMap="searchTreeNodesByDivision">
+		SELECT *
+		  FROM (SELECT *
+				  FROM (SELECT ENTERPRISE_ID as id,
+						       SHORT_NAME as name,
+						       PARENT_ID as pId,
+						       'true' open,
+						       'pIcon' iconSkin,
+						       '' vehicle_code
+						  FROM CLW_JC_ENTERPRISE_T
+						 WHERE VALID_FLAG = '0'
+						   AND LEFT_NUM &gt;=
+						       (SELECT LEFT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						   AND RIGHT_NUM &lt;=
+						       (SELECT RIGHT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+						CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+						UNION
+						SELECT ENTERPRISE_ID as id,
+						       SHORT_NAME as name,
+						       PARENT_ID as pId,
+						       'true' open,
+						       'pIcon' iconSkin,
+						       '' vehicle_code
+						  FROM CLW_JC_ENTERPRISE_T
+						 WHERE VALID_FLAG = '0'
+						   AND LEFT_NUM &gt;=
+						       (SELECT LEFT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						   AND RIGHT_NUM &lt;=
+						       (SELECT RIGHT_NUM
+						          FROM CLW_JC_ENTERPRISE_T
+						         WHERE ENTERPRISE_ID = #enterpriseId#)
+						 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+						<!-- and PARENT_ID != #enterpriseId#-->
+						CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+					ORDER BY NLSSORT(name,'NLS_SORT=SCHINESE_PINYIN_M') DESC
+				)
+		UNION ALL
+		SELECT ID,NAME,PID,OPEN,
+		      CASE
+		       WHEN ONLINE_FLAG = '1' THEN
+		        'online'
+		       ELSE
+		        'offline'
+		      END AS iconSkin
+		      ,vehicle_code
+		  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+		                B.VEHICLE_LN NAME,
+		                B.ORGANIZATION_ID PID,
+		                'false' AS OPEN,
+		                CASE
+                         WHEN NVL(SUBSTRB(t.STAT_INFO, 32, 1), '1') = '0' AND
+                              (SYSDATE - t.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+                          '0'
+                         WHEN NVL(SUBSTRB(t.STAT_INFO, 32, 1), '1') = '1' AND
+                              (SYSDATE - t.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+                          '0'
+                         WHEN t.TERMINAL_TIME is null THEN
+                          '0'
+                         ELSE
+                          '1'
+                       END ONLINE_FLAG,
+                       decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE
+		               <!--  nvl(B.vehicle_code,'') vehicle_code -->
+				  FROM CLW_JC_TERMINAL_T   T,
+				       CLW_CL_BASE_INFO_T  B,
+				       CLW_CL_SIM_T        S,
+				       CLW_JC_ENTERPRISE_T E
+				 WHERE ORGANIZATION_ID IN
+				       (SELECT ENTERPRISE_ID as id
+				          FROM CLW_JC_ENTERPRISE_T
+				         WHERE VALID_FLAG = '0'
+				           AND ENTERPRISE_ID IN
+				               (SELECT ENTERPRISE_ID
+				                  FROM CLW_JC_ENTERPRISE_T
+				                 WHERE LEFT_NUM &gt;=
+				                       (SELECT LEFT_NUM
+				                          FROM CLW_JC_ENTERPRISE_T
+				                         WHERE ENTERPRISE_ID =
+				                               #enterpriseId#)
+				                   AND RIGHT_NUM &lt;=
+				                       (SELECT RIGHT_NUM
+				                          FROM CLW_JC_ENTERPRISE_T
+				                         WHERE ENTERPRISE_ID =
+				                               #enterpriseId#))
+				         START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+				        <!-- and PARENT_ID != #enterpriseId#-->
+				        CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+				   AND B.VALID_FLAG = '0'
+				   and b.vehicle_type='0'
+				   AND B.FEE_FLAG = '0'
+				   AND S.VALID_FLAG = '0'
+				   AND T.VALID_FLAG = '0'
+				   AND T.DEVICE_TYPE = '0'
+				   AND S.DEVICE_TYPE = '0'
+				   AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+				   AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+				   AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+				 ORDER BY ONLINE_FLAG DESC,NLSSORT(NAME,'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+	</select>
+	
+	
+	
+	<resultMap class="CarRunTreeNode" id="plannedTreeNodes">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+       <result property="vehicle_code" column="vehicle_code"/>
+       <result property="driver_name" column="driver_name"/>
+       <result property="driver_id" column="driver_id"/>
+    </resultMap>
+    
+	<select id="getPlannedTreeNodes" parameterClass="String" resultMap="plannedTreeNodes">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+			                        SHORT_NAME as name,
+			                        PARENT_ID as pId,
+			                        case
+			                          when ENTERPRISE_ID =
+			                               #value# then
+			                           'true'
+			                          else
+			                           'false'
+			                        end open,
+			                        'pIcon' as iconSkin,
+			                        '' vehicle_code,
+			                        '' driver_name,
+			                        '' driver_id
+			          FROM CLW_JC_ENTERPRISE_T
+			         START WITH ENTERPRISE_ID IN
+			                    (SELECT DISTINCT CBI.ORGANIZATION_ID
+			                       FROM CLW_JC_TERMINAL_T   JT,
+			                            CLW_CL_BASE_INFO_T  CBI,
+			                            CLW_CL_SIM_T        CS,
+			                            CLW_XC_TRIP_T       XT,
+			                            CLW_JC_ENTERPRISE_T JE
+			                      WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                        AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			                        AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+			                        AND JT.TERMINAL_ID IS NOT NULL
+			                        AND JT.VEHICLE_VIN IS NOT NULL
+			                        AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                        AND JT.VALID_FLAG = '0'
+			                        AND CBI.VALID_FLAG = '0'
+			                        AND CS.VALID_FLAG = '0'
+			                        AND JT.DEVICE_TYPE = '0'
+			                        AND CBI.DEVICE_TYPE = '0'
+			                        AND CS.DEVICE_TYPE = '0'
+			                        AND CBI.ORGANIZATION_ID IS NOT NULL
+			                        AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                        AND XT.VALID_FLAG = '0'
+			                        AND CBI.ORGANIZATION_ID IN
+			                            (SELECT ENTERPRISE_ID
+			                               FROM CLW_JC_ENTERPRISE_T
+			                              WHERE LEFT_NUM >=
+			                                    (SELECT LEFT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #value#)
+			                                AND RIGHT_NUM <=
+			                                    (SELECT RIGHT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #value#)))
+			        CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			               AND VALID_FLAG = '0'
+			               AND LEFT_NUM >=
+			                   (SELECT LEFT_NUM
+			                      FROM CLW_JC_ENTERPRISE_T
+			                     WHERE ENTERPRISE_ID =
+			                           #value#)
+			               AND RIGHT_NUM <=
+			                   (SELECT RIGHT_NUM
+			                      FROM CLW_JC_ENTERPRISE_T
+			                     WHERE ENTERPRISE_ID =
+			                           #value#)
+			         ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC)
+			UNION ALL
+			SELECT *
+			  FROM (SELECT CAR_T.VEHICLE_VIN AS ID,
+			               CAR_T.VEHICLE_LN AS NAME,
+			               CAR_T.ORGANIZATION_ID AS PID,
+			               'false' AS OPEN,
+			               'online' AS iconSkin,
+			               nvl(CAR_T.VEHICLE_CODE,'') VEHICLE_CODE,
+			               driver_name,
+			               to_char(driver_id) driver_id
+			          FROM (SELECT DISTINCT CBI.VEHICLE_VIN,
+			          						CBI.VEHICLE_CODE,
+			                                CBI.VEHICLE_LN,
+			                                CBI.ORGANIZATION_ID,
+			                                (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_name) as driver_name,
+			                                s.driver_id
+			                  FROM CLW_JC_TERMINAL_T   JT,
+			                       CLW_CL_BASE_INFO_T  CBI,
+			                       CLW_CL_SIM_T        CS,
+			                       CLW_XC_TRIP_T       XT,
+			                       CLW_JC_ENTERPRISE_T JE,
+			                       clw_xc_vehdriver_t S
+			                 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                 and JT.vehicle_vin = s.vehicle_vin(+)
+			                   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			                   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+			                   AND JT.TERMINAL_ID IS NOT NULL
+			                   AND JT.VEHICLE_VIN IS NOT NULL
+			                   AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                   AND JT.VALID_FLAG = '0'
+			                   AND CBI.VALID_FLAG = '0'
+			                   AND CS.VALID_FLAG = '0'
+			                   AND JT.DEVICE_TYPE = '0'
+			                   AND CBI.DEVICE_TYPE = '0'
+			                   AND CS.DEVICE_TYPE = '0'
+			                   AND CBI.ORGANIZATION_ID IS NOT NULL
+			                   AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                   AND XT.VALID_FLAG = '0'
+			                   AND CBI.ORGANIZATION_ID IN
+			                       (SELECT ENTERPRISE_ID
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE LEFT_NUM >=
+			                               (SELECT LEFT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #value#)
+			                           AND RIGHT_NUM <=
+			                               (SELECT RIGHT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #value#))) CAR_T
+			         ORDER BY NLSSORT(CAR_T.VEHICLE_LN, 'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+		]]>
+	</select>
+	<select id="getPlannedTreeNodes_exe" parameterClass="Map" resultMap="plannedTreeNodes">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+			                        SHORT_NAME as name,
+			                        PARENT_ID as pId,
+			                        case
+			                          when ENTERPRISE_ID =
+			                               #value# then
+			                           'true'
+			                          else
+			                           'false'
+			                        end open,
+			                        'pIcon' as iconSkin,
+			                        '' vehicle_code,
+			                        '' driver_name,
+			                        '' driver_id
+			          FROM CLW_JC_ENTERPRISE_T
+			         START WITH ENTERPRISE_ID IN
+			                    (SELECT DISTINCT CBI.ORGANIZATION_ID
+			                       FROM CLW_JC_TERMINAL_T   JT,
+			                            CLW_CL_BASE_INFO_T  CBI,
+			                            CLW_CL_SIM_T        CS,
+			                            TQC_TRIP_EXECUTE       XT,
+			                            CLW_JC_ENTERPRISE_T JE
+			                      WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                        AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			                        AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+			                        AND JT.TERMINAL_ID IS NOT NULL
+			                        AND JT.VEHICLE_VIN IS NOT NULL
+			                        AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                        AND JT.VALID_FLAG = '0'
+			                        AND CBI.VALID_FLAG = '0'
+			                        AND CS.VALID_FLAG = '0'
+			                        AND JT.DEVICE_TYPE = '0'
+			                        AND CBI.DEVICE_TYPE = '0'
+			                        AND CS.DEVICE_TYPE = '0'
+			                        AND CBI.ORGANIZATION_ID IS NOT NULL
+			                        AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                        AND XT.VALID_FLAG = '0'
+			                        AND trunc(XT.Exe_Date,'dd') = to_date(#exe_date#,'yyyy-mm-dd')
+			                        AND CBI.ORGANIZATION_ID IN
+			                            (SELECT ENTERPRISE_ID
+			                               FROM CLW_JC_ENTERPRISE_T
+			                              WHERE LEFT_NUM >=
+			                                    (SELECT LEFT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #value#)
+			                                AND RIGHT_NUM <=
+			                                    (SELECT RIGHT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #value#)))
+			        CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			               AND VALID_FLAG = '0'
+			               AND LEFT_NUM >=
+			                   (SELECT LEFT_NUM
+			                      FROM CLW_JC_ENTERPRISE_T
+			                     WHERE ENTERPRISE_ID =
+			                           #value#)
+			               AND RIGHT_NUM <=
+			                   (SELECT RIGHT_NUM
+			                      FROM CLW_JC_ENTERPRISE_T
+			                     WHERE ENTERPRISE_ID =
+			                           #value#)
+			         ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC)
+			UNION ALL
+			SELECT *
+			  FROM (SELECT CAR_T.VEHICLE_VIN AS ID,
+			               CAR_T.VEHICLE_LN AS NAME,
+			               CAR_T.ORGANIZATION_ID AS PID,
+			               'false' AS OPEN,
+			               CASE
+					         WHEN CAR_T.ONLINE_FLAG = '1' THEN
+					          'online'
+					         ELSE
+					          'offline'
+					       END AS iconSkin,
+			               nvl(CAR_T.VEHICLE_CODE,''),
+			               driver_name,
+			               to_char(driver_id) driver_id
+			          FROM (SELECT DISTINCT CBI.VEHICLE_VIN,
+			          						CBI.VEHICLE_CODE,
+			                                CBI.VEHICLE_LN,
+			                                CBI.ORGANIZATION_ID,
+			                                CASE
+			                                 when CBI.vehicle_type = '1' then
+                            				'1'
+							                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+							                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+							                  '0'
+							                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+							                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+							                  '0'
+							                 WHEN JT.TERMINAL_TIME is null THEN
+							                  '0'
+							                 ELSE
+							                  '1'
+							               END ONLINE_FLAG,
+			                                (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_name) as driver_name,
+			                                s.driver_id
+			                  FROM CLW_JC_TERMINAL_T   JT,
+			                       CLW_CL_BASE_INFO_T  CBI,
+			                       CLW_CL_SIM_T        CS,
+			                       TQC_TRIP_EXECUTE       XT,
+			                       CLW_JC_ENTERPRISE_T JE,
+			                       clw_xc_vehdriver_t S
+			                 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                 and JT.vehicle_vin = s.vehicle_vin(+)
+			                   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			                   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+			                   AND JT.TERMINAL_ID IS NOT NULL
+			                   AND JT.VEHICLE_VIN IS NOT NULL
+			                   AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                   AND JT.VALID_FLAG = '0'
+			                   AND CBI.VALID_FLAG = '0'
+			                   AND CS.VALID_FLAG = '0'
+			                   AND JT.DEVICE_TYPE = '0'
+			                   AND CBI.DEVICE_TYPE = '0'
+			                   AND CS.DEVICE_TYPE = '0'
+			                   AND CBI.ORGANIZATION_ID IS NOT NULL
+			                   AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                   AND XT.VALID_FLAG = '0'
+			                   AND trunc(XT.Exe_Date,'dd') = to_date(#exe_date#,'yyyy-mm-dd')
+			                   AND CBI.ORGANIZATION_ID IN
+			                       (SELECT ENTERPRISE_ID
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE LEFT_NUM >=
+			                               (SELECT LEFT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #value#)
+			                           AND RIGHT_NUM <=
+			                               (SELECT RIGHT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #value#))) CAR_T
+			         ORDER BY ONLINE_FLAG DESC,NLSSORT(CAR_T.VEHICLE_LN, 'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+		]]>
+	</select>
+	
+	<resultMap class="CarRunTreeNodeAttri" id="plancarnumber_list">
+       <result property="carnum" column="carnum"/>
+       <result property="enterpriseId" column="enterprise_id"/>
+    </resultMap>
+	
+	<select id="getPlanCarnumberByEnterprise" parameterClass="String" resultMap="plancarnumber_list">
+		<![CDATA[
+			SELECT parent_id as enterprise_id, SUM(CARNUM) as carnum
+              FROM (SELECT car_count_t.carnum, connect_by_root enterprise_id parent_id
+                      FROM (SELECT ID AS enterprise_id,
+                                   0 AS CARNUM,
+                                   CASE
+                                     WHEN ID = #value# THEN
+                                      NULL
+                                     ELSE
+                                      PID
+                                   END AS parent_id
+                              FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+                                                    SHORT_NAME    as name,
+                                                    PARENT_ID     as pId
+                                      FROM CLW_JC_ENTERPRISE_T
+                                     START WITH ENTERPRISE_ID IN
+                                                (SELECT DISTINCT CBI.ORGANIZATION_ID
+                                                   FROM CLW_JC_TERMINAL_T   JT,
+                                                        CLW_CL_BASE_INFO_T  CBI,
+                                                        CLW_CL_SIM_T        CS,
+                                                        CLW_XC_TRIP_T       XT,
+                                                        CLW_JC_ENTERPRISE_T JE
+                                                  WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                                                    AND JT.SIM_CARD_NUMBER =
+                                                        CS.SIM_CARD_NUMBER(+)
+                                                    AND CBI.ENTERPRISE_ID =
+                                                        JE.ENTERPRISE_ID(+)
+                                                    AND JT.TERMINAL_ID IS NOT NULL
+                                                    AND JT.VEHICLE_VIN IS NOT NULL
+                                                    AND JT.SIM_CARD_NUMBER IS NOT NULL
+                                                    AND JT.VALID_FLAG = '0'
+                                                    AND CBI.VALID_FLAG = '0'
+                                                    AND CS.VALID_FLAG = '0'
+                                                    AND JT.DEVICE_TYPE = '0'
+                                                    AND CBI.DEVICE_TYPE = '0'
+                                                    AND CS.DEVICE_TYPE = '0'
+                                                    AND CBI.ORGANIZATION_ID IS NOT NULL
+                                                    AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+                                                    AND XT.VALID_FLAG = '0'
+                                                    AND CBI.ORGANIZATION_ID IN
+                                                        (SELECT ENTERPRISE_ID
+                                                           FROM CLW_JC_ENTERPRISE_T
+                                                          WHERE LEFT_NUM >=
+                                                                (SELECT LEFT_NUM
+                                                                   FROM CLW_JC_ENTERPRISE_T
+                                                                  WHERE ENTERPRISE_ID =
+                                                                        #value#)
+                                                            AND RIGHT_NUM <=
+                                                                (SELECT RIGHT_NUM
+                                                                   FROM CLW_JC_ENTERPRISE_T
+                                                                  WHERE ENTERPRISE_ID =
+                                                                        #value#)))
+                                    CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+                                           AND VALID_FLAG = '0'
+                                           AND ENTERPRISE_ID IN
+                                           (select t.ENTERPRISE_ID
+                                              from clw_jc_enterprise_t t
+                                             where t.valid_flag = '0'
+                                             START WITH t.ENTERPRISE_ID =
+                                                        #value#
+                                            CONNECT BY PRIOR t.ENTERPRISE_ID = t.PARENT_ID)
+                                                               ) T
+                             WHERE id NOT IN
+                                   (SELECT DISTINCT CBI.ORGANIZATION_ID
+                                      FROM CLW_JC_TERMINAL_T   JT,
+                                           CLW_CL_BASE_INFO_T  CBI,
+                                           CLW_CL_SIM_T        CS,
+                                           CLW_XC_TRIP_T       XT,
+                                           CLW_JC_ENTERPRISE_T JE
+                                     WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                                       AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+                                       AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+                                       AND JT.TERMINAL_ID IS NOT NULL
+                                       AND JT.VEHICLE_VIN IS NOT NULL
+                                       AND JT.SIM_CARD_NUMBER IS NOT NULL
+                                       AND JT.VALID_FLAG = '0'
+                                       AND CBI.VALID_FLAG = '0'
+                                       AND CS.VALID_FLAG = '0'
+                                       AND JT.DEVICE_TYPE = '0'
+                                       AND CBI.DEVICE_TYPE = '0'
+                                       AND CS.DEVICE_TYPE = '0'
+                                       AND CBI.ORGANIZATION_ID IS NOT NULL
+                                       AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+                                       AND XT.VALID_FLAG = '0'
+                                       AND CBI.ORGANIZATION_ID IN
+                                           (SELECT ENTERPRISE_ID
+                                              FROM CLW_JC_ENTERPRISE_T
+                                             WHERE LEFT_NUM >=
+                                                   (SELECT LEFT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#)
+                                               AND RIGHT_NUM <=
+                                                   (SELECT RIGHT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#)))
+                            UNION ALL
+                            SELECT t.ORGANIZATION_ID AS enterprise_id,
+                                   COUNT(1) AS CARNUM,
+                                   (select CASE
+                                             WHEN ENTERPRISE_ID =
+                                                  #value# THEN
+                                              NULL
+                                             ELSE
+                                              parent_id
+                                           END AS parent_id
+                                      from clw_jc_enterprise_t
+                                     where enterprise_id = t.ORGANIZATION_ID) as parent_id
+                              FROM (SELECT DISTINCT CBI.VEHICLE_VIN,
+                                                    CBI.VEHICLE_LN,
+                                                    CBI.ORGANIZATION_ID
+                                      FROM CLW_JC_TERMINAL_T   JT,
+                                           CLW_CL_BASE_INFO_T  CBI,
+                                           CLW_CL_SIM_T        CS,
+                                           CLW_XC_TRIP_T       XT,
+                                           CLW_JC_ENTERPRISE_T JE
+                                     WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                                       AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+                                       AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+                                       AND JT.TERMINAL_ID IS NOT NULL
+                                       AND JT.VEHICLE_VIN IS NOT NULL
+                                       AND JT.SIM_CARD_NUMBER IS NOT NULL
+                                       AND JT.VALID_FLAG = '0'
+                                       AND CBI.VALID_FLAG = '0'
+                                       AND CS.VALID_FLAG = '0'
+                                       AND JT.DEVICE_TYPE = '0'
+                                       AND CBI.DEVICE_TYPE = '0'
+                                       AND CS.DEVICE_TYPE = '0'
+                                       AND CBI.ORGANIZATION_ID IS NOT NULL
+                                       AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+                                       AND XT.VALID_FLAG = '0'
+                                       AND CBI.ORGANIZATION_ID IN
+                                           (SELECT ENTERPRISE_ID
+                                              FROM CLW_JC_ENTERPRISE_T
+                                             WHERE LEFT_NUM >=
+                                                   (SELECT LEFT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#)
+                                               AND RIGHT_NUM <=
+                                                   (SELECT RIGHT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#))) t
+                             GROUP BY t.ORGANIZATION_ID) car_count_t
+                    CONNECT BY PRIOR car_count_t.enterprise_id = car_count_t.parent_id) T
+             GROUP BY parent_id
+		]]>
+	</select>
+	<select id="getPlanCarnumberByEnterprise_exe" parameterClass="String" resultMap="plancarnumber_list">
+		<![CDATA[
+			SELECT parent_id as enterprise_id, CONCAT(CONCAT(SUM(ONNUM), '/'), SUM(CARNUM)) as carnum
+              FROM (SELECT car_count_t.carnum, connect_by_root enterprise_id parent_id,ONNUM
+                      FROM (SELECT ID AS enterprise_id,
+                                   0 AS CARNUM,
+                                   CASE
+                                     WHEN ID = #value# THEN
+                                      NULL
+                                     ELSE
+                                      PID
+                                   END AS parent_id,
+                                   0 AS ONNUM
+                              FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+                                                    SHORT_NAME    as name,
+                                                    PARENT_ID     as pId
+                                      FROM CLW_JC_ENTERPRISE_T
+                                     START WITH ENTERPRISE_ID IN
+                                                (SELECT DISTINCT CBI.ORGANIZATION_ID
+                                                   FROM CLW_JC_TERMINAL_T   JT,
+                                                        CLW_CL_BASE_INFO_T  CBI,
+                                                        CLW_CL_SIM_T        CS,
+                                                        CLW_JC_ENTERPRISE_T JE
+                                                  WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                                                    AND JT.SIM_CARD_NUMBER =
+                                                        CS.SIM_CARD_NUMBER(+)
+                                                    AND CBI.ENTERPRISE_ID =
+                                                        JE.ENTERPRISE_ID(+)
+                                                    AND JT.TERMINAL_ID IS NOT NULL
+                                                    AND JT.VEHICLE_VIN IS NOT NULL
+                                                    AND JT.SIM_CARD_NUMBER IS NOT NULL
+                                                    AND JT.VALID_FLAG = '0'
+                                                    AND CBI.VALID_FLAG = '0'
+                                                    AND CS.VALID_FLAG = '0'
+                                                    AND JT.DEVICE_TYPE = '0'
+                                                    AND CBI.DEVICE_TYPE = '0'
+                                                    AND CS.DEVICE_TYPE = '0'
+                                                    AND CBI.ORGANIZATION_ID IS NOT NULL
+                                                    AND CBI.ORGANIZATION_ID IN
+                                                        (SELECT ENTERPRISE_ID
+                                                           FROM CLW_JC_ENTERPRISE_T
+                                                          WHERE LEFT_NUM >=
+                                                                (SELECT LEFT_NUM
+                                                                   FROM CLW_JC_ENTERPRISE_T
+                                                                  WHERE ENTERPRISE_ID =
+                                                                        #value#)
+                                                            AND RIGHT_NUM <=
+                                                                (SELECT RIGHT_NUM
+                                                                   FROM CLW_JC_ENTERPRISE_T
+                                                                  WHERE ENTERPRISE_ID =
+                                                                        #value#)))
+                                    CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+                                           AND VALID_FLAG = '0'
+                                           AND ENTERPRISE_ID IN
+                                           (select t.ENTERPRISE_ID
+                                              from clw_jc_enterprise_t t
+                                             where t.valid_flag = '0'
+                                             START WITH t.ENTERPRISE_ID =
+                                                        #value#
+                                            CONNECT BY PRIOR t.ENTERPRISE_ID = t.PARENT_ID)
+                                                               ) T
+                             WHERE id NOT IN
+                                   (SELECT DISTINCT CBI.ORGANIZATION_ID
+                                      FROM CLW_JC_TERMINAL_T   JT,
+                                           CLW_CL_BASE_INFO_T  CBI,
+                                           CLW_CL_SIM_T        CS,
+                                           TQC_TRIP_EXECUTE       XT,
+                                           CLW_JC_ENTERPRISE_T JE
+                                     WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                                       AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+                                       AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+                                       AND JT.TERMINAL_ID IS NOT NULL
+                                       AND JT.VEHICLE_VIN IS NOT NULL
+                                       AND JT.SIM_CARD_NUMBER IS NOT NULL
+                                       AND JT.VALID_FLAG = '0'
+                                       AND CBI.VALID_FLAG = '0'
+                                       AND CS.VALID_FLAG = '0'
+                                       AND JT.DEVICE_TYPE = '0'
+                                       AND CBI.DEVICE_TYPE = '0'
+                                       AND CS.DEVICE_TYPE = '0'
+                                       AND CBI.ORGANIZATION_ID IS NOT NULL
+                                       AND CBI.ORGANIZATION_ID IN
+                                           (SELECT ENTERPRISE_ID
+                                              FROM CLW_JC_ENTERPRISE_T
+                                             WHERE LEFT_NUM >=
+                                                   (SELECT LEFT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#)
+                                               AND RIGHT_NUM <=
+                                                   (SELECT RIGHT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#)))
+                            UNION ALL
+                            SELECT t.ORGANIZATION_ID AS enterprise_id,
+                                   COUNT(1) AS CARNUM,
+                                   (select CASE
+                                             WHEN ENTERPRISE_ID =
+                                                  #value# THEN
+                                              NULL
+                                             ELSE
+                                              parent_id
+                                           END AS parent_id
+                                      from clw_jc_enterprise_t
+                                     where enterprise_id = t.ORGANIZATION_ID) as parent_id,
+                                     SUM(CASE
+                             WHEN NVL(SUBSTRB(STAT_INFO, 32, 1), '1') = '0' AND
+                                  (SYSDATE - TERMINAL_TIME) * 24 * 60 * 60 >=
+                                  30 * 60 THEN
+                              '0'
+                             WHEN NVL(SUBSTRB(STAT_INFO, 32, 1), '1') = '1' AND
+                                  (SYSDATE - TERMINAL_TIME) * 24 * 60 * 60 >=
+                                  5 * 60 THEN
+                              '0'
+                             WHEN TERMINAL_TIME is null THEN
+                              '0'
+                             ELSE
+                              '1'
+                           END) AS ONNUM
+                              FROM (SELECT DISTINCT CBI.VEHICLE_VIN,
+                                                    CBI.VEHICLE_LN,
+                                                    CBI.ORGANIZATION_ID,
+                                                    JT.TERMINAL_TIME,
+                                        			JT.STAT_INFO
+                                      FROM CLW_JC_TERMINAL_T   JT,
+                                           CLW_CL_BASE_INFO_T  CBI,
+                                           CLW_CL_SIM_T        CS,
+                                           CLW_JC_ENTERPRISE_T JE
+                                     WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+                                       AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+                                       AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+                                       AND JT.TERMINAL_ID IS NOT NULL
+                                       AND JT.VEHICLE_VIN IS NOT NULL
+                                       AND JT.SIM_CARD_NUMBER IS NOT NULL
+                                       AND JT.VALID_FLAG = '0'
+                                       AND CBI.VALID_FLAG = '0'
+                                       AND CS.VALID_FLAG = '0'
+                                       AND JT.DEVICE_TYPE = '0'
+                                       AND CBI.DEVICE_TYPE = '0'
+                                       AND CS.DEVICE_TYPE = '0'
+                                       AND CBI.ORGANIZATION_ID IS NOT NULL
+                                       AND CBI.ORGANIZATION_ID IN
+                                           (SELECT ENTERPRISE_ID
+                                              FROM CLW_JC_ENTERPRISE_T
+                                             WHERE LEFT_NUM >=
+                                                   (SELECT LEFT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#)
+                                               AND RIGHT_NUM <=
+                                                   (SELECT RIGHT_NUM
+                                                      FROM CLW_JC_ENTERPRISE_T
+                                                     WHERE ENTERPRISE_ID =
+                                                           #value#))) t
+                             GROUP BY t.ORGANIZATION_ID) car_count_t
+                    CONNECT BY PRIOR car_count_t.enterprise_id = car_count_t.parent_id) T 
+             GROUP BY parent_id
+		]]>
+	</select>
+	<resultMap class="CarRunTreeNode" id="searchPlannedTreeNodes">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+       <result property="vehicle_code" column="vehicle_code"/>
+       <result property="driver_name" column="driver_name"/>
+       <result property="driver_id" column="driver_id"/>
+    </resultMap>
+	
+	<select id="searchPlannedTreeNodesByName" parameterClass="Map" resultMap="searchPlannedTreeNodes">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+			                        SHORT_NAME as name,
+			                        PARENT_ID as pId,
+			                        case
+			                          when ENTERPRISE_ID =
+			                               #enterpriseId# then
+			                           'true'
+			                          else
+			                           'true'
+			                        end open,
+			                        'pIcon' as iconSkin,
+			                        '' vehicle_code,
+			                        '' driver_name,
+			                        '' driver_id
+			          FROM CLW_JC_ENTERPRISE_T
+			         WHERE LEFT_NUM >=
+			               (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE ENTERPRISE_ID = #enterpriseId#)
+			           AND RIGHT_NUM <=
+			               (SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE ENTERPRISE_ID = #enterpriseId#)
+			         START WITH ENTERPRISE_ID IN
+			                    (SELECT DISTINCT B.ORGANIZATION_ID
+			                       FROM CLW_JC_TERMINAL_T   T,
+			                            CLW_CL_BASE_INFO_T  B,
+			                            CLW_CL_SIM_T        S,
+			                            CLW_XC_TRIP_T       XT,
+			                            CLW_JC_ENTERPRISE_T E
+			                      WHERE ORGANIZATION_ID IN
+			                            (SELECT ENTERPRISE_ID
+			                               FROM CLW_JC_ENTERPRISE_T
+			                              WHERE LEFT_NUM >=
+			                                    (SELECT LEFT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #enterpriseId#)
+			                                AND RIGHT_NUM <=
+			                                    (SELECT RIGHT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #enterpriseId#))
+			                        AND B.VALID_FLAG = '0'
+			                        AND B.FEE_FLAG = '0'
+			                        AND S.VALID_FLAG = '0'
+			                        AND S.DEVICE_TYPE = '0'
+			                        AND T.VALID_FLAG = '0'
+			                        AND T.DEVICE_TYPE = '0'
+			                        AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+			                        AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+			                        AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+			                        AND T.VEHICLE_VIN = XT.VEHICLE_VIN
+			                        AND XT.VALID_FLAG = '0'
+			                        AND upper(B.VEHICLE_LN) like '%' || upper(#name#) || '%' escape '\')
+			        CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			               AND VALID_FLAG = '0'
+			         ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC)
+			UNION ALL
+			SELECT *
+			  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+			                        B.VEHICLE_LN NAME,
+			                        B.ORGANIZATION_ID PID,
+			                        'false' AS OPEN,
+			                        'online' AS iconSkin,
+			                         decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE,
+			                        <!-- nvl(B.vehicle_code,''), -->
+			                        (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_name) as driver_name,
+			                        to_char(s.driver_id) driver_id
+			          FROM CLW_JC_TERMINAL_T   T,
+			               CLW_CL_BASE_INFO_T  B,
+			               CLW_CL_SIM_T        S,
+			               CLW_XC_TRIP_T       XT,
+			               CLW_JC_ENTERPRISE_T E,
+			               clw_xc_vehdriver_t St
+			         WHERE ORGANIZATION_ID IN
+			               (SELECT ENTERPRISE_ID
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE LEFT_NUM >=
+			                       (SELECT LEFT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                   AND RIGHT_NUM <=
+			                       (SELECT RIGHT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#))
+			           AND B.VALID_FLAG = '0'
+			           AND B.FEE_FLAG = '0'
+			           AND S.VALID_FLAG = '0'
+			           AND S.DEVICE_TYPE = '0'
+			           AND T.VALID_FLAG = '0'
+			           AND T.DEVICE_TYPE = '0'
+			           AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+			           AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+			           AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+			           AND T.VEHICLE_VIN = XT.VEHICLE_VIN
+			           and T.vehicle_vin = st.vehicle_vin(+)
+			           AND XT.VALID_FLAG = '0'
+			           AND upper(B.VEHICLE_LN) like '%' || upper(#name#) || '%' escape '\'
+			         ORDER BY NLSSORT(NAME, 'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+		]]>				
+	</select>
+	<select id="searchPlannedTreeNodesByName_exe" parameterClass="Map" resultMap="searchPlannedTreeNodes">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT DISTINCT ENTERPRISE_ID as id,
+			                        SHORT_NAME as name,
+			                        PARENT_ID as pId,
+			                        case
+			                          when ENTERPRISE_ID =
+			                               #enterpriseId# then
+			                           'true'
+			                          else
+			                           'true'
+			                        end open,
+			                        'pIcon' as iconSkin,
+			                        '' vehicle_code,
+			                        '' driver_name,
+			                        '' driver_id
+			          FROM CLW_JC_ENTERPRISE_T
+			         WHERE LEFT_NUM >=
+			               (SELECT LEFT_NUM
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE ENTERPRISE_ID = #enterpriseId#)
+			           AND RIGHT_NUM <=
+			               (SELECT RIGHT_NUM
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE ENTERPRISE_ID = #enterpriseId#)
+			         START WITH ENTERPRISE_ID IN
+			                    (SELECT DISTINCT B.ORGANIZATION_ID
+			                       FROM CLW_JC_TERMINAL_T   T,
+			                            CLW_CL_BASE_INFO_T  B,
+			                            CLW_CL_SIM_T        S,
+			                            TQC_TRIP_EXECUTE       XT,
+			                            CLW_JC_ENTERPRISE_T E
+			                      WHERE ORGANIZATION_ID IN
+			                            (SELECT ENTERPRISE_ID
+			                               FROM CLW_JC_ENTERPRISE_T
+			                              WHERE LEFT_NUM >=
+			                                    (SELECT LEFT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #enterpriseId#)
+			                                AND RIGHT_NUM <=
+			                                    (SELECT RIGHT_NUM
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE ENTERPRISE_ID =
+			                                            #enterpriseId#))
+			                        AND B.VALID_FLAG = '0'
+			                        AND B.FEE_FLAG = '0'
+			                        AND S.VALID_FLAG = '0'
+			                        AND S.DEVICE_TYPE = '0'
+			                        AND T.VALID_FLAG = '0'
+			                        AND T.DEVICE_TYPE = '0'
+			                        AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+			                        AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+			                        AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+			                        AND T.VEHICLE_VIN = XT.VEHICLE_VIN
+			                        and xt.exe_date = to_date(#exe_date#,'yyyy-mm-dd')
+			                        AND XT.VALID_FLAG = '0'
+			                        AND (upper(B.VEHICLE_LN) like '%' || upper(#name#) || '%' escape '\'
+			                        OR upper(B.VEHICLE_CODE) like '%' || upper(#name#) || '%' escape '\')
+			                        )
+			        CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			               AND VALID_FLAG = '0'
+			         ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC)
+			UNION ALL
+			SELECT id,name,pid,open, iconSkin ,VEHICLE_CODE,driver_name,driver_id
+			  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+			                        B.VEHICLE_LN NAME,
+			                        B.ORGANIZATION_ID PID,
+			                        'false' AS OPEN,
+			                        CASE
+			                          when B.VEHICLE_type = '1'
+                   						then 'online'
+					                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '0' AND
+					                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+					                   'offline'
+					                  WHEN NVL(SUBSTRB(T.STAT_INFO, 32, 1), '1') = '1' AND
+					                       (SYSDATE - T.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+					                   'offline'
+					                   WHEN T.TERMINAL_TIME is null THEN
+					                  			  'offline'
+					                  ELSE
+					                   'online'
+					                END iconSkin,
+							        decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE,
+			                        (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=St.driver_id group by cydt.driver_name) as driver_name,
+			                        to_char(st.driver_id) driver_id
+			          FROM CLW_JC_TERMINAL_T   T,
+			               CLW_CL_BASE_INFO_T  B,
+			               CLW_CL_SIM_T        S,
+			               TQC_TRIP_EXECUTE       XT,
+			               CLW_JC_ENTERPRISE_T E,
+			               clw_xc_vehdriver_t St
+			         WHERE ORGANIZATION_ID IN
+			               (SELECT ENTERPRISE_ID
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE LEFT_NUM >=
+			                       (SELECT LEFT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                   AND RIGHT_NUM <=
+			                       (SELECT RIGHT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#))
+			           AND B.VALID_FLAG = '0'
+			           AND B.FEE_FLAG = '0'
+			           AND S.VALID_FLAG = '0'
+			           AND S.DEVICE_TYPE = '0'
+			           AND T.VALID_FLAG = '0'
+			           AND T.DEVICE_TYPE = '0'
+			           AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+			           AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+			           AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+			           AND T.VEHICLE_VIN = XT.VEHICLE_VIN
+			           and t.vehicle_vin = st.vehicle_vin(+)
+			           AND XT.VALID_FLAG = '0'
+			           AND trunc(XT.Exe_Date,'dd') = to_date(#exe_date#,'yyyy-mm-dd')
+			           AND (upper(B.VEHICLE_LN) like '%' || upper(#name#) || '%' escape '\' OR
+			           upper(B.VEHICLE_CODE) like '%' || upper(#name#) || '%' escape '\')
+			         ORDER BY NLSSORT(NAME, 'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+		]]>				
+	</select>
+	<select id="getPlannedDivisionCount" parameterClass="Map" resultClass="Integer">
+		<![CDATA[
+		SELECT count(1)
+		  FROM (SELECT *
+		          FROM (SELECT ENTERPRISE_ID as id,
+		                       SHORT_NAME as name,
+		                       PARENT_ID as pId,
+		                       'true' open,
+		                       'pIcon' iconSkin
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+		                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+		                UNION
+		                SELECT ENTERPRISE_ID as id,
+		                       SHORT_NAME as name,
+		                       PARENT_ID as pId,
+		                       'true' open,
+		                       'pIcon' iconSkin
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+		                CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+		         WHERE ID IN
+		               (SELECT DISTINCT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 START WITH ENTERPRISE_ID IN
+		                            (SELECT DISTINCT CBI.ORGANIZATION_ID
+		                               FROM CLW_JC_TERMINAL_T   JT,
+		                                    CLW_CL_BASE_INFO_T  CBI,
+		                                    CLW_CL_SIM_T        CS,
+		                                    CLW_XC_TRIP_T       XT,
+		                                    CLW_JC_ENTERPRISE_T JE
+		                              WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		                                AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		                                AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		                                AND JT.TERMINAL_ID IS NOT NULL
+		                                AND JT.VEHICLE_VIN IS NOT NULL
+		                                AND JT.SIM_CARD_NUMBER IS NOT NULL
+		                                AND JT.VALID_FLAG = '0'
+		                                AND CBI.VALID_FLAG = '0'
+		                                AND CS.VALID_FLAG = '0'
+		                                AND JT.DEVICE_TYPE = '0'
+		                                AND CBI.DEVICE_TYPE = '0'
+		                                AND CS.DEVICE_TYPE = '0'
+		                                AND CBI.ORGANIZATION_ID IS NOT NULL
+		                                AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+		                                AND XT.VALID_FLAG = '0'
+		                                AND CBI.ORGANIZATION_ID IN
+		                                    (SELECT ENTERPRISE_ID
+		                                       FROM CLW_JC_ENTERPRISE_T
+		                                      WHERE LEFT_NUM >=
+		                                            (SELECT LEFT_NUM
+		                                               FROM CLW_JC_ENTERPRISE_T
+		                                              WHERE ENTERPRISE_ID =
+		                                                    #enterpriseId#)
+		                                        AND RIGHT_NUM <=
+		                                            (SELECT RIGHT_NUM
+		                                               FROM CLW_JC_ENTERPRISE_T
+		                                              WHERE ENTERPRISE_ID =
+		                                                    #enterpriseId#)))
+		                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+		                       AND VALID_FLAG = '0'
+		                       AND LEFT_NUM >=
+		                           (SELECT LEFT_NUM
+		                              FROM CLW_JC_ENTERPRISE_T
+		                             WHERE ENTERPRISE_ID =
+		                                   #enterpriseId#)
+		                       AND RIGHT_NUM <=
+		                           (SELECT RIGHT_NUM
+		                              FROM CLW_JC_ENTERPRISE_T
+		                             WHERE ENTERPRISE_ID =
+		                                   #enterpriseId#))) t
+		 where name like '%' || #name# || '%' escape '\'
+		 ]]>	
+	</select>
+	<select id="getPlannedDivisionCount_exe" parameterClass="Map" resultClass="Integer">
+		<![CDATA[
+		SELECT count(1)
+		  FROM (SELECT *
+		          FROM (SELECT ENTERPRISE_ID as id,
+		                       SHORT_NAME as name,
+		                       PARENT_ID as pId,
+		                       'true' open,
+		                       'pIcon' iconSkin
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+		                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+		                UNION
+		                SELECT ENTERPRISE_ID as id,
+		                       SHORT_NAME as name,
+		                       PARENT_ID as pId,
+		                       'true' open,
+		                       'pIcon' iconSkin
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID =
+		                               #enterpriseId#)
+		                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+		                CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+		         WHERE ID IN
+		               (SELECT DISTINCT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 START WITH ENTERPRISE_ID IN
+		                            (SELECT DISTINCT CBI.ORGANIZATION_ID
+		                               FROM CLW_JC_TERMINAL_T   JT,
+		                                    CLW_CL_BASE_INFO_T  CBI,
+		                                    CLW_CL_SIM_T        CS,
+		                                    TQC_TRIP_EXECUTE       XT,
+		                                    CLW_JC_ENTERPRISE_T JE
+		                              WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		                                AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		                                AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		                                AND JT.TERMINAL_ID IS NOT NULL
+		                                AND JT.VEHICLE_VIN IS NOT NULL
+		                                AND JT.SIM_CARD_NUMBER IS NOT NULL
+		                                AND JT.VALID_FLAG = '0'
+		                                AND CBI.VALID_FLAG = '0'
+		                                AND CS.VALID_FLAG = '0'
+		                                AND JT.DEVICE_TYPE = '0'
+		                                AND CBI.DEVICE_TYPE = '0'
+		                                AND CS.DEVICE_TYPE = '0'
+		                                AND CBI.ORGANIZATION_ID IS NOT NULL
+		                                AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+		                                AND XT.VALID_FLAG = '0'
+		                                AND trunc(XT.Exe_Date,'dd') = to_date(#exe_date#,'yyyy-mm-dd')
+		                                AND CBI.ORGANIZATION_ID IN
+		                                    (SELECT ENTERPRISE_ID
+		                                       FROM CLW_JC_ENTERPRISE_T
+		                                      WHERE LEFT_NUM >=
+		                                            (SELECT LEFT_NUM
+		                                               FROM CLW_JC_ENTERPRISE_T
+		                                              WHERE ENTERPRISE_ID =
+		                                                    #enterpriseId#)
+		                                        AND RIGHT_NUM <=
+		                                            (SELECT RIGHT_NUM
+		                                               FROM CLW_JC_ENTERPRISE_T
+		                                              WHERE ENTERPRISE_ID =
+		                                                    #enterpriseId#)))
+		                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+		                       AND VALID_FLAG = '0'
+		                       AND LEFT_NUM >=
+		                           (SELECT LEFT_NUM
+		                              FROM CLW_JC_ENTERPRISE_T
+		                             WHERE ENTERPRISE_ID =
+		                                   #enterpriseId#)
+		                       AND RIGHT_NUM <=
+		                           (SELECT RIGHT_NUM
+		                              FROM CLW_JC_ENTERPRISE_T
+		                             WHERE ENTERPRISE_ID =
+		                                   #enterpriseId#))) t
+		 where name like '%' || #name# || '%' escape '\'
+		 ]]>	
+	</select>
+	<resultMap class="CarRunTreeNode" id="searchPlannedTreeNodesByDivision">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+       <result property="vehicle_code" column="vehicle_code"/>
+    </resultMap>
+    
+	<select id="searchPlannedTreeNodesByDivisionName" parameterClass="Map" resultMap="searchPlannedTreeNodesByDivision">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT *
+			          FROM (SELECT ENTERPRISE_ID as id,
+			                       SHORT_NAME as name,
+			                       PARENT_ID as pId,
+			                       'true' open,
+			                       'pIcon' iconSkin,
+			                       '' vehicle_code
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE VALID_FLAG = '0'
+			                   AND LEFT_NUM >=
+			                       (SELECT LEFT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                   AND RIGHT_NUM <=
+			                       (SELECT RIGHT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+			                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			                UNION
+			                SELECT ENTERPRISE_ID as id,
+			                       SHORT_NAME as name,
+			                       PARENT_ID as pId,
+			                       'true' open,
+			                       'pIcon' iconSkin,
+			                       '' vehicle_code
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE VALID_FLAG = '0'
+			                   AND LEFT_NUM >=
+			                       (SELECT LEFT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                   AND RIGHT_NUM <=
+			                       (SELECT RIGHT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+			                CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+			         WHERE ID IN
+			               (SELECT DISTINCT ENTERPRISE_ID
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 START WITH ENTERPRISE_ID IN
+			                            (SELECT DISTINCT CBI.ORGANIZATION_ID
+			                               FROM CLW_JC_TERMINAL_T   JT,
+			                                    CLW_CL_BASE_INFO_T  CBI,
+			                                    CLW_CL_SIM_T        CS,
+			                                    CLW_XC_TRIP_T       XT,
+			                                    CLW_JC_ENTERPRISE_T JE
+			                              WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                                AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			                                AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+			                                AND JT.TERMINAL_ID IS NOT NULL
+			                                AND JT.VEHICLE_VIN IS NOT NULL
+			                                AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                                AND JT.VALID_FLAG = '0'
+			                                AND CBI.VALID_FLAG = '0'
+			                                AND CS.VALID_FLAG = '0'
+			                                AND JT.DEVICE_TYPE = '0'
+			                                AND CBI.DEVICE_TYPE = '0'
+			                                AND CS.DEVICE_TYPE = '0'
+			                                AND CBI.ORGANIZATION_ID IS NOT NULL
+			                                AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                                AND XT.VALID_FLAG = '0'
+			                                AND CBI.ORGANIZATION_ID IN
+			                                    (SELECT ENTERPRISE_ID
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE LEFT_NUM >=
+			                                            (SELECT LEFT_NUM
+			                                               FROM CLW_JC_ENTERPRISE_T
+			                                              WHERE ENTERPRISE_ID =
+			                                                    #enterpriseId#)
+			                                        AND RIGHT_NUM <=
+			                                            (SELECT RIGHT_NUM
+			                                               FROM CLW_JC_ENTERPRISE_T
+			                                              WHERE ENTERPRISE_ID =
+			                                                    #enterpriseId#)))
+			                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			                       AND VALID_FLAG = '0'
+			                       AND LEFT_NUM >=
+			                           (SELECT LEFT_NUM
+			                              FROM CLW_JC_ENTERPRISE_T
+			                             WHERE ENTERPRISE_ID =
+			                                   #enterpriseId#)
+			                       AND RIGHT_NUM <=
+			                           (SELECT RIGHT_NUM
+			                              FROM CLW_JC_ENTERPRISE_T
+			                             WHERE ENTERPRISE_ID =
+			                                   #enterpriseId#))
+			         ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC)
+			UNION ALL
+			SELECT *
+			  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+			                        B.VEHICLE_LN NAME,
+			                        B.ORGANIZATION_ID PID,
+			                        'false' AS OPEN,
+			                        'online' AS iconSkin,
+			                         decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE
+			                        <!-- nvl(B.VEHICLE_CODE,'') -->
+			          FROM CLW_JC_TERMINAL_T   T,
+			               CLW_CL_BASE_INFO_T  B,
+			               CLW_CL_SIM_T        S,
+			               CLW_XC_TRIP_T       XT,
+			               CLW_JC_ENTERPRISE_T E
+			         WHERE ORGANIZATION_ID IN
+			               (SELECT ID
+			                  FROM (SELECT ENTERPRISE_ID as id,
+			                               SHORT_NAME as name,
+			                               PARENT_ID as pId,
+			                               'true' open,
+			                               'pIcon' iconSkin
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE VALID_FLAG = '0'
+			                           AND LEFT_NUM >=
+			                               (SELECT LEFT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #enterpriseId#)
+			                           AND RIGHT_NUM <=
+			                               (SELECT RIGHT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #enterpriseId#)
+			                         START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+			                        CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+			                 WHERE ID IN
+			                       (SELECT DISTINCT ENTERPRISE_ID
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         START WITH ENTERPRISE_ID IN
+			                                    (SELECT DISTINCT CBI.ORGANIZATION_ID
+			                                       FROM CLW_JC_TERMINAL_T   JT,
+			                                            CLW_CL_BASE_INFO_T  CBI,
+			                                            CLW_CL_SIM_T        CS,
+			                                            CLW_XC_TRIP_T       XT,
+			                                            CLW_JC_ENTERPRISE_T JE
+			                                      WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                                        AND JT.SIM_CARD_NUMBER =
+			                                            CS.SIM_CARD_NUMBER(+)
+			                                        AND CBI.ENTERPRISE_ID =
+			                                            JE.ENTERPRISE_ID(+)
+			                                        AND JT.TERMINAL_ID IS NOT NULL
+			                                        AND JT.VEHICLE_VIN IS NOT NULL
+			                                        AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                                        AND JT.VALID_FLAG = '0'
+			                                        AND CBI.VALID_FLAG = '0'
+			                                        AND CS.VALID_FLAG = '0'
+			                                        AND JT.DEVICE_TYPE = '0'
+			                                        AND CBI.DEVICE_TYPE = '0'
+			                                        AND CS.DEVICE_TYPE = '0'
+			                                        AND CBI.ORGANIZATION_ID IS NOT NULL
+			                                        AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                                        AND XT.VALID_FLAG = '0'
+			                                        AND CBI.ORGANIZATION_ID IN
+			                                            (SELECT ENTERPRISE_ID
+			                                               FROM CLW_JC_ENTERPRISE_T
+			                                              WHERE LEFT_NUM >=
+			                                                    (SELECT LEFT_NUM
+			                                                       FROM CLW_JC_ENTERPRISE_T
+			                                                      WHERE ENTERPRISE_ID =
+			                                                            #enterpriseId#)
+			                                                AND RIGHT_NUM <=
+			                                                    (SELECT RIGHT_NUM
+			                                                       FROM CLW_JC_ENTERPRISE_T
+			                                                      WHERE ENTERPRISE_ID =
+			                                                            #enterpriseId#)))
+			                        CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			                               AND VALID_FLAG = '0'
+			                               AND LEFT_NUM >=
+			                                   (SELECT LEFT_NUM
+			                                      FROM CLW_JC_ENTERPRISE_T
+			                                     WHERE ENTERPRISE_ID =
+			                                           #enterpriseId#)
+			                               AND RIGHT_NUM <=
+			                                   (SELECT RIGHT_NUM
+			                                      FROM CLW_JC_ENTERPRISE_T
+			                                     WHERE ENTERPRISE_ID =
+			                                           #enterpriseId#)))
+			           AND B.VALID_FLAG = '0'
+			           AND B.FEE_FLAG = '0'
+			           AND S.VALID_FLAG = '0'
+			           AND T.VALID_FLAG = '0'
+			           AND T.DEVICE_TYPE = '0'
+			           AND S.DEVICE_TYPE = '0'
+			           AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+			           AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+			           AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+			           AND T.VEHICLE_VIN = XT.VEHICLE_VIN
+			           AND XT.VALID_FLAG = '0'
+			         ORDER BY NLSSORT(NAME, 'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+		]]>			
+	</select>
+	<select id="searchPlannedTreeNodes_exe" parameterClass="Map" resultMap="searchPlannedTreeNodesByDivision">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT *
+			          FROM (SELECT ENTERPRISE_ID as id,
+			                       SHORT_NAME as name,
+			                       PARENT_ID as pId,
+			                       'true' open,
+			                       'pIcon' iconSkin,
+			                       '' vehicle_code
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE VALID_FLAG = '0'
+			                   AND LEFT_NUM >=
+			                       (SELECT LEFT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                   AND RIGHT_NUM <=
+			                       (SELECT RIGHT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+			                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			                UNION
+			                SELECT ENTERPRISE_ID as id,
+			                       SHORT_NAME as name,
+			                       PARENT_ID as pId,
+			                       'true' open,
+			                       'pIcon' iconSkin,
+			                       '' vehicle_code
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 WHERE VALID_FLAG = '0'
+			                   AND LEFT_NUM >=
+			                       (SELECT LEFT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                   AND RIGHT_NUM <=
+			                       (SELECT RIGHT_NUM
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE ENTERPRISE_ID =
+			                               #enterpriseId#)
+			                 START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+			                CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+			         WHERE ID IN
+			               (SELECT DISTINCT ENTERPRISE_ID
+			                  FROM CLW_JC_ENTERPRISE_T
+			                 START WITH ENTERPRISE_ID IN
+			                            (SELECT DISTINCT CBI.ORGANIZATION_ID
+			                               FROM CLW_JC_TERMINAL_T   JT,
+			                                    CLW_CL_BASE_INFO_T  CBI,
+			                                    CLW_CL_SIM_T        CS,
+			                                    TQC_TRIP_EXECUTE       XT,
+			                                    CLW_JC_ENTERPRISE_T JE
+			                              WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                                AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			                                AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+			                                AND JT.TERMINAL_ID IS NOT NULL
+			                                AND JT.VEHICLE_VIN IS NOT NULL
+			                                AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                                AND JT.VALID_FLAG = '0'
+			                                AND CBI.VALID_FLAG = '0'
+			                                AND CS.VALID_FLAG = '0'
+			                                AND JT.DEVICE_TYPE = '0'
+			                                AND CBI.DEVICE_TYPE = '0'
+			                                AND CS.DEVICE_TYPE = '0'
+			                                AND CBI.ORGANIZATION_ID IS NOT NULL
+			                                AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                                AND XT.VALID_FLAG = '0'
+			                                AND trunc(XT.Exe_Date,'dd') = trunc(sysdate,'dd')
+			                                AND CBI.ORGANIZATION_ID IN
+			                                    (SELECT ENTERPRISE_ID
+			                                       FROM CLW_JC_ENTERPRISE_T
+			                                      WHERE LEFT_NUM >=
+			                                            (SELECT LEFT_NUM
+			                                               FROM CLW_JC_ENTERPRISE_T
+			                                              WHERE ENTERPRISE_ID =
+			                                                    #enterpriseId#)
+			                                        AND RIGHT_NUM <=
+			                                            (SELECT RIGHT_NUM
+			                                               FROM CLW_JC_ENTERPRISE_T
+			                                              WHERE ENTERPRISE_ID =
+			                                                    #enterpriseId#)))
+			                CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			                       AND VALID_FLAG = '0'
+			                       AND LEFT_NUM >=
+			                           (SELECT LEFT_NUM
+			                              FROM CLW_JC_ENTERPRISE_T
+			                             WHERE ENTERPRISE_ID =
+			                                   #enterpriseId#)
+			                       AND RIGHT_NUM <=
+			                           (SELECT RIGHT_NUM
+			                              FROM CLW_JC_ENTERPRISE_T
+			                             WHERE ENTERPRISE_ID =
+			                                   #enterpriseId#))
+			         ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC)
+			UNION ALL
+			SELECT *
+			  FROM (SELECT DISTINCT T.VEHICLE_VIN ID,
+			                        B.VEHICLE_LN NAME,
+			                        B.ORGANIZATION_ID PID,
+			                        'false' AS OPEN,
+			                        'online' AS iconSkin,
+			                         decode(B.vehicle_type,null,'','1','外租','0',nvl(B.vehicle_code,'')) VEHICLE_CODE
+			                        <!-- nvl(B.vehicle_code,'') -->
+			          FROM CLW_JC_TERMINAL_T   T,
+			               CLW_CL_BASE_INFO_T  B,
+			               CLW_CL_SIM_T        S,
+			               TQC_TRIP_EXECUTE       XT,
+			               CLW_JC_ENTERPRISE_T E
+			         WHERE ORGANIZATION_ID IN
+			               (SELECT ID
+			                  FROM (SELECT ENTERPRISE_ID as id,
+			                               SHORT_NAME as name,
+			                               PARENT_ID as pId,
+			                               'true' open,
+			                               'pIcon' iconSkin
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         WHERE VALID_FLAG = '0'
+			                           AND LEFT_NUM >=
+			                               (SELECT LEFT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #enterpriseId#)
+			                           AND RIGHT_NUM <=
+			                               (SELECT RIGHT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_T
+			                                 WHERE ENTERPRISE_ID =
+			                                       #enterpriseId#)
+			                         START WITH SHORT_NAME like '%' || #name# || '%' escape '\'
+			                        CONNECT BY PARENT_ID = PRIOR ENTERPRISE_ID)
+			                 WHERE ID IN
+			                       (SELECT DISTINCT ENTERPRISE_ID
+			                          FROM CLW_JC_ENTERPRISE_T
+			                         START WITH ENTERPRISE_ID IN
+			                                    (SELECT DISTINCT CBI.ORGANIZATION_ID
+			                                       FROM CLW_JC_TERMINAL_T   JT,
+			                                            CLW_CL_BASE_INFO_T  CBI,
+			                                            CLW_CL_SIM_T        CS,
+			                                            TQC_TRIP_EXECUTE       XT,
+			                                            CLW_JC_ENTERPRISE_T JE
+			                                      WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			                                        AND JT.SIM_CARD_NUMBER =
+			                                            CS.SIM_CARD_NUMBER(+)
+			                                        AND CBI.ENTERPRISE_ID =
+			                                            JE.ENTERPRISE_ID(+)
+			                                        AND JT.TERMINAL_ID IS NOT NULL
+			                                        AND JT.VEHICLE_VIN IS NOT NULL
+			                                        AND JT.SIM_CARD_NUMBER IS NOT NULL
+			                                        AND JT.VALID_FLAG = '0'
+			                                        AND CBI.VALID_FLAG = '0'
+			                                        AND CS.VALID_FLAG = '0'
+			                                        AND JT.DEVICE_TYPE = '0'
+			                                        AND CBI.DEVICE_TYPE = '0'
+			                                        AND CS.DEVICE_TYPE = '0'
+			                                        AND CBI.ORGANIZATION_ID IS NOT NULL
+			                                        AND JT.VEHICLE_VIN = XT.VEHICLE_VIN
+			                                        AND XT.VALID_FLAG = '0'
+			                                        AND trunc(XT.Exe_Date,'dd') = trunc(sysdate,'dd')
+			                                        AND CBI.ORGANIZATION_ID IN
+			                                            (SELECT ENTERPRISE_ID
+			                                               FROM CLW_JC_ENTERPRISE_T
+			                                              WHERE LEFT_NUM >=
+			                                                    (SELECT LEFT_NUM
+			                                                       FROM CLW_JC_ENTERPRISE_T
+			                                                      WHERE ENTERPRISE_ID =
+			                                                            #enterpriseId#)
+			                                                AND RIGHT_NUM <=
+			                                                    (SELECT RIGHT_NUM
+			                                                       FROM CLW_JC_ENTERPRISE_T
+			                                                      WHERE ENTERPRISE_ID =
+			                                                            #enterpriseId#)))
+			                        CONNECT BY PRIOR PARENT_ID = ENTERPRISE_ID
+			                               AND VALID_FLAG = '0'
+			                               AND LEFT_NUM >=
+			                                   (SELECT LEFT_NUM
+			                                      FROM CLW_JC_ENTERPRISE_T
+			                                     WHERE ENTERPRISE_ID =
+			                                           #enterpriseId#)
+			                               AND RIGHT_NUM <=
+			                                   (SELECT RIGHT_NUM
+			                                      FROM CLW_JC_ENTERPRISE_T
+			                                     WHERE ENTERPRISE_ID =
+			                                           #enterpriseId#)))
+			           AND B.VALID_FLAG = '0'
+			           AND B.FEE_FLAG = '0'
+			           AND S.VALID_FLAG = '0'
+			           AND T.VALID_FLAG = '0'
+			           AND T.DEVICE_TYPE = '0'
+			           AND S.DEVICE_TYPE = '0'
+			           AND B.ORGANIZATION_ID = E.ENTERPRISE_ID(+)
+			           AND T.VEHICLE_VIN = B.VEHICLE_VIN(+)
+			           AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+			           AND T.VEHICLE_VIN = XT.VEHICLE_VIN
+			           AND XT.VALID_FLAG = '0'
+			           AND trunc(XT.Exe_Date,'dd') = trunc(sysdate,'dd')
+			         ORDER BY NLSSORT(NAME, 'NLS_SORT=SCHINESE_PINYIN_M') ASC)
+		]]>			
+	</select>
+</sqlMap>

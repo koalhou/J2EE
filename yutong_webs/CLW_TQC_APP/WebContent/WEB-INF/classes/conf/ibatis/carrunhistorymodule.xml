@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CarRunHistoryModule">
+	<typeAlias alias="historyInfo1" type="com.neusoft.clw.yunxing.car.runhistory.domain.ClwXcTripHistory" />
+		
+	<resultMap class="historyInfo1" id="infos1">
+	    <result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="routeId" column="route_id" />
+		<result property="moduleDesc" column="module_Desc" />
+		<result property="createTime" column="create_Time" />
+	</resultMap>
+	<parameterMap id="pm_add_route_module_" class="Map">
+		<parameter property="route_id" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="module_desc" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="name" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+	<parameterMap id="pm_update_route_module_" class="Map">
+	    <parameter property="route_id" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="moduleid" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+	<parameterMap id="pm_del_route_module_" class="Map">
+		<parameter property="moduleid" javaType="String" jdbcType="VARCHAR" mode="IN" />
+	</parameterMap>
+	<select id="getRoutenamebyid" parameterClass="String" resultClass="String">
+	    select route_name from clw_xc_route_t t where t.route_id = #value#
+	</select>
+	<procedure id="insertinfobyrouteid" parameterMap="pm_add_route_module_">
+		{call CBM_MODULE_PACK.route_car_module(?, ? ,?,?)}
+    </procedure>
+    <procedure id="updateinfobyid" parameterMap="pm_update_route_module_">
+		{call CBM_MODULE_PACK.route_car_update(?,?,?)}
+    </procedure>
+    <procedure id="delinfobyid" parameterMap="pm_del_route_module_">
+		{call CBM_MODULE_PACK.route_car_del(?)}
+    </procedure>
+    <select id="getclwXcTripHistoryscount" parameterClass="Map" resultClass="Integer">
+	    select count(1) from CLW_XC_TRIP_HISTORY t where t.route_id = #route_id#
+	    <isNotEmpty prepend="and" property="name">
+			t.name like '%' || #name# ||'%' escape '\'
+	    </isNotEmpty>
+	    <isNotEmpty prepend="and" property="create_time">
+			trunc(t.create_time,'dd') = to_date(#create_time#,'yyyy-mm-dd')
+	    </isNotEmpty>
+	</select>
+	<select id="getclwXcTripHistorys" parameterClass="Map" resultMap="infos1">
+	    select * from (select s.*, rownum as rownum_2 from (
+	    
+	    select id,name,route_id,module_Desc,to_char(create_Time,'yyyy-mm-dd hh24:mi:ss') create_Time from CLW_XC_TRIP_HISTORY t where t.route_id = #route_id#
+	    <isNotEmpty prepend="and" property="name">
+			t.name like '%' || #name# ||'%' escape '\'
+	    </isNotEmpty>
+	    <isNotEmpty prepend="and" property="create_time">
+			trunc(t.create_time,'dd') = to_date(#create_time#,'yyyy-mm-dd')
+	    </isNotEmpty>
+	    
+	    	) s where rownum &lt;= #rowEnd# ) where rownum_2 > #rowStart#
+	</select>
+</sqlMap>

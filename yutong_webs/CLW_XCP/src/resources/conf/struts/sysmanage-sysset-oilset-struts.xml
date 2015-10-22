@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="oilset" namespace="/oilset" extends="clw-default">
+		
+		<action name="oilSet" class="oilSetAction" method="oilSetBrowse">
+			<result name="error">/WEB-INF/jsp/sysmanage/sysset/oilset/oilset.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/sysset/oilset/oilset.jsp</result>	
+		</action>
+		<action name="addOilSetbefore" class="oilSetAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/sysset/oilset/addoilset.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">oilSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="oilSet_add" class="oilSetAction" method="addOilSet">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/sysset/oilset/oilset.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">oilSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+				<result name="error" type="redirect-action">
+				<param name="actionName">addOilSetbefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+						
+		</action>
+		<action name="editOilSetbefore" class="oilSetAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/sysset/oilset/editoilset.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">ocktimeset</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="oilSet_edit" class="oilSetAction" method="updateOilSet">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/sysset/oilset/oilset.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">oilSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">editOilSetbefore</param>
+				
+				<param name="message">${message}</param>
+				<param name="oilset.velTypeId">${oilset.velTypeId}</param>
+				<param name="oilset.carType">${oilset.carType}</param>
+				<param name="oilset.carTypeDesc">${oilset.carTypeDesc}</param>
+				<param name="oilset.carBrand">${oilset.carBrand}</param>
+				<param name="oilset.check_time_code">${oilset.check_time_code}</param>
+				<param name="oilset.check_value">${oilset.check_value}</param>
+				 
+			</result>
+			<!-- 
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/sysset/oilset/editoilset.jsp
+			</result>	
+			 -->		
+		</action>
+		<action name="oilSet_delete" class="oilSetAction" method="deleteOilSet">
+			<result name="success" type="redirect-action">
+				<param name="actionName">oilSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/sysset/oilset/oilset.jsp
+			</result>			
+		</action>
+		
+	</package>
+	<package name="oilsetpkg" namespace="/oilsetpkg" extends="json-default">
+       <action name="oilSetpkg" class="oilSetAction" method="oilSetBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+	
+</struts>

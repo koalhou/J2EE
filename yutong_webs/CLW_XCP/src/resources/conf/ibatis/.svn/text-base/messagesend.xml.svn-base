@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="messagesend">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="messageSendInfo"
+		type="com.neusoft.clw.sysmanage.systools.messagesend.domain.MessageSendInfo" />
+
+   
+     <resultMap id="messageSendInfo-result" class="messageSendInfo" >
+       <result property="vehicle_ln" column="vehicle_ln"/>
+       <result property="vehicle_vin" column="vehicle_vin"/>
+       <result property="vehicle_code" column="vehicle_code"/>
+       <result property="operate_time" column="operate_time"/>
+       <result property="deal_state" column="deal_state"/>
+       <result property="remark" column="remark"/>
+    </resultMap>
+    <resultMap class="EnterpriseResInfo" id="enterprise_tree">
+       <result property="enterprise_id" column="enterprise_id"/>
+       <result property="short_name" column="short_name"/>
+       <result property="left_num" column="left_num"/>
+       <result property="right_num" column="right_num"/>
+       <result property="treeleve" column="treeleve"/>
+       <result property="parent_id" column="parent_id"/>
+       <result property="concate_cr_flag" column="concate_cr_flag"/>
+    </resultMap>
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="enterprise_tree"/>
+    </parameterMap>
+    <procedure id="show_enterprise_tree" parameterMap="pm_in_example" >
+       { call tree_enterprise_pack.show_enterprise_tree(?, ? ,? ,?) }
+     </procedure> 
+     <!-- 获取下发消息列表条数 -->
+	<select id="getMessageCount" parameterClass="java.util.Map" resultClass="Integer">
+	SELECT SUM(SMS_COUNT) FROM (
+(select COUNT(*) SMS_COUNT,'下行' sms_type 
+  from CLW_YW_SEND_COMMAND_T A, 
+          CLW_CL_BASE_INFO_T C,
+          CLW_JC_USER_T D
+ WHERE A.VEHICLE_VIN = C.VEHICLE_VIN
+   AND C.VALID_FLAG='0'
+   AND C.DEVICE_TYPE='0'
+   AND A.OPERATE_USER_ID = D.USER_ID 
+   AND A.SEND_TYPE = '2002'
+   AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+         <isNotEmpty prepend="AND" property="operate_user_id">
+         
+              A.OPERATE_USER_ID <![CDATA[ <> ]]> 'yutongsuperadmin'
+         </isNotEmpty>
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+               C.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="starttime">
+              <![CDATA[ A.OPERATE_TIME >= TO_DATE(#starttime#,'YYYY-MM-DD HH24:MI:SS') ]]>
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="endtime">
+              <![CDATA[ A.OPERATE_TIME <= TO_DATE(#endtime# ,'YYYY-MM-DD HH24:MI:SS')]]>
+         </isNotEmpty>
+   )UNION ALL
+ (SELECT COUNT(*) SMS_COUNT,'上行'  SMS_TYPE
+  FROM CLW_YW_UPMESSAGE_T  A, CLW_CL_BASE_INFO_T C
+ WHERE A.VEHICLE_VIN = C.VEHICLE_VIN
+   AND C.VALID_FLAG='0'
+   AND C.DEVICE_TYPE='0'
+   AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+               C.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty> 
+            <isNotEmpty prepend="AND" property="starttime">
+              <![CDATA[ A.TERMINAL_TIME >= TO_DATE(#starttime#,'YYYY-MM-DD HH24:MI:SS')]]>
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="endtime">
+             <![CDATA[  A.TERMINAL_TIME <= TO_DATE(#endtime# ,'YYYY-MM-DD HH24:MI:SS') ]]>
+         </isNotEmpty>      
+ )) <isNotEmpty prepend=" " property="sms_type">
+       WHERE  SMS_TYPE = #sms_type#   
+      </isNotEmpty>  
+		</select>
+	<!-- 获取下发消息列表 -->
+	<select id="getMessageList" parameterClass="java.util.Map" resultClass="messageSendInfo">
+	SELECT VEHICLE_VIN,
+	       VEHICLE_LN,
+	       VEHICLE_CODE,
+	       USER_NAME,
+	       OPERATE_TIME,
+	       REMARK,
+	       SMS_TYPE,
+	       DEAL_STATE FROM
+          (
+           (SELECT 
+            C.VEHICLE_VIN VEHICLE_VIN,
+            C.VEHICLE_LN VEHICLE_LN, 
+            C.VEHICLE_CODE VEHICLE_CODE,
+            D.USER_NAME  USER_NAME,
+            TO_CHAR(A.OPERATE_TIME, 'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+            A.REMARK REMARK,
+            '下行' SMS_TYPE,
+            DECODE(A.DEAL_STATE,
+                    '0',
+                    '信息已发送',
+                    '1',
+                    '信息已发送',
+                    '2',
+                    '信息已发送',
+                    '3',
+                    '终端成功接收信息') DEAL_STATE
+            FROM CLW_YW_SEND_COMMAND_T A, 
+                 CLW_CL_BASE_INFO_T C,
+                 CLW_JC_USER_T D
+           WHERE A.VEHICLE_VIN = C.VEHICLE_VIN
+           AND C.VALID_FLAG='0'
+           AND C.DEVICE_TYPE='0'
+           AND A.OPERATE_USER_ID = D.USER_ID 
+           AND A.SEND_TYPE = '2002'
+           AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+         <isNotEmpty prepend="AND" property="operate_user_id">
+         
+               A.OPERATE_USER_ID <![CDATA[ <> ]]> 'yutongsuperadmin'
+          
+         </isNotEmpty>
+    	
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+               C.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="starttime">
+             <![CDATA[  A.OPERATE_TIME >= TO_DATE(#starttime#,'YYYY-MM-DD HH24:MI:SS')]]>
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="endtime">
+             <![CDATA[  A.OPERATE_TIME <= TO_DATE(#endtime# ,'YYYY-MM-DD HH24:MI:SS') ]]>
+         </isNotEmpty>
+         )
+         union all
+         (SELECT 
+         C.VEHICLE_VIN VEHICLE_VIN,
+         C.VEHICLE_LN VEHICLE_LN, 
+         C.VEHICLE_CODE VEHICLE_CODE,
+         A.DRIVER_ID  USER_NAME,
+         TO_CHAR(A.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+         A.MEG_INFO REMARK,
+         '上行'  SMS_TYPE,
+         '应用成功接收信息' DEAL_STATE
+         FROM CLW_YW_UPMESSAGE_T  A, CLW_CL_BASE_INFO_T C
+         WHERE A.VEHICLE_VIN = C.VEHICLE_VIN
+         AND C.VALID_FLAG='0'
+         AND C.DEVICE_TYPE='0'
+         AND C.ORGANIZATION_ID IN
+         (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+            WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+             AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+               C.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty> 
+         <isNotEmpty prepend="AND" property="starttime">
+              <![CDATA[ A.TERMINAL_TIME >= TO_DATE(#starttime#,'YYYY-MM-DD HH24:MI:SS')]]>
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="endtime">
+             <![CDATA[  A.TERMINAL_TIME <= TO_DATE(#endtime# ,'YYYY-MM-DD HH24:MI:SS') ]]>
+         </isNotEmpty>    
+ ))  
+      <isNotEmpty prepend=" " property="sms_type">
+        WHERE SMS_TYPE = #sms_type#   
+      </isNotEmpty> 
+    <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>   
+	</select>
+		
+</sqlMap>

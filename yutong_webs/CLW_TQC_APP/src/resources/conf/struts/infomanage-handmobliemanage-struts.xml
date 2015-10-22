@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="handmobilemanage" namespace="/handmobile" extends="clw-default">
+		
+		<action name="handmobilemanage" class="handMobileAction" method="init">
+			<result name="error">/WEB-INF/jsp/infomanage/handmobilemanage/handmobilemanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/handmobilemanage/handmobilemanage.jsp</result>	
+		</action>
+		<action name="addhandmobileb" class="handMobileAction" method="addHandmobilebefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/handmobilemanage/addhandmobilebefore.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="handmobile_add" class="handMobileAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/handmobilemanage/addhandmobilebefore.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/handmobilemanage/addhandmobilebefore.jsp
+			</result>			
+		</action>
+		<action name="handmobile_edit_form" class="handMobileAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/handmobilemanage/alterhandmobilebefore.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="handmobile_edit" class="handMobileAction" method="updateHandmobile">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/handmobilemanage/alterhandmobilebefore.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/handmobilemanage/alterhandmobilebefore.jsp
+			</result>			
+		</action>
+		<action name="handmobile_cancle" class="handMobileAction" method="cancleHandmobile">
+			<result name="success" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/handmobilemanage/alterhandmobilebefore.jsp
+			</result>
+		</action>
+		<!-- 车辆批量去除分配 -->
+		<action name="batchHandmobileCancle" class="handMobileAction" method="batchCancleHandmobile">
+			<result name="success" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">handmobilemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<action name="handmobiletreeAction" class="handMobileAction" method="getTreeInit">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/treeModalWindow.jsp</result>
+		</action>
+	</package>
+	
+	<package name="handmobilegrid" namespace="/handmobilegrid" extends="json-default">
+		<action name="handmobilebrowse" class="handMobileAction" method="handmobileBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+	
+	
+</struts>

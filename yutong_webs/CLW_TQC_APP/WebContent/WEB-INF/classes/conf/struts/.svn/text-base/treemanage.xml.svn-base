@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="treemanage" namespace="/treemanage" extends="json-default">
+		<!-- 车辆监控组织树begin -->
+		<action name="getTreeNodes" class="treeManageAction" method="getTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeNodes" class="treeManageAction" method="searchTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 车辆监控组织树end -->
+       	
+       	<!-- 车辆公车巡检组织树begin -->
+		<action name="getTreeNodes_check" class="treeManageAction" method="getCheckTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeNodes_check" class="treeManageAction" method="searchCheckTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 车辆公车私用组织树end -->
+       	
+       	<!-- 无在线状态组织树___维保管理 -->
+		<action name="getRepareTreeNodesWithoutOnline" class="treeManageAction" method="getRepareTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>       	
+       	
+       	<action name="searchRepareTreeNodesWithoutOnline" class="treeManageAction" method="searchRepareTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	
+       	
+       	
+       	
+       		<!-- 无在线状态组织树begin -->
+		<action name="getTreeNodesWithoutOnline" class="treeManageAction" method="getTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>       	
+       	
+       	<action name="searchTreeNodesWithoutOnline" class="treeManageAction" method="searchTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	
+       	
+       	
+       	
+       	
+       	<!-- 无在线状态组织树end -->
+       	
+       	<!-- 车辆监控-线路树 begin -->
+       	<action name="getRouteTreeNodes" class="treeManageAction" method="getRouteTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchRouteTreeNodes" class="treeManageAction" method="searchRouteTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 车辆监控-线路树 end -->
+       	
+       	<!-- 无复选组织线路树 begin -->
+       	<action name="getOrganizationRouteData" class="treeManageAction" method="getOrganizationRouteData">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 无复选组织线路树 begin -->
+       	<action name="tqc_car_getRouteData" class="treeManageAction" method="tqc_car_getRouteData">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="tqc_car_getRouteDatanores" class="treeManageAction" method="tqc_car_getRouteDatanores">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="tqcgetOrganizationRouteData" class="treeManageAction" method="tqcgetOrganizationRouteData">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 无复选组织线路树查询 -->
+       	<action name="searchRouteTreeByRouteName" class="treeManageAction" method="searchRouteTreeByRouteName">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 无复选组织线路树查询 -->
+       	<action name="tqcsearchRouteTree" class="treeManageAction" method="tqcsearchRouteTree">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 无复选组织线路树 end -->
+       	
+       	<!-- 组织数据树begin -->
+       	<action name="getOrganizationTreeData" class="treeManageAction" method="getOrganizationTreeData">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 组织数据树end -->
+       	       	<!-- 无在线状态组织树begin -->
+		<action name="getTreeNodesWithOilState" class="treeManageAction" method="getTreeNodesWithOilState">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeNodesWithOilState" class="treeManageAction" method="searchTreeNodesWithOilState">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="findEnterSub" class="treeManageAction" method="findEnterSub">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- 无在线状态组织树end -->
+       	
+	</package>
+</struts>

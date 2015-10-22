@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="dao"
+		class="com.neusoft.clw.common.dao.impl.SqlMapDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="roleManageDao"
+		class="com.neusoft.clw.yw.qx.rolemanage.dao.RoleManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 终端管理DAO -->
+	<bean id="terminalManageDao"
+		class="com.neusoft.clw.yw.zd.terminal.dao.TerminalManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 车辆注册DAO -->
+	<bean id="vehicleRegisterDao"
+		class="com.neusoft.clw.yw.cl.vehicleRegister.dao.VehicleRegisterDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 终端监控DAO -->
+	<bean id="terminalMonitorDao"
+		class="com.neusoft.clw.yw.xj.monitor.dao.TerminalMonitorDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- SIM卡管理DAO -->
+	<bean id="simManageDao"
+		class="com.neusoft.clw.yw.cs.sim.dao.SimManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- SIM卡流量管理DAO -->
+	<bean id="simFluxManageDao"
+		class="com.neusoft.clw.yw.cs.simflux.dao.SimFluxManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 车辆信息管理DAO -->
+	<bean id="carBaseDao"
+		class="com.neusoft.clw.yw.cl.carbase.dao.CarBaseDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 服务点管理DAO -->
+	<bean id="poiManageDao"
+		class="com.neusoft.clw.yw.xs.poimanage.dao.PoiManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 基础信息管理DAO -->
+	<bean id="baseInfoManageDao"
+		class="com.neusoft.clw.yw.xs.baseinfo.dao.BaseInfoManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 用户授权管理DAO -->
+	<bean id="userManageDao"
+		class="com.neusoft.clw.yw.qx.usermanage.dao.UserManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="ajtNoticeDao"
+		class="com.neusoft.clw.yw.xs.noticemanage.dao.AjtNoticeDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="handheldDeviceDao"
+		class="com.neusoft.clw.yw.cl.handheldDevice.dao.HandheldDeviceDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	<!-- 终端管理【新】（终端远程升级） -->
+	<bean id="newTerminalUpdateDao"
+		class="com.neusoft.clw.yw.zdnew.terminalremoteupdate.dao.NewTerminalUpdateDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+</beans>

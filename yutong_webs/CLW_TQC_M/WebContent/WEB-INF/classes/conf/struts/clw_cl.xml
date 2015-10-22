@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 车辆管理 -->
+	<package name="cl" namespace="/cl" extends="clw-default">
+		<!-- 不良驾驶定义 -->
+		<action name="illdrive" class="illDriveAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cl/illDrive.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/illDrive.jsp
+			</result>
+		</action>
+		<action name="illdrive_goto_add" class="illDriveAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/cl/illDrive_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/illDrive.jsp
+			</result>
+		</action>
+		<action name="illdrive_do_add" class="illDriveAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">illdrive</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">illdrive_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="illdrive_goto_info" class="illDriveAction" method="gotoinfo">
+			<result name="success">
+				/WEB-INF/jsp/cl/illDrive_info.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/illDrive_info.jsp
+			</result>
+		</action>
+		<action name="illdrive_do_edit" class="illDriveAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">illdrive</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">illdrive_goto_info</param>
+				<param name="message">${message}</param>
+				<param name="def_id">${def_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="illdrive_do_del" class="illDriveAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">illdrive</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">illdrive_goto_info</param>
+				<param name="message">${message}</param>
+				<param name="def_id">${def_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 车辆信息管理 -->
+		<action name="carbase" class="carBaseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cl/carBase.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/carBase.jsp
+			</result>
+		</action>
+		<action name="carbase_goto_add" class="carBaseAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/cl/carBase_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/carBase.jsp
+			</result>
+		</action>
+		<action name="carbase_do_add" class="carBaseAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">carbase</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">carbase_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="carbase_goto_info" class="carBaseAction" method="gotoinfo">
+			<result name="success">
+				/WEB-INF/jsp/cl/carBase_info.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/carBase_info.jsp
+			</result>
+		</action>
+		<action name="carbase_do_edit" class="carBaseAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">carbase</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">carbase_goto_info</param>
+				<param name="message">${message}</param>
+				<param name="vehicle_id">${vehicle_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="carbase_do_del" class="carBaseAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">carbase</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">carbase_goto_info</param>
+				<param name="vehicle_id">${vehicle_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导入车辆信息初始化 -->
+		<action name="carbase_goto_import" class="carBaseAction" method="goto_import">
+			<result name="success">
+				/WEB-INF/jsp/cl/carBase_import.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/carBase_import.jsp
+			</result>
+		</action>
+		<!-- 导入车辆信息 -->
+		<action name="carbase_do_import" class="carBaseAction" method="do_import">
+			<result name="input">
+				/WEB-INF/jsp/cl/carBase_import.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">carbase</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/carBase_import.jsp
+			</result>
+		</action>
+		<!-- 导出车辆信息 -->
+		<action name="carbase_do_export" class="carBaseAction" method="do_export">
+			<result name="error" type="redirect-action">
+				<param name="actionName">carbase</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 车辆注册 -->
+		<action name="vehicleregister" class="vehicleRegisterAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+		</action>
+		<!-- 查询 -->
+		<action name="queryVehicleRegister" class="vehicleRegisterAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+		</action>
+		<action name="gpsbrowse" class="vehicleRegisterAction" method="gpsBrowse">
+			<result name="success">
+					/WEB-INF/jsp/cl/showposition.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryVehicleRegister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<!-- 新建车辆注册信息初始化 -->
+		<action name="addVehicleRegisterBefore" class="vehicleRegisterAction" method="addVehicleRegisterBefore">
+			<result name="success">
+				/WEB-INF/jsp/cl/vehicleRegisterInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+		</action>
+		<!-- 新建车辆注册信息 -->
+		<action name="addVehicleRegister" class="vehicleRegisterAction" method="addVehicleRegister">
+			<result name="input">
+				/WEB-INF/jsp/cl/vehicleRegisterInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehicleregister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addVehicleRegisterBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 查询车辆注册信息 -->
+		<action name="queryVehicleRegisterById" class="vehicleRegisterAction" method="queryVehicleRegister">
+			<result name="success">
+				/WEB-INF/jsp/cl/vehicleRegisterEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehicleregister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 车辆注册信息更新 -->
+		<action name="updateVehicleRegister" class="vehicleRegisterAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehicleregister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryVehicleRegisterById</param>
+				<param name="message">${message}</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 车辆注册信息删除 -->
+		<action name="deleteVehicleRegister" class="vehicleRegisterAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehicleregister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryVehicleRegisterById</param>
+				<param name="message">${message}</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导入车辆注册信息初始化 -->
+		<action name="importVehicleRegisterBefore" class="vehicleRegisterAction" method="importVehicleRegisterBefore">
+			<result name="success">
+				/WEB-INF/jsp/cl/vehicleRegisterImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+		</action>
+		<!-- 导入车辆注册信息 -->
+		<action name="importVehicleRegister" class="vehicleRegisterAction" method="importVehicleRegister">
+			<result name="input">
+				/WEB-INF/jsp/cl/vehicleRegisterImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehicleregister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/vehicleRegisterImport.jsp
+			</result>
+		</action>
+		<!-- 导出车辆注册信息 -->
+		<action name="exportVehicleRegister" class="vehicleRegisterAction" method="exportVehicleRegister">
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehicleregister</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 手持设备注册 -->
+		<action name="handheldDevice" class="handheldDeviceAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/cl/handheldDevice.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cl/handheldDevice.jsp
+			</result>
+		</action>
+		<!-- 新建手持设备注册信息初始化 -->
+		<action name="addHandheldDeviceBefore" class="handheldDeviceAction" method="addHandheldDeviceBefore">
+			<result name="success">
+				/WEB-INF/jsp/cl/handheldDeviceInfo.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">handheldDevice</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 新建手持设备注册信息 -->
+		<action name="addHandheldDevice" class="handheldDeviceAction" method="addHandheldDevice">
+			<result name="input">
+				/WEB-INF/jsp/cl/handheldDeviceInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">handheldDevice</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addHandheldDeviceBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 查询手持设备注册信息 -->
+		<action name="queryHandheldDeviceById" class="handheldDeviceAction" method="queryHandheldDeviceById">
+			<result name="success">
+				/WEB-INF/jsp/cl/handheldDeviceEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">handheldDevice</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 手持设备注册信息更新 -->
+		<action name="updateHandheldDevice" class="handheldDeviceAction" method="updateHandheldDevice">
+			<result name="success" type="redirect-action">
+				<param name="actionName">handheldDevice</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryHandheldDeviceById</param>
+				<param name="message">${message}</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 手持设备注册信息删除 -->
+		<action name="delHandheldDevice" class="handheldDeviceAction" method="delHandheldDevice">
+			<result name="success" type="redirect-action">
+				<param name="actionName">handheldDevice</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryHandheldDeviceById</param>
+				<param name="message">${message}</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="clJson" namespace="/clf" extends="json-default">
+		<action name="vehicleregisterList" class="vehicleRegisterAction" method="init">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">vehicleRegistMap</param>
+           </result>
+           <result name="error">
+				/WEB-INF/jsp/cl/vehicleRegister.jsp
+			</result>
+       </action>
+       
+       <action name="handheldDeviceList" class="handheldDeviceAction" method="init">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">handheldMap</param>
+           </result>
+           <result name="error">
+				/WEB-INF/jsp/cl/handheldDevice.jsp
+			</result>
+       </action>
+	</package>
+</struts>

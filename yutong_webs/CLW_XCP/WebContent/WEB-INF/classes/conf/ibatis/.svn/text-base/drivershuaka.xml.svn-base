@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Drivershuaka">
+	<typeAlias alias="driverStatInfo" type="com.neusoft.clw.yunxing.driver.domain.DriverStatInfo" />
+	<select id="getDriverDurationList" parameterClass="driverStatInfo" resultClass="driverStatInfo">
+          SELECT T1.DRIVER_ID DRIVERID,D.DRIVER_NAME DRIVERNAME,D.DRIVER_CARD_ID DRIVERCARDID, TIMECONVERT_FUN(SUM(T1.OFF_DATE-T1.ON_DATE)* 24 * 60 * 60) DRIVERDURATION,
+          DECODE(SUBSTR(SUM(T1.OFF_MILEAGE-T1.ON_MILEAGE),1,1),'.','0'|| SUM(T1.OFF_MILEAGE-T1.ON_MILEAGE),SUM(T1.OFF_MILEAGE-T1.ON_MILEAGE)) || 'KM'  DRIVERMILEAGE
+          FROM (SELECT VEHICLE_VIN,ON_DATE,OFF_DATE FROM CLW_XC_RUN_RECORD_T  WHERE  
+          		<![CDATA[ON_DATE >= TO_DATE(#begTime#, 'YYYY-MM-DD HH24:MI:SS')
+	   			AND OFF_DATE <= TO_DATE(#endTime#, 'YYYY-MM-DD HH24:MI:SS') ]]> 
+	   			GROUP BY  VEHICLE_VIN,ON_DATE,OFF_DATE ) T,
+  				CLW_XC_DRIVER_CHECK_RECORD_T T1 ,CLW_YW_DRIVER_T D
+          WHERE T.VEHICLE_VIN = T1.VEHICLE_VIN
+          AND T1.DRIVER_ID = D.DRIVER_ID
+         <![CDATA[ AND T1.ON_DATE >= T.ON_DATE 
+		  AND T1.ON_DATE <= T.OFF_DATE]]> 
+		  <isNotEmpty prepend="AND" property="driverId">
+		 	d.DRIVER_ID IN ($driverId$)
+		  </isNotEmpty>
+   			AND d.ORGANIZATION_ID IN (SELECT ENTERPRISE_ID FROM CLW_JC_ENTERPRISE_VI
+    		<![CDATA[
+          	WHERE LEFT_NUM >=
+                (SELECT LEFT_NUM
+                   FROM CLW_JC_ENTERPRISE_VI
+                  WHERE ENTERPRISE_ID =  #enterpriseId# )
+            AND RIGHT_NUM<=
+                (SELECT RIGHT_NUM
+                   FROM CLW_JC_ENTERPRISE_VI
+                  WHERE ENTERPRISE_ID = #enterpriseId# )) 
+            ]]>
+            GROUP BY T1.DRIVER_ID,D.DRIVER_NAME,DRIVER_CARD_ID
+			<dynamic prepend="ORDER BY">  
+			   <isNotEmpty property="sortname">  
+			    $sortname$   $sortorder$  
+			   </isNotEmpty>  
+			 </dynamic>  
+    </select>
+	
+	<select id="getDriverDurationCount" parameterClass="driverStatInfo" resultClass="int">
+		 SELECT COUNT(1)
+		 FROM (
+		   SELECT T1.DRIVER_ID DRIVERID,D.DRIVER_NAME DRIVERNAME,D.DRIVER_CARD_ID DRIVERCARDID, TIMECONVERT_FUN(SUM(T1.OFF_DATE-T1.ON_DATE)* 24 * 60 * 60) DRIVERDURATION,
+		   DECODE(SUBSTR(SUM(T1.OFF_MILEAGE-T1.ON_MILEAGE),1,1),'.','0'|| SUM(T1.OFF_MILEAGE-T1.ON_MILEAGE),SUM(T1.OFF_MILEAGE-T1.ON_MILEAGE))
+           FROM (SELECT VEHICLE_VIN,ON_DATE,OFF_DATE FROM CLW_XC_RUN_RECORD_T  WHERE  
+          		<![CDATA[ON_DATE >= TO_DATE(#begTime#, 'YYYY-MM-DD HH24:MI:SS')
+	   			AND OFF_DATE <= TO_DATE(#endTime#, 'YYYY-MM-DD HH24:MI:SS') ]]> 
+	   			GROUP BY  VEHICLE_VIN,ON_DATE,OFF_DATE ) T,
+  				CLW_XC_DRIVER_CHECK_RECORD_T T1 ,CLW_YW_DRIVER_T D
+          WHERE T.VEHICLE_VIN = T1.VEHICLE_VIN
+          AND T1.DRIVER_ID = D.DRIVER_ID
+         <![CDATA[ AND T1.ON_DATE >= T.ON_DATE 
+		  AND T1.ON_DATE <= T.OFF_DATE]]> 
+		  <isNotEmpty prepend="AND" property="driverId">
+		 	d.DRIVER_ID IN ($driverId$)
+		  </isNotEmpty>
+   			AND d.ORGANIZATION_ID IN (SELECT ENTERPRISE_ID FROM CLW_JC_ENTERPRISE_VI
+    		<![CDATA[
+          	WHERE LEFT_NUM >=
+                (SELECT LEFT_NUM
+                   FROM CLW_JC_ENTERPRISE_VI
+                  WHERE ENTERPRISE_ID =  #enterpriseId# )
+            AND RIGHT_NUM<=
+                (SELECT RIGHT_NUM
+                   FROM CLW_JC_ENTERPRISE_VI
+                  WHERE ENTERPRISE_ID = #enterpriseId# )) 
+            ]]>
+            GROUP BY T1.DRIVER_ID,D.DRIVER_NAME,DRIVER_CARD_ID
+		 )
+    </select>
+    
+    <select id="getDriverDurationDetailCount" parameterClass="driverStatInfo" resultClass="int">
+    	   SELECT COUNT(1) FROM (
+			SELECT T1.VEHICLE_LN VEHICLELN,T.ON_DATE,T.OFF_DATE,TIMECONVERT_FUN(SUM(T.OFF_DATE-T.ON_DATE)* 24 * 60 * 60) DRIVERDURATION,
+			DECODE(SUBSTR(SUM(T.OFF_MILEAGE-T.ON_MILEAGE),1,1),'.','0'|| SUM(T.OFF_MILEAGE-T.ON_MILEAGE),SUM(T.OFF_MILEAGE-T.ON_MILEAGE)) || 'KM'  DRIVERMILEAGE
+	        FROM CLW_XC_DRIVER_CHECK_RECORD_T T,CLW_CL_BASE_INFO_T T1,
+	        (SELECT VEHICLE_VIN,ON_DATE,OFF_DATE FROM CLW_XC_RUN_RECORD_T  WHERE  
+          		<![CDATA[ON_DATE >= TO_DATE(#begTime#, 'YYYY-MM-DD HH24:MI:SS')
+	   			AND OFF_DATE <= TO_DATE(#endTime#, 'YYYY-MM-DD HH24:MI:SS') ]]> 
+	   			GROUP BY  VEHICLE_VIN,ON_DATE,OFF_DATE ) T2
+	   		WHERE T.VEHICLE_VIN = T1.VEHICLE_VIN  
+	   		AND T.VEHICLE_VIN= T2.VEHICLE_VIN
+	   		<![CDATA[ 
+	   		    AND T.ON_DATE >= T2.ON_DATE 
+		  		AND T.ON_DATE <= T2.OFF_DATE]]> 
+			AND T.DRIVER_ID  = #driverId#
+	        GROUP BY T1.VEHICLE_LN,T.ON_DATE,T.OFF_DATE
+          )
+    </select>
+    
+    <select id="getDriverDurationDetailList" parameterClass="driverStatInfo" resultClass="driverStatInfo">
+      	SELECT T1.VEHICLE_LN VEHICLELN,TO_CHAR(T.ON_DATE,'YYYY-MM-DD HH24:MI:SS') onDate,TO_CHAR(T.OFF_DATE,'YYYY-MM-DD HH24:MI:SS') offDate,TIMECONVERT_FUN(SUM(T.OFF_DATE-T.ON_DATE)* 24 * 60 * 60) DRIVERDURATION,
+      	DECODE(SUBSTR(SUM(T.OFF_MILEAGE-T.ON_MILEAGE),1,1),'.','0'|| SUM(T.OFF_MILEAGE-T.ON_MILEAGE),SUM(T.OFF_MILEAGE-T.ON_MILEAGE)) || 'KM'  DRIVERMILEAGE
+        FROM CLW_XC_DRIVER_CHECK_RECORD_T T,CLW_CL_BASE_INFO_T T1,
+        (SELECT VEHICLE_VIN,ON_DATE,OFF_DATE FROM CLW_XC_RUN_RECORD_T  WHERE  
+         		<![CDATA[ON_DATE >= TO_DATE(#begTime#, 'YYYY-MM-DD HH24:MI:SS')
+   			AND OFF_DATE <= TO_DATE(#endTime#, 'YYYY-MM-DD HH24:MI:SS') ]]> 
+   			GROUP BY  VEHICLE_VIN,ON_DATE,OFF_DATE ) T2
+   		WHERE T.VEHICLE_VIN = T1.VEHICLE_VIN  
+   		AND T.VEHICLE_VIN= T2.VEHICLE_VIN
+   		<![CDATA[ 
+   		   AND T.ON_DATE >= T2.ON_DATE 
+		   AND T.ON_DATE <= T2.OFF_DATE]]> 
+		AND T.DRIVER_ID  = #driverId#
+        GROUP BY T1.VEHICLE_LN,T.ON_DATE,T.OFF_DATE
+        <dynamic prepend="ORDER BY">  
+    	<isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic> 
+    </select>
+    
+    <select id="getDriverRecordList" parameterClass="driverStatInfo" resultClass="driverStatInfo">
+			SELECT d.DRIVER_ID DRIVERID,d.DRIVER_NAME DRIVERNAME,d.DRIVER_CARD_ID DRIVERCARDID,
+			TO_CHAR(x.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') swipeTime,b.VEHICLE_LN VEHICLELN,
+			DECODE(x.SITE_FLAG ,'0', '上车刷卡','1' , '下车刷卡') state
+			FROM CLW_YW_DRIVER_T d ,CLW_CL_BASE_INFO_T b,
+			CLW_XC_SISCCARD_T x 
+		    WHERE d.DRIVER_ID = x.OTHER_ID
+		    AND x.VEHICLE_VIN = b.VEHICLE_VIN
+		     <isNotEmpty prepend="AND" property="driverId">
+				 x.OTHER_ID IN ($driverId$)
+		     </isNotEmpty>
+		     <isNotEmpty prepend="AND" property="state">
+				 x.site_flag = #state#
+			 </isNotEmpty>
+			 <isNotEmpty prepend="AND" property="vehicleLn">
+				 b.VEHICLE_LN like '%' || #vehicleLn# ||'%' escape '\'
+			 </isNotEmpty>
+			 <![CDATA[
+			 AND x.TERMINAL_TIME >= TO_DATE(#begTime#,'YYYY-MM-DD HH24:MI:SS')
+			 AND x.TERMINAL_TIME <= TO_DATE(#endTime#,'YYYY-MM-DD HH24:MI:SS') 
+			  ]]>
+	  		 AND d.ORGANIZATION_ID IN (SELECT ENTERPRISE_ID FROM CLW_JC_ENTERPRISE_VI
+	  		 	 <![CDATA[
+	  	         WHERE LEFT_NUM >=
+	        		(SELECT LEFT_NUM FROM CLW_JC_ENTERPRISE_VI
+	          		 WHERE ENTERPRISE_ID = #enterpriseId# )
+	       			 AND RIGHT_NUM<=
+	        			(SELECT RIGHT_NUM
+	           		FROM CLW_JC_ENTERPRISE_VI
+	          		WHERE ENTERPRISE_ID = #enterpriseId# )) 
+	          		 ]]>
+	    <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic> 
+    </select>
+	
+	<select id="getDriverRecordCount" parameterClass="driverStatInfo" resultClass="int">
+		SELECT COUNT(1) FROM 
+		(
+			SELECT d.DRIVER_ID DRIVERID,d.DRIVER_NAME DRIVERNAME,d.DRIVER_CARD_ID DRIVERCARDID,
+			TO_CHAR(x.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') swipeTime,b.VEHICLE_LN VEHICLELN,
+			DECODE(x.SITE_FLAG ,'0', '上车刷卡','1' , '下车刷卡') state
+			FROM CLW_YW_DRIVER_T d ,CLW_CL_BASE_INFO_T b,
+			CLW_XC_SISCCARD_T x 
+		    WHERE d.DRIVER_ID = x.OTHER_ID
+		    AND x.VEHICLE_VIN = b.VEHICLE_VIN
+		     <isNotEmpty prepend="AND" property="driverId">
+				 x.OTHER_ID IN ($driverId$)
+		     </isNotEmpty>
+		     <isNotEmpty prepend="AND" property="state">
+				 x.site_flag = #state#
+			 </isNotEmpty>
+			 <isNotEmpty prepend="AND" property="vehicleLn">
+				 b.VEHICLE_LN like '%' || #vehicleLn# ||'%' escape '\'
+			 </isNotEmpty>
+			 <![CDATA[
+			 AND x.TERMINAL_TIME >= TO_DATE(#begTime#,'YYYY-MM-DD HH24:MI:SS')
+			 AND x.TERMINAL_TIME <= TO_DATE(#endTime#,'YYYY-MM-DD HH24:MI:SS') 
+			  ]]>
+	  		 AND d.ORGANIZATION_ID IN (SELECT ENTERPRISE_ID FROM CLW_JC_ENTERPRISE_VI
+	  		 	 <![CDATA[
+	  	         WHERE LEFT_NUM >=
+	        		(SELECT LEFT_NUM FROM CLW_JC_ENTERPRISE_VI
+	          		 WHERE ENTERPRISE_ID = #enterpriseId# )
+	       			 AND RIGHT_NUM<=
+	        			(SELECT RIGHT_NUM
+	           		FROM CLW_JC_ENTERPRISE_VI
+	          		WHERE ENTERPRISE_ID = #enterpriseId# )) 
+	          		 ]]>
+          )
+    </select>
+</sqlMap>

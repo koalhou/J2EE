@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mooko UI Demo</title>
+    <style>
+      input.button, .button {
+        background: url(../../../images/buttongray_bg.png) repeat-x #ebebeb;
+        border: 1px solid #c4c4c4;
+        border-radius: 3px;
+        box-shadow: 0 1px 3px #ddd;
+        color: #757575;
+        display: inline-block;
+        *display: inline;
+        font-family: "Tahoma", sans-serif;
+        font-size: 11px;
+        font-weight: bold;
+        height: 31px;
+        line-height: 31px;
+        margin-right: 4px;
+        padding: 0 14px;
+        text-decoration: none;
+        text-shadow: 0 1px 0 #fff;
+        text-transform: uppercase;
+        zoom: 1;
+      }
+
+      input.button {
+        height: 33px;
+        margin-top: -3px;
+      }
+
+      .button.blue {
+        background: url(../../../images/buttonblue_bg.png) repeat-x #477dae;
+        border: 1px solid #477dae;
+        color: #fff;
+        text-shadow: 0 1px 0 #104266;
+      }
+
+      .button:hover {
+        background: #ebebeb;
+        cursor: pointer;
+      }
+
+      .button.blue:hover {
+  background: #558bbc;
+}
+
+
+.button .glyph {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: normal;
+  margin-right: 8px;
+  margin-top: -100%;
+}
+
+.button .icon16 {
+  float: left;
+  height: 16px;
+  width: 16px;
+  margin-left: -1px;
+  margin-right: 8px;
+  margin-top: 7px;
+}
+
+.button.small {
+  font-size: 10px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0 10px;
+}
+
+.button.small .icon16 {
+  background-size: 28px;
+  background-repeat: no-repeat;
+  height: 14px;
+  margin-top: 5px;
+  margin-right: 7px;
+  width: 14px;
+}
+
+.button.small .glyph {
+  font-size: 14px;
+}
+
+.button.plain {
+  background: #f2f2f2;
+  border: 1px solid #ddd;
+  border-radius: 0;
+  box-shadow: none;
+  color: #aaa;
+  font-size: 9px;
+  height: 22px;
+  line-height: 22px;
+  margin: -4px 0;
+  margin-right: -4px;
+}
+
+.button.plain:hover {
+  color: #777;
+}
+
+.button.plain .glyph {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.button.plain .icon16 {
+  background-size: 24px;
+  height: 12px;
+  margin-left: -3px;
+  margin-top: 5px;
+  width: 12px;
+}
+
+.button.plain:first-child {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+
+.button.plain:last-child {
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.button span.ui-icon {
+  float: left;
+  margin-right: 8px;
+  margin-top: 7px;
+  opacity: .7;
+}
+    </style>
+
+    <script src="../../../libs/jquery-1.7.2.min.js"></script>
+    <script src="../../../core/mk.button.js"></script>
+    <script>
+    	$(function() {
+        $('#test').mk_button();
+    	});
+    </script>
+  </head>
+  <body>
+  	<h1>Mooko UI Demo</h1>
+    <a id="test" href="#">Button</a>
+  	<a href="#" class="button"><span class="ui-icon ui-icon-carat-1-n"></span>Button Test</a>
+    <button class="button">Button</button>
+    <input type="submit" class="button" value="Input Button" />
+    <a href="#" class="button blue">Button Test</a>
+    <button class="button blue">Button</button>
+    <input type="submit" class="button blue" value="Input Button" />
+
+    <li class="button">aaaaaaaa</li>
+  </body>
+</html>

@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 系统设置 -->
+	<package name="xs" namespace="/xs" extends="clw-default">
+		<!-- 省市信息配置 -->
+		<action name="zonemanage" class="zoneManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xs/zoneManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/zoneManage.jsp
+			</result>
+		</action>
+		<action name="zonemanage_goto_add" class="zoneManageAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/xs/zoneManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/zoneManage_add.jsp
+			</result>
+		</action>
+		<action name="zonemanage_do_add" class="zoneManageAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">zonemanage</param>
+				<param name="zone_level">${zone_level}</param>
+				<param name="zone_parent_id">${zone_parent_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">zonemanage_goto_add</param>
+				<param name="zone_level">${zone_level}</param>
+				<param name="zone_parent_id">${zone_parent_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="zonemanage_goto_info" class="zoneManageAction" method="gotoinfo">
+			<result name="success">
+				/WEB-INF/jsp/xs/zoneManage_info.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/zoneManage_info.jsp
+			</result>
+		</action>
+		<action name="zonemanage_do_edit" class="zoneManageAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">zonemanage</param>
+				<param name="zone_level">${zone_level}</param>
+				<param name="zone_parent_id">${zone_parent_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">zonemanage_goto_info</param>
+				<param name="zone_id">${zone_id}</param>
+				<param name="zone_level">${zone_level}</param>
+				<param name="zone_parent_id">${zone_parent_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="zonemanage_do_del" class="zoneManageAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">zonemanage</param>
+				<param name="zone_level">${zone_level}</param>
+				<param name="zone_parent_id">${zone_parent_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">zonemanage_goto_info</param>
+				<param name="zone_id">${zone_id}</param>
+				<param name="zone_level">${zone_level}</param>
+				<param name="zone_parent_id">${zone_parent_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 版本维护 -->
+		<action name="versionmanage" class="versionManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xs/versionManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/versionManage.jsp
+			</result>
+		</action>
+		<action name="versionmanage_goto_add" class="versionManageAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/xs/versionManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/versionManage_add.jsp
+			</result>
+		</action>
+		<action name="versionmanage_do_add" class="versionManageAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">versionmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">versionmanage_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="versionmanage_goto_info" class="versionManageAction" method="gotoinfo">
+			<result name="success">
+				/WEB-INF/jsp/xs/versionManage_info.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/versionManage_info.jsp
+			</result>
+		</action>
+		<action name="versionmanage_do_edit" class="versionManageAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">versionmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">versionmanage_goto_info</param>
+				<param name="version_id">${version_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="versionmanage_do_del" class="versionManageAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">versionmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">versionmanage_goto_info</param>
+				<param name="version_id">${version_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 基础信息管理 -->
+		<!-- 基础信息管理初始化 -->
+		<action name="baseinfomanage" class="baseInfoManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xs/baseInfoManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/baseInfoManage.jsp
+			</result>
+		</action>
+		<!-- 查询基础信息 -->
+		<action name="queryBaseInfo" class="baseInfoManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xs/baseInfoManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/baseInfoManage.jsp
+			</result>
+		</action>
+		<!-- 新建基础信息初始化 -->
+		<action name="addBaseInfoBefore" class="baseInfoManageAction" method="addBaseInfoBefore">
+			<result name="success">
+				/WEB-INF/jsp/xs/baseInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/baseInfoManage.jsp
+			</result>
+		</action>
+		<!-- 新建基础信息 -->
+		<action name="addBaseInfo" class="baseInfoManageAction" method="addBaseInfo">
+			<result name="input">
+				/WEB-INF/jsp/xs/baseInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">baseinfomanage</param>
+				<param name="message">${message}</param>
+				<param name="codeType">${codeType}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addBaseInfoBefore</param>
+				<param name="codeType">${codeType}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询基础信息 -->
+		<action name="queryBaseInfoById" class="baseInfoManageAction" method="queryBaseInfo">
+			<result name="success">
+				/WEB-INF/jsp/xs/baseInfoEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">baseinfomanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 基础信息更新 -->
+		<action name="updateBaseInfo" class="baseInfoManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">baseinfomanage</param>
+				<param name="message">${message}</param>
+				<param name="codeType">${codeType}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryBaseInfoById</param>
+				<param name="message">${message}</param>
+				<param name="codeType">${codeType}</param>
+				<param name="defId">${defId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 基础信息删除 -->
+		<action name="deleteBaseInfo" class="baseInfoManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">baseinfomanage</param>
+				<param name="message">${message}</param>
+				<param name="codeType">${codeType}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryBaseInfoById</param>
+				<param name="message">${message}</param>
+				<param name="defId">${defId}</param>
+				<param name="codeType">${codeType}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 导入基础信息初始化 -->
+		<action name="importBaseInfoBefore" class="baseInfoManageAction" method="importBaseInfoBefore">
+			<result name="success">
+				/WEB-INF/jsp/xs/baseInfoImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/baseInfoImport.jsp
+			</result>
+		</action>
+		<!-- 导入基础信息 -->
+		<action name="importBaseInfo" class="baseInfoManageAction" method="importBaseInfo">
+			<result name="input">
+				/WEB-INF/jsp/xs/baseInfoImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">baseinfomanage</param>
+				<param name="message">${message}</param>
+				<param name="codeType">${codeType}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/baseInfoImport.jsp
+			</result>
+		</action>
+		
+		
+		<!-- 服务点管理 -->
+		<!-- 服务点管理初始化 -->
+		<action name="poimanage" class="poiManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xs/poiManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/poiManage.jsp
+			</result>
+		</action>
+		<!-- 查询服务点信息 -->
+		<action name="queryPoiInfo" class="poiManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xs/poiManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/poiManage.jsp
+			</result>
+		</action>
+		<!-- 新建服务点信息初始化 -->
+		<action name="addPoiInfoBefore" class="poiManageAction" method="addPoiInfoBefore">
+			<result name="success">
+				/WEB-INF/jsp/xs/poiInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/poiManage.jsp
+			</result>
+		</action>
+		<!-- 新建服务点信息 -->
+		<action name="addPoiInfo" class="poiManageAction" method="addPoiInfo">
+			<result name="input">
+				/WEB-INF/jsp/xs/poiInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addPoiInfoBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询服务点信息 -->
+		<action name="queryPoiInfoById" class="poiManageAction" method="queryPoiInfoById">
+			<result name="success">
+				/WEB-INF/jsp/xs/poiEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 服务点信息更新 -->
+		<action name="updatePoiInfo" class="poiManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryPoiInfoById</param>
+				<param name="message">${message}</param>
+				<param name="poiId">${poiId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 服务点信息删除 -->
+		<action name="deletePoiInfo" class="poiManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryPoiInfoById</param>
+				<param name="message">${message}</param>
+				<param name="poiId">${poiId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 服务点有效 -->
+		<action name="poiStartUse" class="poiManageAction" method="poiStartUse">
+			<result name="success" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryPoiInfoById</param>
+				<param name="message">${message}</param>
+				<param name="poiId">${poiId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 服务点无效 -->
+		<action name="poiStopUse" class="poiManageAction" method="poiStopUse">
+			<result name="success" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryPoiInfoById</param>
+				<param name="message">${message}</param>
+				<param name="poiId">${poiId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导入服务点信息初始化 -->
+		<action name="importPoiBefore" class="poiManageAction" method="importPoiBefore">
+			<result name="success">
+				/WEB-INF/jsp/xs/poiImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/poiManage.jsp
+			</result>
+		</action>
+		<!-- 导入SIM卡流量信息 -->
+		<action name="importPoi" class="poiManageAction" method="importPoi">
+			<result name="input">
+				/WEB-INF/jsp/xs/poiImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">poimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/poiImport.jsp
+			</result>
+		</action>
+	
+		<!-- 公告管理 -->
+		<action name="enterpriseNotice" class="ajtNoticeAction" method="blankAction">
+			<result name="error">/WEB-INF/jsp/xs/notice.jsp</result>
+			<result name="success">/WEB-INF/jsp/xs/notice.jsp</result>
+		</action>
+		<action name="addEnterpriseNotice" class="ajtNoticeAction" method="addEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+			</result>
+			<result name="success">/WEB-INF/jsp/xs/addnotice.jsp</result>
+		</action>
+		<!-- 新建页面发布安节通公告 -->
+		<action name="insertEnterpriseNotice" class="ajtNoticeAction" method="insertEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">addEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 新建页面暂存安节通公告 -->
+		<action name="insertEnterpriseNoticeUn" class="ajtNoticeAction" method="pushEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">addEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 新建页面取消安节通公告 -->
+		<action name="cancelEnterpriseNotice" class="ajtNoticeAction" method="deleteNoticeAccessory">
+			<result name="error" type="redirect-action">
+				<param name="actionName">addEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+			</result>
+		</action>
+		<!-- 编辑安节通公告 -->
+		<action name="editEnterpriseNotice" class="ajtNoticeAction" method="editEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+			</result>
+			<result name="success">/WEB-INF/jsp/xs/editnotice.jsp</result>
+		</action>
+		<!-- 编辑页面发布安节通公告 -->
+		<action name="saveEditEnterpriseNotice" class="ajtNoticeAction" method="insertEditEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">editEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 编辑页面暂存安节通公告 -->
+		<action name="saveEditEnterpriseNoticeUn" class="ajtNoticeAction" method="pushEditEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">editEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 编辑页面取消安节通公告 -->
+		<action name="cancelEditEnterpriseNotice" class="ajtNoticeAction" method="deleteEditNoticeAccessory">
+			<result name="error" type="redirect-action">
+				<param name="actionName">editEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+			</result>
+		</action>
+		<!-- 编辑页面删除安节通公告 -->
+		<action name="deleteEditEnterpriseNotice" class="ajtNoticeAction" method="deleteEditEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">editEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 浏览安节通公告 -->
+		<action name="viewEnterpriseNotice" class="ajtNoticeAction" method="viewEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+			</result>
+			<result name="success">/WEB-INF/jsp/xs/viewnotice.jsp</result>
+		</action>
+		<!-- 浏览页面废弃安节通公告 -->
+		<action name="dropEnterpriseNotice" class="ajtNoticeAction" method="dropEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">viewEnterpriseNotice</param>
+				<param name="message">${message}</param>
+				<param name="notice_id">${notice_id}</param>
+			</result>	
+			<result name="success" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 下载附件 -->
+		<action name="downAccessory" class="ajtNoticeAction" method="downAccessory">
+            <result name="success" type="stream">
+               <param name="contentType">application/${suffix}</param>   
+                <param name="inputName">targetFile</param>   
+                <param name="contentDisposition">attachment;filename="${accessoryName}"</param>   
+                <param name="bufferSize">4096</param>   
+            </result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+			</result>			
+		</action>
+		<!-- 导出安节通公告 -->
+		<action name="exportNotice" class="ajtNoticeAction" method="exportEnterpriseNotice">
+			<result name="error" type="redirect-action">
+				<param name="actionName">enterpriseNotice</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>		
+		
+		<!-- 反馈信息管理 -->
+		<!-- 反馈信息管理初始化 -->
+		<action name="informationmanage" class="informationManageAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/xs/informationmanage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/informationmanage.jsp
+			</result>
+		</action>
+		<!-- 新建信息初始化 -->
+		<action name="addInfoBefore" class="informationManageAction" method="addInfoBefore">
+			<result name="success">
+				/WEB-INF/jsp/xs/informationInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xs/informationmanage.jsp
+			</result>
+		</action>
+		<!-- 新建信息 -->
+		<action name="addInfo" class="informationManageAction" method="addInfo">
+			<result name="input">
+				/WEB-INF/jsp/xs/informationInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addInfoBefore</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 查询信息 -->
+		<action name="queryInfoById" class="informationManageAction" method="queryInfoById">
+			<result name="success">
+				/WEB-INF/jsp/xs/informationEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 信息更新 -->
+		<action name="updateInfo" class="informationManageAction" method="updateInfo">
+			<result name="success" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryInfoById</param>
+				<param name="message">${message}</param>
+				<param name="issueId">${issueId}</param>
+				<param name="issueStatus">${issueStatus}</param>
+				<param name="oldIssueStatus">${oldIssueStatus}</param>
+				<param name="replyOrNot">${replyOrNot}</param>
+			</result>
+		</action>
+		<!-- 信息废弃 -->
+		<action name="abandonInfo" class="informationManageAction" method="abandonInfo">
+			<result name="success" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryInfoById</param>
+				<param name="message">${message}</param>
+				<param name="issueId">${issueId}</param>
+				<param name="issueStatus">${issueStatus}</param>
+				<param name="oldIssueStatus">${oldIssueStatus}</param>
+				<param name="replyOrNot">${replyOrNot}</param>
+			</result>
+		</action>
+		<!-- 重新发布已废弃信息 -->
+		<action name="republishInfo" class="informationManageAction" method="republishInfo">
+			<result name="success" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryInfoById</param>
+				<param name="message">${message}</param>
+				<param name="issueId">${issueId}</param>
+				<param name="issueStatus">${issueStatus}</param>
+				<param name="oldIssueStatus">${oldIssueStatus}</param>
+				<param name="replyOrNot">${replyOrNot}</param>
+			</result>
+		</action>
+		<!-- 信息删除 -->
+		<action name="deleteInfo" class="informationManageAction" method="deleteInfo">
+			<result name="success" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryInfoById</param>
+				<param name="message">${message}</param>
+				<param name="issueId">${issueId}</param>
+				<param name="issueStatus">${issueStatus}</param>
+				<param name="oldIssueStatus">${oldIssueStatus}</param>
+				<param name="replyOrNot">${replyOrNot}</param>
+			</result>
+		</action>
+		<!-- 导出信息 -->
+		<action name="exportInfo" class="informationManageAction" method="exportInfo">
+			<result name="error" type="redirect-action">
+				<param name="actionName">informationmanage</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="xsJson" namespace="/xsf" extends="json-default">
+		<action name="informationList" class="informationManageAction" method="getInformations">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">informationsMap</param>
+           </result>
+           <result name="error">
+				/WEB-INF/jsp/xs/informationmanage.jsp
+		   </result>
+        </action>
+	</package>
+	
+	<package name="noticePkg" namespace="/xsp" extends="json-default">
+       <action name="noticePkg" class="ajtNoticeAction" method="getNoticeList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           
+       </action>
+	</package>
+</struts>

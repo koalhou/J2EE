@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper
+END
+AccountMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/AccountMapper.xml
+END
+NewsMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/NewsMapper.xml
+END
+FileMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/FileMapper.xml
+END
+VehicleMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/VehicleMapper.xml
+END
+LogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/LogMapper.xml
+END
+StationMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/StationMapper.xml
+END
+MessageMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/MessageMapper.xml
+END
+AlgorithmMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/AlgorithmMapper.xml
+END
+ChildrenMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/ChildrenMapper.xml
+END
+CommonMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/CommonMapper.xml
+END
+PushRulesMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/mapper/PushRulesMapper.xml
+END

@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config
+END
+service.xml
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/service.xml
+END
+dao.xml
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/dao.xml
+END
+main.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/main.xml
+END
+config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/config.xml
+END
+quartz.xml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/quartz.xml
+END
+smsplatform.xml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/smsplatform.xml
+END
+clwapplication.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/clwapplication.xml
+END
+transactionDao.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/transactionDao.xml
+END
+xmemcache.xml
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/config/xmemcache.xml
+END

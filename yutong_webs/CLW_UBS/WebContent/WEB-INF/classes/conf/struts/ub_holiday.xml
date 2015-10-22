@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+<!-- 节假日维护action start-->
+
+	<package name="ub" namespace="/ub/holiday" extends="clw-default">
+		<!-- 节假日管理 -->
+		<action name="holidaymanage" class="holidayAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/holidayManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/holidayManage.jsp
+			</result>
+		</action>
+		<action name="queryholiday" class="holidayAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/holidayManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/holidayManage.jsp
+			</result>
+		</action>
+		<action name="holidaymanage_goto_add" class="holidayAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/holidayManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/holidayManage.jsp
+			</result>
+		</action>
+		<action name="holidaymanage_do_add" class="holidayAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holidaymanage_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="staitcsObject.day_name">${staitcsObject.day_name}</param>
+				<param name="staitcsObject.startDate">${staitcsObject.startDate}</param>
+				<param name="staitcsObject.endDate">${staitcsObject.endDate}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="holidaymanage_goto_edit" class="holidayAction" method="gotoedit">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/holidayManage_edit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/holidayManage_edit.jsp
+			</result>
+		</action>
+		<action name="holidaymanage_do_edit" class="holidayAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holidaymanage_goto_edit</param>
+				<param name="message">${message}</param>
+				<param name="groupname">${groupname}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="holidaymanage_do_del" class="holidayAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+
+		
+		<!-- 工作日管理 -->
+		<action name="workdaymanage" class="holidayAction" method="init_workday">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/workdayManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/workdayManage.jsp
+			</result>
+		</action>
+		<action name="queryworkday" class="holidayAction" method="init_workday">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/workdayManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/workdayManage.jsp
+			</result>
+		</action>
+		<action name="workdaymanage_goto_add" class="holidayAction" method="gotoadd_workday">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/workdayManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/workdayManage.jsp
+			</result>
+		</action>
+		<action name="workdaymanage_do_add" class="holidayAction" method="doadd_workday">
+			<result name="success" type="redirect-action">
+				<param name="actionName">workdaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">workdaymanage_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="staitcsObject.day_name">${staitcsObject.day_name}</param>
+				<param name="staitcsObject.startDate">${staitcsObject.startDate}</param>
+				<param name="staitcsObject.endDate">${staitcsObject.endDate}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="workdaymanage_goto_edit" class="holidayAction" method="gotoedit_workday">
+			<result name="success">
+				/WEB-INF/jsp/ub/holiday/workdayManage_edit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/holiday/workdayManage_edit.jsp
+			</result>
+		</action>
+		<action name="workdaymanage_do_edit" class="holidayAction" method="doedit_workday">
+			<result name="success" type="redirect-action">
+				<param name="actionName">workdaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">workdaymanage_goto_edit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="workdaymanage_do_del" class="holidayAction" method="dodel_workday">
+			<result name="success" type="redirect-action">
+				<param name="actionName">workdaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">workdaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+
+	</package>
+	 
+<!-- 节假日维护action end-->
+
+</struts>

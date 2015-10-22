@@ -1,0 +1,53 @@
+body{
+	background:#ffffff url(images/bg.jpg) repeat-x top;;
+	
+	margin:0px auto auto auto;
+	padding:0;
+}
+clear{
+clear:both;
+}
+img{
+	border:none;
+}
+a{
+	text-decoration:none;
+}
+p{
+	margin:0;
+	
+}
+li{
+	list-style:none;
+
+}
+.main{
+	width:1000px;
+	height:auto;
+	margin:auto;
+}
+.top{
+	width:1000px;
+	height:70px;
+}
+.logo{
+	width:160px;
+	height:70px;
+}
+.banner{
+	width:1000px;
+	height:400px;
+	background:url(images/banner.jpg) no-repeat;
+}
+.scan2dcode{
+	width:367px;
+	height:129px;
+	background:url(images/scan2dcode.jpg);
+	margin-top:250px;
+	margin-left:630px;
+}
+.tu_1{
+	width:250px;
+	highe:378px;
+	float:left;
+}

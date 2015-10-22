@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TerminalBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="TerminalBrowseInfo" type="com.neusoft.clw.yw.popup.terminal.ds.TerminalBrowseInfo" />
+	
+	<resultMap id="terminalInfo-result" class="TerminalBrowseInfo">
+		<result property="terminalId" column="ID" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="oemName" column="FULL_NAME" />
+		<result property="typeName" column="TYPENAME" />
+		<result property="protocalName" column="TERMINAL_PROTOCOL_NAME" />
+		<result property="videoId" column="VIDEO_ID" />
+	</resultMap>
+	
+	<select id="getTerminalInfos" parameterClass="Map" resultMap="terminalInfo-result">
+		SELECT T.ID,
+               T.TERMINAL_ID,
+               T1.FULL_NAME ,
+               T2.TERMINAL_TYPE_NAME AS TYPENAME,
+               T3.TERMINAL_PROTOCOL_NAME,
+               T.VIDEO_ID
+          FROM CLW_JC_TERMINAL_T T,
+               CLW_CL_TMOEM_T T1,
+               CLW_CL_TMTYPE_T T2,
+               CLW_CL_TMPROTOCOL_T T3
+         WHERE T.TERMINAL_OEM_ID = T1.TERMINAL_OEM_ID
+           AND T.TERMINAL_TYPE_ID = T2.TERMINAL_TYPE_ID
+           AND T.TERMINAL_PROTOCOL_ID = T3.TERMINAL_PROTOCOL_ID
+           AND T.VALID_FLAG = '0'
+           AND T.DEVICE_TYPE = '0'
+           AND T.VEHICLE_VIN IS NULL
+           AND T.SIM_CARD_NUMBER IS NULL
+         <isNotEmpty prepend="AND" property="terminalCode">
+               T.TERMINAL_ID LIKE '%$terminalCode$%'
+         </isNotEmpty>
+         ORDER BY TERMINAL_ID
+	</select>
+	
+</sqlMap>

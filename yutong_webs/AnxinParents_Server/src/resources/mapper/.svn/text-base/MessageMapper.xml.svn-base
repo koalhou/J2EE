@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Message">
+
+	
+	<select id="getPunchIn" parameterType="map" resultType="string">
+		     select distinct punchIn from (
+		      select
+		       to_char(a.create_time, 'yyyyMMdd') as punchIn
+		      from CLW_JZ_STU_notice_RECORD_T a
+		     where to_char(a.create_time, 'yyyyMM') = #{month} and a.rule_id in( '01_102','01_104','01_106','01_107','01_002', '01_004', '01_006', '01_007')
+		       and a.stu_id =#{cld_id} and a.user_id=#{usr_id} 
+		     ) order by punchIn
+	</select>
+	
+	<select id="getHistory" parameterType="map" resultType="HistoryMsg">
+		select a.notice_id as id,
+		       a.stu_id as childId,
+		       a.rule_id as ruleId,
+		       a.content,
+		       to_char(a.create_time, 'yyyyMMddhh24miss') as time
+		  from CLW_JZ_STU_notice_RECORD_T a
+		 where a.stu_id =#{cld_id} and a.USER_ID=#{usr_id} 
+       and to_char(a.create_time,'yyyyMMdd') = #{record_date} order by a.create_time desc
+	</select>
+	
+	<select id="getRealRiding" parameterType="string" resultType="RidingMsg" >
+		select decode(a.gps_valid, 1, a.GPS_SPEEDING, a.vehicle_speed) as speed,
+			  b.driver_name  as driver, 
+			  c.sichen_tel as  teacherPhone, 
+			  c.sichen_name as  teacher,
+	          d.VEHICLE_LN as plate,
+	          e.vehicle_vin as vin
+	     from clw_jc_terminal_t a, CLW_YW_DRIVER_T b, CLW_XC_SICHEN_T c,clw_cl_base_info_t d,CLW_XC_ST_CHECK_T e
+		 where a.driver_id = b.driver_id (+)
+		   and a.current_teacher = c.sichen_id (+)
+		    and d.vehicle_vin=a.vehicle_vin
+		   and a.vehicle_vin =  e.vehicle_vin  
+       		and e.stu_id=#{value}
+	</select>
+	
+	
+	
+</mapper>

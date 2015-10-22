@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="EntiManage">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="EnterpriseResInfo" type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseResInfo" />
+	 <typeAlias alias="EnterpriseDataInfo" type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseDataInfo" />
+
+	 <resultMap class="EnterpriseResInfo" id="enterprise_tree">
+       <result property="enterprise_id" column="enterprise_id"/>
+       <result property="short_name" column="short_name"/>
+       <result property="left_num" column="left_num"/>
+       <result property="right_num" column="right_num"/>
+       <result property="treeleve" column="treeleve"/>
+       <result property="parent_id" column="parent_id"/>
+       <result property="concate_cr_flag" column="concate_cr_flag"/>
+    </resultMap>
+
+
+	<parameterMap id="pm_show_enterprise_tree" class="Map">
+		<parameter property="in_enterprise_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="enterprise_tree"/>
+    </parameterMap>
+    
+    <procedure id="show_enterprise_tree" parameterMap="pm_show_enterprise_tree" >
+       { call tree_enterprise_pack.show_enterprise_tree(?, ? ,? ,?) }
+    </procedure> 
+    
+	<parameterMap id="pm_add_enterprise" class="EnterpriseDataInfo">
+		<parameter property="parent_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_code" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="full_name" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="short_name" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_country" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_province" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_city" javaType="String" jdbcType="VARCHAR" />
+		<!--parameter property="enterprise_type" javaType="String" jdbcType="VARCHAR" /-->
+		<parameter property="enterprise_desc" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="address" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="email" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="postcode" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="contact_p" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="contact_tel" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="msg_num" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="img_path" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="creater" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="netaddress" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_type_cfg" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_leve_cfg" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="enterprise_kind_cfg" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="money_kind_cfg" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="language_cfg" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="isused" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="fax" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="en_mould" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="en_gateway" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+    </parameterMap>
+    
+    <procedure id="add_enterprise" parameterMap="pm_add_enterprise" >
+        { call tree_enterprise_pack.add_enterprise(?, ? ,? ,? ,? ,?, ? ,? ,?
+		,? ,?, ? ,? ,? ,? ,?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?,?,? ) }
+    </procedure>
+    
+    
+    
+    <parameterMap id="pm_del_enterprise" class="Map">
+		<parameter property="in_enterprise_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_vaset_user_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+    </parameterMap>
+    
+    
+    <procedure id="del_enterprise" parameterMap="pm_del_enterprise" >
+       { call tree_enterprise_pack.del_enterprise(?, ? ,? ,? ) }
+    </procedure>
+    
+    
+    <resultMap id="enterInfo-result" class="EnterpriseDataInfo">
+		<result property="enterprise_code" column="enterprise_code" />
+		<result property="full_name" column="full_name" />
+		<result property="short_name" column="short_name" />
+		<result property="enterprise_country" column="enterprise_country" />
+		<result property="enterprise_province" column="enterprise_province" />
+		<result property="enterprise_city" column="enterprise_city" />
+		<result property="enterprise_type" column="enterprise_type" />
+		<result property="enterprise_desc" column="enterprise_desc" />
+		<result property="address" column="address" />
+		<result property="email" column="email" />
+		<result property="postcode" column="postcode" />
+		<result property="contact_p" column="contact_p" />
+		<result property="contact_tel" column="contact_tel" />
+		<result property="msg_num" column="msg_num" />
+	</resultMap>
+    
+    <select id="enterInfo" parameterClass="Map"
+		resultMap="enterInfo-result">
+		SELECT t.enterprise_code,
+		       t.full_name,
+		       t.short_name,
+		       t.enterprise_country,
+		       t.enterprise_province,
+		       t.enterprise_city,
+		       t.enterprise_type,
+		       t.enterprise_desc,
+		       t.address,
+		       t.email,
+		       t.postcode,
+		       t.contact_p,
+		       t.contact_tel,
+		       t.msg_num
+		  FROM clw_jc_enterprise_t t
+		 WHERE t.enterprise_id = #enterId#
+	</select>
+	
+	
+	
+	<update id="updateenterInfo" parameterClass="EnterpriseDataInfo">
+		UPDATE clw_jc_enterprise_t t
+		   SET t.full_name = #full_name#,
+		       t.short_name = #short_name#,
+		       t.enterprise_country = #enterprise_country#,
+		       t.enterprise_province = #enterprise_province#,
+		       t.enterprise_city = #enterprise_city#,
+		       t.enterprise_desc = #enterprise_desc#,
+		       t.address = #address#,
+		       t.email = #email#,
+		       t.postcode = #postcode#,
+		       t.contact_p = #contact_p#,
+		       t.contact_tel=#contact_tel#,
+		       t.msg_num = #msg_num#,
+		       t.modifier = #modifier#,
+		       t.modify_time = SYSDATE
+		 WHERE enterprise_id = #enterprise_id#
+	</update>
+	<!-- 更新LOGO路径 -->
+	<update id="updateLogoPath" parameterClass="EnterpriseDataInfo">
+		UPDATE clw_jc_enterprise_t t
+		   SET t.IMG_PATH = #img_path#
+		 WHERE enterprise_id = #enterprise_id#
+	</update>
+	
+	<select id="CarsNums" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM clw_cl_base_info_t t
+		WHERE t.valid_flag = '0'
+		AND t.organization_id = #organization_id#
+		AND t.device_type = '0'
+	</select>
+	
+	<select id="getPareIdByOrgId" parameterClass="EnterpriseDataInfo" resultClass="String">
+		SELECT t.PARENT_ID
+		FROM CLW_JC_ENTERPRISE_T t
+		WHERE t.valid_flag = '0'
+		AND t.ENTERPRISE_ID = #enterprise_id#
+	</select>
+	
+	<!-- 效验企业名称 -->
+	<select id="checkEntiNameUnique" parameterClass="EnterpriseDataInfo" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM CLW_JC_ENTERPRISE_T t
+		WHERE t.valid_flag = '0'
+		AND t.FULL_NAME = #full_name#
+		<isNotEmpty prepend="AND" property="enterprise_id">
+			t.ENTERPRISE_ID not like #enterprise_id#
+         </isNotEmpty>
+	
+		and t.ENTERPRISE_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #parent_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#parent_id#)        
+			)
+	     ]]>
+	     
+	</select>
+	
+</sqlMap>

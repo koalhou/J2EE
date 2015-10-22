@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TerminalMonitor">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="TerminalRealTimeInfo" type="com.neusoft.clw.yw.xj.monitor.ds.TerminalRealTimeInfo" />
+	<typeAlias alias="TerminalParamsInfo" type="com.neusoft.clw.yw.xj.monitor.ds.TerminalParamsInfo" />
+	<typeAlias alias="SendCommandInfo" type="com.neusoft.clw.yw.xj.monitor.ds.SendCommandInfo" />
+	
+	<resultMap id="terminalRealTimeInfo-result" class="TerminalRealTimeInfo">
+		<result property="terminalId" column="ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseName" column="FULL_NAME" />
+		<result property="userId" column="USER_ID" />
+		<result property="userName" column="USER_NAME" />
+		<result property="gpsState" column="GPS_STATE" />
+	</resultMap>
+	
+	<resultMap id="terminalParams-result" class="TerminalParamsInfo">
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="updateTime" column="UPDATE_TIME" />
+		<result property="messageCenter" column="MSG_CENTER" />
+		<result property="apn" column="APN" />
+		<result property="serverIp" column="SERVER_IP" />
+		<result property="serverPort" column="SERVER_PORT" />
+		<result property="receiverTime" column="RECEIVER_TIME" />
+		<result property="timeAnswers" column="TIME_ANSWERS" />
+		<result property="spacingAnswers" column="SPACING_ANSWERS" />
+		<result property="keepAliveTime" column="KEEPALIVE_TIME" />
+		<result property="keepAliveOverTime" column="KEEPALIVE_OVERTIME" />
+		<result property="stalledTimeAnswers" column="STALLED_TIME_ANSWERS" />
+		<result property="overSpeed" column="OVERSPEED" />
+		<result property="overSpeedDiff" column="OVERSPEED_DIFF" />
+		<result property="overSpeedKeep" column="OVERSPEED_KEEP" />
+		<result property="drivingFatigue" column="DRIVING_FATIGUE" />
+		<result property="drivingFatigueDiff" column="DRIVING_FATIGUE_DIFF" />
+		<result property="drivingFatigueRest" column="DRIVING_FATIGUE_REST" />
+		<result property="indexProperty" column="INDEX_PROPERTY" />
+		<result property="pulsePerSecond" column="PULSE_PER_SECOND" />
+		<result property="engineGear" column="ENGINE_GEAR" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleNo" column="VEHICLE_NO" />
+		<result property="vehicleSort" column="VEHICLE_SORT" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="sleepTime" column="SLEEP_TIME" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_USER_T JU,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.USER_ID = JU.USER_ID(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="terminalCode">
+               JT.TERMINAL_ID LIKE '%$terminalCode$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               JT.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getTerminalRealTimeInfos" parameterClass="Map" resultMap="terminalRealTimeInfo-result">
+		SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+               JT.VEHICLE_VIN,
+               JT.TERMINAL_ID,
+               JT.SIM_CARD_NUMBER,
+               CBI.ENTERPRISE_ID,
+               JE.FULL_NAME,
+               CBI.USER_ID,
+               JU.USER_NAME,
+               JT.GPS_STATE
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_USER_T JU,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.USER_ID = JU.USER_ID(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="terminalCode">
+               JT.TERMINAL_ID LIKE '%$terminalCode$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               JT.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getTerminalParams" parameterClass="String" resultMap="terminalParams-result">
+		SELECT T.TERMINAL_ID,
+               TO_CHAR(T.UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS UPDATE_TIME,
+               T.MSG_CENTER,
+               T.APN,
+               T.SERVER_IP,
+               T.SERVER_PORT,
+               T.RECEIVER_TIME,
+               T.TIME_ANSWERS,
+               T.SPACING_ANSWERS,
+               T.KEEPALIVE_TIME,
+               T.KEEPALIVE_OVERTIME,
+               T.STALLED_TIME_ANSWERS,
+               T.OVERSPEED,
+               T.OVERSPEED_DIFF,
+               T.OVERSPEED_KEEP,
+               T.DRIVING_FATIGUE,
+               T.DRIVING_FATIGUE_DIFF,
+               T.DRIVING_FATIGUE_REST,
+               T.INDEX_PROPERTY,
+               T.PULSE_PER_SECOND,
+               T.ENGINE_GEAR,
+               T.VEHICLE_LN,
+               T.VEHICLE_NO,
+               T.VEHICLE_SORT,
+               T.VEHICLE_VIN,
+               T.SLEEP_TIME
+          FROM CLW_JC_TERMINAL_PARA_T T
+         WHERE T.TERMINAL_ID = #terminalCode#
+	</select>
+	
+	<insert id="insertSendCommandInfo" parameterClass="SendCommandInfo">
+		INSERT INTO CLW_YW_SEND_COMMAND_T T
+          (T.ID,
+           T.SIM_CARD_NUMBER,
+           T.VEHICLE_VIN,
+           T.MSG_ID,
+           T.SEND_COMMAND,
+           T.SEND_TYPE,
+           T.PACKET_CONTENT,
+           T.DEAL_STATE,
+           T.REMARK,
+           T.CORE_ID,
+           T.OPERATE_USER_ID,
+           T.OPERATE_TIME)
+        VALUES
+          (#commandId#,
+           #simCardNumber#,
+           #vehicleVin#,
+           #messageId#,
+           #sendCommand#,
+           #sendType#,
+           #packetContent#,
+           #dealState#,
+           #remark#,
+           #coreId#,
+           #operateUserId#,
+           SYSDATE)
+	</insert>
+	
+</sqlMap>

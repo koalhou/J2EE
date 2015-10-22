@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="TerminalParams">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="xcTerminalParamsInfo" type="com.neusoft.clw.yw.xj.terminalparam.ds.XCTerminalParamsInfo" />
+	<typeAlias alias="TerminalRealTimeInfo" type="com.neusoft.clw.yw.xj.monitor.ds.TerminalRealTimeInfo" />
+	
+	<resultMap id="terminalRealTimeInfo-result" class="TerminalRealTimeInfo">
+		<result property="terminalId" column="ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="enterpriseName" column="FULL_NAME" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="terminalCode">
+               JT.TERMINAL_ID LIKE '%$terminalCode$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               JT.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getTerminalRealTimeInfos" parameterClass="Map" resultMap="terminalRealTimeInfo-result">
+		SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+               JT.VEHICLE_VIN,
+               JT.TERMINAL_ID,
+               JT.SIM_CARD_NUMBER,
+               CS.CELLPHONE,
+               CBI.ENTERPRISE_ID,
+               JE.ENTERPRISE_CODE,
+               JE.FULL_NAME
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="terminalCode">
+               JT.TERMINAL_ID LIKE '%$terminalCode$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               JT.SIM_CARD_NUMBER LIKE '%$simCardNumber$%'
+         </isNotEmpty>
+	</select>
+	
+	<resultMap id="xcTerminalInfo-result" class="xcTerminalParamsInfo">
+		<result property="terminalId" column="TERMINAL_ID" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="terminalRecordVersion" column="TER_JILU_VER" />
+		<result property="terminalScreenVersion" column="TER_XIANSHI_VER" />
+		<result property="terminalDVRVersion" column="TER_DVR_VER" />
+		<result property="terminalRFVersion" column="TER_SHEPIN_VER" />
+		<result property="terminalOtherVersion" column="TER_QITA_VER" />
+	</resultMap>
+	
+	<select id="getTerminalInfoById" parameterClass="String" resultMap="xcTerminalInfo-result">
+		SELECT TERMINAL_ID,
+	           VEHICLE_VIN,
+	           SIM_CARD_NUMBER,
+		       TER_JILU_VER,
+		       TER_XIANSHI_VER,
+		       TER_DVR_VER,
+		       TER_SHEPIN_VER,
+		       TER_QITA_VER
+		  FROM CLW_JC_TERMINAL_T
+		 WHERE ID = #value#
+	</select>
+	
+	<resultMap id="xcTerminalParamsInfo-result" class="xcTerminalParamsInfo">
+		<result property="keepAliveTime" column="KEEPALIVE_TIME" />
+		<result property="tcpOverTime" column="TCP_OVERTIME" />
+		<result property="tcpRetransTime" column="TCP_RETRANS_TIME" />
+		<result property="udpOverTime" column="UDP_OVERTIME" />
+		<result property="udpRetransTime" column="UDP_RETRANS_TIME" />
+		<result property="positionUpType" column="POSITION_UP_TYPE" />
+		<result property="positionUpSchema" column="POSITION_UP_SCHEME" />
+		<result property="sleepDateTime" column="SLEEP_DATETIME" />
+		<result property="sosTime" column="SOS_TIME" />
+		<result property="defaultDateTime" column="DEFAULT_DATETIME" />
+		<result property="defaultSpaceTime" column="DEFAULT_SPACETIME" />
+		<result property="driverOverSpaceTime" column="DRIVER_OVER_SPACETIME" />
+		<result property="sleepSpaceTime" column="SLEEP_SPACETIME" />
+		<result property="sosSpaceTime" column="SOS_SPACETIME" />
+		<result property="makeUpAngle" column="MAKEUP_ANGLE" />
+		<result property="mainApn" column="MAIN_APN" />
+		<result property="mainUser" column="MAIN_USER" />
+		<result property="mainPass" column="MAIN_PASS" />
+		<result property="standbyApn" column="STANDBY_APN" />
+		<result property="standbyUser" column="STANDBY_USER" />
+		<result property="standbyPass" column="STANDBY_PASS" />
+		<result property="mainIp" column="MAIN_IP" />
+		<result property="tcpPort" column="TCP_PORT" />
+		<result property="udpPort" column="UDP_PORT" />
+		<result property="monitorPhone" column="MONITOR_PHONE" />
+		<result property="resetPhone" column="RESET_PHONE" />
+		<result property="resetFactory" column="RESET_FACTORY" />
+		<result property="monitorSmsPhone" column="MONITOR_SMSPHONE" />
+		<result property="terminalSmsPhone" column="TERMINAL_SMSPHONE" />
+		<result property="terminalPhoneTactic" column="TERMINAL_PHONE_TACTIC" />
+		<result property="callTimePer" column="CALL_TIMEPER" />
+		<result property="callTimeMonth" column="CALLTIME_MONCH" />
+		<result property="odometer" column="ODOMETER" />
+		<result property="mediaQuality" column="MEDIA_QUALITY" />
+		<result property="luminance" column="LUMINANCE" />
+		<result property="contrast" column="CONTRAST" />
+		<result property="saturation" column="SATURATION" />
+		<result property="chroma" column="CHROMA" />
+		<result property="alarmShield" column="ALARM_SHIELD" />
+		<result property="alarmSmsSwitch" column="ALARMSMS_SWITCH" />
+		<result property="alarmShootSwitch" column="ALARMSHOOT_SWITCH" />
+		<result property="alarmShootSaveFlag" column="ALARMSHOOT_SAVEFLAG" />
+		<result property="keyFlag" column="KEY_FLAG" />
+	</resultMap>
+	
+	<select id="getTerminalParamsById" parameterClass="String" resultMap="xcTerminalParamsInfo-result">
+		SELECT TERMINAL_ID,
+			   KEEPALIVE_TIME,
+        	   TCP_OVERTIME, 
+		       TCP_RETRANS_TIME,
+		       UDP_OVERTIME,
+		       UDP_RETRANS_TIME,
+		       POSITION_UP_TYPE,
+		       POSITION_UP_SCHEME,
+		       SLEEP_DATETIME,
+		       SOS_TIME,
+		       DEFAULT_DATETIME,
+		       DEFAULT_SPACETIME,
+		       DRIVER_OVER_SPACETIME,
+		       SLEEP_SPACETIME,
+		       SOS_SPACETIME,
+		       MAKEUP_ANGLE,
+		       MAIN_APN,
+		       MAIN_USER,
+		       MAIN_PASS,
+		       STANDBY_APN,
+		       STANDBY_USER,
+		       STANDBY_PASS,
+		       MAIN_IP,
+		       TCP_PORT,
+		       UDP_PORT,
+		       MONITOR_PHONE,
+		       RESET_PHONE,
+		       RESET_FACTORY,
+		       MONITOR_SMSPHONE,
+		       TERMINAL_SMSPHONE,
+		       TERMINAL_PHONE_TACTIC,
+		       CALL_TIMEPER,
+		       CALLTIME_MONCH,
+		       ODOMETER,
+		       MEDIA_QUALITY,
+		       LUMINANCE,
+		       CONTRAST,
+		       SATURATION,
+		       CHROMA,
+		       ALARM_SHIELD,
+		       ALARMSMS_SWITCH,
+		       ALARMSHOOT_SWITCH,
+		       ALARMSHOOT_SAVEFLAG,
+		       KEY_FLAG
+		  FROM CLW_JC_TERMINAL_PARA_T
+		 WHERE TERMINAL_ID =
+		       (SELECT TERMINAL_ID FROM CLW_JC_TERMINAL_T WHERE ID = #value#)
+	</select>
+	
+</sqlMap>

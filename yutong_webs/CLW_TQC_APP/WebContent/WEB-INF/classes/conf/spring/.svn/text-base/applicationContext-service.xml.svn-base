@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<aop:config>
+		<!-- execution(* com.neusoft.laser.ui.service..*.*(..)) -->
+		<!-- 第一个* 表示 返回任意的类型 -->
+		<!-- service.. 代表service包及其子包-->
+		<!-- 第二个* 表示 该包下的所有类 -->
+		<!-- 第三个* 表示 类下的所有方法 -->
+		<!-- ( .. ) 表示 方法带任意参数 -->
+		<aop:advisor
+			pointcut="execution(* com.neusoft.clw.common.service..*.*(..))"
+			advice-ref="txAdvice" />
+			
+	<!-- 专属平台油量监控模块service的事务配置  start-->
+	</aop:config>
+		<aop:config>
+		<aop:advisor
+			pointcut="execution(* com.neusoft.clw.yw.sitemanager.service..*.*(..))"
+			advice-ref="txAdvice" />
+	</aop:config>
+	<aop:config>
+		<aop:advisor
+			pointcut="execution(* com.neusoft.clw.yw.ftly.service..*.*(..))"
+			advice-ref="txAdvice" />
+	</aop:config>
+	<!-- 专属平台油量监控模块service的事务配置   end-->
+
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="*" rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
+    <!-- 公告管理实务配置,此事务应用于service包下的所有类，所有方法 -->
+    <aop:config>
+		<aop:advisor
+			pointcut="execution(* com.neusoft.clw.sysmanage.datamanage.noticemanage.service..*.*(..))"
+			advice-ref="txAdvice" />
+	</aop:config>
+	
+	<bean id="service"
+		class="com.neusoft.clw.common.service.impl.ServiceImpl">
+		<property name="dao" ref="dao" />
+		<property name="affairDao" ref="affairDao" />
+	</bean>
+
+	<bean id="vehmanageservice"
+		class="com.neusoft.clw.common.service.vehiclemanageservice.impl.VehManageServiceImpl">
+		<property name="dao" ref="vehManageDao" />
+	</bean>
+
+<bean id="checkOilSetService"
+		class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.service.CheckOilSetServieImpl">	
+		<property name="dao" ref="dao"></property>	
+	</bean>
+	<bean id="usermanageservice"
+		class="com.neusoft.clw.common.serviec.usermanageserviec.impl.UserManageServiceImpl">
+		<property name="dao" ref="dao" />
+	</bean>
+
+	<bean id="routemanageservice"
+		class="com.neusoft.clw.common.service.routemanageservice.impl.RouteManageServiceImpl">
+		<!--  <property name="dao" ref="vehManageDao" />-->
+		<property name="dao" ref="stationDao" />
+		<property name="stationDao" ref="stationInsertDao" />
+	</bean>
+
+	<!-- 角色管理service -->
+	<bean id="roleManageService"
+		class="com.neusoft.clw.common.service.rolemanageservice.impl.RoleManageServiceImpl">
+		<property name="dao" ref="dao" />
+		<property name="roleManageDao" ref="roleManageDao" />
+	</bean>
+
+	<!-- 考核油耗设置 -->
+	<bean id="oilsetservice"
+		class="com.neusoft.clw.common.service.oilsetservice.impl.OilSetServiceImpl">
+		<property name="dao" ref="vehManageDao" />
+	</bean>
+
+	<!-- 命令下发  -->
+	<bean id="sendCommandClient"
+		class="com.neusoft.clw.sysmanage.datamanage.sendcommand.service.SendCommandClient"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<bean id="employeeManageService"
+		class="com.neusoft.clw.common.service.employeeManageService.impl.EmployeeManageServiceImpl">
+		<property name="dao" ref="employeeManageDao" />
+	</bean>
+	
+	<bean id="studentManageService"
+		class="com.neusoft.clw.common.service.studentManageService.impl.StudentManageServiceImpl">
+		<property name="dao" ref="studentManageDao" />
+	</bean>
+	
+	<bean id="alarmManageService"
+		class="com.neusoft.clw.common.service.alarmmanageservice.impl.AlarmmanageServiceImpl">
+		<property name="dao" ref="alarmManageDao" />
+	</bean>
+	
+	<bean id="driverManageService"
+		class="com.neusoft.clw.common.service.driverManageService.impl.DriverManageServiceImpl">
+		<property name="dao" ref="driverManageDao" />
+	</bean>
+	
+	<bean id="stewardManageService"
+		class="com.neusoft.clw.common.service.stewardManageService.impl.StewardManageServiceImpl">
+		<property name="dao" ref="stewardManageDao" />
+	</bean>
+	
+	<bean id="smsManageService"
+		class="com.neusoft.clw.common.service.smsmanageservice.impl.SmsManageServiceImpl">
+		<property name="dao" ref="smsManageDao" />
+	</bean>
+	
+	<bean id="handmobileservice"
+		class="com.neusoft.clw.common.service.handmobileservice.impl.HandMobileServiceImpl">
+		<property name="dao" ref="handmobileManageDao" />
+	</bean>
+	
+	<bean id="stationservice"
+		class="com.neusoft.clw.common.service.stationservice.impl.StationServiceImpl">
+		<property name="stationDao" ref="stationInsertDao" />
+		<property name="dao" ref="dao" />
+	</bean>
+	
+	<bean id="smsReminderService"
+		class="com.neusoft.clw.common.service.smsreminderservice.impl.SmsReminderServiceImpl">
+		<property name="dao" ref="smsReminderDao" />
+	</bean>
+	
+	<bean id="writegzpackservice"
+		class="com.neusoft.clw.common.service.writegzpackservice.impl.WritegzpackserviceImpl">
+		<property name="writeGZPackDao" ref="writeGZPackDao" />
+		<property name="dao" ref="dao" />
+	</bean>
+	
+	<bean id="sendroutefileservice"
+		class="com.neusoft.clw.infomationExport.SendRouteFile"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<bean id="ridingplanservice"
+		class="com.neusoft.clw.common.service.ridingplanservice.impl.RidingPlanServiceImpl">
+		<property name="ridingPlanDao" ref="ridingPlanDao" />
+		<property name="writeGZPackDao" ref="writeGZPackDao" />
+		<property name="dao" ref="dao" />
+	</bean>
+	
+		<!--加油站设置-->
+	<bean id="sitservice" class="com.neusoft.clw.yw.sitemanager.service.impl.StationServiceImpl">		
+		<property name="stationDao" ref="sitDao" />
+		<property name="dao" ref="dao" />
+	</bean>
+		<bean id="ftlyInfoService" class="com.neusoft.clw.yw.ftly.service.impl.FtlyInfoServiceImpl">
+	</bean>
+	<bean id="vacationService" class="com.neusoft.clw.sysmanage.vacation.service.VacationServiceImpl">		
+		<property name="dao" ref="dao" />
+	</bean>
+	<!--防偷油短信设置-->
+	<bean id="stealOilSmsService" class="com.neusoft.clw.yw.ftly.service.impl.StealOilSmsServiceImpl">
+		<property name="stealOilSmsDao" ref="stealOilSmsDao" />
+	</bean>
+	
+	<!-- 公告发布结束 -->
+	<bean id="noticeService" class="com.neusoft.clw.sysmanage.datamanage.noticemanage.service.NoticeServiceImpl">
+		<property name="dao" ref="dao" />
+	</bean>
+	
+	<!-- ws员工刷卡 -->
+	<bean id="clwXcStCheckRecordT" class="com.neusoft.clw.ws.service.Stcheckrecord">
+		<property name="service" ref="service" />
+	</bean>
+</beans>

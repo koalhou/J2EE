@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SendCommand">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="sendcommand"
+		type="com.neusoft.clw.sysmanage.datamanage.sendcommand.domain.SendCommand" />
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+	<resultMap class="vehcileinfo" id="vehsendinfo-result">
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="sim_card_number" column="SIM_CARD_NUMBER" />
+	</resultMap>
+
+	<!-- 下发消息、拍照命令 -->
+	<insert id="insertsmsphotocmd" parameterClass="sendcommand">
+		INSERT INTO
+		CLW_YW_SEND_COMMAND_T
+		(ID,SIM_CARD_NUMBER,
+		VEHICLE_VIN,MSG_ID,
+		SEND_COMMAND,SEND_TYPE,
+		PACKET_CONTENT,DEAL_STATE,
+		CORE_ID,OPERATE_USER_ID
+		<isNotEmpty prepend="," property="remark">
+			remark 
+         </isNotEmpty>
+		<isNotEmpty prepend="," property="chanle_code">
+			CHANLE_CODE 
+         </isNotEmpty>
+		,OPERATE_TIME)
+		VALUES
+		(#sendcommandid#,#sim_card_number#,
+		#vehicle_vin#,#msg_id#,
+		#send_command#,#send_type#,
+		#packet_content#,#deal_state#,
+		#core_id#,#operate_user_id#
+		<isNotEmpty prepend="," property="remark">
+			#remark#
+         </isNotEmpty>
+		<isNotEmpty prepend="," property="chanle_code">
+			#chanle_code#
+         </isNotEmpty>
+		,sysdate)
+	</insert>
+
+	<!-- 获取SIM卡号 -->
+	<select id="getSIMCardNumber" parameterClass="String"
+		resultMap="vehsendinfo-result">
+		select cl.VEHICLE_VIN, cl.VEHICLE_ID,jct.SIM_CARD_NUMBER
+		from clw_cl_base_info_t
+		cl, clw_jc_terminal_t jct, clw_cl_sim_t sim
+		where cl.VALID_FLAG = '0'
+		and cl.FEE_FLAG = '0'
+		and cl.VEHICLE_VIN = jct.VEHICLE_VIN
+		and
+		jct.VALID_FLAG = '0'
+		and jct.SIM_CARD_NUMBER = sim.SIM_CARD_NUMBER
+		and
+		sim.VALID_FLAG = '0'
+		and cl.VEHICLE_VIN=#value#
+	</select>
+
+
+
+
+</sqlMap>

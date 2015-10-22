@@ -1,0 +1,63 @@
+@charset "utf-8";
+/* CSS Document */
+
+.position_r{ position:relative;}
+.lt{ position:absolute; left:0; top:0;}
+.rt{ position:absolute; right:0; top:0;}
+.float_left{ float:left;}
+.m_t_10{ margin-top:10px;}
+.select_see_val{height:19px; background:#fff; position:absolute; left:1px; top:2px; z-index:100; line-height:19px; text-indent:3px;}
+.text100_txt{ width:80px;}
+.alarm_sel_c select{ height:22px;}
+
+
+
+
+.alarm_arr{ margin-left:10px;}
+.export_alarm{ float:left; width:82px; height:25px; background:url(../newimages/alarm_btn_bg.gif) no-repeat left top; line-height:25px; text-align:left; }
+.export_alarm_c1, .export_alarm_c2{ width:82px; height:25px; display:block; color:#1e1e1e;}
+.export_alarm_c1{ background:url(../newimages/alarm_btn_icon1.gif) no-repeat 4px 3px; text-indent:26px;}
+.export_alarm_c2{ background:url(../newimages/alarm_btn_icon2.gif) no-repeat 4px 3px; text-indent:36px;}
+.m_r_10{ margin-right:8px;}
+
+
+.display_no{ display:none}
+.car-info, .list-sech{ position:relative;}
+.alarm_btn_p304{ position:absolute; left:324px; top:2px; line-height:28px; font-size:12px; font-weight:normal;}
+.newalarm_btn_p304{float:left; margin-left:20px;   margin-top:5px; line-height:28px; font-size:12px; font-weight:normal;display: block;}
+
+.alarm_btn_p{position:absolute; left:680px; top:-5px;}
+
+.border_t_no{ border-top:none;}
+.car-status-alarm{ margin:10px 20px; height:70px; padding-top:5px;}
+.alarm_title{ width:95px; font-weight:bold; height:30px;}
+.alarm_title1{ width:125px; font-weight:bold; height:30px;}
+.alarm_title2{ width:42px; font-weight:bold; height:30px;}
+.alarm_title3{ width:65px; font-weight:bold; height:30px;}
+.alarm_txt120, .alarm_txt_330, .alarm_txt100, .alarm_txt_auto,.alarm_txt205, .alarm_txt156{ line-height:22px; height:22px;	padding:0; text-align:center; padding-right:24px;}
+.alarm_txt120{ width:120px; background: url(../newimages/pop_read_bg_2.gif) no-repeat left center;}
+.alarm_txt_330{ width:330px; background:url(../newimages/alarm_txt_bg.gif) no-repeat left center;}
+.alarm_txt100{ width:100px; background:url(../newimages/alarm_txt_bg_100.gif) no-repeat left center; padding-right:44px;}
+.alarm_txt205{ width:205px; background:url(../newimages/alarm_txt_bg_205.gif) no-repeat left center;}
+.alarm_txt156{ width:156px; background:url(../newimages/alarm_txt_bg_156.gif) no-repeat left center;}
+.alarm_txt_auto{ position:relative; background:url(../newimages/alarm_tbg_c.gif) repeat-x left top; padding-left:10px; padding-right:34px; float:left; margin-right: 10px;}
+.alarm_txt_autoR{float:right; width:auto; height:20px;}
+
+.alarm_tab{ height:28px; background:url(../newimages/alarm_tab_bg.gif) repeat-x left bottom; padding-left:10px;}
+.alarm_tab a{ display:block; width:80px; height:28px; line-height:28px; text-align:center; color:#323232; margin-right:4px; float:left; background:url(../newimages/alarm_tab_btn.gif) no-repeat left top;}
+
+.alarm_tab a.alarm_tabs{ background:url(../newimages/alarm_tab_btns.gif) no-repeat left top;}
+
+
+
+.alarm_select{ width:100%; height:33px; background:#f5f5f5; padding-top:11px; line-height:22px;}
+.alarm_sel_txt{ width:65px;  height:33px; font-weight:bold; display:block; float:left; text-align:right;}
+.alarm_sel_txt_2{ width:20px; height:33px; font-weight:bold; display:block; float:left; text-align:center;}
+.alarm_sel_c{ width:auto; height:33px; float:left;}
+.alarm_btn{ width:76px; height:28px; line-height:28px; text-align:center; background:url(../newimages/btn_blue.gif) no-repeat left top; display:block; float:left; color:#fff; margin-left:20px; margin-top:-5px;}
+
+.alarm_table_c{width:100%; background:#f5f5f5;}
+.alarm_t_c{ height:100%; margin:0 4px 4px 4px; }
+ul.alarm_t_list{width:95px; height:auto;  position:absolute; left:3px; top:38px; z-index:100; border:1px solid #ccc; background:#fff;}
+.alarm_t_list li{ width:100%; height:24px; border-bottom:1px dotted #CCCCCC; line-height:24px; text-align:center;}
+.alarm_c{width:100px; height:38px;float:left;}

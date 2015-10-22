@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="picturefileupload" namespace="/picturefileupload" extends="clw-default">
+		<action name="fileUploadInit" class="uploadUtilAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/infomanage/fileupload/fileUploadAndFormat.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/fileupload/fileUploadAndFormat.jsp
+			</result>
+		</action>
+		<action name="uploadFile" class="uploadUtilAction" method="uploadFile">
+		</action>
+		<action name="showImage" class="uploadUtilAction" method="showImage">
+		</action>
+		<action name="saveImage" class="uploadUtilAction" method="saveImage">
+		</action>
+		<action name="resizeImage" class="uploadUtilAction" method="resizeImage">
+		</action>
+	</package>
+</struts>

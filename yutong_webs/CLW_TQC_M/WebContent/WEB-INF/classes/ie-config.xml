@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE ie-configs SYSTEM "ie-config.dtd">
+
+<ie-configs>
+	<sheets>
+		<sheet id="simInfo" properties="5" memo="SIM卡信息" 
+			class="com.neusoft.clw.yw.cs.sim.ds.SimInfo">
+			<property name="simCardNumber" type="string" memo="电子ICCID">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="60" message="最大位数60"/>
+					<unique value="true" message="电子ICCID号必须唯一"/>
+				</validate>
+			</property>
+			<!--
+			<property name="iccidElectron" type="string" memo="电子ICCID">
+				<validate>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property> 
+			-->
+			<property name="apnType" type="string" memo="APN类型">
+				<validate>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property> 
+			<property name="iccidPrint" type="string" memo="印刷ICCID">
+				<validate>
+					<max value="60" message="最大位数60"/>
+				</validate>
+			</property> 
+			<property name="cellPhone" type="string" memo="手机号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="11" message="最大位数11"/>
+					<regxp value="^[0-9]{11}$" message="不是有效的手机号" />
+					<unique value="true" message="手机号必须唯一"/>
+				</validate>
+			</property> 
+			<property name="startUseTime" type="string" memo="开卡时间">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^(((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)))?$" message="不是有效的日期格式" />
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="simInfoExport" properties="6" memo="SIM卡信息" 
+			class="com.neusoft.clw.yw.cs.sim.ds.SimInfo">
+			<property name="simCardNumber" type="string" memo="电子ICCID">
+			</property>
+			<property name="businessName" type="string" memo="运营商">
+			</property>
+			<property name="apnType" type="string" memo="APN类型">
+			</property> 
+			<!--
+			<property name="iccidElectron" type="string" memo="电子ICCID">
+			</property> 
+			-->
+			<property name="iccidPrint" type="string" memo="印刷ICCID">
+			</property> 
+			<property name="cellPhone" type="string" memo="手机号">
+			</property> 
+			<property name="startUseTime" type="string" memo="开卡时间">
+			</property>
+		</sheet>
+		
+		<sheet id="simFluxInfo" properties="5" memo="SIM卡流量信息" 
+			class="com.neusoft.clw.yw.cs.simflux.ds.SimFluxInfo">
+			<property name="simCardNumber" type="string" memo="SIM卡号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="60" message="最大位数60"/>
+					<unique value="true" message="SIM卡号必须唯一"/>
+				</validate>
+			</property>
+			<property name="cellPhone" type="string" memo="手机号">
+				<validate>
+					<max value="15" message="最大位数15"/>
+				</validate>
+			</property> 
+			<property name="fluxValue" type="string" memo="流量">
+				<validate>
+					<max value="18" message="最大位数18"/>
+				</validate>
+			</property> 
+			<property name="callTime" type="string" memo="通话时间">
+				<validate>
+					<max value="10" message="最大位数10"/>
+				</validate>
+			</property> 
+			<property name="closeTime" type="string" memo="截止时间">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^(((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29)))?$" message="不是有效的日期格式" />
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="simFluxInfoExport" properties="6" memo="SIM卡流量信息" 
+			class="com.neusoft.clw.yw.cs.simflux.ds.SimFluxInfo">
+			<property name="businessName" type="string" memo="运营商">
+			</property>
+			<property name="simCardNumber" type="string" memo="SIM卡号">
+			</property>
+			<property name="cellPhone" type="string" memo="手机号">
+			</property> 
+			<property name="fluxValue" type="string" memo="流量">
+			</property> 
+			<property name="callTime" type="string" memo="通话时间">
+			</property> 
+			<property name="closeTime" type="string" memo="截止时间">
+			</property>
+		</sheet> 
+		
+		<sheet id="terminalInfo" properties="8" memo="终端信息" 
+			class="com.neusoft.clw.yw.zd.terminal.ds.TerminalImportInfo">
+			<property name="terminalCode" type="string" memo="终端号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+					<unique value="true" message="终端号必须唯一"/>
+				</validate>
+			</property>
+			<property name="videoId" type="string" memo="终端视频ID">
+				<validate>
+					<max value="32" message="最大位数32"/>
+				</validate>
+			</property> 
+			<property name="channelInfos" type="string" memo="通道信息">
+			</property>
+			<property name="videoFactory" type="string" memo="视频厂家">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="5" message="最大位数5"/>
+					<regxp value="^(DA|HI)$" message="不是有效视频厂家" />
+				</validate>
+			</property> 
+			<property name="streamServerIp" type="string" memo="流媒体地址">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="videoServerIp" type="string" memo="视频服务器地址">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="videoUser" type="string" memo="视频服务器用户名">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="videoPassword" type="string" memo="视频服务器密码">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数60"/>
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="terminalInfoExport" properties="9" memo="终端信息" 
+			class="com.neusoft.clw.yw.zd.terminal.ds.TerminalInfo">
+			<property name="oemName" type="string" memo="终端厂家">
+			</property>
+			<property name="typeName" type="string" memo="终端型号">
+			</property>
+			<property name="protocalName" type="string" memo="终端协议">
+			</property>
+			<property name="terminalCode" type="string" memo="终端号">
+			</property>
+			<property name="videoFactory" type="string" memo="视频服务器厂家">
+			</property>
+			<property name="videoServerIp" type="string" memo="视频地址">
+			</property>
+			<property name="videoUser" type="string" memo="服务器用户名">
+			</property>
+			<property name="videoPassword" type="string" memo="服务器密码">
+			</property>
+			<property name="videoId" type="string" memo="终端视频ID">
+			</property>
+		</sheet>
+		
+		<sheet id="vehicleRegisterInfo" properties="6" memo="车辆注册信息" 
+			class="com.neusoft.clw.yw.cl.vehicleRegister.ds.VehicleRegisterInfo">
+			<property name="vehicleVin" type="string" memo="车辆VIN号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+					<unique value="true" message="车辆VIN号必须唯一"/>
+				</validate>
+			</property>
+			<property name="terminalCode" type="string" memo="终端号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+					<unique value="true" message="终端号必须唯一"/>
+				</validate>
+			</property>
+			<property name="simCardNumber" type="string" memo="SIM卡号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="32" message="最大位数32"/>
+					<unique value="true" message="SIM卡号必须唯一"/>
+				</validate>
+			</property>
+			<property name="feeFlag" type="string" memo="缴费状态">
+				<validate>
+					<scope value="0,1" message="只能取[0,1]这两个值"/>
+				</validate>
+			</property>
+            <property name="deliveryFlag" type="string" memo="出厂状态">
+				<validate>
+					<scope value="0,1" message="只能取[0,1]这两个值"/>
+				</validate>
+			</property>
+			<property name="fixType" type="string" memo="安装方式">
+				<validate>
+					<scope value="0,1" message="只能取[0,1]这两个值"/>
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="vehicleRegisterInfoExport" properties="9" memo="车辆注册信息" 
+			class="com.neusoft.clw.yw.cl.vehicleRegister.ds.VehicleRegisterInfo">
+			<property name="vehicleVin" type="string" memo="车辆VIN号">
+			</property>
+			<property name="terminalCode" type="string" memo="终端号">
+			</property>
+			<property name="simCardNumber" type="string" memo="SIM卡号">
+			</property>
+			<property name="vehicleLn" type="string" memo="车牌号">
+			</property>
+			<property name="entipriseName" type="string" memo="所属企业">
+			</property>
+			<property name="userName" type="string" memo="所属车主">
+			</property>
+			<property name="feeFlag" type="string" memo="缴费状态">
+			</property>
+			<property name="deliveryFlag" type="string" memo="出厂状态">
+			</property>
+			<property name="fixType" type="string" memo="安装方式">
+			</property>
+		</sheet> 
+		
+		<sheet id="carBase" properties="19" memo="车辆信息" 
+			class="com.neusoft.clw.yw.cl.carbase.ds.CarBaseInfo">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="vehicle_vin" type="string" memo="车辆VIN号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+					<unique value="true" message="车辆VIN号必须唯一"/>
+				</validate>
+			</property>
+			<property name="business_type" type="string" memo="运营类型">
+				<validate>
+					<require value="true" message="必填字段"/>
+				</validate>
+			</property>
+			<property name="tyre_r" type="string" memo="轮胎滚动半径">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^(\d+(.\d{1,3})?)?$" message="请输入最多三位小数的数字" />
+				</validate>
+			</property>
+			<property name="rear_axle_rate" type="string" memo="后桥速比">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^\d+(.\d{1,3})?$" message="请输入最多三位小数的数字" />
+				</validate>
+			</property>
+			<property name="standard_rotate" type="string" memo="发动机标准转速">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="vehicle_color" type="string" memo="车辆颜色">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="limite_number" type="string" memo="载客限员">
+				<validate>
+					<max value="10" message="最大位数10"/>
+					<regxp value="^\d+$" message="请输入正整数" />
+				</validate>
+			</property>
+			<property name="dead_load" type="string" memo="自重">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^\d+$" message="请输入正整数" />
+				</validate>
+			</property>
+			<property name="vehicle_number" type="string" memo="车工号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<regxp value="^(\d{2}[A-Z]{1}\d{3}[A-Z]{1}-\d{4})?$" message="车工号格式错误" />
+				</validate>
+			</property>
+			<property name="engine_number" type="string" memo="发动机号">
+				<validate>
+					<max value="60" message="最大位数60"/>
+				</validate>
+			</property>
+			<property name="standard_oil" type="string" memo="标准油耗">
+				<validate>
+					<max value="30" message="最大位数30"/>
+					<regxp value="^\d+$" message="请输入正整数" />
+				</validate>
+			</property>
+			<property name="car_number" type="string" memo="车辆型号">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="out_number" type="string" memo="排量">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="sell_order_num" type="string" memo="销售订单号">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="made_order_num" type="string" memo="生产订单号">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="chassis_order_num" type="string" memo="底盘订单号">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="sell_date" type="string" memo="销售日期">
+				<validate>
+					<regxp value="^(((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29))[ ]([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])?$" message="销售日期不符合日期格式" />
+				</validate>
+			</property>
+			<property name="oil_config" type="string" memo="是否上报油耗">
+				<validate>
+					<max value="1" message="最大位数1"/>
+					<regxp value="^[0|1]*$" message="请输入0或1" />
+				</validate>
+			</property>
+		</sheet>
+		
+		<sheet id="carBaseInfoExport" properties="21" memo="车辆信息" 
+			class="com.neusoft.clw.yw.cl.carbase.ds.CarBaseInfo">
+			<property name="vehicle_ln" type="string" memo="车牌号">
+			</property>
+			<property name="vehicle_vin" type="string" memo="车辆VIN号">
+			</property>
+			<property name="business_type" type="string" memo="运营类型">
+			</property>
+			<property name="tyre_r" type="string" memo="轮胎滚动半径">
+			</property>
+			<property name="rear_axle_rate" type="string" memo="后桥速比">
+			</property>
+			<property name="standard_rotate" type="string" memo="发动机标准转速">
+			</property>
+			<property name="vehicle_color" type="string" memo="车辆颜色">
+			</property>
+			<property name="limite_number" type="string" memo="载客限员">
+			</property>
+			<property name="dead_load" type="string" memo="自重">
+			</property>
+			<property name="vehicle_number" type="string" memo="车工号">
+			</property>
+			<property name="engine_number" type="string" memo="发动机号">
+			</property>
+			<property name="standard_oil" type="string" memo="标准油耗">
+			</property>
+			<property name="car_number" type="string" memo="车辆型号">
+			</property>
+			<property name="out_number" type="string" memo="排量">
+			</property>
+			<property name="sell_order_num" type="string" memo="销售订单号">
+			</property>
+			<property name="made_order_num" type="string" memo="生产订单号">
+			</property>
+			<property name="chassis_order_num" type="string" memo="底盘订单号">
+			</property>
+			<property name="sell_date" type="string" memo="销售日期">
+			</property>
+			<property name="car_type_brand" type="string" memo="发动机品牌">
+			</property>
+			<property name="brand" type="string" memo="车型品牌">
+			</property>
+			<property name="oil_config" type="string" memo="是否上报油耗">
+			</property>
+		</sheet>
+		
+		<sheet id="poiInfo" properties="18" memo="服务点信息" 
+			class="com.neusoft.clw.yw.xs.poimanage.ds.PoiInfo">
+			<property name="poiCode" type="string" memo="网点代码">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="10" message="最大位数10"/>
+					<unique value="true" message="网点代码必须唯一"/>
+				</validate>
+			</property>
+			<property name="poiName" type="string" memo="服务点名称">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="100" message="最大位数100"/>
+				</validate>
+			</property> 
+			<property name="poiType" type="string" memo="网点类型">
+				<validate>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property> 
+			<property name="poiLevel" type="string" memo="网点级别">
+				<validate>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property> 
+			<property name="poiServiceType" type="string" memo="服务类型">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property> 
+			<property name="countryId" type="string" memo="所属国家">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property>
+			<property name="provinceId" type="string" memo="所属省">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property>
+			<property name="cityId" type="string" memo="所属市">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="64" message="最大位数64"/>
+				</validate>
+			</property>
+			<property name="poiLon" type="string" memo="经度">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="50" message="最大位数50"/>
+				</validate>
+			</property>
+			<property name="poiLat" type="string" memo="纬度">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="50" message="最大位数50"/>
+				</validate>
+			</property>
+			<property name="concateTel" type="string" memo="电话">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="concateFax" type="string" memo="传真">
+				<validate>
+					<max value="30" message="最大位数30"/>
+				</validate>
+			</property>
+			<property name="poiAddress" type="string" memo="地址">
+				<validate>
+					<max value="100" message="最大位数100"/>
+				</validate>
+			</property>
+			<property name="concatePos" type="string" memo="邮编">
+				<validate>
+					<max value="20" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="email" type="string" memo="邮件">
+				<validate>
+					<max value="100" message="最大位数100"/>
+				</validate>
+			</property>
+			<property name="website" type="string" memo="网址">
+				<validate>
+					<max value="100" message="最大位数100"/>
+				</validate>
+			</property>
+			<property name="concatePerson" type="string" memo="联系人">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="20" message="最大位数20"/>
+				</validate>
+			</property>
+			<property name="remark" type="string" memo="备注">
+				<validate>
+					<max value="200" message="最大位数200"/>
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="baseInfo" properties="4" memo="基础信息" 
+			class="com.neusoft.clw.yw.xs.baseinfo.ds.BaseInfo">
+			<property name="codeId" type="string" memo="编码值">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="20" message="最大位数20"/>
+					<unique value="true" message="编码值必须唯一"/>
+				</validate>
+			</property>
+			<property name="codeName" type="string" memo="编码名称">
+				<validate>
+					<max value="60" message="最大位数60"/>
+				</validate>
+			</property> 
+			<property name="codeLevel" type="string" memo="级别">
+				<validate>
+					<max value="20" message="最大位数20"/>
+				</validate>
+			</property> 
+			<property name="remark" type="string" memo="备注">
+				<validate>
+					<max value="40" message="最大位数40"/>
+				</validate>
+			</property>
+		</sheet> 
+		
+		<sheet id="firstReportInfoExport" properties="7" memo="运营报表分析" 
+			class="com.neusoft.clw.yw.xj.report.ds.OperationsInfo">
+			<property name="enterprise_code" type="string" memo="企业代码">
+			</property>
+			<property name="full_name" type="string" memo="企业名称">
+			</property>
+			<property name="account_num" type="string" memo="有效账号数量">
+			</property> 
+			<property name="zhuce_num" type="string" memo="注册车辆数">
+			</property> 
+			<property name="curr_active_num" type="string" memo="当日活动车辆">
+			</property> 
+			<property name="his_active_num" type="string" memo="历史活动车辆">
+			</property>
+			<property name="delivery_flag" type="string" memo="已出厂车辆">
+			</property>
+		</sheet>
+		
+		<sheet id="userInfoExport" properties="9" memo="用户信息" 
+			class="com.neusoft.clw.yw.qx.usermanage.ds.UserDetail">
+			<property name="loginName" type="string" memo="用户名称">
+			</property>
+			<property name="userType" type="string" memo="用户类型">
+			</property>
+			<property name="entipriseCode" type="string" memo="企业代码">
+			</property> 
+			<property name="entipriseName" type="string" memo="所属企业">
+			</property> 
+			<property name="roleName" type="string" memo="所属角色">
+			</property> 
+			<property name="userName" type="string" memo="用户姓名">
+			</property>
+			<property name="userCell" type="string" memo="移动电话">
+			</property>
+			<property name="userEmail" type="string" memo="电子邮件">
+			</property>
+			<property name="validFlag" type="string" memo="状态">
+			</property>
+		</sheet>
+		
+		<sheet id="secondReportInfoExport" properties="9" memo="运营报表分析" 
+			class="com.neusoft.clw.yw.xj.report.ds.OprationsReportSecond">
+			<property name="vehicle_vin" type="string" memo="车辆VIN号">
+			</property>
+			<property name="terminal_id" type="string" memo="终端号">
+			</property>
+			<property name="sim_card_number" type="string" memo="电子ICCID">
+			</property> 
+			<property name="curr_datasum" type="string" memo="当日上报数据量">
+			</property> 
+			<property name="curr_start" type="string" memo="当日开始上报时间">
+			</property> 
+			<property name="curr_end" type="string" memo="当日结束上报时间">
+			</property>
+			<property name="his_datasum" type="string" memo="历史上报数据数量">
+			</property>
+			<property name="his_start" type="string" memo="历史上报数据开始时间">
+			</property>
+			<property name="delivery_flag" type="string" memo="是否已经出厂">
+			</property>
+		</sheet>
+		
+		<sheet id="ajtNoticeExport" properties="5" memo="安节通公告管理" 
+			class="com.neusoft.clw.yw.xs.noticemanage.domain.AjtNotice">
+			<property name="notice_theme" type="string" memo="主题">
+			</property>
+			<property name="notice_type" type="string" memo="公告类型">
+			</property>
+			<property name="publish_user" type="string" memo="创建人">
+			</property> 
+			<property name="publish_time" type="string" memo="发布时间">
+			</property> 
+			<property name="notice_status" type="string" memo="公告状态">
+			</property> 
+		</sheet>
+		
+		<sheet id="informationExport" properties="5" memo="信息反馈" 
+			class="com.neusoft.clw.yw.xs.informationmanage.ds.IssueInfo">
+			<property name="issueTheme" type="string" memo="主题">
+			</property>
+			<property name="creater" type="string" memo="创建人">
+			</property>
+			<property name="publishTime" type="string" memo="发布时间">
+			</property> 
+			<property name="replyOrNot" type="string" memo="是否回复">
+			</property> 
+			<property name="issueStatus" type="string" memo="状态">
+			</property> 
+			
+		</sheet>
+		
+		<sheet id="luxuryCarImport" properties="1" memo="高档车设置" 
+			class="com.neusoft.clw.yw.sm.maitenance.ds.LuxuryCar">
+			<property name="vehicle_number" type="string" memo="车工号">
+				<validate>
+					<require value="true" message="必填字段"/>
+					<max value="12" message="最大位数12"/>
+					<regxp value="^\d{2}[A-Z]{1}\d{3}[A-Z]{1}-\d{4}$" message="格式应该为22A333F-1234" />
+					<unique value="true" message="编码值必须唯一"/>
+				</validate>
+			</property>
+		</sheet>
+
+		<sheet id="luxuryCarExport" properties="6" memo="高档车设置" 
+			class="com.neusoft.clw.yw.sm.maitenance.ds.LuxuryCar">
+			<property name="vehicle_type_name" type="string" memo="车型">
+			</property> 			
+			<property name="vehicle_number" type="string" memo="车工号">
+			</property>
+			<property name="create_time" type="string" memo="创建时间">
+			</property> 
+			<property name="creater_id" type="string" memo="创建人">
+			</property> 
+			<property name="modifier_id" type="string" memo="最后修改人">
+			</property>
+			<property name="modify_time" type="string" memo="修改时间">
+			</property>
+		</sheet>
+		
+		<!-- 行车记录开始 -->
+		<sheet id="ExportRecord_t01" properties="8" memo="GPS信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="longitude" type="string" memo="经度">
+			</property>
+			<property name="latitude" type="string" memo="纬度">
+			</property>
+			<property name="direction_str" type="string" memo="方向">
+			</property>
+			<property name="direction" type="string" memo="方向(原始值)">
+			</property>
+			<property name="vehicle_vin" type="string" memo="VIN">
+			</property>
+			<property name="gps_speeding" type="string" memo="GPS速度(km/h)">
+			</property>
+		</sheet>
+		<sheet id="ExportRecord_t0234" properties="5" memo="基本信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="speeding" type="string" memo="车速(km/h)">
+			</property>
+			<property name="engine_rotate_speed" type="string" memo="转速(rpm)">
+			</property>
+			<property name="mileage" type="string" memo="里程(km)">
+			</property>
+		</sheet>
+		<sheet id="ExportRecord_t05" properties="34" memo="开关量信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.On_off">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="on_off18" type="string" memo="ABS工作">
+			</property>
+			<property name="on_off9" type="string" memo="SOS开关">
+			</property>
+			<property name="on_off13" type="string" memo="点火">
+			</property>
+			<property name="on_off14" type="string" memo="油压报警">
+			</property>
+			<property name="on_off15" type="string" memo="制动气压报警">
+			</property>
+			<property name="on_off8" type="string" memo="雾灯">
+			</property>
+			<property name="on_off7" type="string" memo="远光灯信号">
+			</property>
+			<property name="on_off6" type="string" memo="右转向灯信号">
+			</property>
+			<property name="on_off5" type="string" memo="喇叭信号">
+			</property>
+			<property name="on_off4" type="string" memo="左转向灯信号">
+			</property>
+			<property name="on_off3" type="string" memo="倒档信号">
+			</property>
+			<property name="on_off2" type="string" memo="近光灯信号">
+			</property>
+			<property name="on_off1" type="string" memo="制动状态">
+			</property>
+			<property name="on_off16" type="string" memo="严重故障">
+			</property>
+			<property name="on_off12" type="string" memo="水位低报警">
+			</property>
+			<property name="on_off11" type="string" memo="制动蹄片磨损报警">
+			</property>
+			<property name="on_off10" type="string" memo="空滤堵塞报警">
+			</property>
+			<property name="on_off24" type="string" memo="燃油警告">
+			</property>
+			<property name="on_off23" type="string" memo="空调状态">
+			</property>
+			<property name="on_off22" type="string" memo="空挡信号">
+			</property>
+			<property name="on_off21" type="string" memo="前门信号">
+			</property>
+			<property name="on_off20" type="string" memo="中门信号">
+			</property>
+			<property name="on_off19" type="string" memo="缓速器工作">
+			</property>
+			<property name="on_off17" type="string" memo="加热器工作">
+			</property>
+			<property name="on_off32" type="string" memo="离合器状态">
+			</property>
+			<property name="on_off31" type="string" memo="缓速器高温报警信号">
+			</property>
+			<property name="on_off30" type="string" memo="仓温报警信号">
+			</property>
+			<property name="on_off29" type="string" memo="机滤堵塞信号">
+			</property>
+			<property name="on_off28" type="string" memo="燃油堵塞信号">
+			</property>
+			<property name="on_off27" type="string" memo="机油温度报警信号">
+			</property>
+			<property name="on_off26" type="string" memo="开关量31">
+			</property>
+			<property name="on_off25" type="string" memo="开关量32">
+			</property>
+		</sheet>
+
+		<sheet id="ExportRecord_t06" properties="3" memo="CAN-发动机转速信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="engine_rotate_speed" type="string" memo="发动机转速(rpm)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t07" properties="4" memo="CAN-扭矩信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="torque" type="string" memo="转矩-原始值">
+			</property>
+			<property name="torque1" type="string" memo="转矩-转换值(%)">
+			</property>
+		</sheet>
+		<sheet id="ExportRecord_t08" properties="3" memo="CAN-锂电池电压信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="battery_voltage" type="string" memo="电池电压(v)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t09" properties="3" memo="CAN-蓄电池电压信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="ext_voltage" type="string" memo="外部电压(v)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t010" properties="3" memo="CAN-供电状态信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="power_state" type="string" memo="供电状态">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t011" properties="3" memo="CAN-发动机油温信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="oil_temperature" type="string" memo="机油温度(°C)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t012" properties="3" memo="CAN-发动机水温信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="e_water_temp" type="string" memo="发动机水温(°C)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t013" properties="3" memo="CAN-机油压力信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="create_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="oil_pressure" type="string" memo="机油压力(kPa)">
+			</property>
+
+		</sheet>
+
+		<sheet id="ExportRecord_t014" properties="3" memo="CAN-大气压力信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="air_pressure" type="string" memo="大气压力(kPa)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t015" properties="3" memo="CAN-进气温度信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="air_inflow_tpr" type="string" memo="进气温度(°C)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t016" properties="3" memo="CAN-车速信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="vehicle_speed" type="string" memo="车速(km/h)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t017" properties="3" memo="CAN-冷却剂温度信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="colder_temperature" type="string" memo="冷却液温度(°C)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t018" properties="3" memo="CAN-累计油耗信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="oil_total" type="string" memo="累计油耗(L)">
+			</property>
+
+		</sheet>
+		
+		<sheet id="ExportRecord_t019" properties="3" memo="CAN-发动机运行时间信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="enghrrev_t_e_h" type="string" memo="发动机运行时间(小时)">
+			</property>
+
+		</sheet>
+
+		<sheet id="ExportRecord_t020" properties="3" memo="CAN-瞬时油耗信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="oil_instant" type="string" memo="瞬时油耗(L/h)">
+			</property>
+
+		</sheet>
+		
+		<sheet id="ExportRecord_t021" properties="3" memo="Extend-急减速信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="alarm_time" type="string" memo="持续时间(秒)">
+			</property>
+
+		</sheet>
+		<sheet id="ExportRecord_t022" properties="3" memo="Extend-急加速信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="alarm_time" type="string" memo="持续时间(秒)">
+			</property>
+
+		</sheet>
+		
+		<sheet id="ExportRecord_t023" properties="4" memo="Extend-超速信息"
+			class="com.neusoft.clw.safemanage.humanmanage.drivingrecords.domain.DrivingRecords">
+			<property name="terminal_time" type="string" memo="时间">
+			</property>
+			<property name="write_time" type="string" memo="数据接收时间">
+			</property>
+			<property name="alarm_time" type="string" memo="持续时间(秒)">
+			</property>
+			<property name="maxspeed" type="string" memo="最高车速(km/h)">
+			</property>
+
+		</sheet>
+		<!-- 行车记录结束 -->
+		
+		<sheet id="LogInfo" properties="6" memo="日志信息"
+			class="com.neusoft.clw.yw.xj.statistic.ds.StatisticInfo">
+			<property name="apply_id" type="string" memo="应用系统名称">
+			</property>
+			<property name="user_name" type="string" memo="用户名">
+			</property>
+			<property name="operate_ip" type="string" memo="登录IP">
+			</property>
+			<property name="enterprise_name" type="string" memo="企业名称">
+			</property>
+			<property name="operate_time" type="string" memo="操作时间">
+			</property>
+			<property name="operate_desc" type="string" memo="操作描述">
+			</property>
+		</sheet>
+		<!--登陆次数统计信息  -->
+		<sheet id="loginListExport" properties="3" memo="登陆次数统计信息" 
+			class="com.neusoft.clw.sysmanage.datamanage.statistic.domain.LoginStatistic">
+			<property name="empCode" type="string" memo="员工号">
+			</property>
+			<property name="empName" type="string" memo="姓名">
+			</property>
+			<property name="loginCount" type="string" memo="登陆次数">
+			</property>
+		</sheet>
+		<!--问题反馈导出-->
+		<sheet id="feedBackListExport" properties="9" memo="问题反馈" 
+			class="com.neusoft.clw.yw.newmodel.domain.FeedBackMsg">
+			<property name="exportRownum" type="number" memo="序号">
+			</property>
+			<property name="content" type="string" memo="内容">
+			</property>
+			<property name="empCode" type="string" memo="员工号">
+			</property>
+			<property name="owner" type="string" memo="反馈人">
+			</property>
+			<property name="ygb_tel" type="string" memo="手机号">
+			</property>
+			<property name="suggestDate" type="string" memo="反馈时间">
+			</property>
+			<property name="type" type="string" memo="状态">
+			</property>
+			<property name="operator" type="string" memo="回复人">
+			</property>
+			<property name="operate_time" type="string" memo="回复时间">
+			</property>
+		</sheet>
+	</sheets>
+
+	<excels>
+	
+		<workbook id="importSim"> 
+			<import depends="simInfo" />
+		</workbook>
+		
+		<workbook id="exportSim"> 
+			<import depends="simInfoExport" />
+		</workbook>
+		
+		<workbook id="importSimFlux"> 
+			<import depends="simFluxInfo" />
+		</workbook>
+		
+		<workbook id="exportSimFlux"> 
+			<import depends="simFluxInfoExport" />
+		</workbook>
+		
+		<workbook id="importTerminal"> 
+			<import depends="terminalInfo" />
+		</workbook>
+		
+		<workbook id="exportTerminal"> 
+			<import depends="terminalInfoExport" />
+		</workbook>
+		
+		<workbook id="importVehicleRegister"> 
+			<import depends="vehicleRegisterInfo" />
+		</workbook>
+		
+		<workbook id="exportVehicleRegister"> 
+			<import depends="vehicleRegisterInfoExport" />
+		</workbook>
+		
+		<workbook id="importCarBase"> 
+			<import depends="carBase" />
+		</workbook>
+		
+		<workbook id="exportCarBase"> 
+			<import depends="carBaseInfoExport" />
+		</workbook>
+		
+		<workbook id="importPoi"> 
+			<import depends="poiInfo" />
+		</workbook>
+		
+		<workbook id="importBaseInfo"> 
+			<import depends="baseInfo" />
+		</workbook>
+		
+		<workbook id="exportFirstReport"> 
+			<import depends="firstReportInfoExport" />
+		</workbook>
+		
+		<workbook id="exportSecondReport"> 
+			<import depends="secondReportInfoExport" />
+		</workbook>
+		
+		<workbook id="userInfo"> 
+			<import depends="userInfoExport" />
+		</workbook>
+		
+		<workbook id="exportAjtNotice"> 
+			<import depends="ajtNoticeExport" />
+		</workbook>
+		
+		<workbook id="exportInformation"> 
+			<import depends="informationExport" />
+		</workbook>
+		
+		<workbook id="importLuxuryCar"> 
+			<import depends="luxuryCarImport" />
+		</workbook>
+		<workbook id="exportLuxuryCar"> 
+			<import depends="luxuryCarExport" />
+		</workbook>		
+		
+		<workbook id="export_t01">
+			<import depends="ExportRecord_t01" />
+		</workbook>
+
+		<workbook id="export_t0234">
+			<import depends="ExportRecord_t0234" />
+		</workbook>
+
+		<workbook id="export_t05">
+			<import depends="ExportRecord_t05" />
+		</workbook>
+
+		<workbook id="export_t06">
+			<import depends="ExportRecord_t06" />
+		</workbook>
+
+		<workbook id="export_t07">
+			<import depends="ExportRecord_t07" />
+		</workbook>
+
+		<workbook id="export_t08">
+			<import depends="ExportRecord_t08" />
+		</workbook>
+
+		<workbook id="export_t09">
+			<import depends="ExportRecord_t09" />
+		</workbook>
+
+		<workbook id="export_t010">
+			<import depends="ExportRecord_t010" />
+		</workbook>
+
+		<workbook id="export_t011">
+			<import depends="ExportRecord_t011" />
+		</workbook>
+
+		<workbook id="export_t012">
+			<import depends="ExportRecord_t012" />
+		</workbook>
+
+		<workbook id="export_t013">
+			<import depends="ExportRecord_t013" />
+		</workbook>
+
+		<workbook id="export_t014">
+			<import depends="ExportRecord_t014" />
+		</workbook>
+
+		<workbook id="export_t015">
+			<import depends="ExportRecord_t015" />
+		</workbook>
+
+		<workbook id="export_t016">
+			<import depends="ExportRecord_t016" />
+		</workbook>
+
+		<workbook id="export_t017">
+			<import depends="ExportRecord_t017" />
+		</workbook>
+
+		<workbook id="export_t018">
+			<import depends="ExportRecord_t018" />
+		</workbook>
+
+		<workbook id="export_t019">
+			<import depends="ExportRecord_t019" />
+		</workbook>
+
+		<workbook id="export_t020">
+			<import depends="ExportRecord_t020" />
+		</workbook>
+
+		<workbook id="export_t021">
+			<import depends="ExportRecord_t021" />
+		</workbook>
+
+		<workbook id="export_t022">
+			<import depends="ExportRecord_t022" />
+		</workbook>
+
+		<workbook id="export_t023">
+			<import depends="ExportRecord_t023" />
+		</workbook>
+		
+		<workbook id="exportLog">
+			<import depends="LogInfo" />
+		</workbook>
+		
+		<workbook id="exportLoginList">
+			<import depends="loginListExport" />
+		</workbook>	
+		<!--问题反馈导出-->
+		<workbook id="exportFeedBackList">
+			<import depends="feedBackListExport" />
+		</workbook>
+	</excels>
+
+	<csvs>
+		<csv id="exportLogCsv" depend="LogInfo" />
+	</csvs>
+	
+
+	<global-property-validate/>
+
+	<global-object-validate/>
+	
+	<global-regxp-validate/>
+	
+	<global-dynamic-filter/>
+</ie-configs>

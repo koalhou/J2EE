@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="photomonitor" namespace="/photomonitor"
+		extends="clw-default">
+		<!--拍照监控 -->
+		<!-- 进入历史照片页面前处理  初始化开始时间和结束时间  
+		<action name="photomanage" class="photoMonitorAction"
+			method="photoReady">
+			<result name="success">
+				/WEB-INF/jsp/safemanage/personsafe/photomonitor/photoList.jsp
+			</result>
+		</action>
+		-->
+		<!-- 新UI 进入历史照片页面前处理  初始化开始时间和结束时间  -->
+		<action name="initphoto" class="photoMonitorAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/safemanage/personsafe/photomonitor/photoList.jsp
+			</result>
+		</action>
+		
+		
+        <!--查看相片 
+		<action name="photoView" class="photoMonitorAction"
+			method="photoView">
+			<result name="error">
+			    /WEB-INF/jsp/safemanage/personsafe/photomonitor/photomanagenew.jsp
+			</result>
+			<result name="success">
+				/WEB-INF/jsp/safemanage/personsafe/photomonitor/photoViewnew.jsp
+			</result>
+		</action>
+		-->
+		
+		<!-- 进入 相册  查看相片 -->
+		<action name="photoGalleriaView" class="photoMonitorAction"
+			method="photoGalleriaView">
+			<result name="error">
+			    /WEB-INF/jsp/safemanage/personsafe/photomonitor/photoGalleria.jsp
+			</result>
+			<result name="success">
+				/WEB-INF/jsp/safemanage/personsafe/photomonitor/photoGalleria.jsp
+			</result>
+		</action>
+		
+		<!--查看单个照片的信息  
+		<action name="getPhotoInfo" class="photoMonitorAction"
+			method="getPhotoInfo">
+			<result name="error">
+			    /WEB-INF/jsp/safemanage/personsafe/photomonitor/photoGalleriaView.jsp
+			</result>
+			<result name="success">
+				/WEB-INF/jsp/safemanage/personsafe/photomonitor/photoGalleriaView.jsp
+			</result>
+		</action>
+		-->
+		
+	</package>
+	
+	<!-- 页面加载时触发查询照片信息 -->
+	<!-- 凡是使用Struts2序列化对象到JSON的action，所在的package必须继承自json-default -->
+	<package name="photoflexigrid" namespace="/photoflexgrid" extends="json-default">
+       <action name="photoMonitorFlexigrid" class="photoMonitorAction"  method="photoManage">        
+
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <!--  
+           <result type="json" name="photoList">
+			</result>
+			-->
+       </action>
+       <!--查看单个照片的信息  -->
+		<action name="getPhotoInfo" class="photoMonitorAction"
+			method="getPhotoInfo">
+			 <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">photoInfoMap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">photoInfoMap</param>
+           </result>
+		</action>
+		
+		<!--更新单个照片的信息  -->
+		<action name="updatePhotoInfo" class="photoMonitorAction"
+			method="updatePhotoInfo">
+			 <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">photoInfoMap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">photoInfoMap</param>
+           </result>
+		</action>
+	</package>
+	
+</struts>

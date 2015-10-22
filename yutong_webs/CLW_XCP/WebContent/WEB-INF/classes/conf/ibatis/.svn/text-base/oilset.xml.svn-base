@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OilSet">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="oilset"
+		type="com.neusoft.clw.sysmanage.sysset.oilset.domain.OilSet" />
+   	<typeAlias alias="ocktimeset"
+		type="com.neusoft.clw.sysmanage.sysset.ocktimeset.domain.OckTimeSet" />
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+		
+	
+	
+	<!-- 车辆类型主键返回结果集 -->
+	<resultMap class="String" id="carTypeId-result">
+       <result property="String" column="TYPE_ID"/>
+    </resultMap>
+    <!--查询车辆类型对应主键 -->
+    <select id="getCarTypeId" parameterClass="oilset" resultMap="carTypeId-result">
+    select TYPE_ID from CLW_YW_VEHTYPE_OILCHECK_T where CHECK_ID = #check_id# 
+	</select>
+	
+	
+	
+	
+	
+	
+	<!-- 车辆类型描述返回结果集 -->
+	<resultMap class="String" id="carTypeDesc-result">
+       <result property="String" column="CODE_NAME"/>
+    </resultMap>
+    <!--查询车辆类型描述 -->
+    <select id="getCarTypeDesc" parameterClass="oilset" resultMap="carTypeDesc-result">
+    select CODE_ID,CODE_NAME from CLW_JC_CODEDEF_T where CODE_ID = #carType# and CODE_TYPE='VEHICLETYPE' and VALID_FLAG='0'
+	</select>
+    
+		
+	<!-- 车辆VIN集合返回结果集 -->
+	<resultMap class="String" id="carVin-result">
+       <result property="String" column="VEHICLE_VIN"/>
+    </resultMap>	
+	<!--查询指定品牌车型所属企业的车辆VIN号集合-批量设置考核油耗条件数据 -->
+    <select id="getCarVinList" parameterClass="oilset" resultMap="carVin-result">
+    select VEHICLE_VIN from CLW_CL_BASE_INFO_T where CAR_TYPE_BRAND = 
+    (select CODE_ID from CLW_JC_CODEDEF_T where VALID_FLAG ='0'
+    and CODE_TYPE ='VEHICLEBRAND'
+    and CODE_NAME = #carBrand#)
+    and VEHICLE_TYPE_ID = #carType#
+    AND DEVICE_TYPE='0'
+    and ENTERPRISE_ID =	#enterprise_id#
+	</select>
+		
+		
+	<!-- 效验当前车型是否当前月份已经设置考核油耗 -->
+    <select id="checkTypeMonthUnique" parameterClass="oilset" resultClass="Integer">
+ select count(*) from CLW_YW_VEHICLE_TYPE_T where VEHICLE_TYPE_ID =#carType#
+    and CAR_TYPE_BRAND = #carBrand# and  CHECK_TIME_CODE = #check_time_code#  and VALID_FLAG='0' and ENTERPRISE_ID = #enterprise_id# 
+
+	</select>
+		
+    <!-- 车辆品牌下拉框列表信息 -->
+	<resultMap class="String" id="carPinpai-result">
+       <result property="String" column="CODE_NAME"/>
+    </resultMap>
+    
+    <!-- 获取车辆品牌下拉框信息 -->
+    <select id="getCarPinParList" parameterClass="oilset" resultMap="carPinpai-result">
+    select CODE_NAME from CLW_JC_CODEDEF_T where VALID_FLAG = '0' and code_type='VEHICLEBRAND' and CODE_ID in
+   (
+	select distinct(CAR_TYPE_BRAND)
+FROM CLW_CL_BASE_INFO_T  ccbi
+		WHERE  VALID_FLAG='0' and
+		ccbi.ENTERPRISE_ID = #enterprise_id# 
+		AND DEVICE_TYPE='0'
+			)
+			
+			
+	</select>
+	
+	<!-- 车型下拉框列表信息 -->
+	<resultMap class="oilset" id="carType-result">
+       <result property="carType" column="CODE_ID"/>
+       <result property="carTypeDesc" column="CODE_NAME"/>
+    </resultMap>
+    
+    
+    
+	
+	<!-- 获取车型下拉框信息 -->
+    <select id="getCarTypeList" parameterClass="oilset" resultMap="carType-result">
+    
+    select CODE_ID,CODE_NAME from CLW_JC_CODEDEF_T where CODE_ID in (
+  
+	select distinct(VEHICLE_TYPE_ID)
+FROM CLW_CL_BASE_INFO_T  ccbi
+		WHERE ccbi.CAR_TYPE_BRAND = (select CODE_ID from CLW_JC_CODEDEF_T where 
+		CODE_TYPE = 'VEHICLEBRAND'
+		and VALID_FLAG = '0'
+		and CODE_NAME = #carBrand#)
+		AND ccbi.DEVICE_TYPE='0'
+	and	ccbi.ENTERPRISE_ID = #enterprise_id# 
+) and VALID_FLAG = '0' and CODE_TYPE = 'VEHICLETYPE'
+			
+			
+			
+	</select>
+	
+    
+    
+		
+     <resultMap class="oilset" id="oilset-result">
+       
+       <result property="check_time_code" column="CHECK_TIME_CODE"/>
+       <result property="velTypeId" column="TYPE_ID"/>
+       <result property="check_value" column="CHECK_VALUE"/>
+       <result property="creater" column="CREATER"/>
+       <result property="create_time" column="CREATE_TIME"/>
+       <result property="modifier" column="MODIFIER"/>
+       <result property="modify_time" column="MODIFY_TIME"/>
+       
+       <result property="vehicle_vin" column="vin"/>
+       <result property="check_id" column="check_id"/>
+
+<result property="carTypeDesc" column="CARTYPEDESC"/>
+ 	   <result property="carType" column="CARTYPE"/>
+ 	   <result property="carBrand" column="CARBRAND"/>
+    </resultMap>
+    
+    <resultMap id="vehcileinfo-result" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+	</resultMap>
+	
+	<resultMap id="ocktimeset-result" class="ocktimeset">
+		<result property="check_time_id" column="CHECK_TIME_ID" />
+		<result property="check_time_code" column="CHECK_TIME_CODE" />
+	</resultMap>
+	<!-- 获取考核油耗数量 -->
+    <select id="getCount" parameterClass="oilset" resultClass="Integer">
+    select count(*) from
+    (
+select 
+  yoc.vehicle_vin vin,
+  yoc.check_id,
+ vt.VEHICLE_TYPE_ID as CARTYPE,
+ (select CODE_NAME from CLW_JC_CODEDEF_T where CODE_ID = vt.VEHICLE_TYPE_ID and VALID_FLAG = '0' and CODE_TYPE = 'VEHICLETYPE') as CARTYPEDESC
+ ,vt.car_type_brand as CARBRAND
+ ,yoc.check_time_code,vt.type_id
+   
+       ,to_char(yoc.check_value,'fm9999999990.00') as CHECK_VALUE
+      ,(select USER_NAME from CLW_JC_USER_T where USER_ID = vt.creater ) as CREATER
+      ,to_char(vt.create_time,'yyyy-MM-dd HH24:mi:ss') as create_time
+      ,(select USER_NAME from CLW_JC_USER_T where USER_ID = yoc.MODIFIER) as MODIFIER
+		, to_char(yoc.modify_time,'yyyy-MM-dd HH24:mi:ss') as modify_time
+      
+      
+       from CLW_YW_VEHICLE_TYPE_T vt  ,CLW_YW_VEHTYPE_OILCHECK_T vo,CLW_YW_OIL_CHECK_T yoc
+    
+       
+       where vt.ENTERPRISE_ID=#enterprise_id# 
+       and vt.VALID_FLAG='0' and vo.type_id=vt.type_id and yoc.check_id=vo.check_id and yoc.VALID_FLAG='0'
+      
+         <isNotEmpty prepend="AND" property="check_time_code">
+			yoc.CHECK_TIME_CODE = #check_time_code#
+         </isNotEmpty>
+         )
+
+	</select>
+	
+	<select id="getListPerson">
+		 SELECT cyoc.CHECK_ID id,ccbi.VEHICLE_VIN name,  cyoc.CHECK_VALUE age, cyoc.CREATER address
+		FROM CLW_YW_OIL_CHECK_T cyoc,CLW_YW_OCKTIME_T cyot,CLW_CL_BASE_INFO_T ccbi
+		WHERE cyoc.enterprise_id=cyot.enterprise_id
+		and cyoc.check_time_code=cyot.check_time_id
+		and cyoc.VEHICLE_VIN=ccbi.VEHICLE_VIN
+   		AND cyoc.VALID_FLAG='0'
+   		AND ccbi.DEVICE_TYPE='0'
+	</select>
+	
+    <resultMap class="oilset" id="oilset-query-result">
+       <result property="vehicle_ln" column="vehicle_ln"/>
+       <result property="check_time_code" column="CHECK_TIME_CODE"/>
+       <result property="velTypeId" column="TYPE_ID"/>
+       <result property="check_value" column="CHECK_VALUE"/>
+       <result property="creater" column="CREATER"/>
+       <result property="create_time" column="CREATE_TIME"/>
+       <result property="modifier" column="MODIFIER"/>
+       <result property="modify_time" column="MODIFY_TIME"/>
+       
+       <result property="vehicle_vin" column="vin"/>
+       <result property="check_id" column="check_id"/>
+
+       <result property="carTypeDesc" column="CARTYPEDESC"/>
+       <result property="carType" column="CARTYPE"/>
+       <result property="carBrand" column="CARBRAND"/>
+    </resultMap>
+    
+	<!-- 获取考核油耗列表 -->
+	<select id="getInfos" parameterClass="oilset" resultMap="oilset-query-result">
+
+ select (select t.vehicle_ln from clw_cl_base_info_t t where t.valid_flag = '0' and t.device_type = '0' and t.vehicle_vin = yoc.vehicle_vin and rownum = 1 ) as vehicle_ln,
+  yoc.vehicle_vin vin,
+  yoc.check_id,
+ vt.VEHICLE_TYPE_ID as CARTYPE,
+ (select CODE_NAME from CLW_JC_CODEDEF_T where CODE_ID = vt.VEHICLE_TYPE_ID and VALID_FLAG = '0' and CODE_TYPE = 'VEHICLETYPE') as CARTYPEDESC
+ ,vt.car_type_brand as CARBRAND
+ ,yoc.check_time_code,vt.type_id
+   
+       ,to_char(yoc.check_value,'fm9999999990.00') as CHECK_VALUE
+      ,(select USER_NAME from CLW_JC_USER_T where USER_ID = vt.creater ) as CREATER
+      ,to_char(vt.create_time,'yyyy-MM-dd HH24:mi:ss') as create_time
+      ,(select USER_NAME from CLW_JC_USER_T where USER_ID = yoc.MODIFIER) as MODIFIER
+		, to_char(yoc.modify_time,'yyyy-MM-dd HH24:mi:ss') as modify_time
+      
+      
+       from CLW_YW_VEHICLE_TYPE_T vt  ,CLW_YW_VEHTYPE_OILCHECK_T vo,CLW_YW_OIL_CHECK_T yoc
+    
+       
+       where vt.ENTERPRISE_ID=#enterprise_id# 
+       and vt.VALID_FLAG='0' and vo.type_id=vt.type_id and yoc.check_id=vo.check_id and yoc.VALID_FLAG='0'
+      
+        <isNotEmpty prepend="AND" property="check_time_code">
+			yoc.CHECK_TIME_CODE = #check_time_code#
+         </isNotEmpty>
+       
+         
+         
+   	
+     <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>  
+	</select>
+	
+	<insert id="insertOilSetInfo" parameterClass="oilset">
+		INSERT INTO CLW_YW_OIL_CHECK_T(
+	    CHECK_ID,VEHICLE_VIN,CHECK_TIME_CODE,CHECK_VALUE,CREATER,
+   		CREATE_TIME, VALID_FLAG, ENTERPRISE_ID)
+	  	VALUES
+	  	(#check_id#,#vehicle_vin#,#check_time_code#,#check_value#,#creater#,SYSDATE,'0',#enterprise_id#)
+	</insert>
+	<!-- 插入油耗设置与车辆类型关联信息 -->
+	<insert id="insertOilSetV" parameterClass="oilset">
+		INSERT INTO CLW_YW_VEHTYPE_OILCHECK_T(
+	    TYPE_ID, CHECK_ID)
+	  	VALUES
+	  	(#velTypeId#,#check_id#)
+	</insert>
+	
+	<!-- 插入油耗设置与车辆类型关联信息 -->
+	<insert id="insertVelInfo" parameterClass="oilset">
+		INSERT INTO CLW_YW_VEHICLE_TYPE_T(
+	    TYPE_ID, VEHICLE_TYPE_ID,VEHICLE_TYPE_NAME,CHECK_TIME_CODE
+	    ,CAR_TYPE_BRAND,CHECK_VALUE,CREATER,CREATE_TIME
+	    ,VALID_FLAG,VASET_USER_ID,VASET_TIME,ENTERPRISE_ID)
+	  	VALUES
+	  	(#velTypeId#,#carType#,#carTypeDesc#,#check_time_code#,#carBrand#,#check_value#
+	  	,#creater#,SYSDATE,'0',#vaset_user_id#,#vaset_time#,#enterprise_id#)
+	</insert>
+	
+	<select id="getOilSetInfo" parameterClass="oilset" resultMap="oilset-result">
+		SELECT cyoc.CHECK_ID,ccbi.VEHICLE_VIN,ccbi.VEHICLE_LN, cyoc.check_time_code, cyoc.CHECK_VALUE, cyoc.CREATER,
+		cyoc.create_time,cyoc.modifier,cyoc.modify_time, cyoc.vaset_user_id, cyoc.vaset_time, cyoc.VALID_FLAG,cyoc.ENTERPRISE_ID
+		FROM CLW_YW_OIL_CHECK_T cyoc,CLW_YW_OCKTIME_T cyot,CLW_CL_BASE_INFO_T ccbi
+		WHERE cyoc.enterprise_id=cyot.enterprise_id
+		and cyoc.check_time_code=cyot.check_time_id
+		and cyoc.VEHICLE_VIN=ccbi.VEHICLE_VIN
+   		and CHECK_ID=#check_id#
+   		AND ccbi.DEVICE_TYPE='0'
+	</select>
+	
+	
+	
+	
+	<update id="updatebyOilSetid" parameterClass="oilset">
+		UPDATE CLW_YW_OIL_CHECK_T
+		SET CHECK_TIME_CODE= #check_time_code#,
+		CHECK_VALUE=#check_value#,
+		MODIFIER= #modifier#,
+		MODIFY_TIME=SYSDATE
+	   	WHERE  CHECK_ID=#check_id#
+	</update>
+	
+	<!-- 删除油耗设置表信息 -->
+	<update id="deletebyOilSetid" parameterClass="oilset">
+	   UPDATE CLW_YW_OIL_CHECK_T 
+	   SET VALID_FLAG='1',
+	   VASET_USER_ID= #vaset_user_id#,
+	   VASET_TIME=SYSDATE
+	   WHERE CHECK_ID =#check_id#
+	</update>
+	<!-- 删除关联信息 -->
+	<delete id="deleteTypeOilSet" parameterClass="oilset">
+	delete from CLW_YW_VEHTYPE_OILCHECK_T where CHECK_ID =#check_id#
+	
+	</delete>
+	
+	<!-- 删除车辆类型表信息 -->
+    <update id="deleteTypebyid" parameterClass="oilset">
+	   UPDATE CLW_YW_VEHICLE_TYPE_T 
+	   SET VALID_FLAG='1',
+	   VASET_USER_ID= #vaset_user_id#,
+	   VASET_TIME=SYSDATE
+	   WHERE  TYPE_ID =#velTypeId#
+	</update>
+	
+	
+	
+	
+	<!-- 修改油耗设置表信息 -->
+	<update id="updateOilSetInfomation" parameterClass="oilset">
+	   UPDATE CLW_YW_OIL_CHECK_T 
+	   SET CHECK_TIME_CODE=#check_time_code#,CHECK_VALUE=#check_value#,
+	   MODIFIER= #modifier#,
+	   MODIFY_TIME=SYSDATE
+	   WHERE CHECK_ID in (select CHECK_ID from CLW_YW_VEHTYPE_OILCHECK_T where TYPE_ID =#velTypeId#)
+	</update>
+
+	
+	<!-- 修改车辆类型表信息 -->
+    <update id="updateVelTypebyid" parameterClass="oilset">
+	   UPDATE CLW_YW_VEHICLE_TYPE_T 
+	   SET VEHICLE_TYPE_ID = #carType#,
+	   VEHICLE_TYPE_NAME = #carTypeDesc#,
+	   
+	   CHECK_TIME_CODE = #check_time_code#,
+	   CAR_TYPE_BRAND = #carBrand#,
+	   CHECK_VALUE = #check_value#,
+	   
+	   MODIFIER= #modifier#,
+	   MODIFY_TIME=SYSDATE
+	   WHERE  TYPE_ID =#velTypeId#
+	</update>
+	
+	
+	
+	
+	<!-- 备选车辆列表 -->
+	<select id="getVehicleLeft" parameterClass="Map" resultMap="vehcileinfo-result">
+   		
+			<![CDATA[
+		select t.VEHICLE_VIN,t.VEHICLE_LN from (SELECT VEHICLE_LN,VEHICLE_VIN
+		FROM CLW_CL_BASE_INFO_T 
+		WHERE 
+		 ORGANIZATION_ID in 
+		(select enterprise_id
+		     from clw_jc_enterprise_vi
+		     where left_num >= (select left_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)
+		     and right_num <=(select right_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)        
+		) AND VALID_FLAG='0' AND DEVICE_TYPE='0') t
+where t.VEHICLE_VIN not in(select ccbi.VEHICLE_VIN from CLW_CL_BASE_INFO_T ccbi,CLW_YW_OIL_CHECK_T cyoc
+		where ccbi.ENTERPRISE_ID=cyoc.ENTERPRISE_ID and ccbi.VEHICLE_VIN=cyoc.VEHICLE_VIN  
+		and cyoc.CHECK_TIME_CODE =#CHECK_TIME_CODE#
+		and cyoc.valid_flag = '0' AND ccbi.DEVICE_TYPE='0')
+		 ]]>
+
+	</select>
+	
+	<!-- 已选车辆列表 -->
+	<select id="getVehicleRight" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+   		 SELECT VEHICLE_LN, VEHICLE_VIN
+		FROM CLW_CL_BASE_INFO_T 
+		WHERE 
+		exists(select 1 from CLW_CL_BASE_INFO_T ccbi,CLW_YW_OIL_CHECK_T cyoc
+		where ccbi.ENTERPRISE_ID=cyoc.ENTERPRISE_ID and ccbi.VEHICLE_VIN=cyoc.VEHICLE_VIN
+		AND ccbi.DEVICE_TYPE='0'
+		and ccbi.ORGANIZATION_ID in 
+			<![CDATA[
+		(select enterprise_id
+		     from clw_jc_enterprise_vi
+		     where left_num >= (select left_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)
+		     and right_num <=(select right_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)        
+		))
+		and ORGANIZATION_ID in 
+		(select enterprise_id
+		     from clw_jc_enterprise_vi
+		     where left_num >= (select left_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)
+		     and right_num <=(select right_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)        
+		) AND VALID_FLAG='0' AND DEVICE_TYPE='0'
+		 ]]>
+		ORDER BY VEHICLE_LN  
+	</select>
+	
+	<!-- 考核月度列表 -->
+	<select id="getOckTimeSet" parameterClass="ocktimeset" resultMap="ocktimeset-result">
+   		SELECT CHECK_TIME_ID,CHECK_TIME_CODE
+		FROM CLW_YW_OCKTIME_T 
+		WHERE ENTERPRISE_ID=#enterprise_id# AND VALID_FLAG='0'
+		order by CHECK_TIME_CODE
+	</select>
+	
+	
+	<!-- 效验考核油耗车辆是否存在同月信息 -->
+    <select id="getCheckMonthUniqueCount" parameterClass="oilset" resultClass="Integer">
+	 select count(*) from clw_yw_oil_check_t 
+	 where 
+           CHECK_ID not like #check_id#
+	  and
+	 CHECK_TIME_CODE = #check_time_code# and
+	 VEHICLE_VIN = #vehicle_vin#
+	 and VALID_FLAG = '0'
+	  
+	</select>
+	
+	<!-- 效验修改考核油耗是否唯一 -->
+    <select id="checkUpdateUnique" parameterClass="oilset" resultClass="Integer">
+    select count(*) from CLW_YW_VEHICLE_TYPE_T where VEHICLE_TYPE_ID =#carType#
+    and CAR_TYPE_BRAND = #carBrand# and  CHECK_TIME_CODE = #check_time_code# and TYPE_ID != #velTypeId# and VALID_FLAG='0' and ENTERPRISE_ID = #enterprise_id#
+
+	</select>
+	
+	<select id="getVonum" parameterClass="oilset" resultClass="Integer">
+		select count(1) from CLW_YW_VEHTYPE_OILCHECK_T where TYPE_ID = #velTypeId#
+	</select>
+	
+</sqlMap>

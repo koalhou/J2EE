@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="HandheldDevice">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="HandheldDeviceInfo" type="com.neusoft.clw.yw.cl.handheldDevice.ds.HandheldDeviceInfo" />
+	
+	<select id="getCount" parameterClass="HandheldDeviceInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_USER_T       JU,
+		       CLW_JC_USER_T       JU_R,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND JT.REGISTRANT = JU_R.USER_ID(+)
+		   AND JT.MODIFIER = JU.USER_ID(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '1'
+		   AND CBI.DEVICE_TYPE = '1'
+		   AND CS.DEVICE_TYPE = '1'
+         <isNotEmpty prepend="AND" property="handheldDeviceNo">
+               JT.TERMINAL_ID LIKE '%' || #handheldDeviceNo# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="cellPhoneImei">
+               JT.VEHICLE_VIN LIKE '%' || #cellPhoneImei# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="cellPhone">
+               JT.SIM_CARD_NUMBER LIKE '%' || #cellPhone# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="enterpriseCode">
+               JE.ENTERPRISE_CODE LIKE '%' || #enterpriseCode# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<resultMap id="handheldDeviceInfo-result" class="HandheldDeviceInfo">
+		<result property="terminalId" column="ID" />
+		<result property="cellPhoneImei" column="VEHICLE_VIN" />
+		<result property="handheldDeviceNo" column="TERMINAL_ID" />
+		<result property="cellPhone" column="SIM_CARD_NUMBER" />
+		<result property="entipriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="entipriseName" column="FULL_NAME" />
+		<result property="registrationTime" column="REGISTRATION_TIME" />
+		<result property="registrant" column="REGISTRANT" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+		<result property="modifier" column="MODIFIER" />
+	</resultMap>
+	
+	<select id="getHandheldDeviceInfos" parameterClass="HandheldDeviceInfo" resultMap="handheldDeviceInfo-result">
+		SELECT JT.ID,
+		       JT.VEHICLE_VIN,
+		       JT.TERMINAL_ID,
+		       JT.SIM_CARD_NUMBER,
+		       CBI.ENTERPRISE_ID,
+		       JE.ENTERPRISE_CODE,
+		       JE.FULL_NAME,
+		       to_char(JT.REGISTRATION_TIME, 'yyyy-mm-dd hh24:mi:ss') REGISTRATION_TIME,
+		       JU_R.USER_NAME AS REGISTRANT,
+		       JU.USER_NAME AS MODIFIER,
+		       to_char(JT.MODIFY_TIME, 'yyyy-mm-dd hh24:mi:ss') MODIFY_TIME
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_USER_T       JU,
+		       CLW_JC_USER_T       JU_R,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND JT.REGISTRANT = JU_R.USER_ID(+)
+		   AND JT.MODIFIER = JU.USER_ID(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '1'
+		   AND CBI.DEVICE_TYPE = '1'
+		   AND CS.DEVICE_TYPE = '1'
+         <isNotEmpty prepend="AND" property="handheldDeviceNo">
+               JT.TERMINAL_ID LIKE '%' || #handheldDeviceNo# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="cellPhoneImei">
+               JT.VEHICLE_VIN LIKE '%' || #cellPhoneImei# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="cellPhone">
+               JT.SIM_CARD_NUMBER LIKE '%' || #cellPhone# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="enterpriseCode">
+               JE.ENTERPRISE_CODE LIKE '%' || #enterpriseCode# ||'%' escape '\'
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<insert id="insertVehicleTable" parameterClass="HandheldDeviceInfo">
+		INSERT INTO CLW_CL_BASE_INFO_T
+		  (VEHICLE_VIN,
+		   VEHICLE_ID,
+		   VEHICLE_LN,
+		   ENTERPRISE_ID,
+		   ORGANIZATION_ID,
+		   CR_CONFIG_ID,
+		   ENGINE_TYPE,
+		   BUSINESS_TYPE,
+		   REAR_AXLE_RATE,
+		   CREATER,
+		   CREATE_TIME,
+		   MODIFIER,
+		   MODIFY_TIME,
+		   VALID_FLAG,
+		   STANDARD_ROTATE,
+		   FEE_FLAG,
+		   VEH_PAI_COLOR,
+		   DEVICE_TYPE)
+		VALUES
+		  (#cellPhoneImei#,
+		   #vehicleId#,
+		   #cellPhoneImei#,
+		   #entipriseId#,
+		   NULL,
+		   'HANDHELD',
+		   'HANDHELD',
+		   'HANDHELD',
+		   '1',
+		   #operator#,
+		   SYSDATE,
+		   #operator#,
+		   SYSDATE,
+		   '0',
+		   '1',
+		   '0',
+		   '0',
+		   '1')
+	</insert>
+	
+	<insert id="insertTerminalTable" parameterClass="HandheldDeviceInfo">
+	    INSERT INTO CLW_JC_TERMINAL_T T
+          (T.ID,
+           T.TERMINAL_ID,
+           T.VEHICLE_VIN,
+           T.SIM_CARD_NUMBER,
+           T.ENTERPRISE_ID,
+           T.UPDATE_TIME,
+           T.CREATER,
+           T.CREATE_TIME,
+           T.MODIFIER,
+           T.MODIFY_TIME,
+           T.VALID_FLAG,
+           T.REGISTRANT,
+           T.REGISTRATION_TIME,
+           T.DEVICE_TYPE)
+        VALUES
+          (#terminalId#,
+           #handheldDeviceNo#,
+           #cellPhoneImei#,
+           #cellPhone#,
+           #entipriseId#,
+           SYSDATE,
+           #operator#,
+           SYSDATE,
+           #operator#,
+           SYSDATE,
+           '0',
+           #operator#,
+           SYSDATE,
+           '1')
+	</insert>
+	
+	<insert id="insertSimTable" parameterClass="HandheldDeviceInfo">
+	    INSERT INTO CLW_CL_SIM_T T
+          (T.SIM_ID,
+           T.SIM_CARD_NUMBER,
+           T.ICCID_ELECTRON,
+           T.ICCID_PRINT,
+           T.CELLPHONE,
+           T.BUSINESS_ID,
+           T.START_USE_TIME,
+           T.CREATER,
+           T.CREATE_TIME,
+           T.MODIFIER,
+           T.MODIFY_TIME,
+           T.VALID_FLAG,
+           T.DEVICE_TYPE)
+        VALUES
+          (#simId#,
+           #cellPhone#,
+           #cellPhone#,
+           #cellPhone#,
+           #cellPhone#,
+           'HAND_HELD',
+           TO_CHAR(SYSDATE,'YYYY-MM-DD'),
+           #operator#,
+           SYSDATE,
+           #operator#,
+           SYSDATE,
+           '0',
+           '1')
+	</insert>
+	
+	<resultMap id="handheldDeviceDetail-result" class="HandheldDeviceInfo">
+		<result property="vehicleId" column="VEHICLE_ID" />
+		<result property="cellPhoneImei" column="VEHICLE_VIN" />
+		<result property="terminalId" column="ID" />
+		<result property="handheldDeviceNo" column="TERMINAL_ID" />
+		<result property="simId" column="SIM_ID" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="entipriseId" column="ENTERPRISE_ID" />
+		<result property="entipriseName" column="FULL_NAME" />
+	</resultMap>
+	
+	<select id="getHandheldDeviceInfoById" parameterClass="String" resultMap="handheldDeviceDetail-result">
+		SELECT CBI.VEHICLE_ID,
+		       JT.VEHICLE_VIN,
+		       JT.ID,
+		       JT.TERMINAL_ID,
+		       CS.SIM_ID,
+		       CS.CELLPHONE,
+		       JE.ENTERPRISE_ID,
+		       JE.FULL_NAME
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '1'
+		   AND CBI.DEVICE_TYPE = '1'
+		   AND CS.DEVICE_TYPE = '1'
+		   AND JT.ID = #terminalId#
+	</select>
+	
+	<update id="updateVehicleInfo" parameterClass="HandheldDeviceInfo">
+		UPDATE CLW_CL_BASE_INFO_T T
+		   SET T.ENTERPRISE_ID = #entipriseId#,
+		       T.ORGANIZATION_ID = NULL,
+		       T.MODIFIER = #operator#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.VEHICLE_ID = #vehicleId#
+           AND T.DEVICE_TYPE = '1'
+	</update>
+	
+	<update id="updateTerminalInfo" parameterClass="HandheldDeviceInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+		   SET T.ENTERPRISE_ID = #entipriseId#,
+		       T.MODIFIER = #operator#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.ID = #terminalId#
+           AND T.DEVICE_TYPE = '1'
+	</update>
+	
+	<update id="delVehicleInfo" parameterClass="HandheldDeviceInfo">
+		UPDATE CLW_CL_BASE_INFO_T T
+		   SET T.VALID_FLAG = '1',
+		       T.MODIFIER = #operator#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.VEHICLE_ID = #vehicleId#
+           AND T.DEVICE_TYPE = '1'
+	</update>
+	
+	<update id="delTerminalInfo" parameterClass="HandheldDeviceInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+		   SET T.VALID_FLAG = '1',
+		       T.MODIFIER = #operator#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.ID = #terminalId#
+           AND T.DEVICE_TYPE = '1'
+	</update>
+	
+	<update id="delSimInfo" parameterClass="HandheldDeviceInfo">
+		UPDATE CLW_CL_SIM_T T
+		   SET T.VALID_FLAG = '1',
+		       T.MODIFIER = #operator#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.SIM_ID = #simId#
+           AND T.DEVICE_TYPE = '1'
+	</update>
+	
+	<select id="getVehicleCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_CL_BASE_INFO_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.DEVICE_TYPE = '1'
+           AND T.VEHICLE_VIN = #value#
+	</select>
+	
+	<select id="getTerminalCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.DEVICE_TYPE = '1'
+           AND T.TERMINAL_ID = #value#
+	</select>
+	
+	<select id="getSimCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_CL_SIM_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.DEVICE_TYPE = '1'
+           AND T.CELLPHONE = #value#
+	</select>
+</sqlMap>

@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CarBase">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="CarBaseInfo" type="com.neusoft.clw.yw.cl.carbase.ds.CarBaseInfo" />
+	 <typeAlias alias="BaseInfo" type="com.neusoft.clw.yw.xs.baseinfo.ds.BaseInfo" />
+	 <typeAlias alias="HarmdefDataInfo" type="com.neusoft.clw.yw.cl.illdrive.ds.HarmdefDataInfo" />
+	 
+	 <select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+	    FROM clw_cl_base_info_t t,
+		       (SELECT ct.code_id, ct.code_name
+		          FROM clw_jc_codedef_t ct
+		         WHERE ct.code_type = 'VEHICLEUSE'
+		           AND ct.valid_flag = '0') vuser_t,
+		       (SELECT ct.code_id, ct.code_name
+		          FROM clw_jc_codedef_t ct
+		         WHERE ct.code_type = 'ENGINEBRAND'
+		           AND ct.valid_flag = '0') brand_t,
+		       (SELECT ct.code_id, ct.code_name, ct.parent_id
+		          FROM clw_jc_codedef_t ct
+		         WHERE ct.code_type = 'ENGINETYPE'
+		           AND ct.valid_flag = '0') type_t
+		 WHERE t.valid_flag = '0'
+		   AND T.DEVICE_TYPE = '0'
+		   AND t.business_type = vuser_t.code_id(+)
+		   AND t.brand = brand_t.code_id(+)
+		   AND t.engine_type = type_t.code_id(+)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+       	       t.vehicle_vin LIKE '%' || #vehicle_vin# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicle_ln">
+       	       t.vehicle_ln LIKE '%' || #vehicle_ln# ||'%' escape '\'
+        </isNotEmpty>
+	</select>
+	
+	<resultMap id="data-result" class="CarBaseInfo">
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="engine_type" column="ENGINE_TYPE" />
+		<result property="business_type" column="BUSINESS_TYPE" />
+		<result property="vehicle_type_id" column="VEHICLE_TYPE_ID" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="show_names" column="SHOW_NAMES" />
+		
+	</resultMap>
+	<select id="selectCarBaseInfo"  parameterClass="Map" resultMap="data-result">
+	SELECT t.vehicle_id,
+	       t.vehicle_vin,
+	       t.vehicle_ln,
+	       type_t.code_name AS engine_type,
+	       vuser_t.code_name AS business_type,
+	       t.vehicle_type_id,
+	       t.vehicle_code,
+	       show_names_fun(t.enterprise_id, t.organization_id) AS show_names
+	  FROM clw_cl_base_info_t t,
+	       (SELECT ct.code_id, ct.code_name
+	          FROM clw_jc_codedef_t ct
+	         WHERE ct.code_type = 'VEHICLEUSE'
+	           AND ct.valid_flag = '0') vuser_t,
+	       (SELECT ct.code_id, ct.code_name
+	          FROM clw_jc_codedef_t ct
+	         WHERE ct.code_type = 'ENGINEBRAND'
+	           AND ct.valid_flag = '0') brand_t,
+	       (SELECT ct.code_id, ct.code_name, ct.parent_id
+	          FROM clw_jc_codedef_t ct
+	         WHERE ct.code_type = 'ENGINETYPE'
+	           AND ct.valid_flag = '0') type_t
+	 WHERE t.valid_flag = '0'
+	   AND T.DEVICE_TYPE = '0'
+	   AND t.business_type = vuser_t.code_id(+)
+	   AND t.brand = brand_t.code_id(+)
+	   AND t.engine_type = type_t.code_id(+)
+	   <isNotEmpty prepend="AND" property="vehicle_vin">
+       	       t.vehicle_vin LIKE '%' || #vehicle_vin# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicle_ln">
+       	       t.vehicle_ln LIKE '%' || #vehicle_ln# ||'%' escape '\'
+       </isNotEmpty>
+	 ORDER BY t.vehicle_type_id
+ 	</select>
+ 	
+ 	<resultMap id="engine-list" class="BaseInfo">
+		<result property="codeId" column="CODE_ID" />
+		<result property="codeName" column="CODE_NAME" />
+	</resultMap>
+	<select id="getEngineList"  resultMap="engine-list">
+		SELECT t.code_id, t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.valid_flag = '0'
+		   AND t.code_type = 'ENGINETYPE'
+		   ORDER BY t.create_time
+ 	</select>
+ 	
+ 	<resultMap id="enginebrand-list" class="BaseInfo">
+		<result property="codeId" column="CODE_ID" />
+		<result property="codeName" column="CODE_NAME" />
+	</resultMap>
+	<select id="carEngineBrandList"  resultMap="enginebrand-list">
+		SELECT t.code_id, t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.valid_flag = '0'
+		   AND t.code_type = 'ENGINEBRAND'
+		   ORDER BY t.create_time
+ 	</select>
+ 	<resultMap id="vehicle_type-list" class="BaseInfo">
+		<result property="codeId" column="CODE_ID" />
+		<result property="codeName" column="CODE_NAME" />
+	</resultMap>
+	<select id="getVehicleTypeList" parameterClass="Map" resultMap="vehicle_type-list">
+		SELECT t.code_id, t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.parent_id = (SELECT t1.def_id
+		                        FROM clw_jc_codedef_t t1
+		                       WHERE t1.code_type = 'VEHICLEBRAND'
+		                         AND t1.code_id = #popup_code#)
+		   AND t.code_type = 'VEHICLETYPE'
+		   AND t.valid_flag = '0'
+		   <isNotEmpty prepend="AND" property="popup_name">
+       		t.code_name LIKE '%$popup_name$%'
+       	   </isNotEmpty>
+		 ORDER BY t.code_name
+ 	</select>
+ 	
+ 	<resultMap id="engine_type-list" class="BaseInfo">
+		<result property="codeId" column="CODE_ID" />
+		<result property="codeName" column="CODE_NAME" />
+	</resultMap>
+	<select id="getEngineTypeList" parameterClass="Map" resultMap="engine_type-list">
+		SELECT t.code_id, t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.parent_id = (SELECT t1.def_id
+		                        FROM clw_jc_codedef_t t1
+		                       WHERE t1.code_type = 'ENGINEBRAND'
+		                         AND t1.code_id = #popup_code#)
+		   AND t.code_type = 'ENGINETYPE'
+		   AND t.valid_flag = '0'
+		   <isNotEmpty prepend="AND" property="popup_name">
+       		t.code_name LIKE '%$popup_name$%'
+       	   </isNotEmpty>
+		 ORDER BY t.create_time
+ 	</select>
+ 	<select id="getVehicleInfo" parameterClass="String" resultClass="String">
+		SELECT t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.code_type = 'VEHICLETYPE'
+		   AND t.valid_flag = '0'
+		   AND t.code_id = #code_id#
+	</select>
+	<select id="getEngineInfo" parameterClass="String" resultClass="String">
+		SELECT t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.code_type = 'ENGINETYPE'
+		   AND t.valid_flag = '0'
+		   AND t.code_id = #code_id#
+	</select>
+ 	<resultMap id="illdrive-list" class="HarmdefDataInfo">
+		<result property="def_id" column="DEF_ID" />
+		<result property="def_name" column="DEF_NAME" />
+	</resultMap>
+	<select id="getIllDriveList"  resultMap="illdrive-list">
+		SELECT t.def_id, t.def_name
+		  FROM clw_yw_harmdef_t t
+		 WHERE t.valid_flag = '0'
+		   AND t.apply_id = '0'
+		 ORDER BY t.create_time
+ 	</select>
+ 	
+ 	<resultMap id="business_type-list" class="BaseInfo">
+		<result property="codeId" column="CODE_ID" />
+		<result property="codeName" column="CODE_NAME" />
+	</resultMap>
+	<select id="getBusinessTypeList"  resultMap="business_type-list">
+		SELECT t.code_id, t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.valid_flag = '0'
+		   AND t.code_type = 'VEHICLEUSE'
+		   ORDER BY t.create_time
+ 	</select>
+	<select id="getVinCount" parameterClass="String" resultClass="Integer">
+	SELECT COUNT(*)
+	  FROM clw_cl_base_info_t t
+	 WHERE t.valid_flag = '0'
+	   AND t.vehicle_vin = #vehicle_vin#
+	   AND T.DEVICE_TYPE = '0'
+	</select>
+	<select id="getLnCount" parameterClass="String" resultClass="Integer">
+	SELECT COUNT(*)
+	  FROM clw_cl_base_info_t t
+	 WHERE t.valid_flag = '0'
+	   AND t.vehicle_ln = #vehicle_ln#
+	   AND T.DEVICE_TYPE = '0'
+	</select>
+	<select id="countLnVin" parameterClass="CarBaseInfo" resultClass="Integer">
+	SELECT COUNT(*)
+	  FROM clw_cl_base_info_t t
+	 WHERE t.valid_flag = '0'
+	   AND (t.vehicle_ln = #vehicle_ln# OR t.vehicle_vin = #vehicle_vin#)
+	   AND T.DEVICE_TYPE = '0'
+	</select>
+	<insert id="insertCarBase" parameterClass="CarBaseInfo">
+	INSERT INTO clw_cl_base_info_t
+	  (vehicle_id,
+	   vehicle_vin,
+	   vehicle_code,
+	   vehicle_ln,
+	   enterprise_id,
+	   user_id,
+	   route_id,
+	   organization_id,
+	   cr_config_id,
+	   driver_id,
+	   engine_number,
+	   engine_type,
+	   brand,
+	   vehicle_type_id,
+	   vehicle_color,
+	   limite_number,
+	   standard_oil,
+	   dead_load,
+	   sale_price,
+	   out_number,
+	   business_type,
+	   tyre_r,
+	   rear_axle_rate,
+	   creater,
+	   create_time,
+	   modifier,
+	   modify_time,
+	   valid_flag,
+	   vaset_user_id,
+	   vaset_time,
+	   buy_date,
+	   standard_rotate,
+	   fee_flag,
+	   vehicle_number,
+	   car_number,
+	   sell_order_num,
+	   made_order_num,
+	   chassis_order_num,
+	   sell_date,
+	   car_type_brand,
+	   oil_config)
+	VALUES
+	  (#vehicle_id#,
+	   #vehicle_vin#,
+	   '',
+	   #vehicle_ln#,
+	   '',
+	   '',
+	   '',
+	   '',
+	   #cr_config_id#,
+	   '',
+	   #engine_number#,
+	   #engine_type#,
+	   #brand#,
+	   #vehicle_type_id#,
+	   #vehicle_color#,
+	   #limite_number#,
+	   #standard_oil#,
+	   #dead_load#,
+	   '',
+	   #out_number#,
+	   #business_type#,
+	   #tyre_r#,
+	   #rear_axle_rate#,
+	   #creater#,
+	   SYSDATE,
+	   #creater#,
+	   SYSDATE,
+	   '0',
+	   '',
+	   '',
+	   '',
+	   #standard_rotate#,
+	   '',
+	   #vehicle_number#,
+	   #car_number#,
+	   #sell_order_num#,
+	   #made_order_num#,
+	   #chassis_order_num#,
+	   #sell_date#,
+	   #car_type_brand#,
+	   #oil_config#)
+	</insert>
+	<select id="getCarBaseInfoById"  parameterClass="Map" resultClass="CarBaseInfo">
+		SELECT t.vehicle_id,
+	       t.vehicle_vin,
+	       t.vehicle_code,
+	       t.vehicle_ln,
+	       t.cr_config_id,
+	       t.engine_number,
+	       t.engine_type,
+	       t.brand,
+	       t.vehicle_type_id,
+	       t.vehicle_color,
+	       t.limite_number,
+	       t.standard_oil,
+	       t.dead_load,
+	       t.out_number,
+	       t.business_type,
+	       t.tyre_r,
+	       t.rear_axle_rate,
+	       t.standard_rotate,
+	       t.vehicle_number,
+	       t.car_number,
+	       t.sell_order_num,
+	       t.made_order_num,
+	       t.chassis_order_num,
+	       t.sell_date,
+	       t.car_type_brand,
+           t.oil_config
+	  FROM clw_cl_base_info_t t
+	 WHERE t.valid_flag = '0'
+	   AND t.vehicle_id = #vehicle_id#
+	</select>
+	<update id="updateCarBaseInfo" parameterClass="CarBaseInfo">
+	UPDATE clw_cl_base_info_t t
+	   SET t.vehicle_vin     = #vehicle_vin#,
+	       t.vehicle_code    = #vehicle_code#,
+	       t.vehicle_ln      = #vehicle_ln#,
+	       t.cr_config_id    = #cr_config_id#,
+	       t.engine_number   = #engine_number#,
+	       t.engine_type     = #engine_type#,
+	       t.brand           = #brand#,
+	       t.vehicle_type_id = #vehicle_type_id#,
+	       t.vehicle_color   = #vehicle_color#,
+	       t.limite_number   = #limite_number#,
+	       t.standard_oil    = #standard_oil#,
+	       t.dead_load       = #dead_load#,
+	       t.out_number      = #out_number#,
+	       t.business_type   = #business_type#,
+	       t.tyre_r          = #tyre_r#,
+	       t.rear_axle_rate  = #rear_axle_rate#,
+	       t.standard_rotate = #standard_rotate#,
+	       t.modifier        = #modifier#,
+	       t.modify_time     = SYSDATE,
+	       t.vehicle_number  = #vehicle_number#,
+	       t.car_number      = #car_number#,
+	       t.sell_order_num  = #sell_order_num#,
+	       t.made_order_num  = #made_order_num#,
+	       t.chassis_order_num  = #chassis_order_num#,
+	       t.sell_date       = #sell_date#,
+	       t.car_type_brand  = #car_type_brand#,
+	       t.oil_config		 = #oil_config#
+	 WHERE t.vehicle_id = #vehicle_id#
+	</update>
+	
+	<update id="updateRegistedCarBaseInfo" parameterClass="CarBaseInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+		   SET T.MODIFY_TIME = SYSDATE,
+               T.UPDATE_TIME = SYSDATE,
+               T.VEHICLE_VIN = #vehicle_vin#,
+               T.MODIFIER = #modifier#
+         WHERE T.ID = (SELECT ID
+                         FROM CLW_JC_TERMINAL_T 
+                        WHERE VEHICLE_VIN = #old_vehicle_vin#
+                          AND VALID_FLAG = '0'
+                          AND DEVICE_TYPE = '0'
+                          AND ROWNUM = 1)
+	</update>
+	
+	<update id="updateRegistedCarBizInfo" parameterClass="CarBaseInfo">
+		UPDATE CLW_YW_TERMINAL_BIZ_T T
+           SET T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE,
+               T.VEHICLE_VIN = #vehicle_vin#
+         WHERE T.TBIZ_ID IN (SELECT TBIZ_ID
+                               FROM CLW_YW_TERMINAL_BIZ_T
+                              WHERE VEHICLE_VIN = #old_vehicle_vin#)
+	</update>
+	
+	<update id="updateDelCarBaseInfo" parameterClass="Map">
+		UPDATE clw_cl_base_info_t t
+		   SET t.valid_flag = '1', t.vaset_user_id = #vaset_user_id#, t.vaset_time = SYSDATE, T.MODIFY_TIME = SYSDATE
+		 WHERE t.vehicle_id = #vehicle_id#
+	</update>
+	<select id="countBeforeDelCarBase"  parameterClass="String" resultClass="Integer">
+	SELECT COUNT(*)
+	  FROM clw_jc_terminal_t t, clw_cl_base_info_t tb
+	 WHERE t.valid_flag = '0'
+	   AND t.vehicle_vin = tb.vehicle_vin
+	   AND tb.valid_flag = '0'
+	   AND tb.vehicle_id = #vehicle_id#
+	</select>
+	<resultMap id="data-result-export" class="CarBaseInfo">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="business_type" column="BUSINESS_TYPE" />
+		<result property="tyre_r" column="TYRE_R" />
+		<result property="rear_axle_rate" column="REAR_AXLE_RATE" />
+		<result property="standard_rotate" column="STANDARD_ROTATE" />
+		<result property="vehicle_color" column="VEHICLE_COLOR" />
+		<result property="limite_number" column="LIMITE_NUMBER" />
+		<result property="dead_load" column="DEAD_LOAD" />
+		<result property="vehicle_number" column="VEHICLE_NUMBER" />
+		<result property="engine_number" column="ENGINE_NUMBER" />
+		<result property="standard_oil" column="STANDARD_OIL" />
+		<result property="brand" column="BRAND" />
+		<result property="out_number" column="OUT_NUMBER" />
+		<result property="sell_order_num" column="SELL_ORDER_NUM" />
+		<result property="made_order_num" column="MADE_ORDER_NUM" />
+		<result property="chassis_order_num" column="CHASSIS_ORDER_NUM" />
+		<result property="sell_date" column="SELL_DATE" />
+		<result property="car_number" column="CAR_NUMBER" />
+		<result property="car_type_brand" column="CAR_TYPE_BRAND" />
+		<result property="oil_config" column="OIL_CONFIG" />
+	</resultMap>
+	<select id="selectCarBaseInfoForExport"  parameterClass="Map" resultMap="data-result-export">
+	SELECT t.vehicle_ln,
+	       t.vehicle_vin,
+	       t.business_type,
+	       t.tyre_r,
+	       t.rear_axle_rate,
+	       t.standard_rotate,
+	       t.vehicle_color,
+	       t.limite_number,
+	       t.dead_load,
+	       t.vehicle_number,
+	       t.engine_number,
+	       t.standard_oil,
+	       t.brand,
+	       t.out_number,
+	       t.sell_order_num,
+	       t.made_order_num,
+	       t.chassis_order_num,
+	       t.sell_date,
+	       t.car_number,
+	       t.car_type_brand,
+	       t.oil_config
+	  FROM clw_cl_base_info_t t
+	 WHERE t.valid_flag = '0'
+	   AND T.DEVICE_TYPE = '0'
+	   <isNotEmpty prepend="AND" property="vehicle_vin">
+       	t.vehicle_vin LIKE '%$vehicle_vin$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicle_ln">
+       	t.vehicle_ln LIKE '%$vehicle_ln$%'
+       </isNotEmpty>
+	 ORDER BY t.create_time
+ 	</select>
+ 	<resultMap id="carTypeBrand-list" class="BaseInfo">
+		<result property="codeId" column="CODE_ID" />
+		<result property="codeName" column="CODE_NAME" />
+	</resultMap>
+	<select id="getCarTypeBrandList"  resultMap="carTypeBrand-list">
+		SELECT t.code_id, t.code_name
+		  FROM clw_jc_codedef_t t
+		 WHERE t.valid_flag = '0'
+		   AND t.code_type = 'VEHICLEBRAND'
+		   ORDER BY t.create_time
+ 	</select>
+</sqlMap>

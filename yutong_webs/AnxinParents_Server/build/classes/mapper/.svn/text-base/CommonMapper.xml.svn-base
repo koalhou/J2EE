@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yutong.axxc.parents.mapper.CommonMapper">
+	<!-- 获取数据库时间 -->
+	<select id="getDBTime" resultType="java.util.Date">
+		SELECT SYSDATE FROM DUAL
+	</select>
+</mapper>

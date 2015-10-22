@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg
+END
+TerminalViBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/TerminalViBean.java
+END
+DiaoduInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/DiaoduInfo.java
+END
+ResultSendPhoto.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/ResultSendPhoto.java
+END
+SendTtMsgResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/SendTtMsgResp.java
+END
+PicCommandInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/PicCommandInfo.java
+END
+ResultSendTtMsg.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/ResultSendTtMsg.java
+END
+PushMsgReceivedInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/PushMsgReceivedInfo.java
+END
+MsgMoldReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/MsgMoldReq.java
+END
+CoreMsgInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/CoreMsgInfo.java
+END
+MsgMoldResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/MsgMoldResp.java
+END
+FindMsgMoldResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/FindMsgMoldResp.java
+END
+SendPhotoResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/SendPhotoResp.java
+END
+MsgMoldInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/src/java/com/yutong/axxc/parents/entity/msg/MsgMoldInfo.java
+END

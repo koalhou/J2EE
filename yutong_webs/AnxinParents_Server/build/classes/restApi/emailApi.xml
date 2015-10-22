@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="  
+                       http://www.springframework.org/schema/beans  
+                       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                       http://www.springframework.org/schema/context 
+                       http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+                       http://cxf.apache.org/jaxrs  
+                       http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<!-- 设置需要发布的bean -->
+	<bean id="emailAPI" class="com.yutong.axxc.parents.api.email.EmailAPIImpl" />
+
+	<!-- 站点相关服务API -->
+	<jaxrs:server id="email" address="/email">
+		<jaxrs:serviceBeans>
+			<ref bean="emailAPI" />
+		</jaxrs:serviceBeans>
+		<!-- 验证HTTP Header中access_token信息 -->
+		<jaxrs:inInterceptors>
+			<bean
+				class="com.yutong.axxc.parents.interceptor.OauthTokenCheckInterceptor" />
+		</jaxrs:inInterceptors>
+		<!-- 处理系统内部异常 -->
+		<jaxrs:providers>
+			<bean
+				class="com.yutong.axxc.parents.provider.JacksonDeserializeExceptionMapper" />
+			<bean class="com.yutong.axxc.parents.provider.DataAccessExceptionMapper" />
+			<bean
+				class="com.yutong.axxc.parents.provider.JacksonSerializeExceptionMapper" />
+				
+		</jaxrs:providers>
+		<!-- 日志相关拦截器 -->
+		<jaxrs:features>
+			<bean class="com.yutong.axxc.parents.feature.SyncLoggingFeature" />
+		</jaxrs:features>
+	</jaxrs:server>
+</beans>

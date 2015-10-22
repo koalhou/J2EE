@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RoleBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="RoleBrowseInfo" type="com.neusoft.clw.yw.popup.role.ds.RoleBrowseInfo" />
+	
+	<resultMap id="roleInfo-result" class="RoleBrowseInfo">
+		<result property="roleId" column="ROLE_ID" />
+		<result property="roleName" column="ROLE_NAME" />
+	</resultMap>
+	
+	<resultMap id="selectRoleInfo-result" class="RoleBrowseInfo">
+		<result property="roleId" column="ROLE_ID" />
+		<result property="roleName" column="ROLE_NAME" />
+		<result property="apply_id" column="APPLY_ID" />
+	</resultMap>
+	
+	<select id="getRoleInfos" parameterClass="Map" resultMap="roleInfo-result">
+		SELECT ROLE_ID,
+               ROLE_NAME
+          FROM CLW_JC_ROLE_T 
+         WHERE APPLY_ID = '0'
+           AND VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="roleName">
+               ROLE_NAME LIKE '%$roleName$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="selectRoleInfo" parameterClass="Map" resultMap="selectRoleInfo-result">
+	 	SELECT
+		    ROLE_ID,
+		    ROLE_NAME,
+		    APPLY_ID
+		FROM
+		    clw_jc_role_t
+		WHERE
+		    valid_flag = '0'
+	   <isNotEmpty prepend="AND" property="roleName">
+       		role_name LIKE '%$roleName$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="apply_id">
+       		apply_id=#apply_id#
+       </isNotEmpty>
+	 	ORDER BY apply_id
+ 	</select>
+</sqlMap>

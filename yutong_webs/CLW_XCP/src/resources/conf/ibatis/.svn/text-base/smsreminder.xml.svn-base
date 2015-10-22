@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SmsReminder">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="SmsReminderInfo" type="com.neusoft.clw.infomanage.smsreminder.domain.SmsReminderInfo" />
+	<typeAlias alias="SmsReminderMessageInfo" type="com.neusoft.clw.infomanage.smsreminder.domain.MessageInfo" />
+	
+	<select id="getCount" parameterClass="SmsReminderInfo" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM (SELECT XS.STU_ID,
+		               XS.STU_NAME,
+		               XS.STU_CODE,
+		               XS.STU_SCHOOL,
+		               XS.STU_CLASS,
+		               ORDER_T.ORDER_TIME,
+		               ORDER_T.PHONE1,
+		               ORDER_T.PHONE2,
+		               ORDER_T.PHONE3
+		          FROM CLW_XC_STUDENT_T XS,
+		               (SELECT STU_ID,
+		                       MAX(DECODE(RN, 1, CELL_NUMBER, NULL)) PHONE1,
+		                       MAX(DECODE(RN, 2, CELL_NUMBER, NULL)) PHONE2,
+		                       MAX(DECODE(RN, 3, CELL_NUMBER, NULL)) PHONE3,
+		                       MAX(DECODE(RN, 1, ORDER_TIME, NULL)) ORDER_TIME
+		                  FROM (SELECT STU_ID,
+		                               CELL_NUMBER,
+		                               ORDER_TIME,
+		                               ROW_NUMBER() OVER(PARTITION BY STU_ID ORDER BY MAIN_CELL_FLAG) AS RN
+		                          FROM CLW_XC_MESSAGE_ORDER_T
+		                         WHERE VALID_FLAG = '0') T
+		                 GROUP BY T.STU_ID) ORDER_T
+		         WHERE XS.STU_ID = ORDER_T.STU_ID
+		           AND XS.ORGANIZATION_ID in
+					<![CDATA[
+						(SELECT ENTERPRISE_ID
+						   FROM CLW_JC_ENTERPRISE_VI
+						  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                       FROM CLW_JC_ENTERPRISE_VI
+							                  WHERE ENTERPRISE_ID = #organizationId#)
+						    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+							                   FROM CLW_JC_ENTERPRISE_VI
+								              WHERE ENTERPRISE_ID =#organizationId#)        
+						)
+				     ]]>
+				     <isNotEmpty prepend="AND" property="studentCode">
+			               XS.STU_CODE like '%' || #studentCode# ||'%' escape '\'
+			         </isNotEmpty>
+			         <isNotEmpty prepend="AND" property="studentSchool">
+			               XS.STU_SCHOOL like '%' || #studentSchool# ||'%' escape '\'
+			         </isNotEmpty>
+			         <isNotEmpty prepend="AND" property="studentClass">
+			               XS.STU_CLASS like '%' || #studentClass# ||'%' escape '\'
+			         </isNotEmpty>
+			         <isNotEmpty prepend="AND" property="studentName">
+			               XS.STU_NAME like '%' || #studentName# ||'%' escape '\'
+			         </isNotEmpty>
+				     AND XS.VALID_FLAG = '0')T
+           <dynamic prepend="where">  
+			   <isNotEmpty property="queryStartTime">  
+			    ORDER_TIME BETWEEN TO_DATE(#queryStartTime#,'YYYY-MM-DD HH24:MI:SS') AND TO_DATE(#queryEndTime#,'YYYY-MM-DD HH24:MI:SS')
+			   </isNotEmpty>  
+		   </dynamic>
+		 
+	</select>
+	
+	<resultMap class="SmsReminderInfo" id="messageList-result">
+       <result property="studentId" column="STU_ID"/>
+       <result property="studentName" column="STU_NAME"/>
+       <result property="studentCode" column="STU_CODE"/>
+       <result property="studentSchool" column="STU_SCHOOL"/>
+       <result property="studentClass" column="STU_CLASS"/>
+       <result property="orderTime" column="ORDER_TIME"/>
+       <result property="phone1" column="PHONE1"/>
+       <result property="phone2" column="PHONE2"/>
+       <result property="phone3" column="PHONE3"/>
+    </resultMap>
+	
+	<select id="getInfos" parameterClass="SmsReminderInfo" resultMap="messageList-result">
+		SELECT STU_ID,
+		       STU_NAME,
+		       STU_CODE,
+		       STU_SCHOOL,
+		       STU_CLASS,
+		       TO_CHAR(ORDER_TIME, 'YYYY-MM-DD HH24:MI:SS') AS ORDER_TIME,
+		       PHONE1,
+		       PHONE2,
+		       PHONE3 
+		  FROM (SELECT XS.STU_ID,
+		               XS.STU_NAME,
+		               XS.STU_CODE,
+		               XS.STU_SCHOOL,
+		               XS.STU_CLASS,
+		               ORDER_T.ORDER_TIME,
+		               ORDER_T.PHONE1,
+		               ORDER_T.PHONE2,
+		               ORDER_T.PHONE3
+		          FROM CLW_XC_STUDENT_T XS,
+		               (SELECT STU_ID,
+		                       MAX(DECODE(RN, 1, CELL_NUMBER, NULL)) PHONE1,
+		                       MAX(DECODE(RN, 2, CELL_NUMBER, NULL)) PHONE2,
+		                       MAX(DECODE(RN, 3, CELL_NUMBER, NULL)) PHONE3,
+		                       MAX(DECODE(RN, 1, ORDER_TIME, NULL)) ORDER_TIME
+		                  FROM (SELECT STU_ID,
+		                               CELL_NUMBER,
+		                               ORDER_TIME,
+		                               ROW_NUMBER() OVER(PARTITION BY STU_ID ORDER BY MAIN_CELL_FLAG) AS RN
+		                          FROM CLW_XC_MESSAGE_ORDER_T
+		                         WHERE VALID_FLAG = '0') T
+		                 GROUP BY T.STU_ID) ORDER_T
+		         WHERE XS.STU_ID = ORDER_T.STU_ID
+		           AND XS.ORGANIZATION_ID in
+					<![CDATA[
+						(SELECT ENTERPRISE_ID
+						   FROM CLW_JC_ENTERPRISE_VI
+						  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                       FROM CLW_JC_ENTERPRISE_VI
+							                  WHERE ENTERPRISE_ID = #organizationId#)
+						    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+							                   FROM CLW_JC_ENTERPRISE_VI
+								              WHERE ENTERPRISE_ID =#organizationId#)        
+						)
+				     ]]>
+				     <isNotEmpty prepend="AND" property="studentCode">
+			               XS.STU_CODE like '%' || #studentCode# ||'%' escape '\'
+			         </isNotEmpty>
+			         <isNotEmpty prepend="AND" property="studentSchool">
+			               XS.STU_SCHOOL like '%' || #studentSchool# ||'%' escape '\'
+			         </isNotEmpty>
+			         <isNotEmpty prepend="AND" property="studentClass">
+			               XS.STU_CLASS like '%' || #studentClass# ||'%' escape '\'
+			         </isNotEmpty>
+			         <isNotEmpty prepend="AND" property="studentName">
+			               XS.STU_NAME like '%' || #studentName# ||'%' escape '\'
+			         </isNotEmpty>
+				     AND XS.VALID_FLAG = '0')T
+           <dynamic prepend="where">  
+			   <isNotEmpty property="queryStartTime">  
+			    ORDER_TIME BETWEEN TO_DATE(#queryStartTime#,'YYYY-MM-DD HH24:MI:SS') AND TO_DATE(#queryEndTime#,'YYYY-MM-DD HH24:MI:SS')
+			   </isNotEmpty>  
+		   </dynamic>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$ $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<resultMap class="SmsReminderMessageInfo" id="sms-result">
+		<result property="student_id" column="STU_ID" />
+		<result property="cellPhone" column="CELL_NUMBER" />
+		<result property="relativeType" column="RELATIVE_TYPE" />
+		<result property="eventType" column="EVENT_TYPE" />
+		<result property="mainCellFlag" column="MAIN_CELL_FLAG" />
+	</resultMap>
+	
+	<select id="getSmsInfoById" parameterClass="String" resultMap="sms-result">
+		SELECT STU_ID, CELL_NUMBER, RELATIVE_TYPE, EVENT_TYPE, MAIN_CELL_FLAG
+		  FROM CLW_XC_MESSAGE_ORDER_T T
+		 WHERE STU_ID = #value#
+		   AND VALID_FLAG = '0'
+		 ORDER BY MAIN_CELL_FLAG
+	</select>
+	
+	<update id="updateSmsReminderByStuidAndCell" parameterClass="SmsReminderMessageInfo">
+	    UPDATE CLW_XC_MESSAGE_ORDER_T T
+		   SET T.EVENT_TYPE = #eventType#
+		 WHERE T.STU_ID = #student_id#
+		   AND T.CELL_NUMBER = #cellPhone#
+		   AND T.VALID_FLAG = '0'
+	</update>
+</sqlMap>

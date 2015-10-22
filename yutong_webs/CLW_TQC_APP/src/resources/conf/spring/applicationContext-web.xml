@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="AppContextHelper" class="com.neusoft.clw.common.service.AppContextHelper">
+	</bean>
+
+	<!-- user operation log processor -->
+	<bean id="operateLogRecorder"
+		class="com.neusoft.clw.common.util.log.service.impl.OperateLogRecorderImpl"
+		scope="singleton">
+		<property name="trackDao">
+			<ref bean="dao" />
+		</property>
+	</bean>
+
+	<!-- 翻页 -->
+	<bean id="turnPageInterceptor" class="com.neusoft.clw.common.interceptor.TurnPageInterceptor"
+		scope="prototype">
+	</bean>
+
+	<!-- 权限 -->
+	<bean id="authenticationInterceptor"
+		class="com.neusoft.clw.common.interceptor.AuthenticationInterceptor"
+		scope="singleton">
+	</bean>
+
+	<!-- 首页 -->
+	<bean id="mainAction" class="com.neusoft.clw.common.action.MainAction"
+		scope="prototype">
+	</bean>
+	<!-- 安全认证-->
+
+	<bean id="securityAction"
+		class="com.neusoft.clw.sysmanage.datamanage.security.action.SecurityAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- 验证码  -->
+	<bean id="validateCode"
+		class="com.neusoft.clw.sysmanage.datamanage.security.action.ValidateCode"
+		scope="prototype">
+	</bean>
+	<!-- 用户管理开始  -->
+	<bean id="usermanageAction"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.action.usermanageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	
+	
+
+	<bean id="useraddAction"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.action.useraddAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<bean id="userupdateAction"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.action.userupdateAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="usermanageservice" ref="usermanageservice" />
+	</bean>
+	<bean id="updateValidflagDwr"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.action.updateValidflagDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<bean id="UserNameSameDwr"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.action.useraddAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- 用户管理结束  -->
+
+	<bean id="roleAction"
+		class="com.neusoft.clw.sysmanage.datamanage.rolemanage.action.RoleManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="roleManageService" ref="roleManageService" />
+	</bean>
+	
+	<bean id="roleDWR"
+		class="com.neusoft.clw.sysmanage.datamanage.rolemanage.action.RoleManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+
+	<!-- 车辆管理  -->
+	<bean id="vehiclemanageAction"
+		class="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.action.VehiclemanageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="vehmanageService" ref="vehmanageservice" />
+	</bean>	
+	<!-- 车辆管理（车辆管理DWR） -->
+	<bean id="vehiclemanageDWR"
+		class="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.action.VehicleManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="sendCommandClient" ref="sendCommandClient" />
+	</bean>
+
+	<!-- 线路管理 -->
+	<bean id="routeAction"
+		class="com.neusoft.clw.sysmanage.datamanage.routemanage.action.RoutemanageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="routemanageservice" ref="routemanageservice" />
+	</bean>
+
+	<!-- 驾驶员管理 -->
+	<bean id="driverAction"
+		class="com.neusoft.clw.sysmanage.datamanage.drivermanage.action.DrivermanageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="driverManageService" ref="driverManageService" />
+	</bean>
+	
+		<!-- 员工信息 -->
+	<bean id="employeeManageAction"
+		class="com.neusoft.clw.sysmanage.datamanage.employeemanage.action.EmployeeManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="studentManageService" ref="studentManageService" />
+		<property name="employeeManageService" ref="employeeManageService" />
+	</bean>
+
+	<!-- GPS管理 -->
+	<bean id="gpsAction"
+		class="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.action.GPSAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="sendCommandClient" ref="sendCommandClient" />
+	</bean>
+
+	<!--GPS DWR ACTION -->
+	<bean id="gpsPostionDwr"
+		class="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.action.GpsDwrData"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="sendCommandClient" ref="sendCommandClient" />
+	</bean>
+
+	<!-- 考核月度设置 -->
+	<bean id="ockTimeSetAction"
+		class="com.neusoft.clw.sysmanage.sysset.ocktimeset.action.OckTimeSetAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+
+	<!-- 企业管理 -->
+	<bean id="entiManageAction"
+		class="com.neusoft.clw.sysmanage.datamanage.entimanage.action.EntiManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<bean id="entiManageDwr"
+		class="com.neusoft.clw.sysmanage.datamanage.entimanage.action.EntiManageDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- 系统设置（省市信息DWR） -->
+	<bean id="zoneManageDWR"
+		class="com.neusoft.clw.sysmanage.datamanage.zonemanage.action.ZoneManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- 考核油耗设置 -->
+	<bean id="oilSetAction"
+		class="com.neusoft.clw.sysmanage.sysset.oilset.action.OilSetAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="oilsetservice" ref="oilsetservice" />
+	</bean>
+
+	<bean id="OilSetDwr"
+		class="com.neusoft.clw.sysmanage.sysset.oilset.action.OilSetDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+		
+	</bean>
+
+	<!--不良驾驶分析 ACTION -->
+	<bean id="badDrivingAction"
+		class="com.neusoft.clw.itsmanage.oilmanage.baddriving.action.BadDrivingAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 不良驾驶分析  END-->
+
+	<!--车辆油耗报告 ACTION -->
+	<bean id="oilUsedAction"
+		class="com.neusoft.clw.itsmanage.oilmanage.oilused.action.OilUsedAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 车辆油耗报告  END-->
+	
+	<!--车辆油耗报告 ACTION 泰安-->
+	<bean id="oilUsedNewAction"
+		class="com.neusoft.clw.itsmanage.oilmanage.oilused.action.OilUsedNewAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<bean id="oilUsedEcuAction"
+		class="com.neusoft.clw.itsmanage.oilmanage.oilused.action.OilUsedEcuAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 车辆油耗报告  END-->
+	
+
+	<!-- 修改密码  -->
+	<bean id="pawSetAction"
+		class="com.neusoft.clw.sysmanage.sysset.pawset.action.PawSetAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- logo设置  -->
+	<bean id="logoAction"
+		class="com.neusoft.clw.sysmanage.sysset.logoset.action.LogoAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="logoDefaultPath">
+			<value>${logo.default.path}</value>
+		</property>
+		<property name="videoPath">
+			<value>${video.default.path}</value>
+		</property>		
+	</bean>
+	
+	<!--平均油耗 ACTION -->
+	<!--改名字为发车统计 ACTION -->
+	<bean id="averagefuelRankingAction"
+		class="com.neusoft.clw.safemanage.averagefuel.ranking.action.AveragefuelRankingAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!--泰安日行车记录 -->
+	<bean id="daydriveRecord"
+		class="com.neusoft.clw.safemanage.averagefuel.daydriverecord.action.AveragefuelRankingAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!--客流统计 ACTION -->
+	<bean id="passengerStatAction"
+		class="com.neusoft.clw.safemanage.averagefuel.passengerstat.action.PassengerStatAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!--维保管理 ACTION -->
+	<bean id="repareAction"
+		class="com.neusoft.clw.safemanage.averagefuel.repare.action.RepareAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!--人员处不良驾驶分析 ACTION -->
+	<bean id="humanbadDriveAction"
+		class="com.neusoft.clw.safemanage.humanmanage.baddriving.action.HumanBadDriveAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 不良驾驶分析  END-->
+
+
+	<!-- 人员安全==>拍照监控   -->
+	<bean id="photoMonitorAction"
+		class="com.neusoft.clw.safemanage.personsafe.photomonitor.action.PhotoMonitorAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 人员安全==>拍照监控 -->
+	<bean id="photoMonitorDWRAction"
+		class="com.neusoft.clw.safemanage.personsafe.photomonitor.action.PhotoMonitorDWRAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	 
+
+
+	<!--车辆状态报告 DWR -->
+	<bean id="vehicleStatusDWR"
+		class="com.neusoft.clw.safemanage.vehiclesafe.action.VehicleStatusDWR"
+		scope="prototype">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+	<!-- 车辆状态报告  END-->
+
+	<!--车辆状态报告 ACTION -->
+	<bean id="vehicleStatusAction"
+		class="com.neusoft.clw.safemanage.vehiclesafe.action.VehicleStatusAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 车辆状态报告  END-->
+
+	<!--告警管理 ACTION -->
+	<bean id="alarmManageAction"
+		class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.action.AlarmManageAction"
+		scope="prototype">
+	<property name="service" ref="service" />
+	<property name="sendCommandClient" ref="sendCommandClient" />
+	<property name="alarmservice" ref="alarmManageService" />
+	</bean>
+	<!-- 告警管理  END-->
+
+	<!--下发消息查询 ACTION -->
+    <bean id="messageSendAction"
+		class="com.neusoft.clw.sysmanage.systools.messagesend.action.MessageSendAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 油耗管理-单车时间段内的累计油耗曲线图 add by yg start-->
+	<bean id="OilUsedAction"
+		class="com.neusoft.clw.itsmanage.oilmanage.oilused.action.OilUsedAction"
+		scope="prototype">
+	<property name="service" ref="service" />
+	</bean>
+	<!-- 油耗管理-单车时间段内的累计油耗曲线图 add by yg end-->
+	
+	<!-- 学生查询-->
+	<bean id="studentAction"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.action.studentAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!--运行管理 start-->
+	<bean id="routeChartAction"
+		class="com.neusoft.clw.yunxing.routechart.chart.action.RouteChartAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!--调度中心管理 start-->
+	<bean id="dispatchrouteChartAction"
+		class="com.neusoft.clw.dispatch.action.RouteChartAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="writegzpackservice" ref="writegzpackservice" />
+		<property name="sendCommandClient" ref="sendCommandClient" />
+		<property name="iniDefaultPath">
+			<value>${ini.default.path}</value>
+		</property>
+		<property name="ip">
+			<value>${ip}</value>
+		</property>
+		<property name="port">
+			<value>${port}</value>
+		</property>
+		<property name="username">
+			<value>${username}</value>
+		</property>
+		<property name="userpass">
+			<value>${userpass}</value>
+		</property>
+		<property name="iniDefaultPathFlag">
+			<value>${config.path.flag}</value>
+		</property>
+	</bean>
+	<bean id="routeChartDWR"
+		class="com.neusoft.clw.yunxing.routechart.chart.action.RouteChartDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<bean id="dispatchrouteChartDWR"
+		class="com.neusoft.clw.dispatch.action.RouteChartDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<bean id="passengerStatDwr"
+		class="com.neusoft.clw.safemanage.averagefuel.passengerstat.action.PassengerStatDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<bean id="carRunHistoryAction"
+		class="com.neusoft.clw.yunxing.car.runhistory.action.CarRunHistoryAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<bean id="clwXcTripHistory" class="com.neusoft.clw.yunxing.car.runhistory.domain.ClwXcTripHistory">
+	</bean>
+	<bean id="carRunHistoryModule" class="com.neusoft.clw.yunxing.car.runhistory.action.CarRunHistoryModule" scope="prototype">
+		<property name="service" ref="service" />
+		<property name="clwXcTripHistory" ref="clwXcTripHistory" />
+	</bean>
+	<bean id="stRideAction"
+		class="com.neusoft.clw.yunxing.stu.stride.action.StuRidingAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 学生打卡记录DWR add by fanxy -->
+	<bean id="stuRidingDWR"
+		class="com.neusoft.clw.yunxing.stu.stride.action.StuRidingDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<bean id="rideAlarmSumAction"
+		class="com.neusoft.clw.yunxing.car.ridealarm.action.RideAlarmSumAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>								
+	<!-- 运行管理 end-->
+	
+	<!-- 乘车规划 -->
+	<bean id="ridingPlanAction"
+		class="com.neusoft.clw.infomanage.ridingplan.action.RidingPlanAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="ridingplanservice" ref="ridingplanservice" />
+		<property name="sendCommandClient" ref="sendCommandClient" />
+		<property name="iniDefaultPath">
+			<value>${ini.default.path}</value>
+		</property>
+		<property name="ip">
+			<value>${ip}</value>
+		</property>
+		<property name="port">
+			<value>${port}</value>
+		</property>
+		<property name="username">
+			<value>${username}</value>
+		</property>
+		<property name="userpass">
+			<value>${userpass}</value>
+		</property>
+		<property name="iniDefaultPathFlag">
+			<value>${config.path.flag}</value>
+		</property>
+	</bean>
+	<!-- 区域规划 -->
+	<bean id="areaPlanAction"
+		class="com.neusoft.clw.infomanage.areamanage.action.AreaPlanAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 学生信息密码确认 -->
+	<bean id="passwordConfirmAction"
+		class="com.neusoft.clw.infomanage.studentmanage.action.PasswordConfirmAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!--终端INI文件生成 start-->
+	<bean id="WriteGZPack"
+		class="com.neusoft.clw.infomationExport.WriteGZPack"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="writegzpackservice" ref="writegzpackservice" />
+	</bean>
+	<!-- 终端INI文件生成 end-->
+	
+	<!-- 司乘管理 -->
+	<bean id="stewardManageAction"
+		class="com.neusoft.clw.infomanage.stewardmanage.action.StewardManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="stewardManageService" ref="stewardManageService" />
+	</bean>
+	
+	<!-- 站点管理 -->
+	<bean id="stationManageAction"
+		class="com.neusoft.clw.infomanage.sitemanage.action.SiteManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="stationservice" ref="stationservice" />
+	</bean>	
+	<!-- 学生管理 -->
+	<bean id="studentManageAction"
+		class="com.neusoft.clw.infomanage.studentmanage.action.StudentManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="studentManageService" ref="studentManageService" />
+	</bean>
+	<!-- 假期管理 -->
+	<bean id="holidayManageAction"
+		class="com.neusoft.clw.infomanage.holidaymanage.action.HolidayManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!--线路下发 start-->
+	<bean id="SendRouteFile"
+		class="com.neusoft.clw.infomationExport.SendRouteFile"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="writegzpackservice" ref="writegzpackservice" />
+		<property name="sendCommandClient" ref="sendCommandClient" />
+		<property name="iniDefaultPath">
+			<value>${ini.default.path}</value>
+		</property>
+		<property name="ip">
+			<value>${ip}</value>
+		</property>
+		<property name="port">
+			<value>${port}</value>
+		</property>
+		<property name="username">
+			<value>${username}</value>
+		</property>
+		<property name="userpass">
+			<value>${userpass}</value>
+		</property>
+		<property name="iniDefaultPathFlag">
+			<value>${config.path.flag}</value>
+		</property>
+	</bean>
+	<!--线路下发   end-->
+	
+	<!-- 收发记录 -->
+	<bean id="sendCmdHisAction"
+		class="com.neusoft.clw.businessmanage.sendcommandhis.action.SendCmdHisAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+   <!-- 手持设备 -->
+	<bean id="handMobileAction"
+		class="com.neusoft.clw.infomanage.handmobilemanage.action.HandMobileAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="handmobileService" ref="handmobileservice" />
+	</bean>
+
+	
+	<!-- 短信提醒 -->
+	<bean id="smsManageAction"
+		class="com.neusoft.clw.infomanage.smsmanage.action.SmsManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="smsManageService" ref="smsManageService" />
+	</bean>
+
+	<!-- 图片文件上传通用类 -->
+	<bean id="uploadUtilAction"
+		class="com.neusoft.clw.infomanage.fileupload.action.UploadUtilAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="filepath">
+			<value>${apk.default.path}</value>
+		</property>
+	</bean>
+	
+	<!-- 终端管理【新】（终端参数设置） -->
+	<bean id="newTerminalParamsAction"
+		class="com.neusoft.clw.sysmanage.datamanage.zdnew.terminalparams.action.NewTerminalParamsAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 短信提醒【新】  -->
+	<bean id="smsReminderAction"
+		class="com.neusoft.clw.infomanage.smsreminder.action.SmsReminderAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="smsReminderService" ref="smsReminderService" />
+	</bean>
+	<!-- 超载记录 -->
+	<bean id="overloadAction"
+		class="com.neusoft.clw.businessmanage.overload.action.OverloadAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 日行车记录 -->
+	<bean id="runOilRecordAction"
+		class="com.neusoft.clw.itsmanage.oilmanage.carrun.action.RunOilRecordAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+	<!-- 学生刷卡记录 模式二 -->
+	<bean id="stushuakaAction"
+		class="com.neusoft.clw.yunxing.stu.stushuaka.action.StushuakaAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+	
+	<bean id="treeManageAction"
+		class="com.neusoft.clw.tree.action.TreeManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 专属平台迁移 -->
+	<!-- 加油站设置-->
+	<bean id="sitManageAction" class="com.neusoft.clw.yw.sitemanager.action.SiteManageAction" scope="prototype">
+		<property name="service" ref="service" />
+		<property name="stationservice" ref="sitservice" />
+	</bean>
+		<!-- 防透漏由检测 新-->
+	<bean id="vehicleInfo" class="com.neusoft.clw.yw.engine.ds.VehicleRegisterInfo">
+	</bean>
+	<bean id="ftlyInfoNewAction" class="com.neusoft.clw.yw.ftyleNew.action.FtlyInfoNewAction" scope="prototype">
+		<property name="vehicleInfo" ref="vehicleInfo" />
+		<property name="service" ref="service" />
+		<property name="ftlyInfoService" ref="ftlyInfoService" />
+	</bean>
+	<!-- 防偷油短信-->
+	<bean id="stealOilSmsInfo" class="com.neusoft.clw.yw.ftly.ds.StealOilSmsInfo"></bean>
+	<bean id="stealOilSmsAction" class="com.neusoft.clw.yw.ftyleNew.action.StealOilSmsAction" scope="prototype">
+		<property name="service" ref="service" />
+		<property name="stealOilSmsService" ref="stealOilSmsService" />
+		<property name="stealOilSmsInfo" ref="stealOilSmsInfo" />
+	</bean>
+	
+	<!-- 考核油耗设置 -->
+	<bean id="checkOilSetAction" class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.action.CheckOilSetAction" scope="prototype">
+	<property name="checkOilSetInfo" ref="checkOilSetInfo"></property>
+	<property name="checkMonthInfo" ref="checkMonthInfo"></property>
+	<property name="checkInfo" ref="checkInfo"></property>
+	<property name="monthStartEnd" ref="monthStartEnd"></property>
+	<property name="service" ref="service"></property>	
+	<property name="checkOilSetService" ref="checkOilSetService"></property>	
+	</bean>
+   <bean id="checkOilSetInfo" class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckOilSetInfo"> 
+	</bean>
+	<bean id="checkInfo" class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckInfo"> 
+	</bean>
+	<bean id="monthStartEnd" class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.MonthStartEnd"> 
+	</bean>
+	<bean id="checkMonthInfo" class="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckMonthInfo"> 
+	</bean>
+	
+	<!-- 假期设置 -->
+	<bean id="vacationAction" class="com.neusoft.clw.sysmanage.vacation.action.VacationAction" scope="prototype">
+		<property name="service" ref="service" />
+		<property name="vacationService" ref="vacationService" />
+	</bean>
+
+	<!-- 问题反馈s -->
+	<bean id="feedBackAction" class="com.neusoft.clw.feedback.action.FeedBackAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 公告管理 -->
+	<bean id="noticeManageAction" class="com.neusoft.clw.sysmanage.datamanage.noticemanage.action.NoticeManageAction" scope="prototype">
+		<property name="noticeService" ref="noticeService" />
+		<property name="filePath" value="${notice.pic.path}" />
+	</bean>
+	
+	<!--参数设置管理 -->
+	<bean id="paramSetAction" class="com.neusoft.clw.sysmanage.datamanage.paramset.action.ParamSetAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!--驾驶员刷卡记录 -->
+	<bean id="driveCardRecord" class="com.neusoft.clw.infomanage.driverecord.action.TqcDriverCardAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 公车巡检 -->
+	<bean id="vehicleCheckAction" class="com.neusoft.clw.check.action.VehicleCheckAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 临时派车补录 -->
+	<bean id="tripPatchAction" class="com.neusoft.clw.trippatch.action.TripPatchAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 运营统计 -->
+	<bean id="runStatisticAction" class="com.neusoft.clw.itsmanage.oilmanage.runstatistic.action.RunStatisticAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 车辆运行时间设置 -->
+	<bean id="runtimeSetAction" class="com.neusoft.clw.runtimeset.action.RuntimeSetAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+</beans>

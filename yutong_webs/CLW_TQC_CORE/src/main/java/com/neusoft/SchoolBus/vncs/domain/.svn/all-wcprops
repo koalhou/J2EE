@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain
+END
+XcvsseBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/XcvsseBean.java
+END
+Site.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Site.java
+END
+EnterPriseBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/EnterPriseBean.java
+END
+XcStBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/XcStBean.java
+END
+XcStudentBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/XcStudentBean.java
+END
+Sichen.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Sichen.java
+END
+RouteSiteBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/RouteSiteBean.java
+END
+SmsKeyVTBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/SmsKeyVTBean.java
+END
+Trip.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Trip.java
+END
+XcStuSmsBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/XcStuSmsBean.java
+END
+StudentTrip.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/StudentTrip.java
+END
+XcSiteBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/XcSiteBean.java
+END
+Student.java
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Student.java
+END
+XcStuSmsVTBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/XcStuSmsVTBean.java
+END
+Vehicleinfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Vehicleinfo.java
+END
+VehcileInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/VehcileInfo.java
+END
+Driver.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Driver.java
+END
+Route.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/SchoolBus/vncs/domain/Route.java
+END

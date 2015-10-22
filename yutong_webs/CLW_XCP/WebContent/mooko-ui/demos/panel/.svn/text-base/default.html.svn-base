@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">   
+<html xmlns="http://www.w3.org/1999/xhtml">  
+  <head>
+    <meta charset="utf-8" />
+    <title>Mooko UI Demo</title>
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.linkbutton.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.panel.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+    <style>
+    </style>
+
+    <script src="../../libs/jquery-1.8.0.min.js"></script>
+    <script src="../../core/mk.parser.js"></script>
+    <script src="../../core/mk.linkbutton.js"></script>
+    <script src="../../core/mk.panel.js"></script>
+    <script>
+      $(function() {
+        $('#panel').mk_panel();
+        $('#dd1').click(function() {
+          $('#panel').mk_panel('open');
+        });
+        $('#dd2').click(function() {
+          $('#panel').mk_panel('close');
+        });
+        $('#dd3').click(function() {
+          $('#panel').mk_panel('reload', 'a1.html');
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Mooko UI Menu Demo</h1>
+    <div id="content"></div>
+    <div style="margin:10px 0;">
+      <a href="javascript:void(0)" id="dd1">open</a>
+      <a href="javascript:void(0)" id="dd2">close</a>
+      <a href="javascript:void(0)" id="dd3">reload</a>
+    </div>
+    <div style="height:300px;background:#fafafa;padding:5px;">
+      <div id="panel" class="mk-panel" style="width:500px;height:200px;padding:10px;"
+          data-options="title:'My Panel',icon_cls:'icon-save',
+              collapsible:true,minimizable:true,maximizable:true,closable:true">
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+        <p>panel</p>
+      </div>
+    </div>
+  </body>
+</html>

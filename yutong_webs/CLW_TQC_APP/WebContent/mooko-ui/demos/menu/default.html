@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mooko UI Demo</title>
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.linkbutton.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.menubar.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.menu.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+    <style>
+    </style>
+
+    <script src="../../libs/jquery-1.7.2.min.js"></script>
+    <script src="../../core/mk.parser.js"></script>
+    <script src="../../core/mk.linkbutton.js"></script>
+    <script src="../../core/mk.menubar.js"></script>
+    <script src="../../core/mk.menu.js"></script>
+    <script>
+      $(function() {
+        // $('#mk_menubar').mk_menubar();
+        $('#dd1, #dd2, #dd3, #dd4').mk_linkbutton({
+          events: [
+          {'mouseenter': function() {
+            console.log('mouseenter');
+          }},
+          {'mouseleave': function() {
+            console.log('mouseleave');
+          }}
+          ]
+        });
+        $('#bar1, #bar2').mk_menubar({
+            plain:false
+          });
+        $('#dd1').click(function(){
+          $('#mb1,#mb2').mk_menubar({
+            disabled:true
+          });
+        });
+        $('#dd2').click(function(){
+          $('#mb1,#mb2').mk_menubar({
+            disabled:false
+          });
+        });
+        $('#dd3').click(function(){
+          $('#mb1,#mb2').mk_menubar({
+            plain:false
+          });
+        });
+        $('#dd4').click(function(){
+          $('#mb1,#mb2').mk_menubar({
+            plain:true
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Mooko UI Menu Demo</h1>
+    <div style="margin:10px 0;">
+      <a href="javascript:void(0)" id="dd1">Disable</a>
+      <a href="javascript:void(0)" id="dd2">Enable</a>
+      <a href="javascript:void(0)" id="dd3">3D</a>
+      <a href="javascript:void(0)" id="dd4">Plain</a>
+    </div>
+    <div id="mk_menubar" class="mk-menubar" style="background: #C9EDCC; padding: 5px; width: 600px;">
+      <a href="javascript:void(0)" id="bar1" class="mk-menubar-item" data-options="menu:'#menu_edit',icon_cls:'icon-edit', arrow: false"></a>
+      <div id="menu_edit" style="width:150px;">
+        <div data-options="icon_cls:'icon-undo'">Undo</div>
+        <div data-options="icon_cls:'icon-redo'">Redo</div>
+        <div class="mk-menu-sep"></div>
+        <div>Cut</div>
+        <div>Copy</div>
+        <div>Paste</div>
+        <div class="mk-menu-sep"></div>
+        <div>
+          <span>Toolbar</span>
+          <div style="width:150px;">
+            <div>Address</div>
+            <div>Link</div>
+            <div>Navigation Toolbar</div>
+            <div>Bookmark Toolbar</div>
+            <div class="mk-menu-sep"></div>
+            <div>New Toolbar...</div>
+          </div>
+        </div>
+        <div data-options="icon_cls:'icon-remove', disabled: true" onClick="alert('test');">Delete</div>
+        <div>Select All</div>
+      </div>
+      <a href="javascript:void(0)" id="bar2" class="mk-menubar-item" data-options="menu:'#menu_help',icon_cls:'icon-help'"></a>
+      <div id="menu_help" style="width:100px;">
+        <div>Help</div>
+        <div>Update</div>
+        <div>About</div>
+      </div>
+    </div>
+  </body>
+</html>

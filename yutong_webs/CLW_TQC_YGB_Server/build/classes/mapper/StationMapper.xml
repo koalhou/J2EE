@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Station">
+
+	<select id="getInRouteById" parameterType="map" resultType="Route">
+		select 
+		    t.route_id as line_id, 
+		    t.route_name as line_name,
+		    case t.route_id 
+		    	when ${FACTORY1_INSIDE_ROUND_LINE} then 1 
+		    	when ${FACTORY1_INSIDE_ZDJSNL_LINE} then 1 
+		    	when ${FACTORY2_INSIDE_ROUND_LINE} then 2
+		    	when ${CHANG_JIAN_LINE_1_TO_2} then 1 
+		    	when ${CHANG_JIAN_LINE_2_TO_1} then 2 
+		    end as area_type,
+		    case t.route_id 
+		    	when ${FACTORY1_INSIDE_ROUND_LINE} then 1 
+		    	when ${FACTORY1_INSIDE_ZDJSNL_LINE} then 1 
+		    	when ${FACTORY2_INSIDE_ROUND_LINE} then 1 
+		    	when ${CHANG_JIAN_LINE_1_TO_2} then 3
+		    	when ${CHANG_JIAN_LINE_2_TO_1} then 3 
+		    end as line_range,
+		    '0' as status_range
+		from clw_tqc.clw_xc_route_t t
+		where t.route_id = #{route_id}
+	</select>
+
+	<select id="getSystemConfig" resultType="map">
+		select 
+		  t.param_name,t.param_value
+		from CLW_TQC.CLW_JC_PARAM_CFG_T t
+		where substr(t.param_name,0,4) = 'YGB_'
+	</select>
+	<select id="getOutRouteById" parameterType="map" resultType="Route">
+	    select 
+	        t.route_id as line_id, 
+	        t.route_name as line_name,	
+	        '2' as line_range,
+	        t.route_class as status_range
+	    from clw_tqc.clw_xc_route_t t
+	    where t.route_id = #{route_id}
+	</select>
+
+	<select id="getRouteBySiteId" parameterType="String" resultType="Route">
+		select 
+		    r.route_organization_id as line_range,
+		    r.route_class as status_range
+		from clw_tqc.clw_xc_route_t r,clw_tqc.clw_xc_routesite_t rs
+		where r.route_id = rs.route_id
+		      and rs.site_id = ${value}
+	</select>
+
+	<select id="getSiteById" parameterType="map" resultType="Site" >
+		with emp_notes as 
+		     (select n.site_id, n.emp_code
+			  from clw_tqc_emp_site_note_t n,
+			       (select max(dis.note_id) as note_id
+			        from clw_tqc_emp_site_note_t dis 
+			        where dis.emp_code = ${emp_code} 
+			              and dis.site_id = ${site_id}
+			              and dis.valid_flag = '1') temp
+			  where n.note_id = temp.note_id),
+		     emp_favors as
+		     (select 
+		         f.site_id,f.emp_code
+		      from clw_tqc_emp_sitecollect_t f
+		      where f.emp_code = ${emp_code}
+		      	  and f.site_id  = ${site_id})
+		select 
+		       s.site_id as id,
+		       a.area_id as belong_area_id,
+		       s.site_name as name,
+		       s.site_remark as alias,
+		       s.site_latitude,
+		       s.site_longitude,
+		       case when emp_notes.site_id is null then 0 else 1 end as status,
+		       case when emp_favors.site_id is null then 0 else 1 end as favorites 
+		from clw_tqc.clw_xc_site_t s ,CLW_TQC.CLW_TQC_SITE_AREA_T a, emp_notes,emp_favors
+		where s.site_id = a.site_id(+) 
+		      and s.site_id = emp_favors.site_id(+) 
+		      and s.site_id = emp_notes.site_id(+) 
+		      and s.site_id = ${site_id}
+	</select>
+	<select id="getSites" parameterType="map" resultType="Site">
+		with emp_notes as
+		 (select distinct (n.site_id), n.emp_code
+		    from clw_tqc_emp_site_note_t n
+		   where n.emp_code = ${emp_code}
+		   		and n.valid_flag = '1'),
+		emp_favors as
+		 (select f.site_id, f.emp_code
+		    from clw_tqc_emp_sitecollect_t f
+		   where f.emp_code = ${emp_code}),
+		fac1_sites as (
+		     select s1.site_id
+		     from clw_tqc.clw_xc_site_t s1,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s1.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_organization_id = '${fac1}'),
+		fac2_sites as (
+		     select s2.site_id
+		     from clw_tqc.clw_xc_site_t s2,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s2.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_organization_id = '${fac2}'),
+		morning as (
+		     select s1.site_id
+		     from clw_tqc.clw_xc_site_t s1,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s1.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_class = '0'),
+		afternoon as (
+		     select s2.site_id
+		     from clw_tqc.clw_xc_site_t s2,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s2.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_class = '1'),
+		insides as (
+		     select s3.site_id
+		     from clw_tqc.clw_xc_site_t s3,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s3.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_class = '2')
+		select s.site_id as id,
+		       a.area_id as belong_area_id,
+		       s.site_name as name,
+		       s.site_remark as alias,
+		       s.site_latitude,
+		       s.site_longitude,
+		       case when emp_notes.site_id is null then 0 else 1 end as status,
+		       case when emp_favors.site_id is null then 0 else 1 end as favorites,
+		       case when (s.site_id in (select site_id from fac1_sites) and s.site_id in (select site_id from fac2_sites)) then -1
+		            when (s.site_id in (select site_id from fac1_sites) and s.site_id not in (select site_id from fac2_sites)) then 1
+		            when (s.site_id  not in (select site_id from fac1_sites) and s.site_id in (select site_id from fac2_sites)) then 2       
+		       end as area_type,
+		       case when (s.site_id in (select site_id from morning) and s.site_id in (select site_id from afternoon)) then -1
+		            when (s.site_id in (select site_id from morning) and s.site_id not in (select site_id from afternoon)) then 0
+		            when (s.site_id  not in (select site_id from morning) and s.site_id in (select site_id from afternoon)) then 1              
+		       end as status_range
+		  from clw_tqc.clw_xc_site_t s,
+		       CLW_TQC.CLW_TQC_SITE_AREA_T   a,
+		       emp_notes,
+		       emp_favors
+		 where (s.site_id in (select site_id from fac1_sites) or s.site_id in (select site_id from fac2_sites))
+		   and (s.site_id in (select site_id from morning) or s.site_id in (select site_id from afternoon) or s.site_id in (select site_id from insides))
+		   and s.site_id = a.site_id
+		   and s.site_id = emp_favors.site_id(+)
+		   and s.site_id = emp_notes.site_id(+)
+		      <if test="site_ids != null">and s.site_id in (${site_ids})</if>
+	</select>	
+	<select id="getSiteByEmpCode"  parameterType="map" resultType="Site">
+		with emp_notes as 
+		     (select distinct(n.site_id), n.emp_code
+			  from clw_tqc_emp_site_note_t n
+			  where n.emp_code = ${emp_code}
+			  and n.valid_flag = '1'),
+	    emp_favors as
+		     (select 
+		         f.site_id,f.emp_code
+		      from clw_tqc_emp_sitecollect_t f
+		      where f.emp_code = ${emp_code}),
+		fac1_sites as (
+		     select s1.site_id
+		     from clw_tqc.clw_xc_site_t s1,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s1.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_organization_id = '${fac1}'),
+		fac2_sites as (
+		     select s2.site_id
+		     from clw_tqc.clw_xc_site_t s2,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s2.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_organization_id = '${fac2}'),
+		morning as (
+		     select s1.site_id
+		     from clw_tqc.clw_xc_site_t s1,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s1.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_class = '0'),
+		afternoon as (
+		     select s2.site_id
+		     from clw_tqc.clw_xc_site_t s2,
+		          clw_tqc.clw_xc_routesite_t rs,
+		          clw_tqc.clw_xc_route_t r
+		     where s2.site_id = rs.site_id 
+		           and rs.route_id = r.route_id
+		           and r.route_class = '1')  
+		select 
+		       s.site_id as id,
+		       a.area_id as belong_area_id,
+		       s.site_name as name,
+		       s.site_remark as alias,
+		       s.site_latitude,
+		       s.site_longitude,
+		       '2' as line_range,
+		       case when emp_notes.site_id is null then 0 else 1 end as status,
+		       case when emp_favors.site_id is null then 0 else 1 end as favorites ,
+		       case when (s.site_id in (select site_id from fac1_sites) and s.site_id in (select site_id from fac2_sites)) then -1
+		            when (s.site_id in (select site_id from fac1_sites) and s.site_id not in (select site_id from fac2_sites)) then 1
+		            when (s.site_id  not in (select site_id from fac1_sites) and s.site_id in (select site_id from fac2_sites)) then 2       
+		       end as area_type,
+		       case when (s.site_id in (select site_id from morning) and s.site_id in (select site_id from afternoon)) then -1
+		            when (s.site_id in (select site_id from morning) and s.site_id not in (select site_id from afternoon)) then 0
+		            when (s.site_id  not in (select site_id from morning) and s.site_id in (select site_id from afternoon)) then 1              
+		       end as status_range
+		from clw_tqc.clw_xc_site_t s ,CLW_TQC.CLW_TQC_SITE_AREA_T a, emp_notes,emp_favors
+		where  (s.site_id in (select site_id from fac1_sites) or s.site_id in (select site_id from fac2_sites))
+		   	  and (s.site_id in (select site_id from morning) or s.site_id in (select site_id from afternoon))
+		   	  and s.site_id = a.site_id(+) 
+		      and s.site_id = emp_favors.site_id
+		      and s.site_id = emp_notes.site_id(+) 
+		      
+	</select>
+	
+	<select id="getFavorSiteById" parameterType="map" resultType="Site">
+		select t.site_id as id from clw_tqc_emp_sitecollect_t t where t.site_id = ${site_id} and t.emp_code = '${emp_code}'
+	</select>
+	<!-- 根据条件获取站点线路信息 -->
+	<select id="getLinesByFilter" parameterType="String" resultType="LinePoint">
+		select
+			 t1.route_id,
+			 t.is_site,
+			 t.longitude,
+			 t.latitude,
+			 t.mileage,
+			 t.standard_time,
+			 t.is_order
+		from CLW_TQC.CLW_TQC_EMP_PRELINE_T t,clw_tqc.clw_xc_route_t t1
+		where t1.route_id in (${value})
+		and t1.route_id = t.route_id(+)
+		order by t.route_id,t.is_order
+	</select>
+	
+	<select id="getGPS4Route" parameterType="Route" resultType="GPS">
+        select  lon,lat from (
+		 select  distinct a.longitude lon, a.latitude lat,a.orbit_time
+		         from CLW_JZ_TRIPORBIT_T a
+	        where  a.trip_id = #{tripId}
+	          and a.type = #{routeType}
+		          order by a.orbit_time )  
+	</select>
+	
+	<select id="getTripsBySite" parameterType="Map" resultType="Map">
+	with routes_by as 
+	        (select rs.route_id
+	         from clw_tqc.clw_xc_routesite_t rs,clw_tqc.clw_xc_route_t r    
+	         where rs.site_id = ${site_id}
+	         	and r.route_id = rs.route_id
+	         	and r.route_organization_id = '${area_type}'
+	         	<if test="lines_opened != null">and r.route_id in (${lines_opened})</if>
+	        )
+	select t.vehicle_vin,
+	       c.vehicle_code,
+	       t.route_id as line_id,
+	       t.trip_id as trip_id,
+	       t.status,
+	       t.send_order
+	from clw_tqc.tqc_trip_execute t ,routes_by,clw_tqc.clw_xc_route_t r,  clw_tqc.clw_cl_base_info_t c
+	where t.exe_date = to_date(${search_date},'yyyymmdd')
+	      and t.route_id  = routes_by.route_id
+	      and t.route_id = r.route_id
+	      and t.vehicle_vin = c.vehicle_vin
+	      and r.route_class = ${status_range} 
+	      and c.valid_flag = 0
+	      ORDER by status desc,send_order asc
+	</select>
+	<select id="getSiteVehicleRealA" parameterType="Map" resultType="VehicleReal">
+		with site_order_now as 
+		     (select rs.site_id,rs.rs_order,site_now.instance_percent as inout_flag
+		       from clw_tqc.clw_xc_routesite_t rs,
+		            (select jt.site_id,jt.instance_percent,jt.route_id
+		             from clw_tqc.clw_jc_terminal_t jt 
+		             where jt.vehicle_vin = '${VEHICLE_VIN}') site_now
+		       where rs.site_id = site_now.site_id
+		             and site_now.route_id = rs.route_id
+		      ),
+		      site_order as 
+		     (select rs.rs_order,rs.site_id
+		      from clw_tqc.clw_xc_routesite_t rs
+		      where rs.site_id = ${site_id}
+		            and rs.route_id = ${LINE_ID}
+		     ),
+		     last_site_id as 
+		     (select rs.site_id 
+		      from clw_tqc.clw_xc_routesite_t rs,
+		           (select max(rs_temp.rs_order) as rs_order
+		            from clw_tqc.clw_xc_routesite_t rs_temp
+		            where rs_temp.route_id = ${LINE_ID}) end_site
+		      where rs.route_id = ${LINE_ID}
+		            and rs.rs_order = end_site.rs_order
+		     ),
+		     reminder as 
+		     (select distinct(sn.site_id),
+		     		 sn.vehicle_vin,
+			         sn.note_calc_type,
+			         sn.valid_flag,
+			         sn.ahead_note_mileage,
+			         sn.ahead_note_time
+			  from clw_tqc_emp_site_note_t sn
+			  where sn.site_id = ${site_id}
+			  		and sn.vehicle_vin = '${VEHICLE_VIN}'
+			  		and sn.emp_code = ${emp_code}
+			  		and (sn.up_down = ${status_range} OR sn.up_down = -1)
+		     )
+		select
+		  t.vehicle_vin,
+		  e.send_time as status_desc,
+		  e.route_id as line_id,
+		  case when site_order.rs_order > site_order_now.rs_order or site_order_now.rs_order is null then 0
+		       when site_order.rs_order = site_order_now.rs_order and site_order_now.inout_flag = 0 then 1
+		       else 2 end as arrive_status,
+		  case when last_site_id.site_id = ${jsbl_site} then 1 else 0 end as flag,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select note_calc_type from reminder )else null end as remind_type,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select valid_flag from reminder )else null end as remind_status,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select ahead_note_mileage from reminder )else null end as value1,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select ahead_note_time from reminder )else null end as value2,
+		  to_char(t.Terminal_Time,'yyyymmddhh24miss') as update_time
+		from clw_tqc.clw_jc_terminal_t t, clw_tqc.tqc_trip_execute e,site_order,site_order_now,last_site_id
+		where t.vehicle_vin = '${VEHICLE_VIN}'
+		      and t.vehicle_vin = e.vehicle_vin
+		      and e.trip_id = ${TRIP_ID}
+		      and e.exe_date = to_date(${search_date},'yyyymmdd')
+   			  and t.site_id = site_order_now.site_id(+)
+	</select>
+	<select id="getSiteVehicleRealB" parameterType="Map" resultType="VehicleReal">
+		with last_site_id as 
+		     (select rs.site_id 
+		      from clw_tqc.clw_xc_routesite_t rs,
+		           (select max(rs_temp.rs_order) as rs_order
+		            from clw_tqc.clw_xc_routesite_t rs_temp
+		            where rs_temp.route_id = ${LINE_ID}) end_site
+		      where rs.route_id = ${LINE_ID}
+		            and rs.rs_order = end_site.rs_order
+		     ),
+		     reminder as 
+		     (select distinct(sn.site_id),
+		     		 sn.vehicle_vin,
+			         sn.note_calc_type,
+			         sn.valid_flag,
+			         sn.ahead_note_mileage,
+			         sn.ahead_note_time
+			  from clw_tqc_emp_site_note_t sn
+			  where sn.site_id = ${site_id}
+			  		and sn.vehicle_vin = '${VEHICLE_VIN}'
+			  		and sn.emp_code = ${emp_code}
+			  		and (sn.up_down = ${status_range} OR sn.up_down = -1)
+		     )
+		select
+		  t.vehicle_vin,
+		  e.send_time as status_desc,
+		  e.route_id as line_id,
+		  case when last_site_id.site_id = ${jsbl_site} then 1 else 0 end as flag,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select note_calc_type from reminder )else null end as remind_type,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select valid_flag from reminder )else null end as remind_status,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select ahead_note_mileage from reminder )else null end as value1,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select ahead_note_time from reminder )else null end as value2,
+		  to_char(t.Terminal_Time,'yyyymmddhh24miss') as update_time
+		from clw_tqc.clw_jc_terminal_t t, clw_tqc.tqc_trip_execute e,last_site_id
+		where t.vehicle_vin = '${VEHICLE_VIN}'
+		      and t.vehicle_vin = e.vehicle_vin
+		      and e.exe_date = to_date(${search_date},'yyyymmdd')
+		      and e.trip_id = ${TRIP_ID}
+	</select>
+
+	<select id="getSiteVehicleRealC" parameterType="Map" resultType="VehicleReal">
+		with reminder as 
+		     (select distinct(sn.site_id),
+		     		 sn.vehicle_vin,
+			         sn.note_calc_type,
+			         sn.valid_flag,
+			         sn.ahead_note_mileage,
+			         sn.ahead_note_time
+			  from clw_tqc_emp_site_note_t sn
+			  where sn.site_id = ${site_id}
+			  		and sn.vehicle_vin = '${VEHICLE_VIN}'
+			  		and sn.emp_code = ${emp_code}
+			  		and (sn.up_down = ${status_range} OR sn.up_down = -1)
+		     ),
+		first_site as(
+			select rs.site_id 
+			from clw_tqc.clw_xc_routesite_t rs,
+			     (select min(rs_temp.rs_order) as rs_order
+			      from clw_tqc.clw_xc_routesite_t rs_temp
+			      where rs_temp.route_id = ${LINE_ID}) end_site
+			where rs.route_id = ${LINE_ID}
+			      and rs.rs_order = end_site.rs_order
+		)     
+		select
+		  t.vehicle_vin,
+		  e.send_time as status_desc,
+		  e.route_id as line_id,
+		  case when ((t.site_id in (select site_id from first_site) and t.instance_percent > 0) or (t.site_id is not null and t.site_id not in (select site_id from first_site))) and t.trip_id = ${TRIP_ID} then 1 else 0 end as arrive_status,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select note_calc_type from reminder )else null end as remind_type,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select valid_flag from reminder )else null end as remind_status,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select ahead_note_mileage from reminder )else null end as value1,
+		  case when '${VEHICLE_VIN}' in (select vehicle_vin from reminder) then (select ahead_note_time from reminder )else null end as value2,
+		  to_char(t.Terminal_Time,'yyyymmddhh24miss') as update_time
+		from clw_tqc.clw_jc_terminal_t t, clw_tqc.tqc_trip_execute e,first_site
+		where t.vehicle_vin = '${VEHICLE_VIN}'
+		      and t.vehicle_vin = e.vehicle_vin
+		      and e.exe_date = to_date(${search_date},'yyyymmdd')
+		      and e.trip_id = ${TRIP_ID}      
+	</select>		
+	
+	<select id="getNearPoints" parameterType="map" resultType="map">
+		select max(p.standard_time) as standard_time
+		from clw_tqc.clw_jc_terminal_t t ,CLW_TQC.clw_tqc_emp_preline_t p
+		where t.vehicle_vin = '${VEHICLE_VIN}'
+		      and p.route_id = '${LINE_ID}'
+		      and abs(t.latitude - p.latitude) &lt;  0.001
+		      and abs(t.longitude - p.longitude)  &lt;  0.001
+	</select>
+	<!-- 获取厂外站点 -->
+	<select id="getAllSites" parameterType="String" resultType="Site">
+           select b.site_id siteId,
+              b.plan_in_time planArriveTime,
+              a.site_name siteName,
+              a.site_longitude siteLongitude,
+              a.site_latitude siteLatitude,
+              '0'  siteType
+         from CLW_XC_VSS_SITE_T b, CLW_XC_SITE_T a
+        where a.site_id = b.site_id
+          and a.CONTROL_STATION = #{routeType}
+          and b.trip_id = #{tripId}
+          order by b.plan_in_time
+	</select>
+	
+	<!-- 获取区域集合 -->
+ 	<select id="getAreas" resultType="Area">
+		select 
+			t.area_id,
+			t.area_name,
+			t.max_longitude as max_lon,
+			t.min_longitude as min_lon,
+			t.max_latitude as max_lat,
+			t.min_latitude as min_lat,
+			t.province,
+			t.city
+		from CLW_TQC.clw_tqc_area_t t 
+	</select>
+	
+	<select id="getStationRemind" parameterType="String" resultType="Remind">
+		select 
+		  t.note_id,
+		  case when t.vehicle_vin is null then 0 else 1 end as remind_range, 
+		  t.belong_area as area_type,
+       	  case t.belong_area when '1' then '第一工厂' when '2' then '第二工厂' end as area_name,
+		  t.line_range ,
+		  t.site_id ,
+		  s.site_name,
+		  c.vehicle_vin ,
+		  c.vehicle_code as vehicle_number,
+		  case when t.vehicle_vin is null then 0 else 1 end as remind_range,
+		  t.note_calc_type as remind_type,
+		  t.ahead_note_time as time,
+		  t.ahead_note_mileage as distance,
+		  t.ahead_often as remind_week,
+		  t.valid_flag as remind_status,
+		  t.no_remind_date,
+		  t.up_down as status_range,
+		  t.line_id,
+		  t.line_name,
+		  to_char(nvl(t.modify_time, t.create_time),'yyyymmddhh24miss') as modify_time
+		from CLW_TQC_EMP_SITE_NOTE_T t,clw_tqc.clw_xc_site_t s,clw_tqc.clw_cl_base_info_t c
+		where t.site_id = s.site_id
+			  and t.belong_area = ${area_type}
+		      and t.emp_code =${emp_code}
+		      and t.vehicle_vin = c.vehicle_vin(+)
+	</select>
+	
+	<select id="getStationRemindSingle" parameterType="String" resultType="Remind">
+		select 
+		  t.note_id,
+		  case when t.vehicle_vin is null then 0 else 1 end as remind_range, 
+		  t.belong_area as area_type,
+       	  case t.belong_area when '1' then '第一工厂' when '2' then '第二工厂' end as area_name,
+		  t.line_range ,
+		  t.site_id ,
+		  s.site_name,
+		  c.vehicle_vin ,
+		  c.vehicle_code as vehicle_number,
+		  case when t.vehicle_vin is null then 0 else 1 end as remind_range,
+		  t.note_calc_type as remind_type,
+		  t.ahead_note_time as time,
+		  t.ahead_note_mileage as distance,
+		  t.ahead_often as remind_week,
+		  t.valid_flag as remind_status,
+		  t.no_remind_date,
+		  t.up_down as status_range,
+		  t.line_id,
+		  t.line_name,
+		  to_char(nvl(t.modify_time, t.create_time),'yyyymmddhh24miss') as modify_time
+		from CLW_TQC_EMP_SITE_NOTE_T t,clw_tqc.clw_xc_site_t s,clw_tqc.clw_cl_base_info_t c
+		where t.site_id = s.site_id
+			  and t.site_id = ${site_id}
+			  and (t.belong_area = ${area_type} or t.belong_area = -1) 
+			  and (t.up_down = ${status_range} or t.up_down = -1)
+		      and t.emp_code =${emp_code}
+		      and t.vehicle_vin = c.vehicle_vin(+)
+		      <if test="vehicle_vin != null">and t.vehicle_vin = '${vehicle_vin}'</if>
+		      <if test="vehicle_vin == null">and t.vehicle_vin is null</if>
+	</select>
+	
+	<select id="getTestRemind" parameterType="map" resultType="Remind">
+		select  t.note_id,t.note_calc_type as remind_range,t.up_down as status_range
+		from clw_tqc_emp_site_note_t t
+		where t.emp_code = '${emp_code}'
+			and t.site_id = '${station_id}'
+			and t.belong_area = ${area_type}
+	      	<if test="vehicle_vin != null">and t.vehicle_vin = #{vehicle_vin}</if>
+	      	<if test="vehicle_vin == null">and t.vehicle_vin is null</if>
+	</select>
+	
+	<select id="getTestRemindById" parameterType="map" resultType="Remind">
+		select  
+			t.note_id, 
+			t.note_calc_type as remind_type,
+			t.ahead_often as remind_week 
+		from CLW_TQC_EMP_SITE_NOTE_T t
+		where t.note_id = ${note_id}
+	</select>
+	
+	<insert id="addRemind" parameterType="map">
+		insert into  CLW_TQC_EMP_SITE_NOTE_T t (
+			 note_id,
+       		 emp_code,
+       		 site_id,
+       		 site_name,
+       		 <if test="vehicle_vin != null"> vehicle_vin, </if>
+       		 longitude,
+       		 latitude,
+       		 note_calc_type,
+       		 ahead_note_time,
+        	 ahead_note_mileage,
+        	 valid_flag,
+        	 create_time,
+        	 <if test="remind_week != null">ahead_often,</if>
+        	 <if test="area_type != null">belong_area,</if>
+        	 <if test="line_range != null">line_range,</if>
+        	 <if test="no_remind_date != null">no_remind_date,</if>
+        	 <if test="status_range != null">up_down,</if>
+        	 <if test="line_id != null">line_id,</if>
+        	 <if test="line_id != null">line_name,</if>
+        	 modify_time
+        	 )
+		select CLW_TQC_YGB.Seq_Site_Notelog.NEXTVAL,
+			   ${emp_code},
+			   ${station_id},
+			   s.site_name,
+			   <if test="vehicle_vin != null"> '${vehicle_vin}', </if>
+			   s.site_longitude,
+			   s.site_latitude,
+			   ${remind_type},
+			   ${time},
+			   ${distance},
+			   '${remind_status}',
+			   sysdate,
+			   <if test="remind_week != null">'${remind_week}',</if>
+			   <if test="area_type != null">'${area_type}',</if>
+			   <if test="line_range != null">'${line_range}',</if>
+			   <if test="no_remind_date != null">'${no_remind_date}',</if>
+			   <if test="status_range != null">'${status_range}',</if>
+			   <if test="line_id != null">${line_id},</if>
+			   <if test="line_id != null">r.route_name,</if>
+			   sysdate
+		from clw_tqc.clw_xc_site_t s
+		<if test="line_id != null">,clw_tqc.clw_xc_routesite_t rs,clw_tqc.clw_xc_route_t r</if>
+		where s.site_id = ${station_id}
+			<if test="line_id != null">and s.site_id = rs.site_id and rs.route_id = ${line_id}	and rs.route_id = r.route_id</if>
+	</insert>
+	
+	<update id="updateRemindNoRemind" >
+		UPDATE CLW_TQC_EMP_SITE_NOTE_T t
+		SET t.no_remind_date = to_char(sysdate,'yyyymmdd'),	t.modify_time = sysdate
+		<if test="remind_status != null"> , t.valid_flag = ${remind_status}</if>
+		where t.note_id = ${note_id}
+	</update>	
+	
+	<update id="updateRemindDayly" >
+		UPDATE CLW_TQC_EMP_SITE_NOTE_T t
+		SET t.modify_time = sysdate
+			<if test="remind_type != null" >,t.note_calc_type = '${remind_type}'</if>
+			<if test="time != null">, t.ahead_note_time = ${time}</if>
+			<if test="distance != null"> , t.ahead_note_mileage = ${distance}</if>
+			<if test="remind_status != null"> , t.valid_flag = ${remind_status}</if>
+			<if test="status_range != null"> , t.up_down = ${status_range}</if>
+		where t.note_id = ${note_id}
+	</update>
+	
+	<update id="updateRemindWeekly" >
+		UPDATE CLW_TQC_EMP_SITE_NOTE_T t
+		SET t.modify_time = sysdate
+			<if test="remind_type != null" >,t.note_calc_type = '${remind_type}'</if>
+			<if test="remind_week != null" >,t.ahead_often = '${remind_week}'</if>
+			<if test="time != null">, t.ahead_note_time = '${time}'</if>
+			<if test="distance != null">, t.ahead_note_mileage = '${distance}'</if>
+			<if test="remind_status != null">, t.valid_flag = '${remind_status}'</if>
+		where t.note_id = ${note_id} 
+	</update>
+	
+	<update id="deleteRemind">
+		delete CLW_TQC_EMP_SITE_NOTE_T t where t.note_id = #{note_id}
+	</update>
+	<insert id="insertFavorSites">
+		insert into CLW_TQC_EMP_SITECOLLECT_T (collect_id,emp_code,site_id,site_name,site_desc,longitude,latitude,create_time)
+		select SEQ_SITE_COLLECT.NEXTVAL,${emp_code},${site_id}, t.site_name,t.site_remark,t.site_longitude,t.site_latitude,sysdate
+		from clw_tqc.clw_xc_site_t t 
+		where t.site_id = ${site_id}
+	</insert>
+	<delete id="deleteFavorSites">
+		delete CLW_TQC_EMP_SITECOLLECT_T t where t.site_id = ${site_id} and t.emp_code = ${emp_code}
+	</delete>
+</mapper>

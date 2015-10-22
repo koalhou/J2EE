@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NewTerminalParams">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="NewEnterpriseTreeInfo" type="com.neusoft.clw.sysmanage.datamanage.zdnew.terminalparams.ds.EnterpriseTreeInfo" />
+	<typeAlias alias="CarNumberInfo" type="com.neusoft.clw.sysmanage.datamanage.zdnew.terminalparams.ds.CarNumberInfo" />
+	<typeAlias alias="NewVehicleInfo" type="com.neusoft.clw.sysmanage.datamanage.zdnew.terminalparams.ds.VehicleInfo" />
+	<typeAlias alias="ZdnewXCTerminalParamsInfo" type="com.neusoft.clw.sysmanage.datamanage.zdnew.terminalparams.ds.XCTerminalParamsInfo" />
+	
+	<resultMap class="NewEnterpriseTreeInfo" id="organization_tree">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="isParent" column="isParent"/>
+       <result property="open" column="open"/>
+       <result property="iconSkin" column="iconSkin"/>
+       
+    </resultMap>
+    
+    <resultMap class="NewEnterpriseTreeInfo" id="searchorganization_tree">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+    </resultMap>
+	
+	<select id="getOrganizationTreeData" parameterClass="String" resultMap="organization_tree">
+		SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,
+		case when level=1 then 'true' else 'true' end open,
+		case when level=1 and CONNECT_BY_ISLEAF!=1 then 'true' else 'false' end isParent,
+		'pIcon' as iconSkin
+	    FROM CLW_JC_ENTERPRISE_T
+	      START WITH ENTERPRISE_ID = #value#
+	      CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+	    AND VALID_FLAG='0'
+	</select>
+	
+	<select id="searchOrganizationTreeData" parameterClass="NewEnterpriseTreeInfo" resultMap="searchorganization_tree">
+		SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,'true' open
+		FROM CLW_JC_ENTERPRISE_T
+		WHERE VALID_FLAG='0'
+		START WITH SHORT_NAME like '%' || #name# ||'%' escape '\'
+		CONNECT BY PRIOR PARENT_ID=ENTERPRISE_ID
+		UNION
+		SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,'true' open
+		FROM CLW_JC_ENTERPRISE_T
+		WHERE VALID_FLAG='0'
+		START WITH SHORT_NAME like '%' || #name# ||'%' escape '\'
+		CONNECT BY  PARENT_ID=PRIOR ENTERPRISE_ID
+	</select>
+	
+	<resultMap class="CarNumberInfo" id="carnumber_list">
+       <result property="carnum" column="CARNUM"/>
+       <result property="enterpriseId" column="ENTERPRISEID"/>
+       <result property="flag" column="FLAG"/>
+    </resultMap>
+	
+	<select id="getCarnumberByEnterprise" resultMap="carnumber_list">
+		SELECT COUNT(1) AS CARNUM,
+		       CBI.ENTERPRISE_ID AS ENTERPRISEID,
+		       'ENTERPRISE' AS FLAG
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		 GROUP BY CBI.ENTERPRISE_ID
+		UNION ALL
+		SELECT COUNT(1) AS CARNUM,
+		       CBI.ORGANIZATION_ID AS ENTERPRISEID,
+		       'ORGANIZATION' AS FLAG
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		   AND CBI.ORGANIZATION_ID IS NOT NULL
+		 GROUP BY CBI.ORGANIZATION_ID
+	</select>
+	
+	<select id="getVehicleCount" parameterClass="Map" resultClass="Integer">
+				SELECT COUNT(1)
+		  FROM (SELECT CBI.VEHICLE_ID, CBI.VEHICLE_LN,CBI.VEHICLE_code,CBI.VEHICLE_type
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND CBI.VEHICLE_CODE !='外租'
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		            OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ENTERPRISE_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		           AND CBI.ORGANIZATION_ID IS NOT NULL) CAR_T
+		    <dynamic prepend="WHERE">  
+		    	<isNotEmpty property="vehicleLn">
+		    			CAR_T.VEHICLE_CODE like '%' || #vehicleLn# || '%' escape '\'    
+		    			or
+                       upper(CAR_T.VEHICLE_LN) like '%' || upper(#vehicleLn#) ||'%' escape '\'
+                </isNotEmpty>
+            </dynamic>
+	</select>
+	
+	<resultMap class="NewVehicleInfo" id="vehicle_list">
+       <result property="vehicleId" column="VEHICLE_ID"/>
+       <result property="vehicleLn" column="VEHICLE_LN"/>
+       <result property="vehicleCode" column="VEHICLE_code"/>
+    </resultMap>
+	
+	<select id="getVehicleListById" parameterClass="Map" resultMap="vehicle_list">
+		SELECT CAR_T.VEHICLE_ID, CAR_T.VEHICLE_LN,decode(CAR_T.vehicle_type,null,'','外租','0',nvl(CAR_T.vehicle_code,'未知')) VEHICLE_code
+		  FROM (SELECT CBI.VEHICLE_ID, CBI.VEHICLE_LN,CBI.VEHICLE_code,CBI.VEHICLE_type
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND CBI.VEHICLE_CODE !='外租'
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		            OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ENTERPRISE_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		           AND CBI.ORGANIZATION_ID IS NOT NULL) CAR_T
+		    <dynamic prepend="WHERE">  
+		    	<isNotEmpty property="vehicleLn">
+		    			CAR_T.VEHICLE_CODE like '%' || #vehicleLn# || '%' escape '\'    
+		    			or
+                       upper(CAR_T.VEHICLE_LN) like '%' || upper(#vehicleLn#) ||'%' escape '\'
+                </isNotEmpty>
+            </dynamic>
+		    <dynamic prepend="ORDER BY">  
+			   <isNotEmpty property="sortname">  
+			    $sortname$   $sortorder$  
+			   </isNotEmpty>  
+			</dynamic>
+	</select>
+	
+	<resultMap class="ZdnewXCTerminalParamsInfo" id="vehicleInfos">
+       <result property="vehicleVin" column="VEHICLE_VIN"/>
+       <result property="simCardNumber" column="SIM_CARD_NUMBER"/>
+    </resultMap>
+	<select id="getVehicleInfos" parameterClass="String" resultMap="vehicleInfos">
+			SELECT JT.VEHICLE_VIN, JT.SIM_CARD_NUMBER
+			  FROM CLW_JC_TERMINAL_T JT, CLW_CL_BASE_INFO_T CBI, CLW_CL_SIM_T CS
+			 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			   AND JT.TERMINAL_ID IS NOT NULL
+			   AND JT.VEHICLE_VIN IS NOT NULL
+			   AND JT.SIM_CARD_NUMBER IS NOT NULL
+			   AND JT.VALID_FLAG = '0'
+			   AND CBI.VALID_FLAG = '0'
+			   AND CS.VALID_FLAG = '0'
+			   AND JT.DEVICE_TYPE = '0'
+			   AND CBI.DEVICE_TYPE = '0'
+			   AND CS.DEVICE_TYPE = '0'
+			   AND CBI.VEHICLE_ID IN ($value$)  
+	</select>
+	
+	<resultMap class="ZdnewXCTerminalParamsInfo" id="paramsInfo">
+       <result property="keepAliveTime" column="KEEPALIVE_TIME"/>
+       <result property="tcpOverTime" column="TCP_OVERTIME"/>
+       <result property="tcpRetransTime" column="TCP_RETRANS_TIME"/>
+       <result property="udpOverTime" column="UDP_OVERTIME"/>
+       <result property="udpRetransTime" column="UDP_RETRANS_TIME"/>
+       <result property="mainApn" column="MAIN_APN"/>
+       <result property="mainUser" column="MAIN_USER"/>
+       <result property="mainPass" column="MAIN_PASS"/>
+       <result property="mainIp" column="MAIN_IP"/>
+       <result property="standbyApn" column="STANDBY_APN"/>
+       <result property="standbyUser" column="STANDBY_USER"/>
+       <result property="standbyPass" column="STANDBY_PASS"/>
+       <result property="standbyIp" column="STANDBY_IP"/>
+       <result property="tcpPort" column="TCP_PORT"/>
+       <result property="udpPort" column="UDP_PORT"/>
+       <result property="positionUpType" column="POSITION_UP_TYPE"/>
+       <result property="positionUpSchema" column="POSITION_UP_SCHEME"/>
+       <result property="driverOverDateTime" column="DRIVER_OVER_DATETIME"/>
+       <result property="sleepDateTime" column="SLEEP_DATETIME"/>
+       <result property="sosTime" column="SOS_TIME"/>
+       <result property="defaultDateTime" column="DEFAULT_DATETIME"/>
+       <result property="defaultSpaceTime" column="DEFAULT_SPACETIME"/>
+       <result property="driverOverSpaceTime" column="DRIVER_OVER_SPACETIME"/>
+       <result property="sleepSpaceTime" column="SLEEP_SPACETIME"/>
+       <result property="sosSpaceTime" column="SOS_SPACETIME"/>
+       <result property="makeUpAngle" column="MAKEUP_ANGLE"/>
+       <result property="alarmShieldStr" column="ALARM_SHIELD"/>
+       <result property="alarmShootSwitchStr" column="ALARMSHOOT_SWITCH"/>
+       <result property="alarmShootSaveFlagStr" column="ALARMSHOOT_SAVEFLAG"/>
+       <result property="topSpeed" column="TOP_SPEED"/>
+       <result property="overspeedTime" column="OVERSPEED_TIME"/>
+       <result property="listenPhone" column="LISTEN_PHONE"/>
+       <result property="overspeedAlarmDifference" column="OVERSPEED_ALARM_DIFFERENCE"/>
+       <result property="characteristicOefficient" column="CHARACTERISTIC_OEFFICIENT"/>
+       <result property="wheelPulseCount" column="WHEELPULSES_PER_SECOND"/>
+       <result property="fuelCapacity" column="FUELTANK_CAPACITY"/>
+       <result property="odometer" column="ODOMETER"/>
+       <result property="vehicleLn" column="NUMBER_PLATE"/>
+       <result property="vehicleLnColor" column="NUMBER_PLATE_COLOR"/>
+       <result property="speedSourceSetting" column="SPEED_SOURCE_SETTING"/>
+       <result property="voiceOutputControlType" column="VOICE_OUTPUT_CONTROL"/>
+       <result property="carDoorControlStr" column="CARDOOR_CONTROL"/>
+       <result property="terminalOuterDeviceStr" column="TERMINAL_PERIPHERAL_CONTROL"/>
+       <result property="regularCameraControlStr" column="REGULAR_CAMERA_CONTROL"/>
+       <result property="fixDistanceCameraControlStr" column="FIXEDDISTANCE_CAMERA_CONTROL"/>
+       <result property="autoSwitchTrip" column="SWITCH_TRIP"/>
+       <result property="standardCnt" column="standard_cnt"/>
+    </resultMap>
+    
+	<delete id="deleteParamsByVehicleId" parameterClass="String">
+		DELETE FROM CLW_JC_TERMINAL_PARA_T
+		 WHERE TERMINAL_ID =
+		       (SELECT TERMINAL_ID
+		          FROM CLW_JC_TERMINAL_T
+		         WHERE VEHICLE_VIN =
+		               (SELECT VEHICLE_VIN
+		                  FROM CLW_CL_BASE_INFO_T
+		                 WHERE VEHICLE_ID = #value#)
+		           AND VALID_FLAG = '0'
+		           AND DEVICE_TYPE = '0'
+		           AND ROWNUM = 1)
+	</delete>
+	
+	<select id="getParamsByVehicleId" parameterClass="String" resultMap="paramsInfo">
+		SELECT KEEPALIVE_TIME,
+		       TCP_OVERTIME,
+		       TCP_RETRANS_TIME,
+		       UDP_OVERTIME,
+		       UDP_RETRANS_TIME,
+		       MAIN_APN,
+		       MAIN_USER,
+		       MAIN_PASS,
+		       MAIN_IP,
+		       STANDBY_APN,
+		       STANDBY_USER,
+		       STANDBY_PASS,
+		       STANDBY_IP,
+		       TCP_PORT,
+		       UDP_PORT,
+		       POSITION_UP_TYPE,
+		       POSITION_UP_SCHEME,
+		       DRIVER_OVER_DATETIME,
+		       SLEEP_DATETIME,
+		       SOS_TIME,
+		       DEFAULT_DATETIME,
+		       DEFAULT_SPACETIME,
+		       DRIVER_OVER_SPACETIME,
+		       SLEEP_SPACETIME,
+		       SOS_SPACETIME,
+		       MAKEUP_ANGLE,
+		       ALARM_SHIELD,
+		       ALARMSHOOT_SWITCH,
+		       ALARMSHOOT_SAVEFLAG,
+		       TOP_SPEED,
+		       OVERSPEED_TIME,
+		       LISTEN_PHONE,
+		       OVERSPEED_ALARM_DIFFERENCE,
+		       CHARACTERISTIC_OEFFICIENT,
+		       WHEELPULSES_PER_SECOND,
+		       FUELTANK_CAPACITY,
+		       ODOMETER,
+		       NUMBER_PLATE,
+		       NUMBER_PLATE_COLOR,
+		       SPEED_SOURCE_SETTING,
+		       VOICE_OUTPUT_CONTROL,
+		       CARDOOR_CONTROL,
+		       TERMINAL_PERIPHERAL_CONTROL,
+		       REGULAR_CAMERA_CONTROL,
+		       FIXEDDISTANCE_CAMERA_CONTROL,
+		       SWITCH_TRIP,
+		       standard_cnt
+		  FROM CLW_JC_TERMINAL_PARA_T
+		 WHERE TERMINAL_ID =
+		       (SELECT TERMINAL_ID
+		          FROM CLW_JC_TERMINAL_T
+		         WHERE VEHICLE_VIN =
+		               (SELECT VEHICLE_VIN
+		                  FROM CLW_CL_BASE_INFO_T
+		                 WHERE VEHICLE_ID = #value#)
+		           AND VALID_FLAG = '0'
+		           AND DEVICE_TYPE = '0'
+		           AND ROWNUM = 1)
+	</select>
+	
+	<insert id="setLaterParam" parameterClass="map">
+		insert into ZSPT_LATER_PARAM (ORGANIZATION_ID,LATER_CONFIG) 
+		values (#organization_id#,#later_config#)
+	</insert>
+	
+	<select id="findLaterOrgCount" parameterClass="map" resultClass="Integer">
+		select count(1) from ZSPT_LATER_PARAM where organization_id=#organization_id#
+	</select>
+	
+	<update id="updateLaterParam" parameterClass="map">
+		update ZSPT_LATER_PARAM 
+		set later_config = #later_config#
+		where organization_id = #organization_id#
+	</update>
+	
+</sqlMap>

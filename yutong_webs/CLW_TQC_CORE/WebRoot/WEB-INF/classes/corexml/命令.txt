@@ -1,0 +1,6 @@
+D:\testwork\xmltest\src\login> scomp -out jar\logon.jar logon.xsd -compiler  javac logon.xsdconfig
+
+ D:\workspace\TAG-SYS-LNJT\src\main\config\corexml > 
+
+  scomp -src .\..\..\java\  -out .\..\..\..\..\lib\coreall.jar coreall.xsd -compiler  javac coreall.xsdconfig
+ 

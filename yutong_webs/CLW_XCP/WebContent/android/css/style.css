@@ -1,0 +1,50 @@
+body{
+	background:#FFF;
+    margin:0px auto auto auto;
+	padding:0;
+}
+clear{
+     clear:both;
+}
+img{
+	border:none;
+}
+a{
+	text-decoration:none;
+}
+p{
+	margin:0;
+	
+}
+li{
+	list-style:none;
+}
+.main{
+	width:100%;
+	height:auto;
+	margin:auto;
+}
+.top{
+	width:100%;
+	height:auto;
+	margin-top:10px;
+	border-bottom:1px dashed #CCC;
+}
+.logo{
+	width:75%;
+	margin-left:2%;
+}
+.botton{
+	width:70%;
+	height:auto;
+	margin-top:5px;
+	margin-left:15%;
+	overflow:hidden;
+	padding-bottom:5px;
+}
+.img{
+	margin-top:15px;
+	margin-left:2%;
+	margin-right:2%;
+	clear:both;
+}

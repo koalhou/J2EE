@@ -1,0 +1,31 @@
+html,body{ height:100%; background:#368cc9;}
+.zj_loginBody{background:#368cc9; min-width:1002px;}
+.zj_header{ background:#003a62; height:90px; background:#003a62 url(../newimages/zj/zj_login_logo.png.jpg) left no-repeat;}
+.zj_main {background:#368cc9; width:1002px; margin:0 auto;}
+.zj_main_table{ width:100%;}
+.zj_loginBox{}
+.zj_loginBox input.text{ width:200px; padding:12px 10px; border:3px #03548c solid; float:left}
+.zj_loginBox input.code{ width:110px; padding:12px 10px;; border:3px #03548c solid; float:left}
+.zj_loginBox .codeWrap{ display:inline-block; padding:12px; background:#f4f4f4; border:1px #368cc9 solid;}
+.zj_loginBox a{ background: url(../newimages/zj/zj_login_btn.gif) no-repeat; width:228px; height:60px; display:block;}
+.zj_loginBox a:link.zj_btnLogin,
+.zj_loginBox a:visited.zj_btnLogin{ background-position:top center;}
+.zj_loginBox a:hover.zj_btnLogin,
+.zj_loginBox a:active.zj_btnLogin{ background-position:bottom  center;}
+.zj_loginBox div{ height:60px;}
+.zj_loginBox span{ float:left;}
+.form_valid{ text-align: center; width:210px;}
+.maioshu,
+.input_required{ display:inline-block; padding:4px; background:#ffe5e5; border:1px solid #ff0101; vertical-align: middle; margin:10px 0 0 5px;}
+span.maioshu{ margin:0; float:none;}
+.form_valid{ text-align: center; padding-top:10px; color:#C80000;}
+.zj_flashBox{position:relative;z-index:20000; height:137px; bottom:0px; overflow:hidden;}
+.zj_flashBox div{position:absolute; left:50%; margin-left:-108px; z-index:20000; bottom:0px; }
+.zj_flashBox object{  }
+.zj_login_left{ width:629px; background:url(../newimages/zj/zj_login_left.jpg) no-repeat; height:666px;}
+.zj_login_right{}
+.zj_footer{ height:36px; background:#003a62; color:#ffffff; line-height:36px; font-size:12px; width:100%; min-width:1002px; position:absolute;z-index: 999; bottom:0; top:auto; }
+.zj_car{ float:left; padding-left:20px;}
+.zj_tel{ float:right; padding-right:20px; }
+
+#SWFObjectExprInst{top:0;}

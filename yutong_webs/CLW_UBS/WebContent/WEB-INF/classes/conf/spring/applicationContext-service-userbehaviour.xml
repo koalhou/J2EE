@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	 
+	 
+	<!-- 企业客户活跃度service start -->
+ 
+	<!-- 企业客户活跃度service end -->
+	
+	<!-- 服务活跃度service start -->
+ 
+	<!-- 服务活跃度service end -->
+	
+	<!-- 被动活跃度service start-->
+ 
+	<!-- 被动活跃度service end-->
+	
+	<!-- 系统环境service start-->
+ 
+	<!-- 系统环境service end-->
+	
+	<!-- 登录次数service start-->
+ 
+	<!-- 登录次数service end-->
+	
+	<!-- 节假日维护service start-->
+ 	
+	<!-- 2013-67-9 17:38  zhangzhi -->
+	<bean id="holidayManageService"
+		class="com.neusoft.clw.yw.ub.holiday.service.impl.HolidayManageServiceImpl">
+		<property name="dao" ref="dao" />
+	</bean>
+	<!-- 节假日维护service end-->
+	<!-- 市场看板 service start-->
+	<bean id="marketService"
+		class="com.neusoft.clw.yw.ub.market.service.impl.MarketServiceImpl">
+		<property name="dao" ref="dao" />
+	</bean>
+	<!-- 市场看板service end-->
+	
+</beans>

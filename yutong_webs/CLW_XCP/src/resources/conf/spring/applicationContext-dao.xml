@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<bean id="dao"
+		class="com.neusoft.clw.common.dao.impl.SqlMapDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="vehManageDao"
+		class="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.persistent.vehmanage.VehManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+		<!-- 批处理DAO -->
+	<bean id="affairDao"
+		class="com.neusoft.clw.common.dao.impl.AffairDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="userManageDao"
+		class="com.neusoft.clw.sysmanage.datamanage.usermanage.dao.UserManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+
+	<bean id="roleManageDao"
+		class="com.neusoft.clw.sysmanage.datamanage.rolemanage.dao.RoleManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="studentManageDao"
+		class="com.neusoft.clw.infomanage.studentmanage.dao.StudentManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	<!-- 站点设置 -->
+	<bean id="stationDao"
+		class="com.neusoft.clw.sysmanage.datamanage.routemanage.dao.StationDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="driverManageDao"
+		class="com.neusoft.clw.sysmanage.datamanage.drivermanage.dao.DriverManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="stewardManageDao"
+		class="com.neusoft.clw.infomanage.stewardmanage.dao.StewardManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="smsManageDao"
+		class="com.neusoft.clw.infomanage.smsmanage.dao.SmsManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="handmobileManageDao"
+		class=" com.neusoft.clw.infomanage.handmobilemanage.dao.HandMobileManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<bean id="alarmManageDao"
+		class="com.neusoft.clw.safemanage.humanmanage.alarmmanage.dao.AlarmManageDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 站点设置 -->
+	<bean id="stationInsertDao"
+		class="com.neusoft.clw.infomanage.sitemanage.dao.StationDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 乘车规划 -->
+	<bean id="ridingPlanDao"
+		class="com.neusoft.clw.infomanage.ridingplan.dao.RidingPlanDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+	<!-- 行程文件生成DAO -->
+	<bean id="writeGZPackDao"
+		class="com.neusoft.clw.infomationExport.dao.WriteGZPackDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+
+	<bean id="smsReminderDao"
+		class="com.neusoft.clw.infomanage.smsreminder.dao.SmsReminderDao"
+		scope="prototype">
+		<property name="sqlMapClient">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+	
+</beans>

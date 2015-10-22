@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="carrunmodule" namespace="/carrunmodule" extends="clw-default">
+		<action name="add_xc_trip_module" class="carRunHistoryModule" method="tripready">
+			<result name="success">/WEB-INF/jsp/yunxing/routemonitor/routemotitor_module_add.jsp</result>
+			<result name="error">/WEB-INF/jsp/yunxing/routemonitor/routemotitor_module_add.jsp</result>			
+		</action>
+		<action name="search_xc_trip_module" class="carRunHistoryModule" method="tripListready">
+			<result name="success">/WEB-INF/jsp/yunxing/routemonitor/routemotitor_module_list.jsp</result>
+			<result name="error">/WEB-INF/jsp/yunxing/routemonitor/routemotitor_module_list.jsp</result>			
+		</action>
+		<action name="tripmodule_form" class="carRunHistoryModule" method="tripmodule_form">
+		    <result name="success" type="redirect-action">
+				<param name="actionName">add_xc_trip_module</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">add_xc_trip_module</param>
+				<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+		<action name="tripmodule_form2" class="carRunHistoryModule" method="tripmodule_form2">
+		</action>
+		<action name="searchmoduleto" class="carRunHistoryModule" method="searchmoduleto">
+		</action>
+		<action name="delmoduleto" class="carRunHistoryModule" method="delmoduleto">
+		</action>
+	</package>
+	<package name="carrunmodule-json" namespace="/carrunmodule_history" extends="json-default">
+		<action name="searchcarrunmodule" class="carRunHistoryModule" method="getSelectModuleList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

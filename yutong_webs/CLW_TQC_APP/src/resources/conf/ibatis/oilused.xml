@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OilUsed">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="OilUsed" type="com.neusoft.clw.itsmanage.oilmanage.oilused.domain.OilUsed" />
+	<!-- 按车辆显示油耗列表 resultMap-->
+	<resultMap id="oilused-result" class="OilUsed">	
+		<result property="vehicle_code" column="VEHICLE_CODE"/>
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />		
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="hkm_oilused" column="HKM_OILUSED" />
+		<result property="check_value" column="CHECK_VALUE" />
+		<result property="minusoil" column="MINUSOIL" />
+		<result property="COUNT_OIL_TOTAL" column="COUNT_OIL_TOTAL" />
+		<result property="check_value_mile" column="check_value_mile" />		
+		<result property="COUNT_MILEAGE" column="COUNT_MILEAGE" />		
+		<result property="save_standard" column="SAVE_STANDARD" />
+		<result property="over_standard" column="OVER_STANDARD" />
+		<result property="max_oil" column="MAX_OIL" />
+		<result property="rn" column="RN" />
+		
+		<result property="mileage" column="mileage" />
+		<result property="oil_total" column="oil_total" />
+	</resultMap>
+	
+	<!-- 按车辆显示总计油耗列表 resultMap-->
+	<resultMap id="oilusedsum-result" class="OilUsed">		
+		<result property="COUNT_OIL_TOTAL" column="COUNT_OIL_TOTAL" />		
+		<result property="COUNT_MILEAGE" column="COUNT_MILEAGE" />
+	</resultMap>
+	
+	<!-- 单车累计油耗图表列表 resultMap-->
+	<resultMap id="oilusedline-result" class="OilUsed">
+		<result property="alarm_day" column="analys_date" />
+		<result property="COUNT_OIL_TOTAL" column="COUNT_OIL_TOTAL" />
+	</resultMap>
+	
+	<!-- 单车累计油耗信息列表 resultMap-->
+	<resultMap id="oilusedInfo-result" class="OilUsed">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="short_allname" column="short_allname" />
+	</resultMap>
+
+	<!-- =====================================油量油耗统计页面初始化=========================================== -->
+	
+	<!-- 按车辆显示油耗列表 -->
+	<select id="getOilUsedList" parameterClass="OilUsed" resultMap="oilused-result">
+       with  
+    w1 as 
+    (
+    select t.vehicle_code, t.vehicle_ln, t.vehicle_vin,organ.short_allname
+                              from CLW_CL_BASE_INFO_T t,CLW_JC_CLEN_VI  organ
+                             where t.vehicle_code != '外租'
+                               and t.oil_config = '0'
+                               and t.valid_flag = '0'
+                               and t.vehicle_vin=organ.vehicle_vin(+)
+                               and t.organization_id=organ.organization_id
+                               and t.organization_id IN
+                                   (SELECT enterprise_id
+                                      FROM clw_jc_enterprise_vi
+                                     WHERE  left_num &gt;=
+                                           (SELECT left_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# )
+                                       AND right_num &lt;=
+                                           (SELECT right_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# ))
+		
+		),   
+    w2 as 
+		(
+		select t.vehicle_vin,min(t.driver_name) as driver_name from 
+		(select t1.vehicle_vin,t3.driver_name from CLW_CL_BASE_INFO_T t1,clw_xc_vehdriver_t t2,CLW_YW_DRIVER_T t3 where t1.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin 
+		and t2.driver_id=t3.driver_id) t group by t.vehicle_vin
+		),
+    
+    w3 as 
+		(
+		select t1.vehicle_vin,t2.check_value from  CLW_CL_BASE_INFO_T t1,CLW_YW_OIL_CHECK_T t2
+		where t1.valid_flag='0' and t2.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin(+) and t2.check_time_code=#check_time_code#
+		),
+     w4 as
+    (
+     select t1.vehicle_vin,ROUND(SUM(NVL(t1.used_oil, 0)), 3)  AS COUNT_OIL_TOTAL,ROUND(SUM(NVL(t1.mileage, 0)), 3) AS COUNT_MILEAGE 
+     from ZSPT_OIL_ANALYS_INFO t1 
+     where <!-- (0 != to_number(TO_CHAR(NVL(t1.used_oil, '0'),'fm9999999990')) and 0 != to_number(TO_CHAR(NVL(t1.mileage, '0'),'fm9999999990'))) and --> 
+      t1.analys_date BETWEEN	
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+     GROUP BY  t1.vehicle_vin
+     ),
+   w5 as (select t.vehicle_vin,    ROUND(max(to_number(count_mileage)),3) mileage, ROUND(SUM(NVL(used_oil, 0)), 3) oil_total
+  from ZSPT_OIL_ANALYS_INFO t
+ group by vehicle_vin)
+      
+     
+    select ROW_NUMBER() OVER(ORDER BY d.SAVE_STANDARD desc,d.OVER_STANDARD desc) rn,
+    		d.vehicle_code,
+    		d.vehicle_ln ,
+    		d.vehicle_vin,
+    		d.driver_name,
+    		d.check_value,
+    		to_number(TO_CHAR(ROUND((                
+                   case
+                     when d.count_mileage = 0 then
+                      0
+                     when d.count_oil_total = 0 then
+                      0
+                     else
+                      d.COUNT_OIL_TOTAL * 100 / d.COUNT_MILEAGE
+                   end),
+                   3                   
+                   ),'fm9999999990.00')) AS HKM_OILUSED,
+		    to_number(TO_CHAR( 
+
+to_number(TO_CHAR(ROUND((                
+                   case
+                     when d.count_mileage = 0 then
+                      0
+                     when d.count_oil_total = 0 then
+                      0
+                     else
+                      d.COUNT_OIL_TOTAL * 100 / d.COUNT_MILEAGE
+                   end),
+                   3                   
+                   ),'fm9999999990.00'))- NVL(d.check_value, '0') ,'fm9999999990.00')) AS minusOil,
+			d.COUNT_OIL_TOTAL,
+			d.check_value_mile,
+			d.max_oil,
+			d.SAVE_STANDARD,
+			d.OVER_STANDARD,
+			d.COUNT_MILEAGE,
+			d.short_allname ,mileage,
+       oil_total from
+    			(      
+  					select  s.vehicle_code,
+  		  					s.vehicle_ln,
+          					s.vehicle_vin,
+          					s.driver_name,
+          					s.short_allname,
+          					to_number(TO_CHAR( NVL(s.check_value, '0'),'fm9999999990.00'))   AS check_value,				   			
+		      to_number(TO_CHAR( NVL(s.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00')) AS COUNT_OIL_TOTAL,
+		      to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00')) AS check_value_mile,
+		      to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))   AS max_oil, 
+		      (
+		      case
+		      when COUNT_OIL_TOTAL &lt; to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))     
+		      then to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL
+		      else 0
+		      end
+		      ) as SAVE_STANDARD,
+		      (
+		      case
+		      when s.COUNT_OIL_TOTAL &gt; to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))     
+		      then (to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL)
+		      else 0
+		      end
+		      ) as OVER_STANDARD,
+		     to_number(TO_CHAR( NVL(s.COUNT_MILEAGE, 0) ,'fm9999999990.00')) AS COUNT_MILEAGE,
+		     decode(s.mileage,'FFFF',0,s.mileage,mileage) mileage,
+               decode(s.oil_total,'FFFF',0,s.oil_total,oil_total) oil_total
+         from
+     (
+     select w1.vehicle_code,w1.vehicle_ln,w1.vehicle_vin,w1.short_allname,w2.driver_name,w3.check_value,w4.COUNT_OIL_TOTAL,w4.COUNT_MILEAGE,w5.mileage,w5.oil_total from w1,w2,w3,w4 ,w5 
+     where w1.vehicle_vin=w4.vehicle_vin(+) and w1.vehicle_vin=w2.vehicle_vin(+) and w1.vehicle_vin=w3.vehicle_vin(+)
+     and w1.vehicle_vin = w5.vehicle_vin(+)
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+          upper(w1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+      </isNotEmpty>
+      <isNotEmpty prepend="AND" property="vehicle_code">
+          w1.VEHICLE_CODE like '%' || #vehicle_code# ||'%' escape '\'
+      </isNotEmpty>      
+     )  s
+     )  d
+    <dynamic prepend="ORDER BY">  
+       <isNotEmpty property="sortname">  
+        $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getOilUsedListEcu" parameterClass="OilUsed" resultMap="oilused-result">
+       with  
+    w1 as 
+    (
+    select t.vehicle_code, t.vehicle_ln, t.vehicle_vin,organ.short_allname
+                              from CLW_CL_BASE_INFO_T t,CLW_JC_CLEN_VI  organ
+                             where t.vehicle_code != '外租'
+                               and t.oil_config = '0'
+                               and t.valid_flag = '0'
+                               and t.vehicle_vin=organ.vehicle_vin(+)
+                               and t.organization_id=organ.organization_id
+                               and t.organization_id IN
+                                   (SELECT enterprise_id
+                                      FROM clw_jc_enterprise_vi
+                                     WHERE  left_num &gt;=
+                                           (SELECT left_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# )
+                                       AND right_num &lt;=
+                                           (SELECT right_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# ))
+		
+		),   
+    w2 as 
+		(
+		select t.vehicle_vin,min(t.driver_name) as driver_name from 
+		(select t1.vehicle_vin,t3.driver_name from CLW_CL_BASE_INFO_T t1,clw_xc_vehdriver_t t2,CLW_YW_DRIVER_T t3 where t1.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin 
+		and t2.driver_id=t3.driver_id) t group by t.vehicle_vin
+		),
+    
+    w3 as 
+		(
+		select t1.vehicle_vin,t2.check_value from  CLW_CL_BASE_INFO_T t1,CLW_YW_OIL_CHECK_T t2
+		where t1.valid_flag='0' and t2.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin(+) and t2.check_time_code=#check_time_code#
+		),
+     w4 as
+    (
+     select t1.vehicle_vin,ROUND(SUM(NVL(t1.used_oil, 0)), 3)  AS COUNT_OIL_TOTAL,ROUND(SUM(NVL(t1.mileage, 0)), 3) AS COUNT_MILEAGE 
+     from ZSPT_OIL_ANALYS_INFO t1 
+     where <!-- (0 != to_number(TO_CHAR(NVL(t1.used_oil, '0'),'fm9999999990')) and 0 != to_number(TO_CHAR(NVL(t1.mileage, '0'),'fm9999999990'))) and --> 
+      t1.analys_date BETWEEN	
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+     GROUP BY  t1.vehicle_vin
+     ),
+   w5 as (select t.vehicle_vin,    ROUND(max(to_number(count_mileage)),3) mileage, ROUND(SUM(NVL(used_oil, 0)), 3) oil_total
+  from ZSPT_OIL_ANALYS_INFO t
+ group by vehicle_vin),
+ w6 as (SELECT ccbb.vehicle_vin,
+		    ROUND(SUM(NVL(t.oil, 0)), 3)     AS COUNT_OIL_TOTAL,
+		    ROUND(SUM(NVL(t.mileage, 0)), 3) AS COUNT_MILEAGE
+		  FROM clw_yw_baddriving_t t,
+		    CLW_CL_BASE_INFO_T ccbb
+		  WHERE t.alarm_day BETWEEN
+		    CASE
+		      WHEN (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		      ELSE
+		        (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND
+		    CASE
+		      WHEN (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		      ELSE
+		        (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		  AND ccbb.DEVICE_TYPE='0'
+		  AND EXISTS
+		    (SELECT ENTERPRISE_ID
+		    FROM CLW_JC_ENTERPRISE_T
+		      START WITH ENTERPRISE_ID       = #organization_id#
+		      CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		    AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		    )
+		  GROUP BY ccbb.vehicle_vin
+		  ) 
+      
+     
+    select ROW_NUMBER() OVER(ORDER BY d.SAVE_STANDARD desc,d.OVER_STANDARD desc) rn,
+    		d.vehicle_code,
+    		d.vehicle_ln ,
+    		d.vehicle_vin,
+    		d.driver_name,
+    		d.check_value,
+    		to_number(TO_CHAR(ROUND((                
+                   case
+                     when d.count_mileage = 0 then
+                      0
+                     when d.count_oil_total = 0 then
+                      0
+                     else
+                      d.COUNT_OIL_TOTAL * 100 / d.COUNT_MILEAGE
+                   end),
+                   3                   
+                   ),'fm9999999990.00')) AS HKM_OILUSED,
+		    to_number(TO_CHAR( 
+
+to_number(TO_CHAR(ROUND((                
+                   case
+                     when d.count_mileage = 0 then
+                      0
+                     when d.count_oil_total = 0 then
+                      0
+                     else
+                      d.COUNT_OIL_TOTAL * 100 / d.COUNT_MILEAGE
+                   end),
+                   3                   
+                   ),'fm9999999990.00'))- NVL(d.check_value, '0') ,'fm9999999990.00')) AS minusOil,
+			d.COUNT_OIL_TOTAL,
+			d.check_value_mile,
+			d.max_oil,
+			d.SAVE_STANDARD,
+			d.OVER_STANDARD,
+			d.COUNT_MILEAGE,
+			d.short_allname ,mileage,
+       oil_total from
+    			(      
+  					select  s.vehicle_code,
+  		  					s.vehicle_ln,
+          					s.vehicle_vin,
+          					s.driver_name,
+          					s.short_allname,
+          					to_number(TO_CHAR( NVL(s.check_value, '0'),'fm9999999990.00'))   AS check_value,				   			
+		      to_number(TO_CHAR( NVL(s.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00')) AS COUNT_OIL_TOTAL,
+		      to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00')) AS check_value_mile,
+		      to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))   AS max_oil, 
+		      (
+		      case
+		      when COUNT_OIL_TOTAL &lt; to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))     
+		      then to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL
+		      else 0
+		      end
+		      ) as SAVE_STANDARD,
+		      (
+		      case
+		      when s.COUNT_OIL_TOTAL &gt; to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))     
+		      then (to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL)
+		      else 0
+		      end
+		      ) as OVER_STANDARD,
+		     to_number(TO_CHAR( NVL(s.COUNT_MILEAGE, 0) ,'fm9999999990.00')) AS COUNT_MILEAGE,
+		     decode(s.mileage,'FFFF',0,s.mileage,mileage) mileage,
+               to_number(TO_CHAR( NVL(s.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00')) oil_total
+         from
+     (
+     select w1.vehicle_code,w1.vehicle_ln,w1.vehicle_vin,w1.short_allname,w2.driver_name,w3.check_value,w4.COUNT_MILEAGE,w5.mileage,w5.oil_total,w6.COUNT_OIL_TOTAL from w1,w2,w3,w4 ,w5,w6 
+     where w1.vehicle_vin=w4.vehicle_vin(+) and w1.vehicle_vin=w2.vehicle_vin(+) and w1.vehicle_vin=w3.vehicle_vin(+)
+     and w1.vehicle_vin = w5.vehicle_vin(+)
+     and w1.vehicle_vin = w6.vehicle_vin
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+          upper(w1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+      </isNotEmpty>
+      <isNotEmpty prepend="AND" property="vehicle_code">
+          w1.VEHICLE_CODE like '%' || #vehicle_code# ||'%' escape '\'
+      </isNotEmpty>      
+     )  s
+     )  d
+    <dynamic prepend="ORDER BY">  
+       <isNotEmpty property="sortname">  
+        $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<!-- 按车辆显示油耗数量 -->
+	<select id="getOilUsedCount" parameterClass="OilUsed" resultClass="Integer">
+	   with  
+     w1 as 
+    (
+    select t.vehicle_code, t.vehicle_ln, t.vehicle_vin,organ.short_allname
+                              from CLW_CL_BASE_INFO_T t,CLW_JC_CLEN_VI  organ
+                             where t.vehicle_code != '外租'
+                               and t.oil_config = '0'
+                               and t.valid_flag = '0'
+                               and t.vehicle_vin=organ.vehicle_vin(+)
+                               and t.organization_id=organ.organization_id
+                               and t.organization_id IN
+                                   (SELECT enterprise_id
+                                      FROM clw_jc_enterprise_vi
+                                     WHERE  left_num &gt;=
+                                           (SELECT left_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# )
+                                       AND right_num &lt;=
+                                           (SELECT right_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# ))
+		), 
+    w2 as 
+		(
+		select t.vehicle_vin,min(t.driver_name) as driver_name from 
+		(select t1.vehicle_vin,t3.driver_name from CLW_CL_BASE_INFO_T t1,clw_xc_vehdriver_t t2,CLW_YW_DRIVER_T t3 where t1.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin 
+		and t2.driver_id=t3.driver_id) t group by t.vehicle_vin
+		),
+    
+    w3 as 
+		(
+		select t1.vehicle_vin,t2.check_value from  CLW_CL_BASE_INFO_T t1,CLW_YW_OIL_CHECK_T t2
+		where t1.valid_flag='0' and t2.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin(+) and t2.check_time_code=#check_time_code#
+		),
+      w4 as
+    (
+     select t1.vehicle_vin,ROUND(SUM(NVL(t1.used_oil, 0)), 3)  AS COUNT_OIL_TOTAL,ROUND(SUM(NVL(t1.mileage, 0)), 3) AS COUNT_MILEAGE 
+     from ZSPT_OIL_ANALYS_INFO t1 
+     where (0 != to_number(TO_CHAR(NVL(t1.used_oil, '0'),'fm9999999990')) and 0 != to_number(TO_CHAR(NVL(t1.mileage, '0'),'fm9999999990')))
+     and t1.analys_date BETWEEN	
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+     GROUP BY  t1.vehicle_vin
+     ) 
+     select count(1) from w1,w2,w3,w4 
+     where w1.vehicle_vin=w4.vehicle_vin(+) and w1.vehicle_vin=w2.vehicle_vin(+) and w1.vehicle_vin=w3.vehicle_vin(+)
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+          upper(w1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+      </isNotEmpty>
+      <isNotEmpty prepend="AND" property="vehicle_code">
+          w1.VEHICLE_CODE like '%' || #vehicle_code# ||'%' escape '\'
+      </isNotEmpty>
+	</select>
+	
+	<!-- 按车辆显示总计油耗列表 -->
+	<select id="getOilUsedSumList" parameterClass="OilUsed" resultMap="oilusedsum-result">	
+
+	with  
+    w1 as 
+    (
+    select t.vehicle_code, t.vehicle_ln, t.vehicle_vin,organ.short_allname
+                              from CLW_CL_BASE_INFO_T t,CLW_JC_CLEN_VI  organ
+                             where t.vehicle_code != '外租'
+                               and t.oil_config = '0'
+                               and t.valid_flag = '0'
+                               and t.vehicle_vin=organ.vehicle_vin(+)
+                               and t.organization_id=organ.organization_id
+                               and t.organization_id IN
+                                   (SELECT enterprise_id
+                                      FROM clw_jc_enterprise_vi
+                                     WHERE  left_num &gt;=
+                                           (SELECT left_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# )
+                                       AND right_num &lt;=
+                                           (SELECT right_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# ))
+		
+		),   
+    w2 as 
+		(
+		select t.vehicle_vin,min(t.driver_name) as driver_name from 
+		(select t1.vehicle_vin,t3.driver_name from CLW_CL_BASE_INFO_T t1,clw_xc_vehdriver_t t2,CLW_YW_DRIVER_T t3 where t1.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin 
+		and t2.driver_id=t3.driver_id) t group by t.vehicle_vin
+		),
+    
+    w3 as 
+		(
+		select t1.vehicle_vin,t2.check_value from  CLW_CL_BASE_INFO_T t1,CLW_YW_OIL_CHECK_T t2
+		where t1.valid_flag='0' and t2.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin(+) and t2.check_time_code=#check_time_code#
+		),
+      w4 as
+    (
+     select t1.vehicle_vin,ROUND(SUM(NVL(t1.used_oil, 0)), 3)  AS COUNT_OIL_TOTAL,ROUND(SUM(NVL(t1.mileage, 0)), 3) AS COUNT_MILEAGE 
+     from ZSPT_OIL_ANALYS_INFO t1 
+     where (0 != to_number(TO_CHAR(NVL(t1.used_oil, '0'),'fm9999999990')) and 0 != to_number(TO_CHAR(NVL(t1.mileage, '0'),'fm9999999990'))) 
+     and t1.analys_date BETWEEN	
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+     GROUP BY  t1.vehicle_vin
+     ) 
+     
+     
+     select ROUND (SUM(sab.COUNT_OIL_TOTAL),2) as COUNT_OIL_TOTAL, ROUND (SUM(sab.COUNT_MILEAGE),2) as COUNT_MILEAGE
+  		from (
+     select ROW_NUMBER() OVER(ORDER BY d.SAVE_STANDARD desc,d.OVER_STANDARD desc) rn,d.vehicle_code,d.vehicle_ln ,d.vehicle_vin,d.driver_name,d.check_value,d.HKM_OILUSED,d.minusOil,
+		d.COUNT_OIL_TOTAL,d.check_value_mile,d.max_oil,d.SAVE_STANDARD,d.OVER_STANDARD,d.COUNT_MILEAGE,d.short_allname from
+    (      
+  select  s.vehicle_code,
+  		  s.vehicle_ln,
+          s.vehicle_vin,
+          s.driver_name,
+          s.short_allname,
+          to_number(TO_CHAR( NVL(s.check_value, '0'),'fm9999999990.00'))   AS check_value,
+				  to_number(TO_CHAR(ROUND((
+                                                        
+                                                        case
+                                                          when s.count_mileage = 0 then
+                                                           0
+                                                          when s.count_oil_total = 0 then
+                                                           0
+                                                          else
+                                                           s.COUNT_OIL_TOTAL * 100 / s.COUNT_MILEAGE
+                                                        end),
+                                                        3
+                                                        
+                                                        ),
+                                                  'fm9999999990.00')) AS HKM_OILUSED,
+		      to_number(TO_CHAR( ROUND((NVL(s.COUNT_OIL_TOTAL, 0) * 100 / DECODE(NVL(s.COUNT_MILEAGE, 0), 0, 1, NVL(s.COUNT_MILEAGE, 0))), 3) - NVL(s.check_value, '0') ,'fm9999999990.00')) AS minusOil,
+		      to_number(TO_CHAR( NVL(s.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00')) AS COUNT_OIL_TOTAL,
+		      to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00')) AS check_value_mile,
+		      to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))   AS max_oil, 
+		      (
+		      case
+		      when COUNT_OIL_TOTAL &lt; to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))     
+		      then to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL
+		      else 0
+		      end
+		      ) as SAVE_STANDARD,
+		      (
+		      case
+		      when s.COUNT_OIL_TOTAL &gt; to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))     
+		      then (to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL)
+		      else 0
+		      end
+		      ) as OVER_STANDARD,
+		     to_number(TO_CHAR( NVL(s.COUNT_MILEAGE, 0) ,'fm9999999990.00')) AS COUNT_MILEAGE
+         from
+     (
+     select w1.vehicle_code,w1.vehicle_ln,w1.vehicle_vin,w1.short_allname,w2.driver_name,w3.check_value,w4.COUNT_OIL_TOTAL,w4.COUNT_MILEAGE from w1,w2,w3,w4 
+     where w1.vehicle_vin=w4.vehicle_vin(+) and w1.vehicle_vin=w2.vehicle_vin(+) and w1.vehicle_vin=w3.vehicle_vin(+)
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+          upper(w1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+      </isNotEmpty>
+      <isNotEmpty prepend="AND" property="vehicle_code">
+          w1.VEHICLE_CODE like '%' || #vehicle_code# ||'%' escape '\'
+      </isNotEmpty>      
+     )  s
+     )  d
+    ) sab   
+	</select>
+	
+	
+	
+	<!-- 按车辆显示总计油耗列表 -->
+	<select id="getOilUsedSumListEcu" parameterClass="OilUsed" resultMap="oilusedsum-result">	
+with  
+    w1 as 
+    (
+    select t.vehicle_code, t.vehicle_ln, t.vehicle_vin,organ.short_allname
+                              from CLW_CL_BASE_INFO_T t,CLW_JC_CLEN_VI  organ
+                             where t.vehicle_code != '外租'
+                               and t.oil_config = '0'
+                               and t.valid_flag = '0'
+                               and t.vehicle_vin=organ.vehicle_vin(+)
+                               and t.organization_id=organ.organization_id
+                               and t.organization_id IN
+                                   (SELECT enterprise_id
+                                      FROM clw_jc_enterprise_vi
+                                     WHERE  left_num &gt;=
+                                           (SELECT left_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# )
+                                       AND right_num &lt;=
+                                           (SELECT right_num
+                                              FROM clw_jc_enterprise_t
+                                             WHERE enterprise_id = #organization_id# ))
+		),   
+    w2 as 
+		(
+		select t.vehicle_vin,min(t.driver_name) as driver_name from 
+		(select t1.vehicle_vin,t3.driver_name from CLW_CL_BASE_INFO_T t1,clw_xc_vehdriver_t t2,CLW_YW_DRIVER_T t3 where t1.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin 
+		and t2.driver_id=t3.driver_id) t group by t.vehicle_vin
+		),
+    
+    w3 as 
+		(
+		select t1.vehicle_vin,t2.check_value from  CLW_CL_BASE_INFO_T t1,CLW_YW_OIL_CHECK_T t2
+		where t1.valid_flag='0' and t2.valid_flag='0' and t1.vehicle_vin=t2.vehicle_vin(+) and t2.check_time_code=#check_time_code#
+		),
+     w4 as
+    (
+     select t1.vehicle_vin,ROUND(SUM(NVL(t1.used_oil, 0)), 3)  AS COUNT_OIL_TOTAL,ROUND(SUM(NVL(t1.mileage, 0)), 3) AS COUNT_MILEAGE 
+     from ZSPT_OIL_ANALYS_INFO t1 
+     where <!-- (0 != to_number(TO_CHAR(NVL(t1.used_oil, '0'),'fm9999999990')) and 0 != to_number(TO_CHAR(NVL(t1.mileage, '0'),'fm9999999990'))) and --> 
+      t1.analys_date BETWEEN	
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #organization_id#
+		      )
+		  END
+     GROUP BY  t1.vehicle_vin
+     ),
+   w5 as (select t.vehicle_vin,    ROUND(max(to_number(count_mileage)),3) mileage, ROUND(SUM(NVL(used_oil, 0)), 3) oil_total
+  from ZSPT_OIL_ANALYS_INFO t
+ group by vehicle_vin),
+ w6 as (SELECT ccbb.vehicle_vin,
+		    ROUND(SUM(NVL(t.oil, 0)), 3)     AS COUNT_OIL_TOTAL,
+		    ROUND(SUM(NVL(t.mileage, 0)), 3) AS COUNT_MILEAGE
+		  FROM clw_yw_baddriving_t t,
+		    CLW_CL_BASE_INFO_T ccbb
+		  WHERE t.alarm_day BETWEEN
+		    CASE
+		      WHEN (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		      ELSE
+		        (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND
+		    CASE
+		      WHEN (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		      ELSE
+		        (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		  AND ccbb.DEVICE_TYPE='0'
+		  AND EXISTS
+		    (SELECT ENTERPRISE_ID
+		    FROM CLW_JC_ENTERPRISE_T
+		      START WITH ENTERPRISE_ID       = #organization_id#
+		      CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		    AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		    )
+		  GROUP BY ccbb.vehicle_vin
+		  ) 
+     
+     select ROUND (SUM(sab.COUNT_OIL_TOTAL),2) as COUNT_OIL_TOTAL, ROUND (SUM(sab.COUNT_MILEAGE),2) as COUNT_MILEAGE
+  		from (
+
+    select ROW_NUMBER() OVER(ORDER BY d.SAVE_STANDARD desc,d.OVER_STANDARD desc) rn,
+    		d.vehicle_code,
+    		d.vehicle_ln ,
+    		d.vehicle_vin,
+    		d.driver_name,
+    		d.check_value,
+    		to_number(TO_CHAR(ROUND((                
+                   case
+                     when d.count_mileage = 0 then
+                      0
+                     when d.count_oil_total = 0 then
+                      0
+                     else
+                      d.COUNT_OIL_TOTAL * 100 / d.COUNT_MILEAGE
+                   end),
+                   3                   
+                   ),'fm9999999990.00')) AS HKM_OILUSED,
+		    to_number(TO_CHAR( 
+
+to_number(TO_CHAR(ROUND((                
+                   case
+                     when d.count_mileage = 0 then
+                      0
+                     when d.count_oil_total = 0 then
+                      0
+                     else
+                      d.COUNT_OIL_TOTAL * 100 / d.COUNT_MILEAGE
+                   end),
+                   3                   
+                   ),'fm9999999990.00'))- NVL(d.check_value, '0') ,'fm9999999990.00')) AS minusOil,
+			d.COUNT_OIL_TOTAL,
+			d.check_value_mile,
+			d.max_oil,
+			d.SAVE_STANDARD,
+			d.OVER_STANDARD,
+			d.COUNT_MILEAGE,
+			d.short_allname ,mileage,
+       oil_total from
+    			(      
+  					select  s.vehicle_code,
+  		  					s.vehicle_ln,
+          					s.vehicle_vin,
+          					s.driver_name,
+          					s.short_allname,
+          					to_number(TO_CHAR( NVL(s.check_value, '0'),'fm9999999990.00'))   AS check_value,				   			
+		      to_number(TO_CHAR( NVL(s.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00')) AS COUNT_OIL_TOTAL,
+		      to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00')) AS check_value_mile,
+		      to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))   AS max_oil, 
+		      (
+		      case
+		      when COUNT_OIL_TOTAL &lt; to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))     
+		      then to_number(TO_CHAR( ROUND(NVL(s.check_value, 0) * NVL(s.COUNT_MILEAGE, 0)/100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL
+		      else 0
+		      end
+		      ) as SAVE_STANDARD,
+		      (
+		      case
+		      when s.COUNT_OIL_TOTAL &gt; to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))     
+		      then (to_number(TO_CHAR( ROUND((NVL(s.check_value, 0)) * NVL(s.COUNT_MILEAGE, 0) /100, 3) ,'fm9999999990.00'))- COUNT_OIL_TOTAL)
+		      else 0
+		      end
+		      ) as OVER_STANDARD,
+		     to_number(TO_CHAR( NVL(s.COUNT_MILEAGE, 0) ,'fm9999999990.00')) AS COUNT_MILEAGE,
+		     decode(s.mileage,'FFFF',0,s.mileage,mileage) mileage,
+               to_number(TO_CHAR( NVL(s.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00')) oil_total
+         from
+     (
+     select w1.vehicle_code,w1.vehicle_ln,w1.vehicle_vin,w1.short_allname,w2.driver_name,w3.check_value,w4.COUNT_MILEAGE,w5.mileage,w5.oil_total,w6.COUNT_OIL_TOTAL from w1,w2,w3,w4 ,w5,w6 
+     where w1.vehicle_vin=w4.vehicle_vin(+) and w1.vehicle_vin=w2.vehicle_vin(+) and w1.vehicle_vin=w3.vehicle_vin(+)
+     and w1.vehicle_vin = w5.vehicle_vin(+)
+     and w1.vehicle_vin = w6.vehicle_vin
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+          upper(w1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+      </isNotEmpty>
+      <isNotEmpty prepend="AND" property="vehicle_code">
+          w1.VEHICLE_CODE like '%' || #vehicle_code# ||'%' escape '\'
+      </isNotEmpty>      
+     )  s
+     )  d   
+    ) sab   
+	</select>
+	
+	
+	
+	<!--油耗分析图，获得当月数据 -->
+	<select id="getChartDate" parameterClass="OilUsed" resultMap="oilusedline-result">
+		SELECT TO_CHAR(t.analys_date,'MM-dd') analys_date,
+		       <!-- ROUND((SUM(NVL(t.used_oil, 0)) * 100 / DECODE(SUM(NVL(t.mileage, 0)), 0, 1, SUM(NVL(t.mileage, 0)))), 2) AS COUNT_OIL_TOTAL-->
+		       DECODE(SUM(NVL(t.mileage, 0)),0,0,ROUND((SUM(NVL(t.used_oil, 0)) * 100 / DECODE(SUM(NVL(t.mileage, 0)), 0, 1, SUM(NVL(t.mileage, 0)))),2)) AS COUNT_OIL_TOTAL
+		
+		FROM ZSPT_OIL_ANALYS_INFO t,
+		  CLW_CL_BASE_INFO_T ccbb
+		WHERE  t.analys_date	BETWEEN	
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id#
+		      )
+		  END
+		  
+		  
+		AND t.vehicle_vin   =#vehicle_vin#
+		AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		AND ccbb.DEVICE_TYPE='0'
+		AND EXISTS
+		  (SELECT ENTERPRISE_ID
+		  FROM CLW_JC_ENTERPRISE_T
+		    START WITH ENTERPRISE_ID       = #organization_id#
+		    CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		  AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		  )
+		GROUP BY t.analys_date
+		ORDER BY t.analys_date
+	</select>
+	
+	<select id="getChartInfo" parameterClass="OilUsed" resultMap="oilusedInfo-result">
+		SELECT cjcv.vehicle_ln,
+		  cjcv.vehicle_code,
+		  cjcv.short_allname
+		FROM CLW_JC_CLEN_VI cjcv
+		WHERE cjcv.vehicle_vin    =#vehicle_vin#
+		AND cjcv.ORGANIZATION_ID IN
+		  (SELECT enterprise_id
+		  FROM clw_jc_enterprise_vi
+		  WHERE left_num &gt;=
+		  (SELECT left_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  ) AND right_num &lt;=
+		  (SELECT right_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  )
+		  )
+	</select>
+</sqlMap>

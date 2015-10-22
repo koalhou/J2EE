@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SysVersion">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="SysVersionInfo" type="com.neusoft.clw.yw.xs.versionmanage.ds.SysVersionInfo" />
+
+	 <select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+		  FROM clw_cl_sysversion_t t
+		 WHERE t.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="apply_id">
+			 	t.apply_id=#apply_id#
+		</isNotEmpty>
+     </select>
+     
+	<resultMap id="data-result" class="SysVersionInfo">
+		<result property="version_id" column="VERSION_ID" />
+		<result property="apply_id" column="APPLY_ID" />
+		<result property="version_name" column="VERSION_NAME" />
+		<result property="version_time" column="VERSION_TIME" />
+	</resultMap>
+	<select id="selectSysVersion"  parameterClass="Map" resultMap="data-result">
+	SELECT t.version_id,
+	       t.apply_id,
+	       t.version_name,
+	       to_char(t.version_time, 'yyyy-mm-dd hh24:mi:ss') AS version_time
+	  FROM clw_cl_sysversion_t t
+	 WHERE t.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="apply_id">
+				 	t.apply_id=#apply_id#
+		</isNotEmpty>
+       ORDER BY t.create_time
+ 	</select>
+	 
+	<insert id="insertSysVersion" parameterClass="SysVersionInfo">
+	INSERT INTO clw_cl_sysversion_t
+	  (version_id,
+	   apply_id,
+	   version_name,
+	   version_desc,
+	   creater,
+	   create_time,
+	   modifier,
+	   modify_time,
+	   valid_flag,
+	   vaset_user_id,
+	   vaset_time,
+	   version_time)
+	VALUES
+	  (#version_id#,
+	   #apply_id#,
+	   #version_name#,
+	   #version_desc#,
+	   #creater#,
+	   SYSDATE,
+	   '',
+	   '',
+	   '0',
+	   '',
+	   '',
+	   TO_DATE(#version_time#,'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+	<select id="getSysVersionInfo" parameterClass="String" resultClass="SysVersionInfo">
+	SELECT t.version_id,
+	       t.apply_id,
+	       t.version_name,
+	       TO_CHAR(t.version_time,'yyyy-mm-dd hh24:mi:ss') as version_time,
+	       t.version_desc
+	  FROM clw_cl_sysversion_t t
+	 WHERE t.version_id = #version_id#
+	</select>
+	<update id="updateSysVersionInfo" parameterClass="SysVersionInfo">
+		UPDATE clw_cl_sysversion_t t
+		   SET t.apply_id     = #apply_id#,
+		       t.version_name = #version_name#,
+		       t.version_desc = #version_desc#,
+		       t.version_time = TO_DATE(#version_time#, 'yyyy-mm-dd hh24:mi:ss'),
+		       t.modifier     = #modifier#,
+		       t.modify_time  = SYSDATE
+		 WHERE t.version_id = #version_id#
+ 	</update>
+ 	<update id="updateDelSysVersionInfo" parameterClass="Map">
+	 UPDATE clw_cl_sysversion_t t
+	   SET t.valid_flag = '1', t.vaset_user_id = #vaset_user_id#, t.vaset_time = SYSDATE
+	 WHERE t.version_id = #version_id#
+ 	</update>
+ 	
+ 	
+ 	
+ 	
+ 	
+</sqlMap>

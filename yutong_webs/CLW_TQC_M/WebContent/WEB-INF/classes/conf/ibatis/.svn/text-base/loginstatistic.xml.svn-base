@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Statistic">
+ 
+ <typeAlias alias="LoginStatistic" type="com.neusoft.clw.yw.statistic.domain.LoginStatistic"/>
+ <typeAlias alias="BehaviorInfo" type="com.neusoft.clw.yw.statistic.domain.BehaviorInfo"/>
+ 
+<!-- 根据日期范围查询每个人的登录次数  列表-->
+<select id="getLoginList" parameterClass="LoginStatistic" resultClass="LoginStatistic">
+	select a.emp_code empCode,
+	       b.emp_name empName,
+	       count(a.emp_code) loginCount
+	  from clw_tqc_ygb.CLW_TQC_LOGIN_RECORD a,
+	       clw_tqc_ygb.clw_tqc_emp_t b
+	 where a.emp_code=b.emp_code
+	<dynamic>
+	<isNotEmpty property="beginDate">
+	<![CDATA[
+		and trunc(a.login_time) >= to_date(#beginDate#,'yyyy-mm-dd') 
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="endDate">
+	<![CDATA[
+		and trunc(a.login_time) <= to_date(#endDate#,'yyyy-mm-dd')
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empCode">
+	<![CDATA[
+		and a.emp_code like '%$empCode$%'
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empName">
+	<![CDATA[
+		and b.emp_name like '%$empName$%'
+	]]>
+	</isNotEmpty>
+	</dynamic>
+	 group by a.emp_code,b.emp_name
+	 order by loginCount desc
+</select>
+
+<!-- 根据日期范围查询每个人的登录次数  总数 -->
+<select id="getLoginCount" parameterClass="LoginStatistic" resultClass="java.lang.Integer">
+    select count(1)
+      from (
+	select a.emp_code,
+	       b.emp_name
+	  from clw_tqc_ygb.CLW_TQC_LOGIN_RECORD a,
+	       clw_tqc_ygb.clw_tqc_emp_t b
+	 where a.emp_code=b.emp_code
+	<dynamic>
+	<isNotEmpty property="beginDate">
+	<![CDATA[
+		and trunc(a.login_time) >= to_date(#beginDate#,'yyyy-mm-dd') 
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="endDate">
+	<![CDATA[
+		and trunc(a.login_time) <= to_date(#endDate#,'yyyy-mm-dd')
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empCode">
+	<![CDATA[
+		and a.emp_code like '%$empCode$%'
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empName">
+	<![CDATA[
+		and b.emp_name like '%$empName$%'
+	]]>
+	</isNotEmpty>
+	</dynamic>
+	 group by a.emp_code,b.emp_name
+	 )
+ </select>
+<!-- 根据员工编号查询登录详情  列表-->
+<select id="getLoginDetailList" parameterClass="LoginStatistic" resultClass="LoginStatistic">
+	  select a.emp_code empCode,
+	         b.emp_name empName,
+	         to_char(a.login_time,'yyyy-mm-dd hh24:mi:ss') loginTime,
+	         a.login_type loginType
+	    from clw_tqc_ygb.CLW_TQC_LOGIN_RECORD a,
+	         clw_tqc_ygb.clw_tqc_emp_t b
+	   where a.emp_code=b.emp_code
+	  <dynamic>
+	  <isNotEmpty property="beginDate">
+	  <![CDATA[
+	    and trunc(a.login_time) >= to_date(#beginDate#,'yyyy-mm-dd') 
+	  ]]>
+	  </isNotEmpty>
+	  <isNotEmpty property="endDate">
+	  <![CDATA[
+	    and trunc(a.login_time) <= to_date(#endDate#,'yyyy-mm-dd')
+	  ]]>
+	  </isNotEmpty>
+	  <isNotEmpty property="empCode">
+	  <![CDATA[
+	    and a.emp_code = #empCode#
+	  ]]>
+	  </isNotEmpty>
+	  </dynamic>
+	   order by a.login_time desc
+</select>
+<!-- 根据员工编号查询登录详情  总数-->
+<select id="getLoginDetailCount" parameterClass="LoginStatistic" resultClass="java.lang.Integer">
+	  select count(1)
+	    from clw_tqc_ygb.CLW_TQC_LOGIN_RECORD a,
+	         clw_tqc_ygb.clw_tqc_emp_t b
+	   where a.emp_code=b.emp_code
+	  <dynamic>
+	  <isNotEmpty property="beginDate">
+	  <![CDATA[
+	    and trunc(a.login_time) >= to_date(#beginDate#,'yyyy-mm-dd') 
+	  ]]>
+	  </isNotEmpty>
+	  <isNotEmpty property="endDate">
+	  <![CDATA[
+	    and trunc(a.login_time) <= to_date(#endDate#,'yyyy-mm-dd')
+	  ]]>
+	  </isNotEmpty>
+	  <isNotEmpty property="empCode">
+	  <![CDATA[
+	    and a.emp_code = #empCode#
+	  ]]>
+	  </isNotEmpty>
+	  </dynamic>
+</select>
+<!-- 登陆次数图标显示 -->
+<select id="getLoginCharts" parameterClass="LoginStatistic" resultClass="java.util.LinkedHashMap">
+	select (trunc(to_number(to_char(a.login_time, 'hh24')) / 2) + 1) as timeId, 
+           count(1) as total
+	  from clw_tqc_ygb.clw_tqc_login_record a,
+	       clw_tqc_ygb.clw_tqc_emp_t b
+	 where a.emp_code=b.emp_code
+	<dynamic>
+	<isNotEmpty property="beginDate">
+	<![CDATA[
+		and trunc(a.login_time) >= to_date(#beginDate#,'yyyy-mm-dd') 
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="endDate">
+	<![CDATA[
+		and trunc(a.login_time) <= to_date(#endDate#,'yyyy-mm-dd')
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empCode">
+	<![CDATA[
+		and a.emp_code like '%$empCode$%'
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empName">
+	<![CDATA[
+		and b.emp_name like '%$empName$%'
+	]]>
+	</isNotEmpty>
+	</dynamic>
+	 group by trunc(to_number(to_char(a.login_time, 'hh24')) / 2)
+	 order by timeId asc
+</select>
+<!-- 登陆次数详情柱状图显示 -->
+<select id="getLoginDetailCharts" parameterClass="LoginStatistic" resultClass="java.util.LinkedHashMap">
+	select (trunc(to_number(to_char(a.login_time, 'hh24')) / 2) + 1) as timeId, 
+           count(1) as total
+	  from clw_tqc_ygb.clw_tqc_login_record a
+	 where 1=1
+	<dynamic>
+	<isNotEmpty property="beginDate">
+	<![CDATA[
+		and trunc(a.login_time) >= to_date(#beginDate#,'yyyy-mm-dd') 
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="endDate">
+	<![CDATA[
+		and trunc(a.login_time) <= to_date(#endDate#,'yyyy-mm-dd')
+	]]>
+	</isNotEmpty>
+	<isNotEmpty property="empCode">
+	<![CDATA[
+		and a.emp_code = #empCode#
+	]]>
+	</isNotEmpty>
+	</dynamic>
+	 group by trunc(to_number(to_char(a.login_time, 'hh24')) / 2)
+	 order by timeId asc
+</select>
+</sqlMap>

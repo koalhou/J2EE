@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance
+END
+StationGenAlgorithmThreshold.java
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/StationGenAlgorithmThreshold.java
+END
+Vehicle.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/Vehicle.java
+END
+SQLAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/SQLAdapter.java
+END
+DistanceMsg.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/DistanceMsg.java
+END
+VehicleTrackMapItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/VehicleTrackMapItem.java
+END
+StationGenAlgorithmParam.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/StationGenAlgorithmParam.java
+END
+VehicleTrack.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/VehicleTrack.java
+END
+Parent.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/Parent.java
+END
+VehicleTripOrbit.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/distance/VehicleTripOrbit.java
+END

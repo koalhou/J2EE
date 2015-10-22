@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="wxannouncementmanage" namespace="/wxannouncement" extends="clw-default">
+		
+		<action name="readyPage" class="announcementAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/wxmanage/announcement.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/wxmanage/announcement.jsp</result>	
+		</action>
+		<action name="addbefore" class="announcementAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/wxmanage/addannouncement.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">readyPage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="queryVehicle" class="announcementAction" method="queryVehicle">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/wxmanage/vehicleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/wxmanage/vehicleBrowse.jsp
+			</result>
+		</action>
+		<action name="addAnnouncement" class="announcementAction" method="addAnnouncement">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/wxmanage/addannouncement.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">readyPage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/wxmanage/addannouncement.jsp
+			</result>			
+		</action>
+		<action name="showDetail" class="announcementAction" method="showDetail">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/wxmanage/detail.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">readyPage</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="showVehicleDetail" class="announcementAction" method="showVehicleDetail">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/wxmanage/vehicle_detail.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">readyPage</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+	</package>
+	<package name="wxannouncementGrid" namespace="/wxannouncementGrid" extends="json-default">
+		<action name="announcementBrowse" class="announcementAction"  method="announcementBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

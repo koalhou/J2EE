@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="stcheckrecord">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="clwXcStCheckRecordT" type="com.neusoft.clw.ws.bean.ClwXcStCheckRecordT"/>
+	
+	<resultMap class="ClwXcStCheckRecordT" id="ClwXcStCheckRecordTResult">
+		<result property="id" column="ID"/>
+		<result property="stuCode" column="STU_CODE"/>
+		<result property="siteId" column="SITE_ID"/>
+		<result property="routeId" column="ROUTE_ID"/>
+		<result property="vehicleVin" column="VEHICLE_VIN"/>
+		<result property="piciId" column="PICI_ID"/>
+		<result property="latitude" column="LATITUDE"/>
+		<result property="longitude" column="LONGITUDE"/>
+		<result property="siteFlag" column="SITE_FLAG"/>
+		<result property="vssFlag" column="VSS_FLAG"/>
+		<result property="alarmTypeId" column="ALARM_TYPE_ID"/>
+		<result property="stDowmNum" column="ST_DOWM_NUM"/>
+		<result property="stUpNum" column="ST_UP_NUM"/>
+		<result property="stNum" column="ST_NUM"/>
+		<result property="terminalTime" column="TERMINAL_TIME"/>
+		<result property="createTime" column="CREATE_TIME"/>
+		<result property="operateFlag" column="OPERATE_FLAG"/>
+		<result property="operateTime" column="OPERATE_TIME"/>
+		<result property="operateDesc" column="OPERATE_DESC"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="planUpNum" column="PLAN_UP_NUM"/>
+		<result property="planDownNum" column="PLAN_DOWN_NUM"/>
+		<result property="sichenId" column="SICHEN_ID"/>
+		<result property="driverId" column="DRIVER_ID"/>
+		<result property="mesgFlag" column="MESG_FLAG"/>
+		<result property="smsFailInfo" column="SMS_FAIL_INFO"/>
+		<result property="operateType" column="OPERATE_TYPE"/>
+		<result property="operateRemark" column="OPERATE_REMARK"/>
+		<result property="tripId" column="TRIP_ID"/>
+		<result property="inoutId" column="INOUT_ID"/>
+		<result property="zonename" column="ZONENAME"/>
+		<result property="stuCardId" column="STU_CARD_ID"/>
+		<result property="stuName" column="STU_NAME"/>
+		<result property="organizationId" column="ORGANIZATION_ID"/>
+	</resultMap>
+	
+	<select id="StCheckRecordpaginate"  parameterClass="map" resultMap="ClwXcStCheckRecordTResult">
+		select * from (select s.*, rownum as rownum_2 from (
+		<![CDATA[
+			SELECT  ID, STU_CODE, SITE_ID, ROUTE_ID, VEHICLE_VIN, PICI_ID, LATITUDE, LONGITUDE, SITE_FLAG, VSS_FLAG, ALARM_TYPE_ID, ST_DOWM_NUM, ST_UP_NUM, ST_NUM, TERMINAL_TIME, CREATE_TIME, OPERATE_FLAG, OPERATE_TIME, OPERATE_DESC, USER_ID, PLAN_UP_NUM, PLAN_DOWN_NUM, SICHEN_ID, DRIVER_ID, MESG_FLAG, SMS_FAIL_INFO, OPERATE_TYPE, OPERATE_REMARK, TRIP_ID, INOUT_ID, ZONENAME, STU_CARD_ID, STU_NAME, ORGANIZATION_ID FROM CLW_XC_ST_CHECK_RECORD_T 
+		]]>
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="and" property="id">
+				 ID=#id#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="lesstime">
+				 terminal_time > to_date(#lesstime#,'yyyy-mm-dd')
+			</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="sortname">  
+			order by $sortname$   $sortorder$  
+	    </isNotEmpty>
+		<![CDATA[
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</select>
+</sqlMap>

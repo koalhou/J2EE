@@ -1,0 +1,2193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ZsptFtlyinfoNew">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	
+	<cacheModel id="ftly-cache" type="LRU" readOnly="true"> 
+	  <flushInterval hours="72"/> 
+	  <property name="size" value="1000000" /> 
+	 </cacheModel>
+	 
+	 <cacheModel id="ftly-point-cache" type="LRU" readOnly="true"> 
+	  <flushInterval hours="168"/> 
+	  <property name="size" value="30000" /> 
+	 </cacheModel>
+	
+
+	<typeAlias alias="VehicleTimeSetInfo"
+		type="com.neusoft.clw.yw.cl.vehicleRegister.ds.VehicleTimeSetInfo" />
+
+	<typeAlias alias="ftlyInfo" type="com.neusoft.clw.yw.ftly.ds.ZsptFtlyInfo" />
+
+	<resultMap id="ftlyInfo-result" class="ftlyInfo">
+		<result property="shortName" column="short_name" />
+		<result property="vehicleLn" column="vehicle_ln" />
+		<result property="reportTimeString" column="report_time" />
+		<result property="oilboxState" column="OILBOX_STATE" />
+		<result property="vinCode" column="vehicle_vin" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="vinCode" column="vehicle_vin" />
+		<result property="addOill" column="add_oill" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+	</resultMap>
+	<resultMap id="ftlyInfo-result-init" class="ftlyInfo">
+		<result property="orgName" column="org_name" />
+
+		<result property="shortName" column="short_name" />
+		<result property="vehicleLn" column="vehicle_ln" />
+		<result property="reportTimeString" column="report_time" />
+		<result property="oilboxState" column="OILBOX_STATE" />
+		<result property="vinCode" column="vehicle_vin" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="vinCode" column="vehicle_vin" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="allAddOill" column="all_add_oill" />
+		<result property="allStealOill" column="all_steal_oill" />
+		<result property="alarmCount" column="alarmCount" />
+	</resultMap>
+	<resultMap id="ftlyInfoNew-result-init" class="ftlyInfo">
+		<result property="vehicleLn" column="vehicle_ln" />
+		<result property="reportTimeString" column="report_time" />
+		<result property="vinCode" column="vehicle_vin" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="alarmCount" column="alarmCount" />
+		<result property="ftlyFlag" column="ftly_flag" />
+		<result property="oilPercent" column="oil_percent" />
+		<result property="oilboxState" column="STATE" />
+		<result property="oilCapacity" column="oilCapacity" />
+		<result property="vehicle_code" column="vehicle_code"/>
+	</resultMap>
+	<resultMap id="ftlyInfoNew-allCarState" class="ftlyInfo">
+		<result property="vinCode" column="vehicle_vin" />
+		<result property="oilboxState" column="STATE" />
+	</resultMap>
+	<resultMap id="ftlyInfoDetail-result" class="ftlyInfo">
+		<result property="reportTimeString" column="report_time" />
+		<result property="oilboxState" column="oilbox_state" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="vinCode" column="vin_code" />
+		<result property="oilboxLevel" column="oilbox_level" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="addOill" column="add_oill" />
+		<result property="vehicleLn" column="vehicle_ln" />
+		<result property="zonename" column="zonename" />
+		<result property="vehicle_code" column="vehicle_code"/>
+	</resultMap>
+	<resultMap class="ftlyInfo" id="ftlyInfoDetail-export"
+		extends="ftlyInfoDetail-result">
+		<result property="vehicleLn" column="vehicle_ln" />
+		<result property="gpsSpeeding" column="gps_speeding" />
+		<result property="speeding" column="speeding" />
+		<result property="elevation" column="elevation" />
+		<result property="direction" column="direction" />
+	</resultMap>
+	<resultMap id="ftlyInfo-OilChangeInfo" class="ftlyInfo">
+		<result property="oilboxMass" column="OILBOX_MASS" />
+		<result property="reportTime" column="REPORT_TIME" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vinCode" column="vehicle_vin" />
+	</resultMap>
+	<resultMap id="ftlyInfo-oilWear" class="ftlyInfo">
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="mileage" column="mileage" />
+		<result property="usedOil" column="usedOil" />
+		<result property="totalOilPrice" column="totalOilPrice" />
+		<result property="vehicle_code" column="vehicle_code"/>
+	</resultMap>
+	<sql id="vehicleYtlyInfoEqual">
+		<isNotEmpty prepend="AND" property="organizationId">
+			base.enterprise_id = je.enterprise_id(+)
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleVinList">
+			base.vehicle_vin in
+			<iterate property="vehicleVinList" conjunction="," open="("
+				close=")">
+				#vehicleVinList[]#
+		     	</iterate>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="pt">
+			base.pt_flag = #pt#
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+			t.report_time &lt;= TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			t.report_time &gt;= TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleVin">
+			t.vin_code = #vehicleVin#
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="oilboxStateValueOr">
+			(t.oilbox_state = '001' or t.oilbox_state = '010' )
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="oilMassTrue">
+			<!-- nvl(ROUND(t.oilbox_mass, 2), 0) &gt; 0 -->
+		</isNotEmpty>
+	</sql>
+	<!-- 专为首页列表查询 -->
+	<sql id="vehicleYtlyInfoEqualList">
+		<isNotEmpty prepend="AND" property="organizationId">
+			base.enterprise_id = je.enterprise_id
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicle_ln">
+			upper(base.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleVinList">
+			base.vehicle_vin in
+			<iterate property="vehicleVinList" conjunction="," open="("
+				close=")">
+				#vehicleVinList[]#
+		     	</iterate>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="pt">
+			base.pt_flag = #pt#
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleVin">
+			t.vin_code = #vehicleVin#
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="oilboxStateValueOr">
+			(t.oilbox_state = '001' or t.oilbox_state = '010' )
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="oilMassTrue">
+			nvl(ROUND(t.oilbox_mass, 2), 0) &gt; 0
+         </isNotEmpty>
+	</sql>
+	<!-- 获取防偷漏油列表数量(全部) -->
+	<select id="getFtlyInfoListCount" parameterClass="Map"
+		resultClass="int" >
+		select count(1)
+		from
+		(select
+		<isNotEmpty prepend="" property="kcptType">
+			vi.sName short_name,vi.lname org_name,
+        </isNotEmpty>
+		<isNotEmpty prepend="" property="xcptType">
+			vi.short_name short_name,je.short_name org_name,
+        </isNotEmpty>
+		base.vehicle_ln,to_char(t.report_time,'yyyy-mm-dd hh24:mi:ss') as
+		report_time,
+		base.vehicle_vin,
+		decode(sign(t3.all_steal_oill),1,'2',decode(sign(t2.all_add_oill),1,'1','0'))
+		oilBox_state,
+		nvl(ROUND(t.oilbox_mass,2),0) oilbox_mass,t.latitude
+		,t.longitude ,
+		decode(t2.all_add_oill,null,0,t2.all_add_oill) all_add_oill,
+		decode(t3.all_steal_oill,null,0,t3.all_steal_oill) all_steal_oill
+		from zspt_ftly_info t , (select
+		t.enterprise_id,t.parent_id,t.short_name
+		from clw_jc_enterprise_vi t,
+		(select left_num as v_left, right_num as v_right
+		from clw_jc_enterprise_t t1
+		where t1.enterprise_id = #organizationId#
+		and t1.valid_flag = '0' ) aa
+		where t.left_num &gt;= aa.v_left
+		and t.right_num &lt;= aa.v_right ) je,
+		<isNotEmpty prepend="" property="kcptType">
+			(select aa.short_name sName,bb.short_name lname,aa.enterprise_id from
+			clw_jc_enterprise_vi aa,clw_jc_enterprise_vi bb
+			where aa.parent_id=bb.enterprise_id) vi,
+          </isNotEmpty>
+		<isNotEmpty prepend="" property="xcptType">
+			(select short_name,enterprise_id from clw_jc_enterprise_vi) vi,
+          </isNotEmpty>
+
+		(select max(report_time) report_time,vin_code from zspt_ftly_info t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="end_time">
+				t.report_time &lt;= to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+          </isNotEmpty>
+			<isNotEmpty prepend="AND" property="start_time">
+				t.report_time &gt;= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+          </isNotEmpty>
+		</dynamic>
+		group by vin_code) t1,
+		(select sum(add_oill) all_add_oill,vin_code
+		from zspt_ftly_info t
+		where t.report_time &lt;= to_date('$end_time$', 'yyyy-mm-dd HH24:MI:SS')
+		and t.report_time &gt;= to_date('$start_time$', 'yyyy-mm-dd
+		HH24:MI:SS')
+		and t.oilbox_state = '010' group by vin_code) t2,
+		(select sum(add_oill) all_steal_oill,vin_code
+		from zspt_ftly_info t
+		where t.report_time &lt;= to_date('$end_time$', 'yyyy-mm-dd HH24:MI:SS')
+		and t.report_time &gt;= to_date('$start_time$', 'yyyy-mm-dd
+		HH24:MI:SS')
+		and t.oilbox_state = '001' group by vin_code) t3,
+		clw_cl_base_info_t base
+		where base.vehicle_vin = t1.vin_code(+)
+		<isNotEmpty prepend="" property="kcptType">
+			and je.parent_id(+) = vi.enterprise_id
+          </isNotEmpty>
+		<isNotEmpty prepend="" property="xcptType">
+			and base.organization_id = vi.enterprise_id(+)
+          </isNotEmpty>
+		and t2.vin_code(+) = t1.vin_code
+		and t3.vin_code(+) = t1.vin_code
+		and t1.report_time=t.report_time
+		and base.vehicle_vin = t.vin_code
+		<include refid="vehicleYtlyInfoEqualList" />
+		)
+	</select>
+	<!-- 获取防偷漏油列表信息 (全部) -->
+	<select id="getFtlyInfoListGrid" parameterClass="Map"
+		resultMap="ftlyInfo-result-init">
+		<include refid="Page.prefix" />
+		select
+		short_name,org_name,vehicle_ln,report_time,vehicle_vin,oilBox_state,oilbox_mass,latitude,longitude,all_add_oill,all_steal_oill
+		from
+		(select
+		<isNotEmpty prepend="" property="kcptType">
+			vi.sName short_name,vi.lname org_name,
+        </isNotEmpty>
+		<isNotEmpty prepend="" property="xcptType">
+			vi.short_name short_name,je.short_name org_name,
+        </isNotEmpty>
+		base.vehicle_ln,to_char(t.report_time,'yyyy-mm-dd hh24:mi:ss') as
+		report_time,
+		base.vehicle_vin,
+		decode(sign(t3.all_steal_oill),1,'2',decode(sign(t2.all_add_oill),1,'1','0'))
+		oilBox_state,
+		nvl(ROUND(t.oilbox_mass,2),0) oilbox_mass,t.latitude
+		,t.longitude ,
+		decode(t2.all_add_oill,null,0,t2.all_add_oill) all_add_oill,
+		decode(t3.all_steal_oill,null,0,t3.all_steal_oill) all_steal_oill
+		from zspt_ftly_info t , (select
+		t.enterprise_id,t.parent_id,t.short_name
+		from clw_jc_enterprise_vi t,
+		(select left_num as v_left, right_num as v_right
+		from clw_jc_enterprise_t t1
+		where t1.enterprise_id = #organizationId#
+		and t1.valid_flag = '0' ) aa
+		where t.left_num &gt;= aa.v_left
+		and t.right_num &lt;= aa.v_right ) je,
+		<isNotEmpty prepend="" property="kcptType">
+			(select aa.short_name sName,bb.short_name lname,aa.enterprise_id from
+			clw_jc_enterprise_vi aa,clw_jc_enterprise_vi bb
+			where aa.parent_id=bb.enterprise_id) vi,
+          </isNotEmpty>
+		<isNotEmpty prepend="" property="xcptType">
+			(select short_name,enterprise_id from clw_jc_enterprise_vi) vi,
+          </isNotEmpty>
+
+		(select max(report_time) report_time,vin_code from zspt_ftly_info t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="end_time">
+				t.report_time &lt;= to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+          </isNotEmpty>
+			<isNotEmpty prepend="AND" property="start_time">
+				t.report_time &gt;= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+          </isNotEmpty>
+		</dynamic>
+		group by vin_code
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+		   </isNotEmpty>
+		</dynamic>
+		) t1,
+		(select sum(add_oill) all_add_oill,vin_code
+		from zspt_ftly_info t
+		where t.report_time &lt;= to_date('$end_time$', 'yyyy-mm-dd HH24:MI:SS')
+		and t.report_time &gt;= to_date('$start_time$', 'yyyy-mm-dd
+		HH24:MI:SS')
+		and t.oilbox_state = '010' group by vin_code) t2,
+		(select sum(add_oill) all_steal_oill,vin_code
+		from zspt_ftly_info t
+		where t.report_time &lt;= to_date('$end_time$', 'yyyy-mm-dd HH24:MI:SS')
+		and t.report_time &gt;= to_date('$start_time$', 'yyyy-mm-dd
+		HH24:MI:SS')
+		and t.oilbox_state = '001' group by vin_code) t3,
+		clw_cl_base_info_t base
+		where base.vehicle_vin = t1.vin_code(+)
+		<isNotEmpty prepend="" property="kcptType">
+			and je.parent_id(+) = vi.enterprise_id
+          </isNotEmpty>
+		<isNotEmpty prepend="" property="xcptType">
+			and base.organization_id = vi.enterprise_id(+)
+          </isNotEmpty>
+		and t2.vin_code(+) = t1.vin_code
+		and t3.vin_code(+) = t1.vin_code
+		and t1.report_time=t.report_time
+		and base.vehicle_vin = t.vin_code
+		<include refid="vehicleYtlyInfoEqualList" />
+		)
+		<include refid="Page.suffix" />
+	</select>
+	<!-- 获取加油图表数量  ftlyInfo-result  ftlyInfo-->
+	<select id="getFtlyInfoList" parameterClass="Map" resultClass="ftlyInfo">
+<!-- 	select -->
+<!-- 				short_name shortName ,vehicle_ln vehicleLn, report_time reportTimeString, vehicle_vin vinCode,  -->
+<!-- 				oilBox_state oilboxState,oilbox_mass oilboxMass, latitude latitude, longitude longitude, nvl(add_oill,0) as addOill, -->
+<!-- 				reportTime -->
+<!-- 				from ( -->
+<!-- 				select -->
+<!-- 				short_name,vehicle_ln,report_time,vehicle_vin,oilBox_state,oilbox_mass,latitude,longitude,add_oill,reportTime,rownum -->
+<!-- 				as rno -->
+<!-- 				from ( -->
+<!-- 				select je.short_name,base.vehicle_ln,to_char(t.report_time,'mm.dd -->
+<!-- 				hh24:mi:ss') as report_time, -->
+<!-- 				base.vehicle_vin,t.oilBox_state,nvl(ROUND(t.oilbox_mass,2),0) -->
+<!-- 				oilbox_mass,t.latitude ,t.longitude,t.add_oill,report_time reportTime -->
+<!-- 				from ZSPT_FTLY_INFO t , -->
+<!-- 				(SELECT t.enterprise_id,t.full_name,t.short_name -->
+<!-- 				FROM clw_jc_enterprise_vi t, -->
+<!-- 				(SELECT left_num as v_left, right_num as v_right -->
+<!-- 				FROM clw_jc_enterprise_t t1 -->
+<!-- 				WHERE t1.enterprise_id = #organizationId# -->
+<!-- 				AND t1.valid_flag = '0' ) aa -->
+<!-- 				where t.left_num &gt;= aa.v_left -->
+<!-- 				AND t.right_num &lt;= aa.v_right ) je, -->
+<!-- 				clw_cl_base_info_t base -->
+<!-- 				where base.vehicle_vin = t.vin_code -->
+<!-- 				and t.oilbox_state != '11' -->
+<!-- 				<include refid="vehicleYtlyInfoEqual" /> -->
+<!-- 				<isNotEmpty prepend="AND" property="endDate_time"> -->
+<!-- 					t.report_time &lt;= TO_DATE(#endDate_time#,'yyyy-mm-dd HH24:MI:SS') -->
+<!-- 		         </isNotEmpty> -->
+<!-- 				<isNotEmpty prepend="AND" property="startDate_time"> -->
+<!-- 					t.report_time &gt;= TO_DATE(#startDate_time#,'yyyy-mm-dd HH24:MI:SS') -->
+<!-- 		         </isNotEmpty> -->
+<!-- 				order by t.report_time asc -->
+<!-- 				)) -->
+<!-- 				where (mod(rno, -->
+<!-- 				floor(to_date(#endDate_time#,'yyyy-mm-dd HH24:MI:SS') - -->
+<!-- 				to_date(#startDate_time#,'yyyy-mm-dd HH24:MI:SS'))+1) = 0 -->
+<!-- 				and oilBox_state = '00') or (oilBox_state != '00') -->
+			<isNotEmpty property="dateArray" >
+<!-- 				union  -->
+				<iterate property="dateArray" conjunction="union all" open=""
+					close="">
+					select
+						short_name shortName ,vehicle_ln vehicleLn, report_time reportTimeString, vehicle_vin vinCode, 
+						oilBox_state oilboxState,oilbox_mass oilboxMass, latitude latitude, longitude longitude, nvl(add_oill,0) as addOill,
+						reportTime
+						from (
+						select
+						short_name,vehicle_ln,report_time,vehicle_vin,oilBox_state,oilbox_mass,latitude,longitude,add_oill,reportTime,rownum
+						as rno
+<!-- 						, -->
+<!-- 						floor(to_date(#dateArray[]# || '23:59:59','yyyy-mm-dd HH24:MI:SS') - -->
+<!-- 						to_date(#dateArray[]# || '00:00:00','yyyy-mm-dd HH24:MI:SS')) + 10 pps -->
+						from (
+						select je.short_name,base.vehicle_ln,to_char(t.report_time,'mm.dd
+						hh24:mi:ss') as report_time,
+						base.vehicle_vin,t.oilBox_state,nvl(ROUND(t.oilbox_mass,2),0)
+						oilbox_mass,t.latitude ,t.longitude,t.add_oill,report_time reportTime
+						from ZSPT_FTLY_INFO t ,
+						(SELECT t.enterprise_id,t.full_name,t.short_name
+						FROM clw_jc_enterprise_vi t,
+						(SELECT left_num as v_left, right_num as v_right
+						FROM clw_jc_enterprise_t t1
+						WHERE t1.enterprise_id = #organizationId#
+						AND t1.valid_flag = '0' ) aa
+						where t.left_num &gt;= aa.v_left
+						AND t.right_num &lt;= aa.v_right ) je,
+						clw_cl_base_info_t base
+						where base.vehicle_vin = t.vin_code
+						and t.oilbox_state != '011' and t.oilbox_state!='100' and t.oilbox_state!='101'
+						<include refid="vehicleYtlyInfoEqual" />
+						<isNotEmpty prepend="AND" property="dateArray">
+							t.report_time &lt;= TO_DATE(#dateArray[]# || '23:59:59','yyyy-mm-dd HH24:MI:SS')
+				         </isNotEmpty>
+						<isNotEmpty prepend="AND" property="dateArray">
+							t.report_time &gt;= TO_DATE(#dateArray[]# || '00:00:00','yyyy-mm-dd HH24:MI:SS')
+				         </isNotEmpty>
+				       order by t.report_time asc,t.create_time,t.oilbox_state
+
+						))
+						where (
+<!-- 						mod(rno, -->
+<!-- 						floor(to_date(#dateArray[]# || '23:59:59','yyyy-mm-dd HH24:MI:SS') - -->
+<!-- 						to_date(#dateArray[]# || '00:00:00','yyyy-mm-dd HH24:MI:SS'))+10) = 0 -->
+							0 = (rno/to_number(#diffDay#)-floor(rno/to_number(#diffDay#)))
+						and oilBox_state = '000') or (oilBox_state != '000')
+				</iterate>
+		</isNotEmpty>
+	</select>
+	<!-- 获取加油图表数量  -->
+	<select id="getFtlyInfoListNew" parameterClass="Map" resultClass="ftlyInfo" >
+		select 
+		'' shortName ,
+		'' vehicleLn, report_time reportTimeString, vin_code vinCode, 
+		oilBox_state oilboxState,oilbox_mass oilboxMass, latitude latitude, longitude longitude, nvl(add_oill,0) as addOill,
+		reportTime
+		from tb_yw_ftly_char where 1=1
+		<isNotEmpty prepend="AND" property="vehicleVin">
+			vin_code = #vehicleVin#
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+			reportTime &lt;= TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN')
+         </isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			reportTime &gt;= TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN')
+         </isNotEmpty>
+		
+	</select>
+	<!-- 获取油量变动告警表详细信息 -->
+	<select id="getOilStateChangeCount" parameterClass="Map"
+		resultClass="int">
+		select count(*)
+		from ZSPT_FTLY_ALARM ftly,CLW_CL_BASE_INFO_T base
+		where
+		1=1 and ftly.vin_code=base.vehicle_vin
+		and ftly.Vin_Code in
+		<iterate property="vehicle_vin" conjunction="," open="("
+			close=")">
+			#vehicle_vin[]#
+		     	</iterate>
+		<isNotNull prepend="AND" property="oilbox_state">
+			ftly.oilbox_state in
+			<iterate property="oilbox_state" conjunction="," open="("
+				close=")">
+				#oilbox_state[]#
+		     	</iterate>
+		</isNotNull>
+		and ( ftly.report_time between TO_DATE(#start_time#,'yyyy-mm-dd
+		HH24:MI:SS')
+		and TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取油量变动告警表详细信息 -->
+	<select id="getOilStateChangeList" parameterClass="Map"
+		resultMap="ftlyInfoDetail-result">
+		select vehicle_ln,nvl(ROUND(add_oill,2),0) add_oill,
+		decode(oilbox_state,
+		'001',
+		nvl(ROUND(add_oill, 2), 0) + nvl(ROUND(oilbox_mass, 2), 0),
+		nvl(ROUND(oilbox_mass, 2),0) - nvl(ROUND(add_oill, 2), 0)) oilbox_level,
+		nvl(ROUND(oilbox_mass,2),0) oilbox_mass,
+	    ftly.longitude,
+	    ftly.latitude,
+		to_char(report_time,'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,vin_code,zonename,base.vehicle_code
+		from ZSPT_FTLY_ALARM ftly,CLW_CL_BASE_INFO_T base
+		where 1=1 and
+		ftly.vin_code=base.vehicle_vin
+		and ftly.Vin_Code in
+		<iterate property="vehicle_vin" conjunction="," open="("
+			close=")">
+			#vehicle_vin[]#
+		     	</iterate>
+		<isNotNull prepend="AND" property="oilbox_state">
+			ftly.oilbox_state in
+			<iterate property="oilbox_state" conjunction="," open="("
+				close=")">
+				#oilbox_state[]#
+		     	</iterate>
+		</isNotNull>
+		and ( ftly.report_time between TO_DATE(#start_time#,'yyyy-mm-dd
+		HH24:MI:SS')
+		and TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取油量变动告警表详细信息 -->
+	<select id="getOilWearCount" parameterClass="Map" resultClass="int">
+		select count(*) from (
+			select
+			c.vehicle_ln,
+			c.vehicle_vin,
+			c.vehicle_code,
+			to_char(round(sum(t.mileage),2),'99999999999999.99') as mileage,
+			to_char(round(sum(t.USED_OIL),2),'99999999999999.99') as usedOil,
+			to_char(round(sum(t.TOTAL_OIL_PRICE),2),'99999999999999.99') as totalOilPrice
+			from ZSPT_OIL_ANALYS_INFO t,CLW_CL_BASE_INFO_T c
+			where  t.vehicle_vin=c.vehicle_vin
+			and t.vehicle_code != '外租'
+			and t.vehicle_vin in
+			<iterate property="vehicle_vin" conjunction="," open="("
+				close=")">
+				#vehicle_vin[]#
+			     	</iterate>
+			and ( t.analys_date between TO_DATE(#start_time#,'yyyy-mm-dd
+			HH24:MI:SS')
+			and TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+			) group by c.vehicle_vin ,c.vehicle_ln,c.vehicle_code
+		) 
+
+	</select>
+	<!-- 获取油量变动告警表详细信息 -->
+	<select id="getOilWearList" parameterClass="Map" resultMap="ftlyInfo-oilWear">
+
+		select
+		c.vehicle_ln,
+		c.vehicle_vin,
+		c.vehicle_code,
+		to_char(round(sum(t.mileage),2),'fm9999990.0099') as mileage,
+		to_char(round(sum(t.USED_OIL),2),'fm9999990.0099') as usedOil,
+		to_char(round(sum(t.TOTAL_OIL_PRICE),2),'fm9999990.0099') as totalOilPrice
+		from ZSPT_OIL_ANALYS_INFO t,CLW_CL_BASE_INFO_T c
+		where  t.vehicle_vin=c.vehicle_vin
+		and t.vehicle_code != '外租'
+		and t.vehicle_vin in
+		<iterate property="vehicle_vin" conjunction="," open="("
+			close=")">
+			#vehicle_vin[]#
+		     	</iterate>
+		and ( t.analys_date between TO_DATE(#start_time#,'yyyy-mm-dd
+		HH24:MI:SS')
+		and TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+		) group by c.vehicle_vin ,c.vehicle_ln,c.vehicle_code
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取防偷漏油列表导出数据信息 -->
+	<select id="getOilListExport" parameterClass="Map"
+		resultMap="ftlyInfoDetail-export">
+		select nvl(ROUND(add_oill,2),0) add_oill,nvl(ROUND(oilbox_mass,2),0)
+		oilbox_mass,oilbox_level,longitude, latitude ,
+		to_char(report_time,'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,vin_code,gps_speeding,speeding,elevation,direction,base.vehicle_ln,zonename
+		from ZSPT_FTLY_INFO ftly,clw_cl_base_info_t base
+		where ftly.vin_code = base.vehicle_vin
+		and ( ftly.report_time between TO_DATE(#startDate#,'yyyy-mm-dd
+		HH24:MI:SS')
+		and TO_DATE(#endDate#,'yyyy-mm-dd HH24:MI:SS')
+		)
+		and ftly.OILBOX_STATE in ('001','010')
+		<isNotEmpty prepend="AND" property="vehicleVinList">
+			base.vehicle_vin in
+			<iterate property="vehicleVinList" conjunction="," open="("
+				close=")">
+				#vehicleVinList[]#
+		     	</iterate>
+		</isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取防偷漏油加油数据导出 -->
+	<select id="getAllOilListExport" parameterClass="Map"
+		resultMap="ftlyInfoDetail-export">
+		select nvl(ROUND(add_oill,2),0) add_oill,nvl(ROUND(oilbox_mass,2),0)
+		oilbox_mass,oilbox_level,longitude, latitude ,
+		to_char(report_time,'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,vin_code,gps_speeding,speeding,elevation,direction,base.vehicle_ln,zonename
+		from ZSPT_FTLY_INFO ftly,clw_cl_base_info_t base
+		where ftly.vin_code = base.vehicle_vin
+		and ( ftly.report_time between TO_DATE(#startDate#,'yyyy-mm-dd
+		HH24:MI:SS')
+		and TO_DATE(#endDate#,'yyyy-mm-dd HH24:MI:SS')
+		)
+		<isNotEmpty prepend="AND" property="vehicleVinList">
+			base.vehicle_vin in
+			<iterate property="vehicleVinList" conjunction="," open="("
+				close=")">
+				#vehicleVinList[]#
+		     	</iterate>
+		</isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取防偷漏油异动地图坐标 -->
+	<select id="getBugtoMapFtlyInfo" parameterClass="Map"
+		resultMap="ftlyInfoDetail-result">
+		select
+		vin_code,report_time,oilbox_level,oilbox_mass,add_oill, oilbox_state,
+		latitude, longitude,zonename
+		from (
+		select vin_code,to_char(report_time,'yyyy-mm-dd HH24:MI:SS')
+		report_time,oilbox_level,oilbox_mass,add_oill, oilbox_state, latitude,
+		longitude,zonename
+		from zspt_ftly_info
+		where latitude = $latY$ and
+		longitude = $lngX$ and
+		vin_code = #vehicleVin# and
+		report_time &lt;= TO_DATE(#end_time#,'yyyy-mm-dd HH24:MI:SS') and
+		report_time &gt;= TO_DATE(#start_time#,'yyyy-mm-dd HH24:MI:SS') and
+		oilbox_state != '000'
+		order by report_time
+		)
+		where
+		rownum = 1
+	</select>
+
+
+
+
+
+	<!-- 油量监控仪表盘数量 -->
+	<select id="getLastFtlyInfoGroupedCount" parameterClass="Map"
+		resultClass="int">
+		with vehicleCount as (
+		select vin_code,count(vin_code) as alarm_count from (
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+	                                                              from CLW_JC_ENTERPRISE_T
+	                                                             where enterprise_id = #ent_id#)
+	                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+	                                                           from CLW_JC_ENTERPRISE_T
+	                                                            where enterprise_id = #ent_id#)
+	                                                            ]]>)
+		<isNotNull prepend="AND" property="vehicleVin">
+			ftly.Vin_Code in
+			<iterate property="vehicleVin" conjunction="," open="("
+				close=")">
+				#vehicleVin[]#
+				     	</iterate>
+		</isNotNull>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+		              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+		                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		and drv.valid_flag='0'
+		and ftly.is_valid = '0'
+		and ftly.oilbox_state='001'
+		) cl group by vin_code
+		)
+
+
+		select count(1) from (
+		select round(nvl(c.oilbox_mass,0), 2) oilbox_mass,
+		d.organization_id,
+		to_char(c.report_time,'yyyy-mm-dd hh24:mi:ss') report_time,
+		b.vehicle_vin,
+		d.vehicle_ln,
+		b.ftly_flag,
+		ROUND(nvl(b.oilbox_capacity,0), 2) as oilCapacity,
+		decode(cou.alarm_count,null,0,cou.alarm_count) alarmCount,
+		ROUND(nvl(c.oilbox_mass, 0) / b.oilbox_capacity, 2)* 100  as
+		oil_percent,
+		1 as state
+		from (select distinct t.oilbox_mass, z.*
+		from zspt_ftly_info partition($partionTime$) t,
+		(select a.vin_code, max(a.report_time) as report_time
+		from zspt_ftly_info partition($partionTime$) a
+		group by a.vin_code) z
+		where t.vin_code = z.vin_code
+		and t.report_time = z.report_time) c,
+		vehicleCount cou,
+		clw_jc_terminal_t b,
+		clw_cl_base_info_t d
+		where b.vehicle_vin = d.vehicle_vin
+		and c.vin_code(+) = b.vehicle_vin
+		and d.vehicle_vin = cou.vin_code(+)
+		and b.valid_flag = '0'
+		and d.valid_flag = '0'
+		<isNotNull prepend="AND" property="vehicleVin">
+			b.vehicle_vin in
+			<iterate property="vehicleVin" conjunction="," open="("
+				close=")">
+				#vehicleVin[]#
+				     	</iterate>
+		</isNotNull>
+		) g
+		where 1=1
+		<isEqual prepend="and" property="type" compareValue="low">
+			g.state=0 
+			and g.ftly_flag=0
+		 </isEqual>
+		<isEqual prepend="and" property="type" compareValue="alarm">
+			g.alarmCount>0 
+			and g.ftly_flag=0
+		 </isEqual>
+<!-- 		 <isEqual prepend="and" property="type" compareValue="all"> -->
+<!-- 			 g.report_time is not null -->
+<!-- 		 </isEqual> -->
+		order by g.ftly_flag , g.alarmCount desc nulls last,g.organization_id
+		desc nulls last,NLSSORT(g.vehicle_ln,'NLS_SORT=SCHINESE_PINYIN_M') ASC
+	</select>
+	<!-- 油量监控 仪表盘分页查询 -->
+	<select id="getLastFtlyInfoGrouped" parameterClass="Map"
+		resultMap="ftlyInfoNew-result-init">
+		with vehicleCount as (
+		select vin_code,count(vin_code) as alarm_count from (
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+	                                                              from CLW_JC_ENTERPRISE_T
+	                                                             where enterprise_id = #ent_id#)
+	                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+	                                                           from CLW_JC_ENTERPRISE_T
+	                                                            where enterprise_id = #ent_id#)
+	                                                            ]]>)
+		<isNotNull prepend="AND" property="vehicleVin">
+			ftly.Vin_Code in
+			<iterate property="vehicleVin" conjunction="," open="("
+				close=")">
+				#vehicleVin[]#
+				     	</iterate>
+		</isNotNull>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+		              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+		                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		and drv.valid_flag='0'
+		and ftly.is_valid = '0'
+		and ftly.oilbox_state='001'
+		) cl group by vin_code
+		)
+
+
+		<include refid="Page.prefix" />
+		select * from (
+		select to_char(round(nvl(c.oilbox_mass,0), 2),'fm9999990.009999') oilbox_mass,
+		d.organization_id,
+		to_char(c.report_time,'yyyy-mm-dd hh24:mi:ss') report_time,
+		b.vehicle_vin,
+		d.vehicle_ln,
+		b.ftly_flag,
+		ROUND(nvl(b.oilbox_capacity,0), 2) as oilCapacity,
+		decode(cou.alarm_count,null,0,cou.alarm_count) alarmCount,
+		ROUND(nvl(c.oilbox_mass, 1000) / b.oilbox_capacity, 2) * 100 as
+		oil_percent,
+		(case when f.oil_value_check='1' and (trunc(nvl(c.oilbox_mass, 1000) / b.oilbox_capacity, 3))<![CDATA[  <= ]]>
+		nvl(f.threshold,0) then '0' else '1' end) as state,
+		d.vehicle_code
+		from (select distinct t.oilbox_mass, z.*
+		from zspt_ftly_info partition($partionTime$) t,
+		(select a.vin_code, max(a.report_time) as report_time
+		from zspt_ftly_info partition($partionTime$) a
+		group by a.vin_code) z
+		where t.vin_code = z.vin_code
+		and t.report_time = z.report_time) c,
+		vehicleCount cou,
+		clw_jc_terminal_t b,
+		clw_cl_base_info_t d,
+		(select e.LOW_OIL_VALUE threshold,e.oil_value_check,e.enterprise_id from zspt_sit_addoil_config e where
+		e.enterprise_id= #enterprise_id#) f
+		where b.vehicle_vin = d.vehicle_vin
+		and c.vin_code(+) = b.vehicle_vin
+		and d.vehicle_vin = cou.vin_code(+)
+		and d.enterprise_id = f.enterprise_id(+)
+		and b.valid_flag = '0'
+		and d.valid_flag = '0'
+		and d.vehicle_type='0'
+		<isNotNull prepend="AND" property="vehicleVin">
+			b.vehicle_vin in
+			<iterate property="vehicleVin" conjunction="," open="("
+				close=")">
+				#vehicleVin[]#
+			</iterate>
+		</isNotNull>
+		) g
+		where 1=1
+		<isEqual prepend="and" property="type" compareValue="low">
+			g.state=0 
+			and g.ftly_flag=0
+		 </isEqual>
+		<isEqual prepend="and" property="type" compareValue="alarm">
+			g.alarmCount>0 
+			and g.ftly_flag=0
+		 </isEqual>
+<!-- 		 <isEqual prepend="and" property="type" compareValue="all"> -->
+<!-- 			 g.report_time is not null -->
+<!-- 		 </isEqual> -->
+		order by g.ftly_flag , g.alarmCount desc nulls last,g.organization_id
+		desc nulls last,NLSSORT(g.vehicle_ln,'NLS_SORT=SCHINESE_PINYIN_M') ASC
+		<include refid="Page.suffix" />
+	</select>
+
+	<!-- 获取所有车辆的油量状态 -->
+	<select id="getAllCarState" parameterClass="Map"
+		resultMap="ftlyInfoNew-allCarState">
+		
+		with vehicleCount as (
+		select vin_code,count(vin_code) as alarm_count from (
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln
+		from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+	                                                              from CLW_JC_ENTERPRISE_T
+	                                                             where enterprise_id = #ent_id#)
+	                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+	                                                           from CLW_JC_ENTERPRISE_T
+	                                                            where enterprise_id = #ent_id#)
+	                                                            ]]>)
+		and drv.valid_flag='0'
+		and ftly.is_valid = '0'
+		and CBI.vehicle_type='0'
+		and ftly.oilbox_state='001'
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,vehicle_ln
+		union
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		
+		(select *
+		from zspt_sit_t a, zspt_sit_set b
+		where a.site_id = b.sit_id
+		<isNotEmpty prepend="AND" property="ent_id">
+			b.organization_id = #ent_id#
+	                   	</isNotEmpty>
+		) sit,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.vin_code = sit.vehicle_vin
+		and drv.driver_id = vehd.driver_id
+		and (trunc(ftly.longitude, 4) != trunc(sit.site_longitude, 4)
+		or trunc(ftly.latitude, 4) != trunc(sit.site_latitude, 4))
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+	                                                              from CLW_JC_ENTERPRISE_T
+	                                                             where enterprise_id = #ent_id#)
+	                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+	                                                           from CLW_JC_ENTERPRISE_T
+	                                                            where enterprise_id = #ent_id#)
+	                                                            ]]>)
+		and drv.valid_flag='0'
+		and ftly.oilbox_state='010'
+		and ftly.is_valid = '0'
+		and CBI.vehicle_type='0'
+		union
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		'12' oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		
+		CLW_CL_BASE_INFO_T CBI,
+<!-- 		(select a.site_longitude,a.site_latitude,a.enterprise_id,b.vehicle_vin -->
+<!-- 		from zspt_sit_t a, zspt_sit_set b -->
+<!-- 		where a.site_id = b.sit_id -->
+<!-- 		<isNotEmpty prepend="AND" property="ent_id"> -->
+<!-- 			b.organization_id = #ent_id# -->
+<!-- 	                   	</isNotEmpty> -->
+<!-- 		) sit, -->
+		(select
+		start_time_quantum ,
+		end_time_quantum,
+		add_oil_rate,
+		enterprise_id,
+		oil_rate_check
+		from zspt_sit_addoil_config where enterprise_id=#ent_id#) configOil,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+<!-- 		and ftly.vin_code = sit.vehicle_vin -->
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+	                                                              from CLW_JC_ENTERPRISE_T
+	                                                             where enterprise_id = #ent_id#)
+	                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+	                                                           from CLW_JC_ENTERPRISE_T
+	                                                            where enterprise_id = #ent_id#)
+	                                                            ]]>)
+		and (
+				configOil.oil_rate_check = '1' and
+	                (<![CDATA[ 
+	                to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) <=
+                                           to_number(configOil.start_time_quantum) or
+                                           to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) >=
+                                           to_number(configOil.end_time_quantum)  
+	           	  ]]>)
+		)
+		and drv.valid_flag='0'
+		and ftly.is_valid = '0'
+		and ftly.oilbox_state = '010'
+		and CBI.vehicle_type='0'
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,vehicle_ln
+		) cl group by vin_code
+		)
+		
+		
+	    SELECT CAR_T.VEHICLE_VIN,
+		       oilState as state
+		  FROM (SELECT CBI.VEHICLE_VIN,
+		               CBI.VEHICLE_LN,
+		               CBI.ORGANIZATION_ID,
+		               CASE
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+		                  '0'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+		                  '0'
+		                  WHEN 
+		                      JT.TERMINAL_TIME is null THEN
+		                  '0'
+		                 ELSE
+		                  '1'
+		               END ONLINE_FLAG,
+		               CASE
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+		                  '0'
+		                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+		                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+		                  '0'
+		                  WHEN 
+		                      JT.TERMINAL_TIME is null THEN
+		                  '0'
+		                  WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' THEN
+		                  '0'
+				  		  WHEN 
+		                      NVL(SUBSTRB(JT.VEH_EXT_INFO, 1, 1), '1') = '0' THEN
+		                  '0'
+		                 ELSE
+		                  '1'
+		               END ONDVR_FLAG,
+		               (case
+                         when JT.Ftly_Flag = 1 then
+                          '2'
+                         when 
+                              (cfg.oil_value_check = '1' and
+                              ((trunc(nvl(info.oilbox_mass, 1000) /
+                                       JT.oilbox_capacity,
+                                       2))<![CDATA[ > ]]>nvl(cfg.LOW_OIL_VALUE, 0)))
+                               
+                              then
+                          '0'
+                          when vc.alarm_count > 0
+                            then
+                          '1'
+                         else
+                          '0'
+                       end) as oilState
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE,
+		               (select a.site_longitude,a.site_latitude,a.enterprise_id
+                  from zspt_sit_t a, zspt_sit_set b
+                 where a.site_id = b.sit_id
+                   and b.enterprise_id = #ent_id#) sit,
+               (select distinct t.oilbox_mass, z.*,t.latitude,t.longitude,t.oilbox_state
+                  from zspt_ftly_alarm t,
+                       (select a.vin_code, max(a.report_time) as report_time
+                          from zspt_ftly_alarm a where is_valid='0'
+                         group by a.vin_code) z
+                 where t.vin_code = z.vin_code
+                   and t.report_time = z.report_time
+                   and t.is_valid='0') info,
+               (select start_time_quantum ,
+                   end_time_quantum,
+                  add_oil_rate,
+                  enterprise_id,
+                  LOW_OIL_VALUE,
+                  oil_rate_check,
+                  OIL_VALUE_CHECK
+                  from zspt_sit_addoil_config where enterprise_id = #ent_id#) cfg,
+                  vehicleCount vc
+		         WHERE cfg.enterprise_id = #ent_id#
+		           AND jt.vehicle_vin = info.vin_code(+)
+		           AND JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           and JT.VEHICLE_VIN = vc.vin_code(+)
+		           and CBI.vehicle_type='0'
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           and CBI.vehicle_type='0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ORGANIZATION_ID IS NOT NULL
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID =
+		                               #ent_id#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID =
+		                               #ent_id#))
+		         ORDER BY ONLINE_FLAG DESC,NLSSORT(VEHICLE_LN,'NLS_SORT=SCHINESE_PINYIN_M') ASC) CAR_T
+		         group by VEHICLE_VIN, VEHICLE_LN, ORGANIZATION_ID,  ONLINE_FLAG, ONDVR_FLAG, oilState
+	</select>
+
+
+	<resultMap id="ftlyInfoDriver-result" class="ftlyInfo">
+		<result property="reportTimeString" column="report_time" />
+		<result property="oilboxState" column="oilbox_state" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="vinCode" column="vin_code" />
+		<result property="oilboxLevel" column="oilbox_level" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="addOill" column="add_oill" />
+		<result property="zonename" column="zonename" />
+		<result property="driverName" column="driver_name" />
+		<result property="driverTel" column="driver_tel" />
+	</resultMap>
+
+	<!-- 获取防偷漏油列表详细信息中偷油数量 包含驾驶员信息 -->
+	<select id="getStealAlarmListCount" parameterClass="Map"
+		resultClass="int">
+		select count(1)
+		from ZSPT_FTLY_INFO ftly,
+		CLW_YW_DRIVER_T drv,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1=1
+		and ftly.Vin_Code=#vehicle_vin#
+		and ftly.oilbox_state=#oilbox_state#
+		and ftly.vin_code = vehd.vehicle_vin
+		and drv.driver_id = vehd.driver_id
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 读取告警表中偷油明细 -->
+	<select id="getStealAlarmList" parameterClass="Map"
+		resultMap="ftlyInfoDriver-result">
+		
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln
+		from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_XC_VEHDRIVER_T vehd,
+		CLW_CL_BASE_INFO_T CBI
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and drv.driver_id = vehd.driver_id
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		and ftly.oilbox_state='001'
+		and ftly.is_valid='0'
+		and drv.valid_flag='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		and CBI.vehicle_type='0'
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,vehicle_ln
+		order by report_time desc
+	</select>
+
+	<resultMap id="ftlyInfoAlarmDriver-result" class="ftlyInfo">
+		<result property="ftylyIdNum" column="ftly_id" />
+		<result property="reportTimeString" column="report_time" />
+		<result property="oilboxState" column="oilbox_state" />
+		<result property="oilboxMass" column="oilbox_mass" />
+		<result property="vinCode" column="vin_code" />
+		<result property="oilboxLevel" column="oilbox_level" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="addOill" column="add_oill" />
+		<result property="zonename" column="zonename" />
+		<result property="driverName" column="driver_name" />
+		<result property="driverTel" column="driver_tel" />
+		<result property="direction" column="direction" />
+		<result property="vehicle_code" column="vehicle_code" />
+		<result property="operateDesc" column="opeerate_desc" />
+		<result property="isValid" column="is_valid" />
+		<result property="vehicleLn" column="vehicle_ln" />
+		<result property="operator_name" column="user_name" />
+		<result property="operateTimeString" column="operate_time" />
+	</resultMap>
+
+	<!-- 获取防偷漏油列表详细信息中偷油数量 包含驾驶员信息(告警处理时用,包含加油地点告警) -->
+	<select id="getStealAlarmListPageCount" parameterClass="Map"
+		resultClass="int">
+		select count(1) from (with vehicleCount as (
+		select vin_code,count(vin_code) as alarm_count from (
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+	                                                              from CLW_JC_ENTERPRISE_T
+	                                                             where enterprise_id = #enterprise_id#)
+	                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+	                                                           from CLW_JC_ENTERPRISE_T
+	                                                            where enterprise_id = #enterprise_id#)
+	                                                            ]]>)
+		<isNotNull prepend="AND" property="vehicleVin">
+			ftly.Vin_Code in
+			<iterate property="vehicleVin" conjunction="," open="("
+				close=")">
+				#vehicleVin[]#
+				     	</iterate>
+		</isNotNull>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+		              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+		                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		and drv.valid_flag='0'
+		and ftly.is_valid = '0'
+		and ftly.oilbox_state='001'
+		) cl group by vin_code
+		)
+		)
+	</select>
+	<!-- 获取防偷漏油列表详细信息中偷油列表 (包含驾驶员信息，加油地点告警) -->
+	<select id="getStealAlarmListPage" parameterClass="Map"
+		resultMap="ftlyInfoAlarmDriver-result">
+		select ftly_id,
+		oilbox_mass,
+		add_oill,
+		oilbox_level,
+		latitude,
+		longitude,
+		report_time,
+		oilbox_state,
+		vin_code,
+		zonename,
+		driver_name,
+		driver_tel,
+		direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time
+		from ( select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time
+		from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,
+		ftly.is_valid,cbi.vehicle_ln,u.user_name,ftly.operate_time
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_JC_USER_T u,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.operator_name = u.user_id(+)
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+	              </isNotEmpty>
+		and drv.valid_flag='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		<isNotEmpty prepend="AND" property="vehicleln">
+			cbi.vehicle_ln like '%' || upper(#vehicleln#) ||'%' escape '\'
+		</isNotEmpty>
+		and ftly.oilbox_state='001'
+		and CBI.vehicle_type='0'
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+	              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+	                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleln">
+			cbi.vehicle_ln like '%' || upper(#vehicleln#) ||'%' escape '\'
+		</isNotEmpty>
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,vehicle_ln,user_name,operate_time
+		union
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln,u.user_name,ftly.operate_time
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_JC_USER_T u,
+		(select *
+		from zspt_sit_t a, zspt_sit_set b
+		where a.site_id = b.sit_id
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			b.vehicle_vin = #vehicle_vin#
+                   	</isNotEmpty>
+		<isNotEmpty prepend="AND" property="entId">
+			b.organization_id = #entId#
+                   	</isNotEmpty>
+		) sit,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.operator_name = u.user_id(+)
+		and drv.driver_id = vehd.driver_id
+		and ftly.vin_code = sit.vehicle_vin
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		and (trunc(ftly.longitude, 4) != trunc(sit.site_longitude, 4)
+		or trunc(ftly.latitude, 4) != trunc(sit.site_latitude, 4))
+		and drv.valid_flag='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		and ftly.oilbox_state='010'
+		and CBI.vehicle_type='0'
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleln">
+			cbi.vehicle_ln like '%' || upper(#vehicleln#) ||'%' escape '\'
+		</isNotEmpty>
+		union
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		'12' oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln,u.user_name,ftly.operate_time
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_JC_USER_T u,
+<!-- 		(select a.site_longitude,a.site_latitude,a.enterprise_id,b.vehicle_vin -->
+<!-- 		from zspt_sit_t a, zspt_sit_set b -->
+<!-- 		where a.site_id = b.sit_id -->
+<!-- 		<isNotEmpty prepend="AND" property="vehicle_vin"> -->
+<!-- 			b.vehicle_vin = #vehicle_vin# -->
+<!--                    	</isNotEmpty> -->
+<!-- 		<isNotEmpty prepend="AND" property="entId"> -->
+<!-- 			b.organization_id = #entId# -->
+<!--                    	</isNotEmpty> -->
+<!-- 		) sit, -->
+		(select
+		start_time_quantum ,
+		end_time_quantum,
+		add_oil_rate,
+		enterprise_id,
+		oil_rate_check
+		from zspt_sit_addoil_config where enterprise_id=#entId#) configOil,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.operator_name = u.user_id(+)
+<!-- 		and ftly.vin_code = sit.vehicle_vin -->
+		and drv.driver_id = vehd.driver_id
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		and (
+				configOil.oil_rate_check='1' and 
+                (<![CDATA[ 
+                to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) <=
+                                           to_number(configOil.start_time_quantum) or
+                                           to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) >=
+                                           to_number(configOil.end_time_quantum)  
+           	  ]]>)
+		)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		and drv.valid_flag='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		and ftly.oilbox_state = '010'
+		and CBI.vehicle_type='0'
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleln">
+			cbi.vehicle_ln like '%' || upper(#vehicleln#) ||'%' escape '\'
+		</isNotEmpty>
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,user_name,operate_time,
+		direction,vehicle_code,opeerate_desc,vehicle_ln
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取防偷漏油列表详细信息中偷油数量 包含驾驶员信息(油量骤减) -->
+	<select id="getStealAlarmListPageCount1" parameterClass="Map"
+		resultClass="int">
+		select count(1) from (
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln
+		from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_XC_VEHDRIVER_T vehd,
+		CLW_CL_BASE_INFO_T CBI
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and drv.driver_id = vehd.driver_id
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleln">
+			cbi.vehicle_ln like '%' || #vehicleln# || '%'
+        </isNotEmpty>
+		and ftly.oilbox_state='001'
+		and drv.valid_flag='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		and CBI.vehicle_type='0'
+		<isNotEmpty prepend="AND" property="enterprise_id">
+		cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+        </isNotEmpty>                                                    
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,vehicle_ln
+		)
+	</select>
+	<!-- 获取防偷漏油列表详细信息中偷油列表 (包含驾驶员信息，加油地点告警) -->
+	<select id="getStealAlarmListPage1" parameterClass="Map"
+		resultMap="ftlyInfoAlarmDriver-result">
+		select ftly_id,
+		oilbox_mass,
+		add_oill,
+		oilbox_level,
+		latitude,
+		longitude,
+		report_time,
+		oilbox_state,
+		vin_code,
+		zonename,
+		driver_name,
+		driver_tel,
+		direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time
+		from ( select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time
+		from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln,u.user_name,ftly.operate_time
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_JC_USER_T u,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.operator_name = u.user_id(+)
+		and drv.driver_id = vehd.driver_id
+		and CBI.vehicle_type='0'
+		<isNotEmpty prepend="AND" property="enterprise_id">
+		cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+        </isNotEmpty>
+		        <isNotEmpty prepend="AND" property="vehicle_vin">
+					ftly.Vin_Code=#vehicle_vin#
+		              </isNotEmpty>
+				and drv.valid_flag='0'
+				<dynamic prepend="and">
+					<isNotEmpty property="isValid">
+						ftly.is_valid = #isValid#
+							</isNotEmpty>
+				</dynamic>
+				and ftly.oilbox_state='001'
+				<isNotEmpty prepend="AND" property="start_time">
+					ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+		              </isNotEmpty>
+				<isNotEmpty prepend="AND" property="end_time">
+		                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+				</isNotEmpty>
+				<isNotEmpty prepend="AND" property="vehicleCode">
+					cbi.vehicle_code like '%' || #vehicleCode# || '%'
+		        </isNotEmpty>
+		        <isNotEmpty prepend="AND" property="vehicleln">
+					cbi.vehicle_ln like '%' || #vehicleln# || '%'
+		        </isNotEmpty>
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,vehicle_ln,user_name,operate_time
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortotherconfig$ $sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取防偷漏油列表详细信息中偷油数量 包含驾驶员信息(加油地点告警) -->
+	<select id="getStealAlarmListPageCount2" parameterClass="Map"
+		resultClass="int">
+		select count(1) from (
+
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_XC_VEHDRIVER_T vehd,
+		CLW_CL_BASE_INFO_T CBI,
+		(select *
+		from zspt_sit_t a, zspt_sit_set b
+		where a.site_id = b.sit_id
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			b.vehicle_vin = #vehicle_vin#
+                   	</isNotEmpty>
+		<isNotEmpty prepend="AND" property="entId">
+			b.organization_id = #entId#
+                   	</isNotEmpty>
+		) sit
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.vin_code = sit.vehicle_vin
+		and drv.driver_id = vehd.driver_id and drv.valid_flag='0'
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		and ftly.oilbox_state='010'
+		and CBI.vehicle_type='0'
+		and (trunc(ftly.longitude, 4) != trunc(sit.site_longitude, 4)
+		or trunc(ftly.latitude, 4) != trunc(sit.site_latitude, 4))
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,
+		driver_tel,direction,vehicle_code,opeerate_desc,vehicle_ln
+		)
+	</select>
+	<!-- 获取防偷漏油列表详细信息中偷油列表 (加油地点告警) -->
+	<select id="getStealAlarmListPage2" parameterClass="Map"
+		resultMap="ftlyInfoAlarmDriver-result">
+		select ftly_id,
+		oilbox_mass,
+		add_oill,
+		oilbox_level,
+		latitude,
+		longitude,
+		report_time,
+		oilbox_state,
+		vin_code,
+		zonename,
+		driver_name,
+		driver_tel,
+		direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time
+		from (
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,CBI.vehicle_ln,u.user_name,ftly.operate_time
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_JC_USER_T u,
+		(select *
+		from zspt_sit_t a, zspt_sit_set b
+		where a.site_id = b.sit_id
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			b.vehicle_vin = #vehicle_vin#
+                   	</isNotEmpty>
+		<isNotEmpty prepend="AND" property="entId">
+			b.organization_id = #entId#
+                   	</isNotEmpty>
+		) sit,
+		CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+		and ftly.operator_name = u.user_id(+)
+		and ftly.vin_code = sit.vehicle_vin
+		and drv.driver_id = vehd.driver_id
+		and CBI.vehicle_type='0'
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+			and drv.valid_flag = '0'
+			<isNotEmpty prepend="AND" property="vehicle_vin">
+				ftly.Vin_Code=#vehicle_vin#
+	              </isNotEmpty>
+			and (trunc(ftly.longitude, 4) != trunc(sit.site_longitude, 4)
+			or trunc(ftly.latitude, 4) != trunc(sit.site_latitude, 4))
+			<dynamic prepend="and">
+				<isNotEmpty property="isValid">
+					ftly.is_valid = #isValid#
+						</isNotEmpty>
+			</dynamic>
+			and ftly.oilbox_state='010'
+			<isNotEmpty prepend="AND" property="start_time">
+				ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+	              </isNotEmpty>
+			<isNotEmpty prepend="AND" property="end_time">
+	                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="vehicleCode">
+				cbi.vehicle_code like '%' || #vehicleCode# || '%'
+	        </isNotEmpty>
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,
+		driver_tel,direction,vehicle_code,opeerate_desc,vehicle_ln,user_name,operate_time
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 获取防偷漏油列表详细信息中偷油数量 包含驾驶员信息(加油时间告警) -->
+	<select id="getStealAlarmListPageCount3" parameterClass="Map"
+		resultClass="int">
+		select count(1) from (
+
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		'12' oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_XC_VEHDRIVER_T vehd,
+		CLW_CL_BASE_INFO_T CBI,
+<!-- 		(select a.site_longitude,a.site_latitude,a.enterprise_id,b.vehicle_vin -->
+<!-- 		from zspt_sit_t a, zspt_sit_set b -->
+<!-- 		where a.site_id = b.sit_id -->
+<!-- 		<isNotEmpty prepend="AND" property="vehicle_vin"> -->
+<!-- 			b.vehicle_vin = #vehicle_vin# -->
+<!--                    	</isNotEmpty> -->
+<!-- 		<isNotEmpty prepend="AND" property="entId"> -->
+<!-- 			b.organization_id = #entId# -->
+<!--                    	</isNotEmpty> -->
+<!-- 		) sit, -->
+		(select
+		start_time_quantum ,
+		end_time_quantum,
+		add_oil_rate,
+		enterprise_id,
+		oil_rate_check
+		from zspt_sit_addoil_config where enterprise_id=#entId#) configOil
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin(+)
+<!-- 		and ftly.vin_code = sit.vehicle_vin -->
+		and drv.driver_id = vehd.driver_id
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		and ftly.oilbox_state = '010'
+		and drv.valid_flag='0'
+		and CBI.vehicle_type='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		and (
+				configOil.oil_rate_check = '1' and 
+                (<![CDATA[ 
+                to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) <=
+                                           to_number(configOil.start_time_quantum) or
+                                           to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) >=
+                                           to_number(configOil.end_time_quantum)  
+           	  ]]>)
+		)
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,
+		driver_tel,direction,vehicle_code,opeerate_desc,vehicle_ln
+		)
+	</select>
+
+	<!-- 获取防偷漏油列表详细信息中偷油列表 (包含驾驶员信息，加油地点告警) -->
+	<select id="getStealAlarmListPage3" parameterClass="Map"
+		resultMap="ftlyInfoAlarmDriver-result">
+		select ftly_id,
+		oilbox_mass,
+		add_oill,
+		oilbox_level,
+		latitude,
+		longitude,
+		report_time,
+		oilbox_state,
+		vin_code,
+		zonename,
+		driver_name,
+		driver_tel,
+		direction,
+		vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time
+		from (
+		select ftly_id,wm_concat(oilbox_state)
+		oilbox_state,oilbox_mass,add_oill,oilbox_level,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,driver_tel,
+		direction,vehicle_code,opeerate_desc,is_valid,vehicle_ln,user_name,operate_time from(
+		select ftly.ftly_id,
+		nvl(ROUND(ftly.oilbox_mass, 2), 0) oilbox_mass,
+		nvl(ROUND(ftly.add_oill, 2), 0) add_oill,
+		ftly.oilbox_level,
+		ftly.latitude,
+		ftly.longitude,
+		to_char(ftly.report_time, 'yyyy-mm-dd hh24:mi:ss') as report_time,
+		'12' oilbox_state,
+		ftly.vin_code,
+		ftly.zonename,
+		drv.driver_name,
+		drv.driver_tel,ftly.direction,cbi.vehicle_code,ftly.opeerate_desc,ftly.is_valid,cbi.vehicle_ln,u.user_name,ftly.operate_time
+		from ZSPT_FTLY_ALARM ftly,
+		clw_YW_DRIVER_T drv,
+		CLW_CL_BASE_INFO_T CBI,
+		CLW_JC_USER_T u,
+<!-- 		(select a.site_longitude,a.site_latitude,a.enterprise_id,b.vehicle_vin -->
+<!-- 		from zspt_sit_t a, zspt_sit_set b -->
+<!-- 		where a.site_id = b.sit_id -->
+<!-- 		<isNotEmpty prepend="AND" property="vehicle_vin"> -->
+<!-- 			b.vehicle_vin = #vehicle_vin# -->
+<!--                    	</isNotEmpty> -->
+<!-- 		<isNotEmpty prepend="AND" property="entId"> -->
+<!-- 			b.organization_id = #entId# -->
+<!--                    	</isNotEmpty> -->
+<!-- 		) sit, -->
+		(select
+			start_time_quantum ,
+			end_time_quantum,
+			add_oil_rate,
+			enterprise_id,
+			oil_rate_check
+			from zspt_sit_addoil_config where enterprise_id=#entId#) configOil,
+		 CLW_XC_VEHDRIVER_T vehd
+		where 1 = 1
+		and ftly.vin_code = vehd.vehicle_vin(+)
+		and ftly.vin_code = cbi.vehicle_vin (+)
+		and ftly.operator_name = u.user_id(+)
+<!-- 		and ftly.vin_code = sit.vehicle_vin -->
+		and drv.driver_id = vehd.driver_id
+		and CBI.vehicle_type='0'
+		and cbi.ORGANIZATION_ID in
+		(select enterprise_id
+		from CLW_JC_ENTERPRISE_T
+		where <![CDATA[ left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                                                              from CLW_JC_ENTERPRISE_T
+                                                             where enterprise_id = #enterprise_id#)
+                                             and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                                                           from CLW_JC_ENTERPRISE_T
+                                                            where enterprise_id = #enterprise_id#)
+                                                            ]]>)
+		and (
+				configOil.oil_rate_check = '1' and 
+                (<![CDATA[ 
+                to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) <=
+                                           to_number(configOil.start_time_quantum) or
+                                           to_number(decode(configOil.add_oil_rate,'1',
+                                                    to_char(ftly.report_time,'dd'),
+                                                    '2',
+                                                    decode(to_char(ftly.report_time,'d'),'1',7,'2',1,'3',2,'4',3,'5',4,'6',5,'7',6))) >=
+                                           to_number(configOil.end_time_quantum)  
+           	  ]]>)
+		)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+			ftly.Vin_Code=#vehicle_vin#
+              </isNotEmpty>
+		and drv.valid_flag='0'
+		<dynamic prepend="and">
+			<isNotEmpty property="isValid">
+				ftly.is_valid = #isValid#
+					</isNotEmpty>
+		</dynamic>
+		and ftly.oilbox_state = '010'
+		<isNotEmpty prepend="AND" property="start_time">
+			ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+		<isNotEmpty prepend="AND" property="end_time">
+                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="vehicleCode">
+			cbi.vehicle_code like '%' || #vehicleCode# || '%'
+        </isNotEmpty>
+		) group by ftly_id,oilbox_mass,add_oill,oilbox_level,is_valid,
+		latitude,longitude,report_time,vin_code,zonename,driver_name,
+		driver_tel,direction,vehicle_code,opeerate_desc,vehicle_ln,user_name,operate_time
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$ 
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+
+	<update id="proccessAlarm" parameterClass="Map">
+		update
+		ZSPT_FTLY_ALARM set 
+			OPEERATE_DESC = #operateDesc#,
+			IS_VALID = #isValid#,
+			OPERATOR_NAME = #operator_name#,
+			OPERATE_TIME=SYSDATE
+		where ftly_id = #ftlyId#
+	</update>
+	
+	<resultMap class="ftlyInfo" id="ftlyInfo-Chart">
+		<result property="ftylyIdNum" column="ftly_id" />
+		<result property="vinCode" column="vin_code" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude"/>
+		<result property="elevation" column="elevation" />
+		<result property="direction" column="direction" />
+		<result property="reportTimeString" column="report_time" />
+		<result property="oilboxState" column="OILBOX_STATE" />
+	</resultMap>
+	<select id="getFtlyChars" parameterClass="Map"
+		resultClass="ftlyInfo" >
+		select ftly.ftly_id ftlylyIdNum,ftly.vin_code vinCode,ftly.direction direction,ftly.elevation elevation
+		,ftly.report_time reportTimeString,ftly.oilbox_state oilboxState,
+		ftly.longitude,ftly.latitude  
+<!-- 		from ( -->
+<!-- 			select ftly_id,vin_code,latitude,longitude,direction,elevation,report_time,OILBOX_STATE, -->
+<!-- 				( -->
+<!-- 		             select min(t.report_time) -->
+<!-- 		             from zspt_ftly_info t -->
+<!-- 		            where 1=1  -->
+<!-- 		            <![CDATA[                -->
+<!-- 		              and t.report_time >= ftly.report_time-(1*390)/(24*60*60) -->
+<!-- 		              and t.report_time <= ftly.report_time -->
+<!-- 		              ]]> -->
+<!-- 		              and t.vin_code = #vehicleVin# -->
+<!-- 		        ) as tmpTimes  -->
+			from zspt_ftly_alarm ftly where 1=1
+			<isNotEmpty prepend="AND" property="start_time">
+				ftly.report_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+	              </isNotEmpty>
+			<isNotEmpty prepend="AND" property="end_time">
+	                   <![CDATA[ ftly.report_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss') ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="vehicleCode">
+				ftly.vehicle_code like '%' || #vehicleCode# || '%'
+	        </isNotEmpty>
+	        <isNotEmpty prepend="AND" property="vehicleVin">
+				ftly.vin_code = #vehicleVin#
+	        </isNotEmpty>
+<!-- 	        ) finV, zspt_ftly_info info where 1=1 -->
+<!-- 			   AND info.vin_code = #vehicleVin# -->
+<!-- 			   and finV.tmpTimes = info.report_time -->
+<!-- 			   order by finV.report_time asc -->
+	</select>
+	
+	<resultMap class="ftlyInfo" id="ftlyInfo-point">
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+	</resultMap>
+	<select id="getftlyPoint" parameterClass="Map" resultClass="ftlyInfo" cacheModel="ftly-point-cache">
+		select zfi.longitude,zfi.latitude  from (
+           select t.longitude,t.latitude,t.report_time,t.vin_code 
+             from zspt_ftly_info t
+            where 1=1 
+            <![CDATA[
+              and t.report_time >= to_date(#report_time#,'yyyy-mm-dd hh24:mi:ss')-(1*390)/(24*60*60)
+              and t.report_time <= to_date(#report_time#,'yyyy-mm-dd hh24:mi:ss')
+              ]]>
+              and t.vin_code = #vehicle_vin#
+           order by t.report_time
+        ) zfi where ROWNUM=1
+	</select>	
+	
+	
+</sqlMap>

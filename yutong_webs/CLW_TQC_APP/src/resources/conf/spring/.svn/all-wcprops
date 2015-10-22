@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_TQC_APP/src/resources/conf/spring
+END
+applicationContext-datasource.xml
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_TQC_APP/src/resources/conf/spring/applicationContext-datasource.xml
+END
+applicationContext-web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_TQC_APP/src/resources/conf/spring/applicationContext-web.xml
+END
+applicationContext-webaspect.xml
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_TQC_APP/src/resources/conf/spring/applicationContext-webaspect.xml
+END
+applicationContext-service.xml
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_TQC_APP/src/resources/conf/spring/applicationContext-service.xml
+END
+applicationContext-dao.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_TQC_APP/src/resources/conf/spring/applicationContext-dao.xml
+END

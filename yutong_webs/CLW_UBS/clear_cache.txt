@@ -1,0 +1,1 @@
+http://10.8.1.166:8080/CLW_UBS/ub/index/clearCache.shtml

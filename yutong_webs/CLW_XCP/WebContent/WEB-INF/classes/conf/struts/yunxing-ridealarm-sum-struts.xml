@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="ridealarm" namespace="/ridealarm" extends="clw-default">		
+		<action name="ready" class="rideAlarmSumAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/yunxing/ridealarm/ride_alarm_sum.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/ridealarm/ride_alarm_sum.jsp</result>	
+		</action>
+		<action name="exportRideAlarmSum" class="rideAlarmSumAction" method="exportRideAlarmSum">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ready</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<action name="detailbrowse" class="rideAlarmSumAction" method="ready">
+			<result name="error">/WEB-INF/jsp/yunxing/ridealarm/ride_alarm_detail.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/ridealarm/ride_alarm_detail.jsp</result>
+		</action>
+		<action name="iframeChoice" class="rideAlarmSumAction" method="iframeChoice">
+			<result name="error">/WEB-INF/jsp/yunxing/ridealarm/iframeChoice.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/ridealarm/iframeChoice.jsp</result>
+		</action>								
+	</package>
+	<package name="ridealarm-json" namespace="/ride_alarm" extends="json-default">
+		<action name="getRideAlarmSum" class="rideAlarmSumAction" method="getRideAlarmSum">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+		<action name="getRideAlarmDetail" class="rideAlarmSumAction" method="getRideAlarmDetail">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>               
+	</package>
+</struts>

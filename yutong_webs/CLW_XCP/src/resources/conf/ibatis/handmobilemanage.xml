@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="HandMobileManage">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="handmobileinfo"
+		type="com.neusoft.clw.infomanage.handmobilemanage.domain.HandMobileInfo" />
+	<typeAlias alias="EnterpriseResInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseResInfo" />
+	<typeAlias alias="UserInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" />
+
+	<resultMap id="handmobileinfo-result" class="handmobileinfo">
+		<result property="terminal_id" column="TERMINAL_ID" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="cellphone" column="CELLPHONE" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="user_contact" column="USER_CONTACT" />
+	</resultMap>
+
+	<resultMap class="EnterpriseResInfo" id="enterprise_tree">
+		<result property="enterprise_id" column="enterprise_id" />
+		<result property="short_name" column="short_name" />
+		<result property="left_num" column="left_num" />
+		<result property="right_num" column="right_num" />
+		<result property="treeleve" column="treeleve" />
+		<result property="parent_id" column="parent_id" />
+		<result property="concate_cr_flag" column="concate_cr_flag" />
+	</resultMap>
+	
+	<resultMap id="handmobiledesc-result" class="handmobileinfo">
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_desc" column="VEHICLE_DESC" />
+	</resultMap>
+	
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR"
+			mode="OUT" />
+		<parameter property="out_message" javaType="String"
+			jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR"
+			mode="OUT" resultMap="enterprise_tree" />
+	</parameterMap>
+	
+	<resultMap id="enid-result" class="handmobileinfo">
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+	</resultMap>
+	
+	<parameterMap id="getAllEnid" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="in_org_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR"
+			mode="OUT" />
+		<parameter property="out_message" javaType="String"
+			jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR"
+			mode="OUT" resultMap="enid-result" />
+	</parameterMap>
+	
+	<!-- 企业管理员获取手持设备数量-->
+	<select id="getCountbyEnid" parameterClass="handmobileinfo" resultClass="Integer">
+	    SELECT COUNT(B.TERMINAL_ID)
+        FROM CLW_CL_BASE_INFO_T A, CLW_JC_TERMINAL_T B, CLW_CL_SIM_T C
+        WHERE A.VEHICLE_VIN = B.VEHICLE_VIN
+          AND B.SIM_CARD_NUMBER = C.SIM_CARD_NUMBER
+	      <isNotEmpty prepend="AND" property="organization_id">
+           A.ORGANIZATION_ID IN 
+		   (SELECT ENTERPRISE_ID
+             FROM CLW_JC_ENTERPRISE_VI
+             WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+               AND <![CDATA[RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+                   ]]>
+		      )
+          </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="terminal_id">
+               B.TERMINAL_ID like '%' || #terminal_id# ||'%' escape '\'
+          </isNotEmpty>
+          AND B.VALID_FLAG='0'
+          AND C.VALID_FLAG='0'
+          AND A.VALID_FLAG='0'
+          AND A.ENTERPRISE_ID=#enterprise_id#
+          AND A.DEVICE_TYPE='1'
+          AND C.DEVICE_TYPE='1'
+	</select>
+	
+	<!-- 企业管理员获取手持设备列表 -->
+	<select id="getInfosbyEnid" parameterClass="handmobileinfo" resultMap="handmobileinfo-result">
+		SELECT 
+		    B.TERMINAL_ID,
+            A.VEHICLE_VIN,
+            A.VEHICLE_ID,
+            A.USER_NAME,
+            A.USER_CONTACT,
+            C.CELLPHONE,
+            ORGNAME.PATH AS SHORT_ALLNAME
+	     FROM CLW_CL_BASE_INFO_T A, 
+	          CLW_JC_TERMINAL_T B, 
+	          CLW_CL_SIM_T C,
+              (SELECT REPLACE(sys_connect_by_path(SHORT_NAME, '/@'), '/@', '') AS Path,
+               SHORT_NAME as organizationName,
+               ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_T
+         start WITH PARENT_ID = '111'
+        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID) ORGNAME
+        WHERE A.VEHICLE_VIN = B.VEHICLE_VIN
+          AND B.SIM_CARD_NUMBER = C.SIM_CARD_NUMBER
+          AND A.ORGANIZATION_ID = ORGNAME.ENTERPRISE_ID(+)
+	      <isNotEmpty prepend="AND" property="organization_id">
+           A.ORGANIZATION_ID IN 
+		   (SELECT ENTERPRISE_ID
+             FROM CLW_JC_ENTERPRISE_VI
+             WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+               AND <![CDATA[RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+                   ]]>
+		      )
+          </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="terminal_id">
+                B.TERMINAL_ID like '%' || #terminal_id# ||'%' escape '\'
+         </isNotEmpty>
+         AND B.VALID_FLAG='0'
+         AND C.VALID_FLAG='0'
+         AND A.VALID_FLAG='0'
+         AND A.ENTERPRISE_ID=#enterprise_id#
+         AND A.DEVICE_TYPE='1'
+         AND C.DEVICE_TYPE='1'
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+	
+	<!--分公司人员获取手持设备数量 -->
+	<select id="getCount" parameterClass="handmobileinfo" resultClass="Integer">
+	    SELECT COUNT(B.TERMINAL_ID)
+        FROM CLW_CL_BASE_INFO_T A, CLW_JC_TERMINAL_T B, CLW_CL_SIM_T C
+        WHERE A.VEHICLE_VIN = B.VEHICLE_VIN
+          AND B.SIM_CARD_NUMBER = C.SIM_CARD_NUMBER
+          <isNotEmpty prepend="AND" property="terminal_id">
+               B.TERMINAL_ID like '%' || #terminal_id# ||'%' escape '\'
+          </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="organization_id">
+           A.ORGANIZATION_ID IN 
+		   (SELECT ENTERPRISE_ID
+             FROM CLW_JC_ENTERPRISE_VI
+             WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+               AND <![CDATA[RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+                   ]]>
+		      )
+          </isNotEmpty>
+          AND B.VALID_FLAG='0'
+          AND C.VALID_FLAG='0'
+          AND A.VALID_FLAG='0'
+          AND A.DEVICE_TYPE='1'
+          AND C.DEVICE_TYPE='1'
+	</select>
+	
+	<!-- 分公司员获取手持设备列表 -->
+	<select id="gethandmoblieInfos" parameterClass="handmobileinfo" resultMap="handmobileinfo-result">
+		SELECT 
+		    B.TERMINAL_ID,
+            A.VEHICLE_VIN,
+            A.VEHICLE_ID,
+            A.USER_NAME,
+            A.USER_CONTACT,
+            C.CELLPHONE,
+            ORGNAME.PATH AS SHORT_ALLNAME
+	     FROM CLW_CL_BASE_INFO_T A, 
+	          CLW_JC_TERMINAL_T B, 
+	          CLW_CL_SIM_T C,
+              (SELECT REPLACE(sys_connect_by_path(SHORT_NAME, '/@'), '/@', '') AS Path,
+               SHORT_NAME as organizationName,
+               ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_T
+         start WITH PARENT_ID = '111'
+        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID) ORGNAME
+        WHERE A.VEHICLE_VIN = B.VEHICLE_VIN
+          AND B.SIM_CARD_NUMBER = C.SIM_CARD_NUMBER
+          AND A.ORGANIZATION_ID = ORGNAME.ENTERPRISE_ID(+)
+          <isNotEmpty prepend="AND" property="terminal_id">
+              B.TERMINAL_ID like '%' || #terminal_id# ||'%' escape '\'
+         </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="organization_id">
+           A.ORGANIZATION_ID IN 
+		   (SELECT ENTERPRISE_ID
+             FROM CLW_JC_ENTERPRISE_VI
+             WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+               AND <![CDATA[RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #organization_id#)
+                   ]]>
+		      )
+          </isNotEmpty>
+          AND B.VALID_FLAG='0'
+          AND C.VALID_FLAG='0'
+          AND A.VALID_FLAG='0'
+          AND A.DEVICE_TYPE='1'
+          AND C.DEVICE_TYPE='1'
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+	
+	
+	<select id="getHandmobileByid" parameterClass="handmobileinfo" resultClass="handmobileinfo">
+		    SELECT
+		    B.TERMINAL_ID,
+            A.VEHICLE_VIN,
+            A.VEHICLE_ID,
+            A.USER_NAME,
+            A.USER_CONTACT,
+            A.ORGANIZATION_ID,
+            C.CELLPHONE,
+            EN.SHORT_NAME AS organizationName
+	    FROM CLW_CL_BASE_INFO_T A, 
+	          CLW_JC_TERMINAL_T B, 
+	          CLW_CL_SIM_T C,
+              CLW_JC_ENTERPRISE_T EN
+        WHERE A.VEHICLE_VIN = B.VEHICLE_VIN
+          AND A.ORGANIZATION_ID=EN.ENTERPRISE_ID(+)
+          AND B.SIM_CARD_NUMBER = C.SIM_CARD_NUMBER
+          AND A.VALID_FLAG='0'
+          AND B.VALID_FLAG='0'
+          AND C.VALID_FLAG='0'
+          AND C.DEVICE_TYPE='1'
+          AND A.DEVICE_TYPE='1'
+          AND A.VEHICLE_ID=#vehicle_id#
+	</select>	
+	
+	<update id="updatebyVehicleid" parameterClass="handmobileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=#organization_id#,
+		    MODIFIER=#modifier#,
+		    MODIFY_TIME=SYSDATE,
+		    USER_NAME=#user_name#,
+		    USER_CONTACT=#user_contact#
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<update id="canclebyVehicleid" parameterClass="handmobileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=null,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<update id="canclebyVin" parameterClass="handmobileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=null,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE
+		WHERE VEHICLE_VIN = #vehicle_vin#
+	</update>
+	
+	
+    <!-- 获取未分配的车辆列表 -->
+    
+	<select id="getHandmobiledesc" parameterClass="String" resultMap="handmobiledesc-result">
+		SELECT A.VEHICLE_ID,B.TERMINAL_ID||'-'||A.VEHICLE_VIN as VEHICLE_DESC
+		FROM CLW_CL_BASE_INFO_T A,CLW_JC_TERMINAL_T B
+        WHERE A.VEHICLE_VIN=B.VEHICLE_VIN
+        AND A.ENTERPRISE_ID=#enterprise_id#
+        AND A.VALID_FLAG='0'
+        AND B.VALID_FLAG='0'
+        AND ORGANIZATION_ID is NULL 
+        AND A.DEVICE_TYPE='1'
+	</select>
+	
+	  <update id="updateHandOrgid" parameterClass="handmobileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=#organization_id#,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	 <procedure id="show_enterprise_tree" parameterMap="pm_in_example" >
+       { call tree_enterprise_pack.show_enterprise_tree(?, ? ,? ,?) }
+     </procedure> 
+     
+     <procedure id="show_enterprise_id" parameterMap="getAllEnid" >
+       { call tree_enterprise_pack.get_between_enterprise_id(?, ? ,? ,?,?) }
+     </procedure> 
+     
+		
+</sqlMap>

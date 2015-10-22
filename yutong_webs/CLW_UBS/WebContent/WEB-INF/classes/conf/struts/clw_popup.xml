@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- popup页面 -->
+	<package name="popup" namespace="/popup" extends="clw-default">
+		<!-- 车型选择 -->
+		<!-- 初始化 -->
+		<action name="vehicle_type_init" class="carBaseAction" method="getVehicleType">
+			<result name="success">
+				/WEB-INF/jsp/popup/vehicle_typeBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/vehicle_typeBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询 -->
+		<action name="query_vehicle_type" class="carBaseAction" method="getVehicleType">
+			<result name="success">
+				/WEB-INF/jsp/popup/vehicle_typeBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/vehicle_typeBrowse.jsp
+			</result>
+		</action>
+		
+		<!-- 创建车型初始化 -->
+		<action name="vehicleTypeCreate" class="carBaseAction" method="vehicleTypeCreate">
+			<result name="error">/WEB-INF/jsp/popup/vehicleTypeCreate.jsp</result>
+			<result name="success">/WEB-INF/jsp/popup/vehicleTypeCreate.jsp</result>
+		</action>
+		<!-- 创建车型 -->
+		<action name="createVehicleType" class="carBaseAction" method="createVehicleType">
+		</action>
+		
+		<!-- 发动机类型选择 -->
+		<!-- 初始化 -->
+		<action name="engine_type_init" class="carBaseAction" method="getEngineType">
+			<result name="success">
+				/WEB-INF/jsp/popup/engine_typeBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/engine_typeBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询 -->
+		<action name="query_engine_type" class="carBaseAction" method="getEngineType">
+			<result name="success">
+				/WEB-INF/jsp/popup/engine_typeBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/engine_typeBrowse.jsp
+			</result>
+		</action>
+		<!-- 创建发动机型号初始化 -->
+		<action name="engineTypeCreate" class="carBaseAction" method="engineTypeCreate">
+			<result name="error">/WEB-INF/jsp/popup/engineTypeCreate.jsp</result>
+			<result name="success">/WEB-INF/jsp/popup/engineTypeCreate.jsp</result>
+		</action>
+		<!-- 创建发动机型号 -->
+		<action name="createEngineType" class="carBaseAction" method="createEngineType">
+		</action>
+		
+		
+		
+		<!-- 企业选择 -->
+		<!-- 初始化 -->
+		<action name="enterpriseinit" class="enterpriseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/enterpriseBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/enterpriseBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询企业 -->
+		<action name="queryEnterprise" class="enterpriseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/enterpriseBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/enterpriseBrowse.jsp
+			</result>
+		</action>
+	
+		<!-- 车主选择 -->
+		<!-- 初始化 -->
+		<action name="ownerinit" class="ownerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/ownerBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/ownerBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询车主 -->
+		<action name="queryOwner" class="ownerAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/ownerBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/ownerBrowse.jsp
+			</result>
+		</action>
+	
+		<!-- 用户选择 -->
+		<!-- 初始化 -->
+		<action name="userinit" class="userBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/userCheckBoxBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/userCheckBoxBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询用户 -->
+		<action name="queryUser" class="userBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/userCheckBoxBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/userCheckBoxBrowse.jsp
+			</result>
+		</action>
+		
+		<!-- 角色选择 -->
+		<!-- 初始化 -->
+		<action name="roleinit" class="roleBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/roleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/roleBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询角色 -->
+		<action name="queryRole" class="roleBrowseAction" method="popInitRole">
+			<result name="success">
+				/WEB-INF/jsp/popup/roleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/roleBrowse.jsp
+			</result>
+		</action>
+		
+		<!-- 车辆选择 -->
+		<!-- 初始化 -->
+		<action name="vehicleinit" class="vehicleBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/vehicleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/vehicleBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询车辆 -->
+		<action name="queryVehicle" class="vehicleBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/vehicleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/vehicleBrowse.jsp
+			</result>
+		</action>
+	
+		<!-- 终端选择 -->
+		<!-- 初始化 -->
+		<action name="terminalinit" class="terminalBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/terminalBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/terminalBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询终端 -->
+		<action name="queryTerminal" class="terminalBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/terminalBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/terminalBrowse.jsp
+			</result>
+		</action>
+	
+		<!-- SIM卡选择 -->
+		<!-- 初始化 -->
+		<action name="siminit" class="simBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/simBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/simBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询SIM卡 -->
+		<action name="querySim" class="simBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/simBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/simBrowse.jsp
+			</result>
+		</action>
+	
+		<!-- 已注册车辆选择 -->
+		<!-- 初始化 -->
+		<action name="registevehicleinit" class="registeVehicleBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/registeVehicleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/registeVehicleBrowse.jsp
+			</result>
+		</action>
+		<!-- 查询车辆 -->
+		<action name="queryRegisteVehicle" class="registeVehicleBrowseAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/registeVehicleBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/registeVehicleBrowse.jsp
+			</result>
+		</action>
+		<!-- 用户管理角色选择 -->
+		<!-- 初始化 -->
+		<action name="chooseRole" class="roleBrowseAction" method="popInitRole">
+			<result name="success">
+				/WEB-INF/jsp/popup/chooseRole.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/chooseRole.jsp
+			</result>
+		</action>
+		<action name="queryChooseRole" class="roleBrowseAction" method="popInitRole">
+			<result name="success">
+				/WEB-INF/jsp/popup/chooseRole.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/chooseRole.jsp
+			</result>
+		</action>
+		
+		
+		<!-- 企业选择与新增 -->
+		<!-- 初始化 -->
+		<action name="enterpriseViewAndCreate" class="enterpriseViewAndCreateAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/enterpriseBrowseAndCreate.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/enterpriseBrowseAndCreate.jsp
+			</result>
+		</action>
+		<!-- 查询企业 -->
+		<action name="queryEnterpriseViewAndCreate" class="enterpriseViewAndCreateAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/popup/enterpriseBrowseAndCreate.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/popup/enterpriseBrowseAndCreate.jsp
+			</result>
+		</action>
+		<!-- 创建企业初始化 -->
+		<action name="enterpriseViewCreate" class="enterpriseViewAndCreateAction" method="enterpriseViewCreate">
+			<result name="error">/WEB-INF/jsp/popup/enterpriseViewCreate.jsp</result>
+			<result name="success">/WEB-INF/jsp/popup/enterpriseViewCreate.jsp</result>
+		</action>
+		<!-- 创建企业 -->
+		<action name="createEnterpriseView" class="enterpriseViewAndCreateAction" method="createEnterpriseView">
+		</action>
+	</package>
+</struts>

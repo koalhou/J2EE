@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 公车私用巡检 -->
+<struts>
+	<package name="vehicleCheck" namespace="/checking" extends="clw-default">
+		<!-- 进入公车私用巡检列表页面-->
+		<action name="vehicleCheckManage" class="vehicleCheckAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/check/vehicleRecord.jsp</result>
+			<result name="success">/WEB-INF/jsp/check/vehicleRecord.jsp</result>	
+		</action>
+		<!--异常用车列表导出  -->
+		<action name="exportIllListAction" class="vehicleCheckAction" method="exportIllList">
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehicleCheckManage</param>
+			</result>
+		</action>
+		<!--处理记录列表导出  -->
+		<action name="exportOperatedListAction" class="vehicleCheckAction" method="exportOperatedList">
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehicleCheckManage</param>
+			</result>
+		</action>
+		<!-- 弹出地图对话框 -->
+		<action name="showMapPage" class="vehicleCheckAction" method="showMapPage">
+			<result name="success">/WEB-INF/jsp/check/mapshow.jsp</result>	
+		</action>
+		<!-- 加载地图页面的引用页 -->
+		<action name="loadIframe" class="vehicleCheckAction" method="loadIframe">
+			<result name="success">/WEB-INF/jsp/check/iframeArea.jsp</result>	
+		</action>
+		<!-- 处理告警信息 -->
+		<action name="batchOperate" class="vehicleCheckAction" method="batchOperate">
+		</action>
+		<!-- 自动显示处理下一条记录 -->
+		<action name="getNextRow" class="vehicleCheckAction" method="getNextRow">
+		</action>
+	</package>
+	<package name="vehicleCheckJson" namespace="/checkingList" extends="json-default">
+		<!-- 公车私用巡检列表,异常记录查询 -->
+		<action name="illList" class="vehicleCheckAction" method="illList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+		<!-- 公车私用巡检列表,处理记录查询 -->
+		<action name="operatedList" class="vehicleCheckAction" method="operatedList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+	</package>
+	
+</struts>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Daydriverecord">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="historyInfo"
+		type="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunHistory" />
+	<typeAlias alias="vehcileBean"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+
+
+
+	<resultMap class="historyInfo" id="infos">
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<!-- <result property="driver_name" column="DRIVER_NAME" /> -->
+		<result property="start_time" column="START_TIME" />
+		<result property="end_time" column="END_TIME" />
+		<result property="run_time" column="RUN_TIME" />
+		<result property="spd_oil" column="SPD_OIL" />
+		<result property="total_mileage" column="TOTAL_MILEAGE" />
+		<result property="VIN" column="VEHICLE_VIN" />
+
+	</resultMap>
+
+	<resultMap class="historyInfo" id="total">
+		<result property="run_time" column="RUN_TIME" />
+		<result property="spd_oil" column="SPD_OIL" />
+		<result property="total_mileage" column="TOTAL_MILEAGE" />
+
+	</resultMap>
+
+
+
+
+	<select id="getCountDriveRecord" parameterClass="historyInfo"
+		resultClass="Integer">
+		select sum(cnt) from (
+		SELECT COUNT(1) cnt
+
+		from CLW_XC_RUN_RECORD_T t,
+		clw_cl_base_info_t b
+		where t.vehicle_vin = b.vehicle_vin
+		<isNotEmpty prepend="AND" property="begintime">
+			t.on_date &gt;=
+			TO_DATE(#begintime#,'yyyy-mm-dd hh24:mi:ss') 
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="endtime">
+			t.on_date &lt;
+			TO_DATE(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vins">
+			t.vehicle_vin in
+			($vins$)
+		 </isNotEmpty>
+		 and b.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+		</isNotEmpty>
+		)
+	</select>
+
+	<select id="getDriveRecordInfos" parameterClass="historyInfo"
+		resultMap="infos">
+
+		select * from (
+		SELECT
+		b.vehicle_vin,
+		b.vehicle_code,
+		b.vehicle_ln,
+		
+		TO_CHAR(t.on_date,'yyyy-mm-dd hh24:mi:ss') start_time,
+		TO_CHAR(t.off_date, 'yyyy-mm-dd hh24:mi:ss') end_time,
+		round(to_number(t.off_date - t.on_date) *
+		1440) run_time,
+		t.spd_oil,
+		t.mileage total_mileage
+		from
+		CLW_XC_RUN_RECORD_T t,
+		clw_cl_base_info_t b
+		where
+		t.vehicle_vin =
+		b.vehicle_vin
+		<isNotEmpty prepend="AND" property="begintime">
+			t.on_date &gt;=
+			TO_DATE(#begintime#,'yyyy-mm-dd hh24:mi:ss') 
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="endtime">
+			t.on_date &lt;
+			TO_DATE(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vins">
+			t.vehicle_vin in
+			($vins$)
+		 </isNotEmpty>
+		 and b.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+		</isNotEmpty>
+		)
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+		   </isNotEmpty>
+		</dynamic>
+	</select>
+
+
+
+	<select id="getSumList" parameterClass="historyInfo" resultMap="total">
+
+
+		
+		SELECT
+		
+		nvl(sum(round(to_number(t.off_date - t.on_date) * 1440)),0) run_time,
+		nvl(sum(t.spd_oil),0) spd_oil,
+		nvl(sum(t.mileage),0) total_mileage
+		
+		
+		
+		from
+		CLW_XC_RUN_RECORD_T t,		
+		clw_cl_base_info_t b
+		where
+		t.vehicle_vin =
+		b.vehicle_vin
+		<isNotEmpty prepend="AND" property="begintime">
+			t.on_date &gt;=
+			TO_DATE(#begintime#,'yyyy-mm-dd hh24:mi:ss') 
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="endtime">
+			t.on_date &lt;
+			TO_DATE(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+		<isNotEmpty prepend="AND" property="vins">
+			t.vehicle_vin in
+			($vins$)
+		 </isNotEmpty>
+		 and b.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="user_organization_id">
+			b.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+		</isNotEmpty>
+		
+		
+	</select>
+
+	<!-- 得到里程数 -->
+	<select id="getOrgan" parameterClass="historyInfo" resultClass="string">
+		select t.short_name from CLW_JC_ENTERPRISE_T t,clw_cl_base_info_t b
+		where b.organization_id = t.enterprise_id
+		and b.vehicle_vin = #VIN#
+		and b.valid_flag = '0'
+	</select>
+
+
+
+
+</sqlMap>

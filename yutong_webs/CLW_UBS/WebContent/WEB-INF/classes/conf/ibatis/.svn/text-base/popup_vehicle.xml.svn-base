@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="VehicleBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="VehicleBrowseInfo" type="com.neusoft.clw.yw.popup.vehicle.ds.VehicleBrowseInfo" />
+	
+	<resultMap id="vehicleInfo-result" class="VehicleBrowseInfo">
+		<result property="vehicleId" column="VEHICLE_ID" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+	</resultMap>
+	
+	<select id="getVehicleInfos" parameterClass="Map" resultMap="vehicleInfo-result">
+		SELECT CBI.VEHICLE_ID, 
+		       CBI.VEHICLE_VIN, 
+		       CBI.VEHICLE_LN
+          FROM CLW_CL_BASE_INFO_T CBI
+         WHERE CBI.VALID_FLAG = '0'
+           AND CBI.DEVICE_TYPE = '0'
+           AND NOT EXISTS (SELECT 1
+                             FROM CLW_JC_TERMINAL_T JT
+                            WHERE CBI.VEHICLE_VIN = JT.VEHICLE_VIN
+                              AND JT.VALID_FLAG = '0'
+                              AND JT.DEVICE_TYPE = '0')
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               CBI.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleLn">
+               CBI.VEHICLE_LN LIKE '%$vehicleLn$%'
+         </isNotEmpty>
+         ORDER BY VEHICLE_VIN
+	</select>
+	
+</sqlMap>

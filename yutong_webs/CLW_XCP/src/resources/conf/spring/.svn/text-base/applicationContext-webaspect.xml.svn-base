@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	                       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd 
+	                       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+	   <bean id="logClass" class="com.neusoft.clw.common.aspects.LogRecording" />
+	   
+	   <aop:config proxy-target-class="true">
+		   <aop:aspect id="logAction" ref="logClass">
+			   <aop:pointcut id="logActionCutPoint" expression="execution(* *..action*..*(..)))"/>
+			   <aop:before pointcut-ref="logActionCutPoint" method="beforeMethodInvoke"/>
+			   <aop:after pointcut-ref="logActionCutPoint" method="afterMethodInvoke"/>
+		   </aop:aspect>
+	   </aop:config>
+	   
+<!--	   <aop:config proxy-target-class="true">-->
+<!--		   <aop:aspect id="logService" ref="logClass">-->
+<!--			   <aop:pointcut id="logServiceCutPoint" expression="execution(* *..service*..*(..)))"/>-->
+<!--			   <aop:before pointcut-ref="logServiceCutPoint" method="beforeMethodInvoke"/>-->
+<!--			   <aop:after pointcut-ref="logServiceCutPoint" method="afterMethodInvoke"/>-->
+<!--		   </aop:aspect>-->
+<!--	   </aop:config>-->
+</beans>      
+

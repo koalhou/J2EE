@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="pawset" namespace="/pawset" extends="clw-default">
+		
+		<action name="alterpaw" class="pawSetAction" method="pawSetBefore">
+			<result name="error">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpaw.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpaw.jsp</result>	
+		</action>		
+		<action name="pawSet" class="pawSetAction" method="pawSet">
+			<result name="error">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpaw.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpaw.jsp</result>	
+		</action>
+		<action name="alterpawST" class="pawSetAction" method="pawSetBefore">
+			<result name="error">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpawST.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpawST.jsp</result>	
+		</action>		
+		<action name="pawSetST" class="pawSetAction" method="pawSetST">
+			<result name="error">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpawST.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/sysset/pawset/alterpawST.jsp</result>	
+		</action>
+		
+		
+		
+	</package>
+</struts>

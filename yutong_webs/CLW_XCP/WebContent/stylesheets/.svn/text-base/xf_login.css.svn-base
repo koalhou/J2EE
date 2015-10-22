@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* CSS Document */
+
+.xf_loginBody{ background:#b1d6fa url(../newimages/xf/xf_bg.gif) repeat-x top;}
+.xf_header{ width:1002px; margin:0 auto; position:relative;}
+.xf_loginLogo{ width:452px; height:66px; background:url(../newimages/xf/xf_login_logo.png) no-repeat; position:absolute;}
+.xf_main{ width:1002px; margin:0 auto; padding-top:160px;}
+.xf_loginBox{ width:238px; margin:0 auto; padding-top:70px; }
+
+.xf_loginBox input.xf_text{ height:30px; width:230px;  border:1px #ccc solid; margin:0px;line-height:30px; padding:0 4px; font-size:14px;}
+.xf_loginBox input.code{ width:110px;}
+.xf_loginBox a{ background:url(../newimages/xf/xf_login_btn.png) no-repeat; display:block; width:238px; height:43px; margin:0 auto;}
+.xf_loginBox a:link.xf_btnLogin,
+.xf_loginBox a:visited.xf_btnLogin{ background-position:top center;}
+.xf_loginBox a:hover.xf_btnLogin,
+.xf_loginBox a:active.xf_btnLogin{ background-position:bottom center;}
+.xf_loginBox div{ height:46px; position:relative;}
+.xf_loginBox div.remember{ height:40px;}
+.xf_loginBox div span{ position:absolute; right:-50px; top:8px;}
+.xf_loginBox .form_valid{ text-align: center;  padding-top:10px; color:#C80000;}
+.xf_flashBox{}
+
+.xf_login_left{ width:620px;background:url(../newimages/xf/xf_login_left.png) no-repeat;}
+.xf_login_right{ background:url(../newimages/xf/xf_login_right.png) no-repeat;}
+
+.xf_loginBox table{}
+.xf_loginBox td{ height:40px;}
+
+.xf_flashBox{ overflow:hidden; height:60px;}

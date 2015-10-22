@@ -1,0 +1,200 @@
+body{
+	background:url(images/top_bg.jpg) repeat-x top;
+	margin:0px auto auto auto;
+	padding:0;
+}
+clear{
+clear:both;
+}
+img{
+	border:none;
+}
+a{
+	text-decoration:none;
+}
+p{
+	margin:0;
+	
+}
+li{
+	list-style:none;
+	
+
+}
+.wrap{
+	width:1000px;
+	margin:auto;
+}
+.top{
+	width:1000px;
+	height:238px;
+	
+	background:url(images/top.jpg) no-repeat;
+}
+.top p{
+	 font-size:12px;
+	 padding-left:445px;
+	 padding-top:200px;
+	 color:#606060;
+}
+.menu{
+	width:1000px;
+	height:53px;
+}
+.menu_one{
+	width:153px;
+	height:53px;
+	float:left;
+}
+.menu_two{
+	width:215px;
+	height:53px;
+	float:left;
+}
+.menu_three{
+	width:170px;
+	height:53px;
+	float:left;
+}
+.menu_four{
+	width:178px;
+	height:53px;
+	float:left;
+}
+.menu_five{
+	width:205px;
+	height:53px;
+	float:left;
+}
+.menu_six{
+	width:79px;
+	height:53px;
+	float:left;
+}
+.part_one{
+	width:1000px;
+	height:7 2px;
+	margin-top:20px;
+}
+.bar{
+	width:1000px;
+	height:44px;
+
+}
+.bar_left{
+	width:23px;
+	height:44px;
+	background:url(images/bar_left.jpg) no-repeat;
+	float:left;
+}
+.bar_m{
+	width:952px;
+	height:44px;
+	background:#6699cc;
+	float:left;
+}
+.bar_right{
+	width:23px;
+	height:44px;
+	background:url(images/bar_right.jpg) no-repeat;
+	float:left;
+}
+
+.bar_m p{
+	font-size:18px;
+	font-family:微软雅黑;
+	color:#FFF;
+	font-weight:bold;
+	line-height:44px;
+	font-style:italic;
+}
+.bar_m p span{
+	font-size:24px;
+}
+.word{
+	width:930px;
+	
+	padding-left:40px;
+	padding-top:10px;
+
+	clear:both;
+	
+}
+.word p{
+	font-size:14px;
+	line-height:30px;
+
+}
+.word p span{
+	color:#F00;
+}
+.two_img{
+	width:674px;
+	height:375px;
+	padding-left:100px;
+	padding-top:10px;
+}
+.part_two{
+	width:1000px;
+	height:490px;
+}
+.word_r{
+	width:930px;
+	height:30px;
+	padding-left:410px;
+	padding-top:10px;
+
+	clear:both;
+	
+}
+.word_r p{
+	font-size:14px;
+	line-height:30px;
+}
+.word_four{
+	width:930px;
+	height:60px;
+	padding-left:30px;
+	padding-top:10px;
+	clear:both;
+	
+}
+.word_four p{
+	font-size:14px;
+	line-height:30px;
+}
+
+.word_four p span{
+	color:#F00;
+}
+.five_img{
+	padding-left:130px;
+}
+.six_img{
+	width:926px;
+	height:644px;
+	padding-left:10px;
+}
+
+.word_six{
+	padding-left:20px;
+	
+}
+.word_six ul li{
+	font-size:14px;
+	line-height:30px;
+}
+
+#goTopBtn {
+	position: fixed; 
+	text-align:center; 
+	line-hight: 30px; 
+	width: 30px; 
+	bottom: 35px; 
+	height: 33px; 
+	font-size: 12px; 
+	cursor: pointer; 
+	right: 0px; 
+	_position: absolute; 
+	_right: auto
+}

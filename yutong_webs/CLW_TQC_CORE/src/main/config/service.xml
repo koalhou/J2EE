@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="false"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="appConfigCacheManager" class="com.neusoft.clw.vncs.cachemanager.AppConfigCacheManager">
+		<property name="appconfigDAO" ref="appconfigDAO" />
+	</bean>
+
+	<bean id="terminalCacheManager" class="com.neusoft.clw.vncs.cachemanager.TerminalCacheManager">
+		<property name="terminalDAO" ref="terminalDAO" />
+	</bean>
+
+	<bean id="sendCommandManager" class="com.neusoft.clw.vncs.manage.SendCommandManager">
+		<property name="sendCommandDAO" ref="sendCommandDAO" />
+		<property name="oilWearSQL" ref="oilWearSQL" />
+	</bean>
+	<bean id="reportManager" class="com.neusoft.clw.vncs.manage.ReportManager">
+		<property name="reportDAO" ref="reportDAO" />
+	</bean>
+	<bean id="harmDefCacheManager" class="com.neusoft.clw.vncs.cachemanager.HarmDefCacheManager">
+		<property name="harmdefDAO" ref="harmdefDAO" />
+	</bean>
+
+	<bean id="vehicleCacheManager" class="com.neusoft.clw.vncs.cachemanager.VehicleCacheManager">
+		<property name="vehicleDAO" ref="vehicleDAO" />
+		<property name="terminalDAO" ref="terminalDAO" />
+	</bean>
+
+	<bean id="sendxcmsmCommandManager"
+		class="com.neusoft.SchoolBus.vncs.manage.SendxcmsmCommandManager">
+		<property name="sendXcSmsDAO" ref="sendXcSmsDAO"></property>
+	</bean>
+
+	<bean id="fullQuantityCacheManager"
+		class="com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager">
+		<property name="terminalDAO" ref="terminalDAO" />
+		<property name="vehicleDAO" ref="vehicleDAO" />
+		<property name="sendXcSmsDAO" ref="sendXcSmsDAO"></property>
+	</bean>
+	
+	<bean id="quartzCommandManager" class="com.neusoft.SchoolBus.vncs.manage.QuartzManager">
+	</bean>
+	<bean id="syncCommandManager" class="com.neusoft.smsplatform.message.manage.SyncManager">
+		<property name="smssyncdao" ref="smssyncdao"></property>
+	</bean>
+	
+	
+	<bean id="algorithmManager" class="com.neusoft.parents.algorithm.manager.AlgorithmManager">
+		<property name="algorithmDAO" ref="algorithmDAO"></property>
+		<property name="stationGenerator" ref="simpleStationGenerator2"></property>
+		<property name="mileageCalculator" ref="simpleMileageCalculator"></property>
+		<property name="stationStudentGenerator" ref="simpleStationStudentGenerator"></property>
+		<property name="tripOrbitGenerator" ref="simpleTripOrbitGenerator"></property>
+		<property name="timeCalculator" ref="simpleTimeCalculator"></property>
+	</bean>
+	
+	<bean id="sendBuffer" class="com.neusoft.smsplatform.message.buffer.send.SendBuffer" abstract="true">
+	</bean>
+    <bean id="quartzTripCommandManager" class="com.neusoft.SchoolBus.vncs.manage.QuartzTripManager">
+	</bean>
+	<bean id="smsOrderManager"
+		class="com.neusoft.SchoolBus.vncs.manage.SmsOrderManager">
+		<property name="sendXcSmsDAO" ref="sendXcSmsDAO"></property>
+   </bean>
+   
+   <bean id="newsManager" class="com.neusoft.parents.newsmanager.NewsManager">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>
+
+	<bean id="siteNoteManager" class="com.neusoft.parents.sitenotemanager.SiteNoteManager">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>
+	<bean id="vehicleRealCacheManager"
+		class="com.neusoft.parents.cachemanager.VehicleRealCacheManager">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>	
+	<bean id="vinTripCacheManager"
+		class="com.neusoft.parents.cachemanager.VinTripCacheManager">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>
+	
+	<bean id="preLineAlarm"
+		class="com.neusoft.parents.cachemanager.PreLineAlarm">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>
+	
+
+	
+	<bean id="ruleCacheManager" class="com.neusoft.parents.cachemanager.RuleCacheManager">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>
+	<bean id="stuStateClearManager" class="com.neusoft.parents.sitenotemanager.StuStateClearManager">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+	</bean>	
+	
+	<bean id="overPreLine"
+		class="com.neusoft.parents.overpreline.manager.OverPreLine">
+		<property name="parentsDAO" ref="parentsDAO"></property>
+		<property name="overPreLineDao" ref="overPreLineDao"></property>
+	</bean>
+	
+	<bean id="privateUseManager"
+		class="com.neusoft.privateuse.manager.PrivateUseManager">
+		<property name="privateUseDAO" ref="privateUseDAO"></property>
+	</bean>
+	
+	<bean id="simpleStationGenerator2"
+		class="com.neusoft.parents.algorithm.manager.SimpleStationGenerator2">
+		<property name="algorithmDAO" ref="algorithmDAO"></property>
+	</bean>
+	
+	<bean id="simpleMileageCalculator"
+		class="com.neusoft.parents.algorithm.manager.SimpleMileageCalculator">
+		<property name="algorithmDAO" ref="algorithmDAO"></property>
+	</bean>
+	
+	<bean id="simpleStationStudentGenerator"
+		class="com.neusoft.parents.algorithm.manager.SimpleStationStudentGenerator">
+		<property name="algorithmDAO" ref="algorithmDAO"></property>
+	</bean>
+	
+	<bean id="simpleTripOrbitGenerator"
+		class="com.neusoft.parents.algorithm.manager.SimpleTripOrbitGenerator">
+		<property name="algorithmDAO" ref="algorithmDAO"></property>
+	</bean>
+	
+	<bean id="simpleTimeCalculator"
+		class="com.neusoft.parents.algorithm.manager.SimpleTimeCalculator">
+		<property name="algorithmDAO" ref="algorithmDAO"></property>
+	</bean>
+   <!-- 通勤车统计功能 -->
+   <bean id="tqcStatisticManager" class="com.neusoft.tqcpt.manage.TqcStatisticManager">
+   </bean>
+   <bean id="tqcOilWearManager" class="com.neusoft.tqcpt.manage.TqcOilWearManager">
+   </bean>
+   <!-- 员工乘车规划功能 -->
+   <bean id="ridingPlanCacheManager" class="com.neusoft.clw.vncs.cachemanager.RidingPlanCacheManager">
+		<property name="ridingPlanDAO" ref="ridingPlanDAO" />
+	</bean>
+   
+   <!-- ****************************刘俊安测试************************************* 
+   <bean id="pushMsgBuffer" class="com.neusoft.parents.pushmessage.manager.PushMsgBuffer">
+        <property name="parentsDAO" ref="parentsDAO"></property>
+   </bean>-->
+   
+   
+</beans>

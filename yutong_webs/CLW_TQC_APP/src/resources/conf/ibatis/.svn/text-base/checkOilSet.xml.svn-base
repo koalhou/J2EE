@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CheckOilSet">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="checkOilSetInfo" type="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckOilSetInfo" />
+	<typeAlias alias="insertCheckOilList" type="com.neusoft.clw.sysmanage.datamanage.checkOilSet.InsertCheckOilList" />
+	<typeAlias alias="testList" type="com.neusoft.clw.sysmanage.datamanage.checkOilSet.TestList" />			
+	<typeAlias alias="checkInfo" type="com.neusoft.clw.sysmanage.datamanage.checkOilSet.CheckInfo" />	
+	<typeAlias alias="monthStartEnd" type="com.neusoft.clw.sysmanage.datamanage.checkOilSet.MonthStartEnd" />			
+		
+	<resultMap id="checkOilSetInfo-result" class="checkOilSetInfo">
+		<result property="vehicle_code" column="VEHICLE_CODE"/>
+	    <result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_type" column="VEHICLE_TYPE" />
+		<result property="checkYear" column="CHECK_TIME_CODE" />
+		<result property="january" column="JANUARY" />
+		<result property="february" column="FEBRUARY" />
+		<result property="march" column="MARCH" />
+		<result property="april" column="APRIL" />
+		<result property="may" column="MAY" />
+		<result property="june" column="JUNE" />
+		<result property="july" column="JULY" />
+		<result property="august" column="AUGUST" />
+		<result property="september" column="SEPTEMBER" />		
+		<result property="october" column="OCTOBER" />
+		<result property="november" column="NOVEMBER" />
+		<result property="december" column="DECEMBER" />
+	</resultMap>
+
+     <resultMap id="vehicleVin" class="checkOilSetInfo">
+	   	<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+	</resultMap>
+
+
+
+    <resultMap id="checkInfoList" class="checkInfo">
+	   <result property="vehicle_vin" column="vehicle_vin" />
+	   <result property="checkTimeCode" column="check_time_code" />
+	   <result property="start_time" column="start_time" />
+	   <result property="end_time" column="end_time" />
+		<result property="checkValue" column="check_value" />
+	</resultMap>
+
+
+<!-- 查更改考核油耗的信息-->	
+<update id="CheckOilSet.updateCheckInfo" parameterClass="checkInfo">
+		UPDATE clw_yw_oil_check_t
+		SET check_value=#checkValue#,
+		MODIFY_TIME=SYSDATE		  
+	   	WHERE  vehicle_vin=#vehicle_vin#
+	   	and check_time_code=#checkTimeCode#	   	
+	 </update>
+
+<!-- 查询未设置考核油耗的车辆-->	
+<select id="getVehicleVinCount"  resultClass="Integer">
+select  count(1) from  clw_cl_base_info_t t1 
+where t1.vehicle_vin not in (select t2.vehicle_vin from clw_yw_oil_check_t t2
+							 where to_char(to_date(t2.check_time_code,'yyyy-MM'),'yyyy') = #checkYear#
+							   and t2.enterprise_id in
+							   <![CDATA[
+			                         (SELECT ENTERPRISE_ID
+			                          FROM CLW_JC_ENTERPRISE_VI
+			                         WHERE LEFT_NUM >=
+			                               (SELECT LEFT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_VI
+			                                 WHERE ENTERPRISE_ID = #enterpriseId#)
+			                           AND RIGHT_NUM <=
+			                               (SELECT RIGHT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_VI
+			                                 WHERE ENTERPRISE_ID = #enterpriseId#))
+			                   ]]> 
+							)
+and t1.vehicle_code != '外租'
+and t1.valid_flag = 0
+and t1.organization_id in
+	<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]> 
+<isNotEmpty prepend="AND" property="vehicle_ln">
+    upper(t1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_vin">
+    t1.vehicle_vin like '%' || #vehicle_vin# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_code">
+    t1.vehicle_code like '%' || #vehicle_code# ||'%' escape '\'
+   </isNotEmpty>
+</select>
+
+
+<select id="getVehicleVin"  resultMap="vehicleVin">
+select  t1.vehicle_vin,t1.vehicle_ln,t1.vehicle_code from  clw_cl_base_info_t t1 
+where t1.vehicle_vin not in (select t2.vehicle_vin from clw_yw_oil_check_t t2
+							 where to_char(to_date(t2.check_time_code,'yyyy-MM'),'yyyy') = #checkYear#
+							   and t2.enterprise_id in
+							   <![CDATA[
+			                         (SELECT ENTERPRISE_ID
+			                          FROM CLW_JC_ENTERPRISE_VI
+			                         WHERE LEFT_NUM >=
+			                               (SELECT LEFT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_VI
+			                                 WHERE ENTERPRISE_ID = #enterpriseId#)
+			                           AND RIGHT_NUM <=
+			                               (SELECT RIGHT_NUM
+			                                  FROM CLW_JC_ENTERPRISE_VI
+			                                 WHERE ENTERPRISE_ID = #enterpriseId#))
+			                   ]]> 
+							)
+	and t1.vehicle_code != '外租'
+	and t1.valid_flag = 0
+	and t1.organization_id in
+	<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]> 
+   <isNotEmpty prepend="AND" property="vehicle_ln">
+    upper(t1.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_vin">
+    t1.vehicle_vin like '%' || #vehicle_vin# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_code">
+    t1.vehicle_code like '%' || #vehicle_code# ||'%' escape '\'
+   </isNotEmpty>
+   <dynamic prepend="ORDER BY">  
+   		<isNotEmpty property="sortName">  
+        	$sortName$   $sortOrder$  
+		</isNotEmpty>  
+	</dynamic>
+</select>
+
+<select id="getEnidUser"  parameterClass="String" resultClass="String">
+	select t.parent_id from clw_jc_enterprise_t t
+	where t.enterprise_id=#value#
+</select>
+
+<!-- 设置单辆车的考核油耗值和起止时间-->	
+<select id="getCheckValueTimeCount"  resultClass="Integer">
+select count(1)
+from CLW_YW_OIL_CHECK_T t1,CLW_YW_OCKTIME_T t2 
+where t1.enterprise_id=t2.enterprise_id (+)
+and t1.check_time_code=t2.check_time_code (+)
+<isNotEmpty prepend="AND" property="checkTimeCode">
+    t1.check_time_code like '%' || #checkTimeCode# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_vin">
+    t1.vehicle_vin like '%' || #vehicle_vin# ||'%' escape '\'
+   </isNotEmpty>
+</select>
+
+
+<select id="getCheckValueTimeList"  resultMap="checkInfoList">
+select t1.check_time_code,
+to_char(t2.start_time,'yyyy-mm-dd') as  start_time,
+to_char(t2.end_time,'yyyy-mm-dd') as  end_time,
+t1.check_value,t1.vehicle_vin  
+from CLW_YW_OIL_CHECK_T t1,CLW_YW_OCKTIME_T t2 
+where t1.enterprise_id=t2.enterprise_id (+)
+ and t1.check_time_code=t2.check_time_code (+) 
+<isNotEmpty prepend="AND" property="checkTimeCode">
+    t1.check_time_code like '%' || #checkTimeCode# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_vin">
+    t1.vehicle_vin like '%' || #vehicle_vin# ||'%' escape '\'
+   </isNotEmpty>
+   <dynamic prepend="ORDER BY">  
+	 <isNotEmpty property="sortName">  
+	 $sortName$   $sortOrder$  
+	 </isNotEmpty>  
+	</dynamic>
+</select>
+
+    <delete id="deleteCheckByVin" parameterClass="checkInfo">
+		delete clw_yw_oil_check_t t where  t.vehicle_vin = #vehicle_vin#        
+	</delete>
+
+<!-- 考核油耗信息数量-->
+	<select id="getCheckOilCount" parameterClass="checkOilSetInfo" resultClass="Integer">
+		with 
+   aa as (select distinct (t1.vehicle_vin) as vehicle_vin,
+                                            t1.enterprise_id,
+                                            t1.modify_time,
+                                            t2.vehicle_code,
+                                            t2.vehicle_ln,
+                                            t3.code_name as vehicle_type,
+                                            to_char(to_date(t1.check_time_code,
+                                                            'yyyy-mm'),
+                                                    'yyyy') as check_time_code
+                            
+                              from (select distinct (t.vehicle_vin) as vehicle_vin,
+                                                    t.enterprise_id,
+                                                    t.check_time_code,
+                                                    t.modify_time
+                                      from clw_yw_oil_check_t t) t1,CLW_CL_BASE_INFO_T t2,CLW_JC_CODEDEF_T t3
+     where t1.check_time_code like '%' || #checkYear# ||'%' escape '\'
+     and t1.vehicle_vin= t2.vehicle_vin
+     and t1.enterprise_id=t2.enterprise_id
+     and t2.vehicle_type_id=t3.code_id
+     and t2.valid_flag = 0
+     and t3.code_type='VEHICLETYPE'
+   ),
+  bb as (
+  select t.vehicle_vin,
+      max(decode(check_time_code,#checkYear#||'-01',check_value,0)) as january,
+      max(decode(check_time_code,#checkYear#||'-02',check_value,0)) as february,
+      max(decode(check_time_code,#checkYear#||'-03',check_value,0)) as march,
+      max(decode(check_time_code,#checkYear#||'-04',check_value,0)) as april,
+      max(decode(check_time_code,#checkYear#||'-05',check_value,0)) as may,
+      max(decode(check_time_code,#checkYear#||'-06',check_value,0)) as june,
+      max(decode(check_time_code,#checkYear#||'-07',check_value,0)) as july,
+      max(decode(check_time_code,#checkYear#||'-08',check_value,0)) as august,
+      max(decode(check_time_code,#checkYear#||'-09',check_value,0)) as september,
+      max(decode(check_time_code,#checkYear#||'-10',check_value,0)) as october,
+      max(decode(check_time_code,#checkYear#||'-11',check_value,0)) as november,
+      max(decode(check_time_code,#checkYear#||'-12',check_value,0)) as december
+    from clw_yw_oil_check_t t  
+    <isNotEmpty prepend="WHERE" property="checkYear">
+   t.check_time_code like '%' || #checkYear# ||'%' escape '\'
+   </isNotEmpty>
+    group by t.vehicle_vin
+    ), cc as (
+    select t.vehicle_vin,
+    max(t.modify_time) as modify_time
+    from clw_yw_oil_check_t t
+    group by vehicle_vin)
+   
+  select count(1) 
+  from  aa,bb,cc
+  where aa.vehicle_vin = bb.vehicle_vin
+  and aa.vehicle_vin = cc.vehicle_vin
+  and aa.vehicle_code !='外租'
+  and aa.modify_time = cc.modify_time
+  and aa.enterprise_id in
+  	<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]> 
+    <isNotEmpty prepend="AND" property="vehicle_ln">
+    upper(aa.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_code">
+    aa.vehicle_code like '%' || #vehicle_code# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_vin">
+    aa.vehicle_vin like '%' || #vehicle_vin# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_type">
+    aa.vehicle_type like '%' || #vehicle_type# ||'%' escape '\'
+   </isNotEmpty>
+</select>		
+		
+		
+
+
+<!-- 考核油耗信息列表-->
+
+<select id="getCheckOilList" parameterClass="checkOilSetInfo" resultMap="checkOilSetInfo-result">
+	with 
+   aa as (select distinct (t1.vehicle_vin) as vehicle_vin,
+                                            t1.enterprise_id,
+                                            t1.modify_time,
+                                            t2.vehicle_code,
+                                            t2.vehicle_ln,
+                                            t3.code_name as vehicle_type,
+                                            to_char(to_date(t1.check_time_code,
+                                                            'yyyy-mm'),
+                                                    'yyyy') as check_time_code
+                            
+                              from (select distinct (t.vehicle_vin) as vehicle_vin,
+                                                    t.enterprise_id,
+                                                    t.check_time_code,
+                                                    t.modify_time
+                                      from clw_yw_oil_check_t t) t1,CLW_CL_BASE_INFO_T t2,CLW_JC_CODEDEF_T t3
+     where t1.check_time_code like '%' || #checkYear# ||'%' escape '\'
+     and t1.vehicle_vin= t2.vehicle_vin
+     and t1.enterprise_id=t2.enterprise_id
+     and t2.vehicle_type_id=t3.code_id
+     and t2.valid_flag = 0
+     and t3.code_type='VEHICLETYPE'
+   ),
+  bb as (
+  select t.vehicle_vin,
+      max(decode(check_time_code,#checkYear#||'-01',check_value,0)) as january,
+      max(decode(check_time_code,#checkYear#||'-02',check_value,0)) as february,
+      max(decode(check_time_code,#checkYear#||'-03',check_value,0)) as march,
+      max(decode(check_time_code,#checkYear#||'-04',check_value,0)) as april,
+      max(decode(check_time_code,#checkYear#||'-05',check_value,0)) as may,
+      max(decode(check_time_code,#checkYear#||'-06',check_value,0)) as june,
+      max(decode(check_time_code,#checkYear#||'-07',check_value,0)) as july,
+      max(decode(check_time_code,#checkYear#||'-08',check_value,0)) as august,
+      max(decode(check_time_code,#checkYear#||'-09',check_value,0)) as september,
+      max(decode(check_time_code,#checkYear#||'-10',check_value,0)) as october,
+      max(decode(check_time_code,#checkYear#||'-11',check_value,0)) as november,
+      max(decode(check_time_code,#checkYear#||'-12',check_value,0)) as december
+    from clw_yw_oil_check_t t  
+    <isNotEmpty prepend="WHERE" property="checkYear">
+   t.check_time_code like '%' || #checkYear# ||'%' escape '\'
+   </isNotEmpty>
+    group by t.vehicle_vin
+    ), 
+    cc as (
+    select t.vehicle_vin,
+    max(t.modify_time) as modify_time
+    from clw_yw_oil_check_t t
+    group by vehicle_vin)
+   
+  select  
+  aa.vehicle_code,aa.vehicle_ln,aa.vehicle_vin,aa.vehicle_type,aa.check_time_code,
+  bb.january,bb.february,bb.march,
+  bb.april,
+  bb.may,
+  bb.june,
+  bb.july,
+  bb.august,
+  bb.september,
+  bb.october,
+  bb.november,
+  bb.december,
+  aa.modify_time
+  from  aa,bb,cc
+  where aa.vehicle_vin = bb.vehicle_vin
+  and aa.vehicle_vin = cc.vehicle_vin
+  and aa.vehicle_code !='外租'
+  and aa.modify_time = cc.modify_time
+  and aa.enterprise_id in
+  	<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]> 
+    <isNotEmpty prepend="AND" property="vehicle_ln">
+    upper(aa.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_code">
+    aa.vehicle_code like '%' || #vehicle_code# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_vin">
+    aa.vehicle_vin like '%' || #vehicle_vin# ||'%' escape '\'
+   </isNotEmpty>
+   <isNotEmpty prepend="AND" property="vehicle_type">
+    aa.vehicle_type like '%' || #vehicle_type# ||'%' escape '\'
+   </isNotEmpty>      
+   <dynamic prepend="ORDER BY">  
+	 <isNotEmpty property="sortName">  
+	 $sortName$   $sortOrder$  
+	 </isNotEmpty>  
+	</dynamic>
+  
+</select>
+
+<!-- 批量导入油耗设置信息-->
+
+<insert id="insertCheckOilSetInfo" parameterClass="insertCheckOilList">
+INSERT INTO clw_yw_oil_check_t 	VALUES 
+(#check_id#, #vehicle_vin#,#check_ime_code#,#check_value#,#creater#,sysdate,#modifier#,sysdate,'0','','',#enterpriseId#)
+</insert>
+<!-- 批量导入测试数据-->
+
+<insert id="insertCheckOilSetInfoTest" parameterClass="testList">
+INSERT INTO zspt_oil_analys_info (OIL_ANALYS_ID,VEHICLE_VIN,VEHICLE_LN,ANALYS_DATE,MILEAGE,USED_OIL,IS_EFFECTIVE) VALUES 
+(#insert_id#,#vehicle_vin#,#vehicle_ln#,to_date(#insert_date#,'yyyy-mm-dd'),#mileage#,#oil#,'0')
+</insert>
+
+
+
+
+<!-- 查询考核开始时间和结束时间-->
+<select id="selectCheckTime" parameterClass="monthStartEnd" resultClass="int">
+select count(1) from clw_yw_ocktime_t  where enterprise_id=#enterpriseId# and check_time_code=#checkTimeCode#
+</select>
+<!-- 插入考核开始时间和结束时间-->
+<insert id="insertCheckTime" parameterClass="monthStartEnd">
+INSERT INTO clw_yw_ocktime_t (check_time_id,enterprise_id,check_time_code,start_time,end_time,creater,create_time,modifier,modify_time,valid_flag) VALUES 
+(#checkTimeId#,#enterpriseId#,#checkTimeCode#,to_date(#startTime#,'yyyy-mm-dd'),to_date(#endTime#,'yyyy-mm-dd'),#creater#,SYSDATE,#modifier#,SYSDATE,'0')
+</insert>
+<!-- 更改考核开始时间和结束时间-->
+<insert id="updateCheckTime" parameterClass="monthStartEnd">
+UPDATE clw_yw_ocktime_t set start_time=to_date(#startTime#,'yyyy-mm-dd'),end_time=to_date(#endTime#,'yyyy-mm-dd'),
+creater=#creater#,create_time=SYSDATE,modifier=#modifier#,modify_time=SYSDATE
+where enterprise_id=#enterpriseId# and check_time_code=#checkTimeCode#
+</insert>
+
+    <resultMap id="selectMonth" class="monthStartEnd">
+	   <result property="checkTimeId" column="check_time_id" />
+	   <result property="enterpriseId" column="ENTERPRISE_ID" />
+	   <result property="checkTimeCode" column="check_time_code" />
+	   <result property="startTime" column="start_time" />
+	   <result property="endTime" column="end_time" />
+	</resultMap>
+
+<select id="selectEntIdTime" parameterClass="Map" resultMap="selectMonth">
+	select t.check_time_id,t.ENTERPRISE_ID,t.check_time_code,to_char(t.start_time,'yyyy-MM-dd') as start_time
+		,to_char(t.end_time,'yyyy-MM-dd') as end_time 
+		from CLW_YW_OCKTIME_T t where 1=1 
+		and t.enterprise_id=#entId#
+		and trunc(t.start_time,'yyyy') = to_date(#checkYear#,'yyyy-mm-dd')
+		order by t.start_time
+</select>
+
+</sqlMap>

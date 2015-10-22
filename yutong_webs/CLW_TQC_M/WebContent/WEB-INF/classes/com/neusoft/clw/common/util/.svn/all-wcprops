@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util
+END
+ModuleId.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/ModuleId.java
+END
+SearchUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/SearchUtil.java
+END
+StringUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/StringUtil.java
+END
+Base64.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/Base64.java
+END
+SqlStringUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/SqlStringUtil.java
+END
+BytetoImage.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/BytetoImage.java
+END
+DateUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/DateUtil.java
+END
+OperateLogFormator.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/OperateLogFormator.java
+END
+Constants.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/Constants.java
+END
+FileUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/FileUtil.java
+END
+UUIDGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/UUIDGenerator.java
+END
+BatchIdHelper.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/BatchIdHelper.java
+END
+UnicodeConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/util/UnicodeConverter.java
+END

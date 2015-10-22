@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DriverManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="driverinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.drivermanage.domain.DriverInfo" />
+	  
+	 <resultMap class="driverinfo" id="driverinfos-result">
+       <result property="driver_id" column="DRIVER_ID"/>
+       <result property="driver_license" column="DRIVER_LICENSE"/>
+       <result property="driver_card" column="DRIVER_CARD_ID"/>
+       <result property="driver_name" column="DRIVER_NAME"/>
+       <result property="driver_sex" column="DRIVER_SEX"/>
+       <result property="driver_birth" column="DRIVER_BIRTH"/>
+       <result property="driver_address" column="DRIVER_ADDRESS"/>
+       <result property="cell_number" column="DRIVER_TEL"/>
+       <result property="remarks" column="DRIVER_REMARK"/>
+      </resultMap> 
+    
+	<!-- 获取驾驶员数量 -->
+    <select id="getCount" parameterClass="driverinfo" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM CLW_YW_DRIVER_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		   AND VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="driver_name">
+               DRIVER_NAME like '%' || #driver_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="driver_license">
+               DRIVER_LICENSE like '%' || #driver_license# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="driver_card">
+               DRIVER_CARD_ID like '%' || #driver_card# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<!-- 获取驾驶员列表 -->
+	<select id="getInfos" parameterClass="driverinfo" resultMap="driverinfos-result">
+		SELECT DRIVER_ID,
+		       DRIVER_LICENSE,
+		       DRIVER_CARD_ID,
+		       DRIVER_NAME,
+		       DRIVER_SEX,
+		       TO_CHAR(DRIVER_BIRTH, 'YYYY-MM-DD') AS DRIVER_BIRTH,
+		       DRIVER_ADDRESS,
+		       DRIVER_TEL,
+		       DRIVER_REMARK
+	      FROM CLW_YW_DRIVER_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND VALID_FLAG = '0'
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="driver_name">
+               DRIVER_NAME like '%' || #driver_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="driver_license">
+               DRIVER_LICENSE like '%' || #driver_license# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="driver_card">
+               DRIVER_CARD_ID like '%' || #driver_card# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="exportDriverInfos" parameterClass="driverinfo" resultMap="driverinfos-result">
+		SELECT DRIVER_ID,
+		       DRIVER_LICENSE,
+		       DRIVER_CARD_ID,
+		       DRIVER_NAME,
+		       CASE
+                 WHEN DRIVER_SEX = '0' THEN
+                  '男'
+                 ELSE
+                  '女'
+               END AS DRIVER_SEX,
+		       TO_CHAR(DRIVER_BIRTH, 'YYYY-MM-DD') AS DRIVER_BIRTH,
+		       DRIVER_ADDRESS,
+		       DRIVER_TEL,
+		       DRIVER_REMARK
+	      FROM CLW_YW_DRIVER_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND VALID_FLAG = '0'
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="driver_name">
+               DRIVER_NAME like '%' || #driver_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="driver_license">
+               DRIVER_LICENSE like '%' || #driver_license# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="driver_card">
+               DRIVER_CARD_ID like '%' || #driver_card# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<insert id="insertdriverInfo" parameterClass="driverinfo">
+		INSERT INTO CLW_YW_DRIVER_T
+		  (DRIVER_ID,
+		   DRIVER_NAME,
+		   DRIVER_LICENSE,
+		   DRIVER_CARD_ID,
+		   DRIVER_SEX,
+		   DRIVER_ADDRESS,
+		   DRIVER_BIRTH,
+		   DRIVER_TEL,
+		   DRIVER_REMARK,
+		   ENTERPRISE_ID,
+		   ORGANIZATION_ID,
+		   CREATER,
+		   CREATE_TIME,
+		   MODIFIER,
+		   MODIFY_TIME,
+		   VALID_FLAG,
+		   PHOTO_NAME,
+		   DRIVER_PHOTO)
+		VALUES
+		  (SEQ_YW_DRIVER_T.NEXTVAL,
+		   #driver_name#,
+		   #driver_license#,
+		   #driver_card#,
+		   #driver_sex#,
+		   #driver_address#,
+		   TO_DATE(#driver_birth#, 'YYYY-MM-DD'),
+		   #cell_number#,
+		   #remarks#,
+		   #enterprise_id#,
+		   #organization_id#,
+		   #creater#,
+		   sysdate,
+		   #modifier#,
+		   sysdate,
+		   '0',
+		   #photo_name#,
+		   #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#)
+	</insert>
+	
+	<resultMap class="driverinfo" id="driverinfo-result">
+       <result property="driver_id" column="DRIVER_ID"/>
+       <result property="driver_license" column="DRIVER_LICENSE"/>
+       <result property="driver_card" column="DRIVER_CARD_ID"/>
+       <result property="driver_name" column="DRIVER_NAME"/>
+       <result property="driver_sex" column="DRIVER_SEX"/>
+       <result property="driver_birth" column="DRIVER_BIRTH"/>
+       <result property="driver_address" column="DRIVER_ADDRESS"/>
+       <result property="cell_number" column="DRIVER_TEL"/>
+       <result property="remarks" column="DRIVER_REMARK"/>
+       <result property="photo_name" column="PHOTO_NAME"/>
+       <result property="photoContent" column="DRIVER_PHOTO" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler"/>
+       <result property="vehicle_ln" column="VEHICLE_LN"/>
+       <result property="route_name" column="ROUTE_NAME"/>
+       <result property="organization_id" column="ORGANIZATION_ID"/>
+       <result property="short_allname" column="ORGANIZATION_NAME"/>
+    </resultMap>
+	
+	<select id="getDriverInfo" parameterClass="driverinfo" resultMap="driverinfo-result">
+		SELECT DRIVER_ID,
+		       DRIVER_LICENSE,
+		       DRIVER_CARD_ID,
+		       DRIVER_NAME,
+		       DRIVER_SEX,
+		       TO_CHAR(DRIVER_BIRTH, 'YYYY-MM-DD') AS DRIVER_BIRTH,
+		       DRIVER_ADDRESS,
+		       DRIVER_TEL,
+		       DRIVER_REMARK,
+		       PHOTO_NAME,
+		       DRIVER_PHOTO,
+		       (SELECT WM_CONCAT(CCBI.VEHICLE_LN)
+				  FROM CLW_CL_BASE_INFO_T CCBI
+				 WHERE EXISTS (SELECT CXV.VEHICLE_VIN
+				          FROM CLW_XC_VEHDRIVER_T CXV
+				         WHERE CXV.DRIVER_ID = #driver_id#
+				           AND CXV.VEHICLE_VIN = CCBI.VEHICLE_VIN)) 
+			   AS VEHICLE_LN,
+			   (SELECT WM_CONCAT(CXRT.ROUTE_NAME)
+				  FROM CLW_XC_ROUTE_T CXRT
+				 WHERE EXISTS (SELECT 1
+				          FROM CLW_XC_VSS_T XV
+				         WHERE EXISTS (SELECT 1
+				                  FROM CLW_XC_VEHDRIVER_T CXV
+				                 WHERE CXV.DRIVER_ID = #driver_id#
+				                   AND CXV.TRIP_ID = XV.TRIP_ID)
+				           AND XV.ROUTE_ID = CXRT.ROUTE_ID)
+				   AND CXRT.VALID_FLAG = '0')
+			    AS ROUTE_NAME,
+			    ORGANIZATION_ID,
+			    (SELECT CJET.FULL_NAME
+				  FROM CLW_JC_ENTERPRISE_T CJET
+				 WHERE CJET.ENTERPRISE_ID =
+				       (SELECT ORGANIZATION_ID FROM CLW_YW_DRIVER_T WHERE DRIVER_ID = #driver_id#))
+				AS ORGANIZATION_NAME
+		   FROM CLW_YW_DRIVER_T T
+		  WHERE DRIVER_ID=#driver_id# 
+	</select>
+	
+	<update id="updateInfoAndPhotobyDriverid" parameterClass="driverinfo">
+	    UPDATE CLW_YW_DRIVER_T
+		   SET DRIVER_NAME    = #driver_name#,
+		       DRIVER_LICENSE = #driver_license#,
+		       DRIVER_CARD_ID = #driver_card#,
+		       DRIVER_SEX     = #driver_sex#,
+		       DRIVER_ADDRESS = #driver_address#,
+		       DRIVER_BIRTH   = TO_DATE(#driver_birth#, 'YYYY-MM-DD'),
+		       DRIVER_TEL     = #cell_number#,
+		       DRIVER_REMARK  = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       ORGANIZATION_ID = #organization_id#,
+		       PHOTO_NAME     = #photo_name#,
+		       DRIVER_PHOTO   = #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#
+		 WHERE DRIVER_ID = #driver_id#
+	</update>
+	
+	<update id="updateInfoDelPhotobyDriverid" parameterClass="driverinfo">
+	    UPDATE CLW_YW_DRIVER_T
+		   SET DRIVER_NAME    = #driver_name#,
+		       DRIVER_LICENSE = #driver_license#,
+		       DRIVER_CARD_ID = #driver_card#,
+		       DRIVER_SEX     = #driver_sex#,
+		       DRIVER_ADDRESS = #driver_address#,
+		       DRIVER_BIRTH   = TO_DATE(#driver_birth#, 'YYYY-MM-DD'),
+		       DRIVER_TEL     = #cell_number#,
+		       DRIVER_REMARK  = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       ORGANIZATION_ID = #organization_id#,
+		       PHOTO_NAME     = NULL,
+		       DRIVER_PHOTO   = NULL
+		 WHERE DRIVER_ID = #driver_id#
+	</update>
+	
+	<update id="updateInfoOnlybyDriverid" parameterClass="driverinfo">
+	    UPDATE CLW_YW_DRIVER_T
+		   SET DRIVER_NAME    = #driver_name#,
+		       DRIVER_LICENSE = #driver_license#,
+		       DRIVER_CARD_ID = #driver_card#,
+		       DRIVER_SEX     = #driver_sex#,
+		       DRIVER_ADDRESS = #driver_address#,
+		       DRIVER_BIRTH   = TO_DATE(#driver_birth#, 'YYYY-MM-DD'),
+		       DRIVER_TEL     = #cell_number#,
+		       DRIVER_REMARK  = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       ORGANIZATION_ID = #organization_id#
+		 WHERE DRIVER_ID = #driver_id#
+	</update>
+	
+	<select id="getvehCount" parameterClass="driverinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_XC_VEHDRIVER_T WHERE DRIVER_ID = #driver_id#   
+	</select>
+	
+	<update id="deletebyDriverid" parameterClass="driverinfo">
+	   UPDATE CLW_YW_DRIVER_T 
+	   SET VALID_FLAG='1',
+	       VASET_USER_ID=#vaset_user_id#,
+	       VASET_TIME=SYSDATE
+	    WHERE DRIVER_ID=#driver_id#
+	</update>
+		
+	<select id="checkDriverCard" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM CLW_YW_DRIVER_T T
+		 WHERE T.DRIVER_CARD_ID = #value#
+		   AND T.VALID_FLAG = '0'
+	</select>	
+	
+    <select id="checkDriverLicense" parameterClass="String" resultClass="Integer">
+        SELECT COUNT(1)
+          FROM CLW_YW_DRIVER_T T
+         WHERE T.DRIVER_LICENSE = #value#
+           AND T.VALID_FLAG = '0'
+    </select>
+    
+	<update id="mergeDriverInfo" parameterClass="driverinfo">
+		MERGE INTO CLW_YW_DRIVER_T XS
+		USING DUAL
+		ON (XS.DRIVER_CARD_ID = #driver_card# AND XS.VALID_FLAG = '0')
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET DRIVER_NAME    = #driver_name#,
+		         DRIVER_LICENSE = #driver_license#,
+		         DRIVER_SEX     = #driver_sex#,
+		         DRIVER_ADDRESS = #driver_address#,
+		         DRIVER_BIRTH   = TO_DATE(#driver_birth#, 'YYYY-MM-DD'),
+		         DRIVER_TEL     = #cell_number#,
+		         DRIVER_REMARK  = #remarks#,
+		         MODIFIER       = #modifier#,
+		         MODIFY_TIME    = SYSDATE,
+                 ENTERPRISE_ID  = #enterprise_id#,
+		         ORGANIZATION_ID = #organization_id#
+		WHEN NOT MATCHED THEN
+		  INSERT
+		    (DRIVER_ID,
+		     DRIVER_NAME,
+		     DRIVER_LICENSE,
+		     DRIVER_CARD_ID,
+		     DRIVER_SEX,
+		     DRIVER_ADDRESS,
+		     DRIVER_BIRTH,
+		     DRIVER_TEL,
+		     DRIVER_REMARK,
+		     ENTERPRISE_ID,
+		     ORGANIZATION_ID,
+		     CREATER,
+		     CREATE_TIME,
+		     MODIFIER,
+		     MODIFY_TIME,
+		     VALID_FLAG)
+		  VALUES
+		    (SEQ_YW_DRIVER_T.NEXTVAL,
+		     #driver_name#,
+		     #driver_license#,
+		     #driver_card#,
+		     #driver_sex#,
+		     #driver_address#,
+		     TO_DATE(#driver_birth#, 'YYYY-MM-DD'),
+		     #cell_number#,
+		     #remarks#,
+		     #enterprise_id#,
+		     #organization_id#,
+		     #creater#,
+		     sysdate,
+		     #modifier#,
+		     sysdate,
+		     '0')
+	</update>
+	
+	<update id="updateDriverCardById" parameterClass="Map">
+	    UPDATE CLW_YW_DRIVER_T
+		   SET DRIVER_CARD_ID = #driverCard#,
+		       MODIFY_TIME    = SYSDATE
+		 WHERE DRIVER_ID = #driverId#
+	</update>
+	
+</sqlMap>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="System">
+
+	<insert id="insertAdvices">
+		insert into CLW_TQC.CLW_TQC_SUGGEST_T (SUGGEST_ID,content,SUGGEST_DATE,owner,type,msg_id) 
+		values (SEQ_SUGGEST.nextval,'${content}',sysdate,${emp_code},'0','${msg_id}')
+	</insert>
+
+	<select id="getNewsSummary" parameterType="String" resultType="News">
+		select 
+		  t.gonggao_id,
+		  t.gonggao_title as title,
+		  t.gonggao_summary as summary,
+		  t.gonggao_type as type,
+		  to_char(t.gonggao_date,'yyyymmddhh24miss') as publish_time
+		from CLW_TQC.CLW_TQC_GONGGAO_T t
+		where t.gonggao_type = ${value}
+		order by t.gonggao_id desc
+	</select>
+
+	
+	<select id="getAdvises" parameterType="String" resultType="Advises">
+		select s.content         as advise,
+		       s.suggest_date    as advise_time,
+		       s.operate_content as reply,
+		       s.operate_time    as reply_time,
+		       s.msg_id as msg_id
+		  from clw_tqc.clw_tqc_suggest_t s
+		where s.owner = '${value}'
+		order by s.suggest_id desc
+	</select>	
+	
+	
+	<select id="getNewsDetail" parameterType="String" resultType="News">
+		select 
+		  t.gonggao_id,
+		  t.gonggao_title as title,
+		  t.gonggao_summary as summary,
+		  t.gonggao_type as type,
+		  to_char(t.gonggao_date,'yyyymmddhh24miss') as publish_time,
+		  t.gonggao_author as author,
+		  t.gonggao_content as content,
+		  t.photo1,
+		  t.photo2,
+		  t.photo3,
+		  t.photo4,
+		  t.photo5
+		from CLW_TQC.CLW_TQC_GONGGAO_T t
+		where t.gonggao_id = ${value}
+	</select>
+
+	<!-- 获取学生类别的未设置规则模板 -->
+	<select id="getChildTemplateRule" parameterType="string" resultType="pushRuleInfo">
+		  SELECT ON_OFF onOff, FLAG flag, PM_RULE_ID ruleId
+		  FROM CLW_JZ_PUSHRULE_TEMPLATE_T
+		 WHERE DEL = '0' and    pm_rule_id like '01_%' and PM_RULE_ID not in (select a.pm_rule_id
+			                            from clw_jz_pushrule_t a
+			                           where a.user_id = #{uid} and a.stu_id=#{sid} 
+			                           and a.pm_rule_id like '01%')
+		 
+	</select>
+	<!-- 获取系统类别的未设置规则模板 -->
+	<select id="getSystemTemplateRule" parameterType="String" resultType="pushRuleInfo">
+		  SELECT ON_OFF onOff, FLAG flag, PM_RULE_ID ruleId
+		  FROM CLW_JZ_PUSHRULE_TEMPLATE_T
+		 WHERE DEL = '0' and    pm_rule_id like '02_%' and PM_RULE_ID not in (select a.pm_rule_id
+			                            from clw_jz_pushrule_t a
+			                           where a.user_id = #{uid}
+			                           and a.pm_rule_id like '02%')
+		 
+	</select>
+	
+		<!-- 根据用户ID查询用户所有有效的推送规则 -->
+	<select id="getPushRules" parameterType="String" resultType="UserInfo">
+		select t.push_rule from clw_tqc_emp_t t where t.emp_code = ${value}
+	</select>
+	
+	<update id="updateEmpRules">
+		update clw_tqc_emp_t t set t.push_rule = ${push_rule} where t.emp_code = ${emp_code}
+	</update>
+	
+	<update id="updatePersonalRule" parameterType="map">
+		UPDATE clw_jz_pushrule_t
+		SET ON_OFF = #{on_off},
+		FLAG = #{flag},
+		UPDATE_TIME =sysdate
+		WHERE rule_id=#{id}
+	</update>
+	
+	<insert id="insertPersonalRule" parameterType="pushRuleInfo">
+		insert into clw_jz_pushrule_t
+		  (rule_id,
+		   user_id,
+		   stu_id,
+		   pm_rule_id,
+		   on_off,
+		   flag,
+		   create_time)
+		values(
+			seq_clw_jz_pushrule_t.nextval,
+			#{usrId},
+			#{childId,jdbcType=VARCHAR},
+			#{ruleId},
+			#{onOff},
+			#{flag},
+			sysdate
+		)
+	</insert>
+	<delete id="delRule" parameterType="pushRuleInfo">
+		delete from  clw_jz_pushrule_t
+		where user_id =#{uid}  and  stu_id=#{sid} 
+	</delete>
+
+	<select id="checkPwd" parameterType="map" resultType="UserInfo">
+		select a.emp_id
+		from CLW_BSP_ACCOUNT_T b, clw_tqc_emp_t a
+	 	where a.account_id = b.account_id
+	   		and  b.account_pwd = '${password}' 
+		   	and  to_char(a.emp_code)= ${emp_code}	
+	</select>
+	
+	<update id="changePwd">
+		update CLW_BSP_ACCOUNT_T t set t.account_pwd = '${new_pwd}' where t.account_code = ${emp_code} and t.account_pwd = '${old_pwd}'
+	</update>
+</mapper>

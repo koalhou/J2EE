@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage
+END
+adddriver.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/adddriver.jsp
+END
+driver_validate.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/driver_validate.jsp
+END
+drivermanage.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/drivermanage.jsp
+END
+driverImport.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/driverImport.jsp
+END
+alterdriver_js.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/alterdriver_js.jsp
+END
+driverImport_validate.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/driverImport_validate.jsp
+END
+adddriver_js.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/adddriver_js.jsp
+END
+drivermanage_js.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/drivermanage_js.jsp
+END
+alterdriver.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/WebContent/WEB-INF/jsp/sysmanage/datamanage/drivermanage/alterdriver.jsp
+END

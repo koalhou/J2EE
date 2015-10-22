@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="energyVersion" namespace="/energyVersion" extends="clw-default json-default">	
+		<action name="energyVersionBrows" class="newEnergyVersionAction" method="init">
+		    <result name="success">
+				/WEB-INF/jsp/newenergy/energyversion/energyversion_list.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/newenergy/energyversion/energyversion_list.jsp
+			</result>
+		</action>
+		
+		
+		<action name="findVersionList" class="newEnergyVersionAction" method="findVersionList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>        
+       </action>
+       
+       <action name="exportVersionList" class="newEnergyVersionAction" method="exportVersionList">   
+		</action>
+		
+		
+	</package>
+</struts>

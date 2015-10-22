@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/nio/mina/interfaces
+END
+CommunicateService.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/nio/mina/interfaces/CommunicateService.java
+END
+AbstractNioHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/nio/mina/interfaces/AbstractNioHandler.java
+END
+CommunicateServiceAbstract.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/nio/mina/interfaces/CommunicateServiceAbstract.java
+END
+ActiveTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/nio/mina/interfaces/ActiveTest.java
+END
+INioHandler.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/nio/mina/interfaces/INioHandler.java
+END

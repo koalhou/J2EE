@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+
+<struts>
+	<package name="daydrive" namespace="/daydriverecord" extends="clw-default">
+		<action name="daydriverecord" class="daydriveRecord" method="rankAction">
+			<result name="error">/WEB-INF/jsp/safemanage/averagefuel/daydriverecord/rightranking.jsp
+			</result>
+			<result name="success">/WEB-INF/jsp/safemanage/averagefuel/daydriverecord/rightranking.jsp
+			</result>
+		</action>
+
+
+		<!-- 导出日行车记录 -->
+		<action name="exportdriverecord" class="daydriveRecord"
+			method="exportDriverecord">
+			<result name="error" type="redirect-action">
+				<param name="actionName">daydriverecord</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+
+			</result>
+		</action>
+		
+		<!-- 加载地图页面的引用页 -->
+		<action name="loadIframe" class="daydriveRecord" method="loadIframe">
+			<result name="success">/WEB-INF/jsp/safemanage/averagefuel/daydriverecord/iframeArea.jsp</result>	
+		</action>
+		
+		<!-- 弹出地图对话框 -->
+		<action name="showMapPage" class="daydriveRecord" method="showMapPage">
+			<result name="success">/WEB-INF/jsp/safemanage/averagefuel/daydriverecord/mapshow.jsp</result>	
+		</action>
+		
+
+	</package>
+
+	<package name="daydrivesearch" namespace="/daydriverecordsearch"
+		extends="json-default">
+		<action name="dayDriveRecordList" class="daydriveRecord"
+			method="getDriveRecordList">
+			<result name="success" type="json">
+				<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+				<param name="noCache">true</param>
+				<param name="root">map</param>
+			</result>
+			<result name="error" type="json">
+				<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+				<param name="noCache">true</param>
+				<param name="root">map</param>
+			</result>
+		</action>
+	</package>
+</struts>

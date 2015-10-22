@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="infomanage" namespace="/infomanage" extends="clw-default">
+		<action name="ridingReady" class="ridingPlanAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/ridingReady.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/ridingReady.jsp</result>	
+		</action>
+		<action name="deleteRidingPlan" class="ridingPlanAction" method="deleteRidingPlan">
+			<result name="success" type="redirect-action">
+			<param name="actionName">showRidingplan</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">showRidingplan</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		<action name="deleteRidingPlan2" class="ridingPlanAction" method="deleteRidingPlan2">
+		</action>
+		<action name="updateRidingReady" class="ridingPlanAction" method="updateRidingReady">
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/liststudent2.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/liststudent2.jsp</result>
+		</action>
+		<action name="chooseStudent" class="ridingPlanAction" method="chooseStudentStart">
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/liststudent2.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/liststudent2.jsp</result>	
+		</action>
+		<action name="showStudent" class="ridingPlanAction" method="chooseStudentStart">
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/liststudentshow.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/liststudentshow.jsp</result>	
+		</action>		
+		<action name="getchooseCarList" class="ridingPlanAction" method="chooseCarStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listcar.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listcar.jsp</result>			
+		</action>
+		<action name="getchooseRoute" class="ridingPlanAction" method="chooseRoute">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/routelist.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/routelist.jsp</result>			
+		</action>
+		<action name="getchooseRoutenores" class="ridingPlanAction" method="chooseRoutenores">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/routelistnores.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/routelistnores.jsp</result>			
+		</action>
+		<action name="chooseCar" class="ridingPlanAction" method="chooseCarStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listcar2.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listcar2.jsp</result>			
+		</action>
+		<action name="chooseTCar" class="ridingPlanAction" method="chooseTCar">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/riding_carlist.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/riding_carlist.jsp</result>			
+		</action>
+		<action name="chooseDriver_car" class="ridingPlanAction" method="chooseDriverStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listdriver_choice.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listdriver_choice.jsp</result>			
+		</action>
+		<action name="chooseDriver_car_pat" class="ridingPlanAction" method="chooseDriverStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listdriver_choice_pat.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listdriver_choice_pat.jsp</result>			
+		</action>
+		<action name="chooseCar_isfalse" class="ridingPlanAction" method="chooseCarStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listcar_isf.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listcar_isf.jsp</result>			
+		</action>
+		<action name="chooseCar_isfalse1" class="ridingPlanAction" method="chooseCarStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listcar_isf1.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listcar_isf1.jsp</result>			
+		</action>
+		<action name="patchchooseCar" class="ridingPlanAction" method="chooseCarStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/patchlistcar2.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/patchlistcar2.jsp</result>			
+		</action>	
+		<action name="chooseDriver" class="ridingPlanAction" method="chooseDriverStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listdriver.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listdriver.jsp</result>			
+		</action>	
+		<action name="chooseSichen" class="ridingPlanAction" method="chooseSichenStart">
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/listsichen.jsp</result>
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/listsichen.jsp</result>			
+		</action>	
+		<action name="showRidingplan" class="ridingPlanAction" method="planReadyPage">
+			<result name="error">/WEB-INF/jsp/infomanage/ridingplan/ridingplan.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/ridingplan/ridingplan.jsp</result>
+		</action>
+		<action name="checkCarAndStu" class="ridingPlanAction" method="checkCarAndStu">
+		</action>
+		<action name="ridingadd" class="ridingPlanAction" method="ridingadd">
+			<result name="erorr" type="redirect-action">
+			<param name="actionName">showRidingplan</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="success" type="redirect-action">
+			<param name="actionName">showRidingplan</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		<action name="ridingadd2" class="ridingPlanAction" method="ridingadd2">
+		</action>
+		<action name="ridingupdate" class="ridingPlanAction" method="ridingupdate">
+			<result name="error" type="redirect-action">
+				<param name="actionName">showRidingplan</param>
+				<param name="errorMessage">${errorMessage}</param>
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">showRidingplan</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<action name="ridingupdate2" class="ridingPlanAction" method="ridingupdate2">
+		</action>
+		<!-- 文件导出 -->
+		<action name="exportIni" class="WriteGZPack" method="getVinToTrip">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ridingplan</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 泰安文件导出 -->
+		<action name="exportTIni" class="WriteGZPack" method="getTVinToTrip">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ridingplan</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 线路下发 -->
+		<action name="sendRouteFileGo" class="SendRouteFile" method="sendRouteFile">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ridingplan</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 泰安线路下发 -->
+		<action name="tSendRouteFileGo" class="SendRouteFile" method="tSendRouteFile">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ridingplan</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="getupstudentname" class="studentAction" method="getupstudentname">
+		</action>
+	</package>
+	
+	<package name="ridingplanpkg" namespace="/ridingplanpkg" extends="json-default">
+       <action name="showridingplanlist" class="ridingPlanAction" method="ridingPlanList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="getCarList" class="ridingPlanAction"  method="getCarList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       
+       <action name="getSteward" class="ridingPlanAction"  method="getSteward">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>   
+       <action name="getDriver" class="ridingPlanAction"  method="getDriver">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+        <action name="ridingSTList" class="studentAction"  method="stList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="ridingSTList2" class="studentAction"  method="stList2">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">studentList</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">studentList</param>
+           </result>
+       </action>
+        <action name="ridingSTShow" class="studentAction"  method="stShow">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action> 
+       <action name="ridingSTShow2" class="studentAction"  method="stShow2">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">studentList</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">studentList</param>
+           </result>
+       </action>    
+       <action name="routeList" class="ridingPlanAction" method="getRouteList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+        <action name="siteList" class="ridingPlanAction" method="getSiteList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+	
+	<!-- 车牌号弹出层列表显示-->
+	<package name="exportpkg" namespace="/exportpkg" extends="json-default">
+		<action name="choiceExportPkg" class="WriteGZPack"  method="vehicleList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

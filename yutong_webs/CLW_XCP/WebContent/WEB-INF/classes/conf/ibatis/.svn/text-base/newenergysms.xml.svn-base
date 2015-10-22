@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    <!-- 数据挖掘新__能源故障表 -->
+<sqlMap namespace="energysms">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="newEnergySms"
+		type="com.neusoft.clw.newenergy.newenergymsgsms.domain.EnergySms" />
+	<typeAlias alias="newEnergyDic"
+		type="com.neusoft.clw.newenergy.newenergymsgsms.domain.EnergyAlarmType" />
+	<typeAlias alias="UserInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" />
+	<resultMap id="sms-result" class="newEnergySms">
+		<result property="vehicleVin" column="vehicle_vin" />
+		<result property="alarmType" column="alarm_type" />
+		<result property="vehicleln" column="vehicle_ln" />
+		<result property="orgName" column="short_name"/>
+		<result property="routeName" column="route_name" />
+		<result property="smsCount" column="smsCount"/>
+	</resultMap>
+	
+	<resultMap id="user-result" class="UserInfo">
+		<result property="userID" column="USERID" />
+		<result property="userName" column="USERNAME" />
+		<result property="moblie" column="MOBLIE" />
+		<result property="userType" column="USERTYPE" />
+	</resultMap>
+	
+	<!-- 新能源故障查询 -->
+	<select id="energySmsPageList" parameterClass="Map" resultMap="sms-result">
+	
+	with sms_type as (
+	    select b.vehicle_vin,b.alarm_type, a.alarm_type dsp
+                                    from (select case when c.alarm_level is null 
+                                                 then '[' || c.alarm_address || ',' ||
+                                                    c.alarm_code || ']'
+                                                 else 
+                                                    '[' || c.alarm_type || ']'
+                                                   end alarm_type,
+                                                 case
+                                                   when c.alarm_level is null and
+                                                        c.alarm_address is null and
+                                                        c.alarm_code is null then
+                                                    '' 
+                                                   when c.alarm_level is null then
+                                                    '[' || c.alarm_address || ',' ||
+                                                    c.alarm_code || ']'
+                                                   else
+                                                    '[' || c.alarm_address || ',' ||
+                                                    c.alarm_level || ',' ||
+                                                    c.alarm_code || ']'
+                                                 end alarmType
+                                            from clw_newenergy_alarm_warn_t c) a,
+                                         (select t.*,
+                                                 case
+                                                   when t.alarm_level is null and
+                                                        t.alarm_address is null and
+                                                        t.alarm_code is null then
+                                                    ''
+                                                   when t.alarm_level is null then
+                                                    '[' || t.alarm_address || ',' ||
+                                                    t.alarm_code || ']'
+                                                   else
+                                                    '[' || t.alarm_address || ',' ||
+                                                    t.alarm_level || ',' ||
+                                                    t.alarm_code || ']'
+                                                 end alarm_type
+                                            from clw_newenergy_sms_t t
+                                           where 1 = 1) b
+                                   where 1 = 1
+                                     and a.alarmType(+) = b.alarm_type
+                                     group by b.vehicle_vin,b.alarm_type,a.alarm_type
+	)
+	
+		select aa.vehicle_vin,aa.vehicle_ln,aa.route_name,aa.short_name,WM_CONCAT(aa.alarm_type) alarm_type,
+		(select count(1) from clw_newenergy_sms_t where vehicle_vin=aa.vehicle_vin) smsCount from (
+		 select info.vehicle_vin,
+	        case when t.dsp is null
+            then t.alarm_type
+              else 
+                t.dsp
+                end alarm_type,
+	        info.vehicle_ln,route.route_name,ent.short_name
+	        from sms_type t,
+	        	( select base.*,term.route_Id  routeid from clw_cl_base_info_t base,clw_jc_terminal_t term
+ 								where 1=1 and base.vehicle_vin = term.vehicle_vin(+)) info,
+	        	clw_xc_route_t route ,
+	        clw_jc_enterprise_t ent
+	        where 1=1
+	  		and t.vehicle_vin(+) = info.vehicle_vin and info.routeid = route.route_id(+)
+	  		and info.device_type='0' and info.valid_flag='0' and ent.enterprise_id=info.organization_id
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             t.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="smsId">
+        	t.id = #smsId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID
+		             <isNotEmpty prepend="AND" property="organizname">
+	        			short_name like '%' || #organizname# ||'%' escape '\'
+        			 </isNotEmpty>)
+        </isNotEmpty>
+        ) aa group by aa.vehicle_vin,aa.vehicle_ln,aa.route_name,aa.short_name
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	
+	<select id="energySmsPageListCount" parameterClass="Map" resultClass="Integer">
+		with sms_type as (
+		    select b.vehicle_vin,b.alarm_type, a.alarm_type dsp
+                                    from (select case when c.alarm_level is null 
+                                                 then '[' || c.alarm_address || ',' ||
+                                                    c.alarm_code || ']'
+                                                 else 
+                                                    '[' || c.alarm_type || ']'
+                                                   end alarm_type,
+                                                 case
+                                                   when c.alarm_level is null and
+                                                        c.alarm_address is null and
+                                                        c.alarm_code is null then
+                                                    '' 
+                                                   when c.alarm_level is null then
+                                                    '[' || c.alarm_address || ',' ||
+                                                    c.alarm_code || ']'
+                                                   else
+                                                    '[' || c.alarm_address || ',' ||
+                                                    c.alarm_level || ',' ||
+                                                    c.alarm_code || ']'
+                                                 end alarmType
+                                            from clw_newenergy_alarm_warn_t c) a,
+                                         (select t.*,
+                                                 case
+                                                   when t.alarm_level is null and
+                                                        t.alarm_address is null and
+                                                        t.alarm_code is null then
+                                                    ''
+                                                   when t.alarm_level is null then
+                                                    '[' || t.alarm_address || ',' ||
+                                                    t.alarm_code || ']'
+                                                   else
+                                                    '[' || t.alarm_address || ',' ||
+                                                    t.alarm_level || ',' ||
+                                                    t.alarm_code || ']'
+                                                 end alarm_type
+                                            from clw_newenergy_sms_t t
+                                           where 1 = 1) b
+                                   where 1 = 1
+                                     and a.alarmType(+) = b.alarm_type
+                                     group by b.vehicle_vin,b.alarm_type,a.alarm_type
+		)
+		
+		select count(1) from (
+			select aa.vehicle_vin,aa.vehicle_ln,aa.route_name,aa.short_name,WM_CONCAT(aa.alarm_type) alarm_type,
+		(select count(1) from clw_newenergy_sms_t where vehicle_vin=aa.vehicle_vin) smsCount from (
+		 select info.vehicle_vin,
+	        case when t.dsp is null
+            then t.alarm_type
+              else 
+                t.dsp
+                end alarm_type,
+	        info.vehicle_ln,route.route_name,ent.short_name
+	        from sms_type t,
+	        	( select base.*,term.route_Id  routeid from clw_cl_base_info_t base,clw_jc_terminal_t term
+ 							where 1=1 and base.vehicle_vin = term.vehicle_vin(+)) info,
+	        	clw_xc_route_t route ,
+	        clw_jc_enterprise_t ent
+	        where 1=1
+	  		and t.vehicle_vin(+) = info.vehicle_vin and info.routeid = route.route_id(+)
+	  		and info.device_type='0' and info.valid_flag='0' and ent.enterprise_id=info.organization_id
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             t.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="smsId">
+        	t.id = #smsId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID
+		             <isNotEmpty prepend="AND" property="organizname">
+	        			short_name like '%' || #organizname# ||'%' escape '\'
+        			 </isNotEmpty>)
+        </isNotEmpty>
+        ) aa group by aa.vehicle_vin,aa.vehicle_ln,aa.route_name,aa.short_name
+        )
+	</select>
+	
+	<resultMap id="smsSign-result" class="newEnergySms">
+		<result property="vehicleVin" column="vehicle_vin" />
+		<result property="alarmType" column="alarm_type" />
+		<result property="userId" column="user_id" />
+		<result property="userName" column="user_name" />
+		<result property="telePhone" column="telephone"/>
+		
+	</resultMap>
+	<select id="findVehicleSmsSetSign" parameterClass="Map" resultMap="smsSign-result">
+	select vehicle_vin,user_Id,user_Name,telephone,WM_CONCAT(alarm_type||'!') alarm_type from (
+		 select t.id,t.vehicle_vin,t.user_id,t.user_name,t.telephone,t.enterprise_id,
+	        t.organization_id,t.create_time,t.create_by,
+	        case 
+	          when t.alarm_level is null and t.alarm_address is null and t.alarm_code is null
+	           then ''
+	          when t.alarm_level is null 
+	           then t.alarm_address ||','|| t.alarm_code 
+	          else t.alarm_address ||','|| t.alarm_level ||','|| t.alarm_code 
+	            end alarm_type,
+	        info.vehicle_ln,route.route_name,ent.short_name,t.modifie_time,t.modifie_by
+	        from clw_newenergy_sms_t t,clw_cl_base_info_t info,clw_xc_route_t route ,
+	        clw_jc_enterprise_t ent
+	        where 1=1
+	  		and t.vehicle_vin(+) = info.vehicle_vin and info.route_Id = route.route_id(+)
+	  		and info.device_type='0' and info.valid_flag='0' and ent.enterprise_id=info.organization_id
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             t.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="smsId">
+        	t.id = #smsId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        ) 
+   		group by vehicle_vin,user_Id,user_Name,telephone
+	</select>
+	
+	<resultMap id="dic-result" class="newEnergyDic">
+		<result property="alarmType" column="alarm_type" />
+		<result property="alarmInfo" column="alarm_info" />
+		<result property="alarmValue" column="alarm_value" />
+	</resultMap>
+	<!-- 提醒类型字典表 -->
+	<select id="findDic" resultMap="dic-result">
+		 select case when t.alarm_level is null 
+            then t.alarm_address ||','|| t.alarm_code
+              else t.alarm_type end alarm_type,alarm_info,
+          case 
+            when alarm_level is not null
+            then t.alarm_address ||','|| t.alarm_level ||','|| t.alarm_code
+            else t.alarm_address ||','|| t.alarm_code
+              end alarm_value
+  			from CLW_NEWENERGY_ALARM_WARN_T t
+	</select>
+	
+	<!-- 删除车辆短信提醒设置 -->
+	<delete id="delVehiclesmsSet" parameterClass="Map">
+		delete clw_newenergy_sms_t where 1=1
+		<isNotEmpty prepend="AND" property="vins">
+    		vehicle_vin in 
+    		<iterate conjunction="," open="(" close=")" property="vins">  
+	        	#vins[]#
+	        </iterate>
+    	</isNotEmpty>
+    	<isNotEmpty	prepend="AND" property="vehicleVin">
+    		vehicle_vin = #vehicleVin#
+    	</isNotEmpty>
+	</delete>
+	
+	<!-- 添加新的短信提醒 -->
+	<insert id="addsmsSet" parameterClass="newEnergySms">
+		insert into clw_newenergy_sms_t (id,vehicle_vin,user_id,telephone,
+			create_time,create_by,valid_flag,alarm_address,alarm_level,alarm_code,user_name)
+			values (#smsId#,#vehicleVin#,#userId#,#telePhone#,sysdate,#createBy#,
+			'0',#alarmAddress#,#alarmLevel#,#alarmCode#,#userName#)
+	</insert>	
+	
+	<select id="queryUser" parameterClass="Map" resultMap="user-result">
+		SELECT * FROM (
+			SELECT T.USER_ID USERID,T.USER_NAME USERNAME,T.USER_MOBILE MOBLIE,T.ORGANIZATION_ID,'系统用户' USERTYPE
+		    FROM CLW_JC_USER_T T WHERE T.VALID_FLAG != '1' AND T.APPLY_ID = '1'
+		    UNION ALL
+		    SELECT TO_CHAR(D.DRIVER_ID) USERID,D.DRIVER_NAME USERNAME,D.DRIVER_TEL MOBLIE,D.ORGANIZATION_ID,'司机' USERTYPE FROM CLW_YW_DRIVER_T D
+	  	) T1
+	  	WHERE T1.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+		<isNotEmpty prepend="AND" property="userName">
+		 T1.USERNAME like '%' || #userName# ||'%' escape '\'
+		</isNotEmpty>
+		<dynamic prepend="ORDER BY">  
+     	  	<isNotEmpty property="sortname">  
+            	$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		  </dynamic> 
+	</select>
+	
+	<select id="queryUserCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1) FROM (
+			SELECT T.USER_ID USERID,T.USER_NAME USERNAME,T.USER_MOBILE MOBLIE,T.ORGANIZATION_ID,'系统用户' USERTYPE
+		    FROM CLW_JC_USER_T T WHERE T.VALID_FLAG != '1' AND T.APPLY_ID = '1'
+		    UNION ALL
+		    SELECT TO_CHAR(D.DRIVER_ID) USERID,D.DRIVER_NAME USERNAME,D.DRIVER_TEL MOBLIE,D.ORGANIZATION_ID,'司机' USERTYPE FROM CLW_YW_DRIVER_T D
+	  	) T1
+	  	WHERE T1.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+		<isNotEmpty prepend="AND" property="userName">
+		 T1.USERNAME like '%' || #userName# ||'%' escape '\'
+		</isNotEmpty>
+	</select>
+</sqlMap>

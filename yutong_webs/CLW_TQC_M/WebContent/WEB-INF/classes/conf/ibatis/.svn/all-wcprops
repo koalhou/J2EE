@@ -1,0 +1,335 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis
+END
+qx_rolemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/qx_rolemanage.xml
+END
+qx_modifypassword.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/qx_modifypassword.xml
+END
+fileupload.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/fileupload.xml
+END
+xj_terminalmonitor.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_terminalmonitor.xml
+END
+xj_operatingReport.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_operatingReport.xml
+END
+xj_drivingRecords.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_drivingRecords.xml
+END
+com_logfilter.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/com_logfilter.xml
+END
+cs_simfluxmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cs_simfluxmanage.xml
+END
+zdnew_terminalupdate.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zdnew_terminalupdate.xml
+END
+zd_oemmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zd_oemmanage.xml
+END
+zdnew_terminalparams.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zdnew_terminalparams.xml
+END
+cl_illdrive.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cl_illdrive.xml
+END
+cs_businessmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cs_businessmanage.xml
+END
+feedbackMessage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/feedbackMessage.xml
+END
+zd_protocalmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zd_protocalmanage.xml
+END
+popup_terminal.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_terminal.xml
+END
+qx_usermanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/qx_usermanage.xml
+END
+zd_devicemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zd_devicemanage.xml
+END
+cl_handhelddevice.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cl_handhelddevice.xml
+END
+zdnew_ftlyparam.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zdnew_ftlyparam.xml
+END
+xj_statistic.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_statistic.xml
+END
+xs_poimanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xs_poimanage.xml
+END
+xj_terminalauthentication.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_terminalauthentication.xml
+END
+paramSet.xml
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/paramSet.xml
+END
+cl_carbase.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cl_carbase.xml
+END
+qx_security.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/qx_security.xml
+END
+xj_operationsReport.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_operationsReport.xml
+END
+qx_entimanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/qx_entimanage.xml
+END
+zd_terminalmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zd_terminalmanage.xml
+END
+sm_maintenance.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/sm_maintenance.xml
+END
+com_baseInfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/com_baseInfo.xml
+END
+popup_role.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_role.xml
+END
+popup_registevehicle.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_registevehicle.xml
+END
+cs_simmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cs_simmanage.xml
+END
+xj_terminalmonitorsingle.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_terminalmonitorsingle.xml
+END
+zdnew_terminalversion.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zdnew_terminalversion.xml
+END
+xs_notice.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xs_notice.xml
+END
+xs_zonemanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xs_zonemanage.xml
+END
+xs_version.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xs_version.xml
+END
+xj_xcterminalRomoteUpdate.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_xcterminalRomoteUpdate.xml
+END
+loginstatistic.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/loginstatistic.xml
+END
+popup_user.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_user.xml
+END
+cl_vehicleregister.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/cl_vehicleregister.xml
+END
+popup_vehicle.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_vehicle.xml
+END
+popup_enterprise.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_enterprise.xml
+END
+com_appconfig.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/com_appconfig.xml
+END
+zdnew_terminaldevicestatus.xml
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zdnew_terminaldevicestatus.xml
+END
+xs_informationmanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xs_informationmanage.xml
+END
+xs_baseinfomanage.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xs_baseinfomanage.xml
+END
+xj_xcterminalparams.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/xj_xcterminalparams.xml
+END
+popup_sim.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_sim.xml
+END
+zdnew_speedmonitoring.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/zdnew_speedmonitoring.xml
+END
+popup_owner.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/popup_owner.xml
+END
+sql-map-config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/sql-map-config.xml
+END
+theme_set.xml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/resources/conf/ibatis/theme_set.xml
+END

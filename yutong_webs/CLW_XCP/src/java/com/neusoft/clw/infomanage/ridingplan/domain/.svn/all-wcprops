@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain
+END
+SiteInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/SiteInfo.java
+END
+RidingReady.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/RidingReady.java
+END
+RidingPlanInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/RidingPlanInfo.java
+END
+VssInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/VssInfo.java
+END
+VehsichenInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/VehsichenInfo.java
+END
+RouteInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/RouteInfo.java
+END
+VehdriverInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/VehdriverInfo.java
+END
+Vss_SiteInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/infomanage/ridingplan/domain/Vss_SiteInfo.java
+END

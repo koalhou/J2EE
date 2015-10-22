@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NoticeManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="gonggaoInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.noticemanage.domain.ClwTqcGonggaoT" />
+	<typeAlias alias="fileInfo"
+	    type="com.neusoft.clw.sysmanage.datamanage.noticemanage.domain.ClwBspUnstructurFileT" />
+	  
+	  <resultMap class="gonggaoInfo" id="gonggao-result">
+		<result property="gonggaoId" column="GONGGAO_ID"/>
+		<result property="gonggaoAuthor" column="GONGGAO_AUTHOR"/>
+		<result property="gonggaoTitle" column="GONGGAO_TITLE"/>
+		<result property="gonggaoSummary" column="GONGGAO_SUMMARY"/>
+		<result property="gonggaoContent" column="GONGGAO_CONTENT" javaType="java.lang.String" jdbcType="CLOB"/>
+		<result property="sgonggaoDate" column="GONGGAO_DATE"/>
+		<result property="gonggaoType" column="GONGGAO_TYPE"/>
+		<result property="isTop" column="IS_TOP"/>
+		<result property="photo1" column="PHOTO1"/>
+		<result property="photo2" column="PHOTO2"/>
+		<result property="photo3" column="PHOTO3"/>
+		<result property="photo4" column="PHOTO4"/>
+		<result property="photo5" column="PHOTO5"/>
+		<result property="sendFlag" column="SEND_FLAG"/>
+	</resultMap>
+      <!-- 查询公告信息列表 -->
+      <select id="getGonggaoList" parameterClass="gonggaoInfo" resultMap="gonggao-result">
+		   <![CDATA[
+			  SELECT GONGGAO_ID, 
+			         GONGGAO_AUTHOR, 
+			         GONGGAO_TITLE, 
+			         GONGGAO_SUMMARY, 
+			         GONGGAO_CONTENT, 
+			         GONGGAO_DATE, 
+			         GONGGAO_TYPE, 
+			         IS_TOP, 
+			         PHOTO1, 
+			         PHOTO2, 
+			         PHOTO3, 
+			         PHOTO4, 
+			         PHOTO5, 
+			         SEND_FLAG 
+			    FROM CLW_TQC_GONGGAO_T
+			   where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="gonggaoDate">
+				 TRUNC(GONGGAO_DATE)=TRUNC(#gonggaoDate#)
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="sendFlag">
+				 SEND_FLAG=#sendFlag#
+			</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	<!-- 查询公告信息列表总数 -->
+     <select id="getGonggaoCount" parameterClass="gonggaoInfo" resultClass="Integer">
+		 <![CDATA[
+			  SELECT count(GONGGAO_ID)
+			    FROM CLW_TQC_GONGGAO_T
+			   where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="gonggaoDate">
+				 TRUNC(GONGGAO_DATE)=TRUNC(#gonggaoDate#)
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="sendFlag">
+				 SEND_FLAG=#sendFlag#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+      <!-- 插入公告信息 -->
+		<insert id="addGonggao" parameterClass="gonggaoInfo">
+		<selectKey resultClass="java.lang.Integer" keyProperty="gonggaoId" > 
+		    SELECT seq_CLW_TQC_GONGGAO_T.nextval AS gonggaoId FROM DUAL 
+		</selectKey>
+		<![CDATA[
+			INSERT INTO CLW_TQC_GONGGAO_T
+			( 
+			GONGGAO_ID, 
+			GONGGAO_AUTHOR, 
+			GONGGAO_TITLE, 
+			GONGGAO_SUMMARY, 
+			GONGGAO_CONTENT, 
+			GONGGAO_DATE, 
+			IS_TOP, 
+			PHOTO1, 
+			SEND_FLAG,
+			gonggao_type
+			) 
+			VALUES 
+			( 
+			#gonggaoId:NUMERIC#, 
+			#gonggaoAuthor:VARCHAR#, 
+			#gonggaoTitle:VARCHAR#, 
+			#gonggaoSummary:VARCHAR#, 
+			#gonggaoContent,javaType=java.lang.String,jdbcType=CLOB#, 
+			
+			sysdate,
+			 
+			#isTop:VARCHAR#,
+		    #photo1:VARCHAR#, 
+		    #sendFlag:VARCHAR#,
+		    '1'
+		    )
+		]]>
+		<!-- #gonggaoDate:DATE#, -->
+	</insert>
+	<!-- 插入图片信息 -->
+	<insert id="addNoticeFile" parameterClass="fileInfo">
+	    <selectKey resultClass="java.lang.Integer" keyProperty="fileId" > 
+		    SELECT seq_clw_bsp_unstructur_file_t.nextval AS fileId FROM DUAL 
+		</selectKey>
+		<![CDATA[
+			INSERT INTO CLW_BSP_UNSTRUCTUR_FILE_T
+			( 
+			FILE_ID, 
+			FILE_NAME, 
+			FILE_DESC, 
+			FILE_STORAGE, 
+			FILE_PATH, 
+			FILE_SUFFIX, 
+			CREATE_TIME
+			) 
+			VALUES 
+			( 
+			#fileId:NUMERIC#, 
+			#fileName:VARCHAR#, 
+			#fileDesc:VARCHAR#, 
+			#fileStorage:NUMERIC#, 
+			#filePath:VARCHAR#, 
+			#fileSuffix:VARCHAR#, 
+			to_date(#screateDate#,'yyyy-mm-dd hh24:mi:ss')
+			)
+		]]>
+	</insert>
+	<!-- 置顶 -->
+	<update id="upFirstNotice" parameterClass="gonggaoInfo">
+	   UPDATE CLW_TQC_GONGGAO_T 
+	      SET IS_TOP=#isTop#
+	    WHERE GONGGAO_ID=#gonggaoId#
+	</update>
+	<!-- 修改置顶状态,把置顶的修改成未置顶 -->
+	<update id="updateTop">
+	   UPDATE CLW_TQC_GONGGAO_T 
+	      SET IS_TOP='0'
+	    WHERE IS_TOP='1'
+	</update>
+	<!-- 查询公告信息 ById-->
+      <select id="searchGonggaoById" parameterClass="gonggaoInfo" resultMap="gonggao-result">
+		   <![CDATA[
+			  SELECT GONGGAO_ID, 
+			         GONGGAO_AUTHOR, 
+			         GONGGAO_TITLE, 
+			         GONGGAO_SUMMARY, 
+			         GONGGAO_CONTENT, 
+			         GONGGAO_DATE, 
+			         GONGGAO_TYPE, 
+			         IS_TOP, 
+			         PHOTO1, 
+			         PHOTO2, 
+			         PHOTO3, 
+			         PHOTO4, 
+			         PHOTO5, 
+			         SEND_FLAG 
+			    FROM CLW_TQC_GONGGAO_T
+			   where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="gonggaoId">
+				 GONGGAO_ID=#gonggaoId#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	 <!-- 修改公告信息 -->
+	<update id="updateGonggao" parameterClass="gonggaoInfo">
+	   UPDATE CLW_TQC_GONGGAO_T 
+	      SET GONGGAO_TITLE=#gonggaoTitle:VARCHAR#,
+	          GONGGAO_SUMMARY=#gonggaoSummary:VARCHAR#,
+		      GONGGAO_CONTENT=#gonggaoContent,javaType=java.lang.String,jdbcType=CLOB#,
+             <isNotEmpty  property="photo1">
+               PHOTO1=#photo1#,
+             </isNotEmpty>
+             <isNotEmpty  property="isTop">
+               IS_TOP=#isTop:VARCHAR#
+             </isNotEmpty>
+		     <!-- GONGGAO_DATE=#gonggaoDate:DATE# -->
+	   WHERE GONGGAO_ID=#gonggaoId#
+	</update>
+</sqlMap>

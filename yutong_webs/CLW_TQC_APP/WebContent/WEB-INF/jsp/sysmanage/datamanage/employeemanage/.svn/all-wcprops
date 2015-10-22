@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage
+END
+employeemanage_js.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/employeemanage_js.jsp
+END
+employeeforbid.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/employeeforbid.jsp
+END
+alteremployee.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/alteremployee.jsp
+END
+addemployee.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/addemployee.jsp
+END
+employeemanage.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/employeemanage.jsp
+END
+employeeImport.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/employeeImport.jsp
+END
+alteremployee_validate.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/alteremployee_validate.jsp
+END
+addemployee_validate.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/addemployee_validate.jsp
+END
+employeeforbid_js.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/employeeforbid_js.jsp
+END
+employeeImport_validate.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 152
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_APP/WebContent/WEB-INF/jsp/sysmanage/datamanage/employeemanage/employeeImport_validate.jsp
+END

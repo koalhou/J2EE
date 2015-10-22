@@ -1,0 +1,93 @@
+
+
+/*
+a
+{
+	text-decoration:none;
+	color:#6191d4;
+}
+a:hover,a:active
+{
+	text-decoration:underline;
+
+}
+a:visited
+{
+	
+	color:#6191d4;
+}
+*/
+.indicator_container
+{
+	
+	display:block;
+	
+	
+}
+.indicator_container .wraper
+{
+	border:1px solid #dadada;
+	background:#eeeeee;
+	line-height:25px;
+	height:25px;
+	padding:5px 10px;
+
+	display:inline;
+	cursor:pointer;
+
+
+}
+.indicator_container .wraper:hover {
+	BACKGROUND: #f6f6f6
+}
+
+.indicator_container a span.title
+{
+		
+	line-height:30px;
+	padding-right:10px;
+	background:url(ele.png) no-repeat right -2766px;
+}
+.indicator_container .select a span.title
+{
+	
+	background:url(ele.png) no-repeat right -2786px;
+}
+.indicator_container .popup
+{
+	width:500px;
+	border:1px solid #cccccc;
+	padding:10px;
+	position:absolute;
+	left:0px;
+	top:60px;
+	background:white;
+	z-index:1;
+}
+.indicator_container .indicatoritems
+{
+	display:block;
+	margin:5px 0px;
+}
+.indicator_container .indicatoritems .item 
+{
+	width:120px;
+	height:26px;
+	line-height:26px;
+	float:left;
+	vertical-align:middle;
+	
+}
+.indicator_container .indicatoritems .item input
+{
+	margin-right:5px;
+	vertical-align:middle;
+}
+
+.indicator_container .tip
+{
+	margin-top:5px;
+	float:right;
+	color:#ccc;
+}
+

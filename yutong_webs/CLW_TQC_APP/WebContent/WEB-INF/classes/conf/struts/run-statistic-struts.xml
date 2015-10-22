@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 运营统计 -->
+<struts>
+	<package name="runStatistic" namespace="/runStatistic" extends="clw-default">
+		<!-- 进入运营统计列表页面-->
+		<action name="runStatisticManage" class="runStatisticAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/itsmanage/runstatistic/runstatistic.jsp</result>
+			<result name="success">/WEB-INF/jsp/itsmanage/runstatistic/runstatistic.jsp</result>	
+		</action>
+		<!-- 进入出勤明细列表页面-->
+		<action name="workDetailPage" class="runStatisticAction" method="workDetailPage">
+			<result name="success">/WEB-INF/jsp/itsmanage/runstatistic/workDetail.jsp</result>
+		</action>
+		<!-- 进入维保明细列表页面-->
+		<action name="repaireDetailPage" class="runStatisticAction" method="repaireDetailPage">
+			<result name="success">/WEB-INF/jsp/itsmanage/runstatistic/repaireDetail.jsp</result>
+		</action>
+		<!-- 进入公差明细列表页面-->
+		<action name="pubDetailPage" class="runStatisticAction" method="pubDetailPage">
+			<result name="success">/WEB-INF/jsp/itsmanage/runstatistic/pubDetail.jsp</result>
+		</action>
+		<!--导出  -->
+		<action name="exportList" class="runStatisticAction" method="exportList">
+			<result name="error" type="redirect-action">
+				<param name="actionName">runStatisticManage</param>
+			</result>
+		</action>
+		<!-- 员工刷卡记录 -->
+		<action name="stcheckPage" class="runStatisticAction" method="stcheckPage">
+			<result name="success">/WEB-INF/jsp/itsmanage/runstatistic/stcheckList.jsp</result>
+		</action>
+		<!--员工刷卡记录导出  -->
+		<action name="exportStCheckList" class="runStatisticAction" method="exportStCheckList">
+			<result name="error" type="redirect-action">
+				<param name="actionName">stcheckPage</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+	</package>
+	<package name="runStatisticJson" namespace="/runStatisticList" extends="json-default">
+		<!-- 查询临时派车补录列表信息 -->
+		<action name="list" class="runStatisticAction" method="list">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+		<!-- 通勤明细信息 -->
+		<action name="workDetailListJson" class="runStatisticAction" method="workDetailList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">subMap</param>
+           </result>	
+		</action>
+		<!-- 公差明细信息 -->
+		<action name="pubDetailListJson" class="runStatisticAction" method="pubDetailList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">subMap</param>
+           </result>	
+		</action>
+		<!-- 维修细信息 -->
+		<action name="repaireDetailListJson" class="runStatisticAction" method="repaireDetailList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">subMap</param>
+           </result>	
+		</action>
+		<!-- 员工刷卡记录 -->
+		<action name="stcheckList" class="runStatisticAction" method="stcheckList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+	</package>
+	
+</struts>

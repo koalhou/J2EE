@@ -1,0 +1,166 @@
+
+*{
+margin: 0;
+padding: 0;
+}
+
+
+h1,h2,h3{
+font-size: 14px;
+}
+
+h4{
+font-size: 14px;
+}
+/*
+a:link, a:visited{
+font-size: 12px;
+font-weight: normal;
+color: #0099CC;
+text-decoration : none;
+
+}
+
+a:hover{
+font-size: 12px;
+font-weight: normal;
+text-decoration : underline;
+color: #0099CC;
+}
+
+a:active{
+font-size: 12px;
+font-weight: normal;
+text-decoration : none;
+color: #0099CC;
+}
+*/
+.tf{
+/*height: 17px;
+line-height: 17px;
+font-size: 12px;
+border: #006699 1px solid;
+padding-left: 0px;
+padding-top: 0px;*/
+
+}
+
+.ta{
+/*font-size: 12px;
+border: #006699 1px solid;
+padding-left: 2px;
+padding-top: 0px;*/
+
+}
+
+.sl{
+line-height: 17px;
+font-size: 12px;
+
+/*border: #006699 1px solid;*/
+}
+
+.rd{
+
+}
+
+.cb{
+
+}
+
+.bt{
+height: 24px;
+width: 70px;
+font-size: 12px;
+line-height: 24px;
+color: #ffffff;
+border: none;
+cursor: hand;
+
+background: transparent url(../images/common/button.gif) center no-repeat;
+}
+
+.hand{
+cursor: hand;
+}
+.errorInput{
+
+}
+.successInput{
+
+}
+.noticeMsg{
+font-size: 12px;
+color: #CC0000;
+padding: 2px;
+}
+
+.error{
+font-size: 12px;
+color: #CC0000;
+}
+
+.success{
+font-size: 12px;
+color: #009900;
+}
+
+div#messagebar{
+width: 100%;
+height: 20px;
+/*line-height: 90px;*/
+position: relative;
+margin-right: auto;
+margin-left: auto;
+text-align: left;
+/*color: #666;*/
+overflow: hidden;
+}
+
+div#message, .message{
+clear: both;
+text-align: center;
+list-style-type: square;
+overflow: hidden;
+}
+
+.bmask{
+position: absolute;
+height: 100%;
+width: 100%;
+top: 0;
+left: 0;
+*background-color: #000000; /*for ie*/
+*filter: alpha(opacity=50);
+border: none;
+z-index: 9997;
+overflow: hidden;
+}
+
+.mask{
+position: absolute;
+top: 0;
+left: 0;
+height: 100%;
+width: 100%;
+filter: alpha(opacity=10);
+text-align: center;
+border: none;  
+z-index: 9998;
+}
+
+.tmask{
+position: absolute;
+top: 40%;
+left: 40%;
+height: 30px;
+width: 150px;
+padding-top: 10px;
+margin-left: auto;
+margin-right: auto;
+/*border: #006699 1px solid;
+background-color: #83D4FF;*/
+color: #FFFFFF;
+z-index: 9999;
+}
+

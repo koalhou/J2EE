@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp
+END
+QueryTerminalResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp/QueryTerminalResp.class
+END
+SendDataResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp/SendDataResp.class
+END
+ActiveTestResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp/ActiveTestResp.class
+END
+BindResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp/BindResp.class
+END
+UploadDataResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp/UploadDataResp.class
+END
+UnBindResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/msg/resp/UnBindResp.class
+END

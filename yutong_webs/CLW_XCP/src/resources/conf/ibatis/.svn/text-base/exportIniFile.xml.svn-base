@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ExportIni">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Driver" type="com.neusoft.clw.infomationExport.Driver" />
+	<typeAlias alias="Route" type="com.neusoft.clw.infomationExport.Route" />
+	<typeAlias alias="Sichen" type="com.neusoft.clw.infomationExport.Sichen" />
+	<typeAlias alias="Site" type="com.neusoft.clw.infomationExport.Site" />
+	<typeAlias alias="Student" type="com.neusoft.clw.infomationExport.Student" />
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+	<typeAlias alias="Trip" type="com.neusoft.clw.infomationExport.Trip" />
+	
+	<select id="getoperatetimeold" parameterClass="String" resultClass="String" >
+		SELECT
+		    TO_CHAR(MAX(CXTT.OPERATE_TIME),'YYYYMMDDHH24MISS') OPERATE_TIME
+		FROM
+		    CLW_XC_VSS_T CXVT,CLW_XC_TRIP_T CXTT
+		WHERE
+		    CXTT.VEHICLE_VIN = #VEHICLE_VIN_OLD#
+		    AND CXVT.TRIP_ID(+)=CXTT.TRIP_ID
+		GROUP BY
+		    CXTT.VEHICLE_VIN
+	</select>
+	
+	<select id="getoperatetime" parameterClass="String" resultClass="String" >
+		SELECT
+		    TO_CHAR(MAX(CXTT.OPERATE_TIME),'YYYYMMDDHH24MISS') OPERATE_TIME
+		FROM
+		    CLW_XC_VSS_T CXVT,CLW_XC_TRIP_T CXTT
+		WHERE
+		    CXTT.VEHICLE_VIN = #VEHICLE_VIN#
+		    AND CXVT.TRIP_ID(+)=CXTT.TRIP_ID
+		GROUP BY
+		    CXTT.VEHICLE_VIN
+	</select>
+	
+	<resultMap id="Trip-result" class="Trip">
+		<result property="trip_id" column="TRIP_ID" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+	</resultMap>
+	
+	<select id="getVintoTripOld" parameterClass="String" resultMap="Trip-result" >
+		SELECT
+		    CXVT.TRIP_ID,CXVT.VEHICLE_VIN
+		FROM
+		    CLW_XC_VSS_T CXVT
+		WHERE
+		    CXVT.VEHICLE_VIN = #VEHICLE_VIN_OLD#
+		GROUP BY
+		    CXVT.VEHICLE_VIN ,
+		    CXVT.TRIP_ID
+	</select>
+	
+	<select id="getVintoTripNew" parameterClass="String" resultMap="Trip-result" >
+		SELECT
+		    CXVT.TRIP_ID,CXVT.VEHICLE_VIN
+		FROM
+		    CLW_XC_VSS_T CXVT
+		WHERE
+		    CXVT.VEHICLE_VIN = #VEHICLE_VIN#
+		GROUP BY
+		    CXVT.VEHICLE_VIN ,
+		    CXVT.TRIP_ID
+	</select>
+	
+	<resultMap id="Route-result" class="Trip">
+	    <result property="vehicle_vin" column="VEHICLE_VIN" />
+	    <result property="route_id" column="ROUTE_ID" />
+	    <result property="route_name" column="ROUTE_NAME" />
+	    <result property="trip_id" column="TRIP_ID" />
+	    <result property="type" column="TYPE" />
+		<result property="sitecount" column="SITECOUNT" />
+		<result property="studentcount" column="STUDENTCOUNT" />
+		<result property="drivercount" column="DRIVERCOUNT" />
+		<result property="sichencount" column="SICHENCOUNT" />
+		<result property="start_time" column="START_TIME" />
+		<result property="end_time" column="END_TIME" />
+		<result property="operate_time" column="OPERATE_TIME" />
+	</resultMap>
+
+	<select id="getRouteBaseInfo" parameterClass="String" resultMap="Route-result">
+		SELECT
+			CXTT.VEHICLE_VIN,
+		    TO_CHAR(CXTT.OPERATE_TIME,'YYYYMMDDHH24MISS') OPERATE_TIME,
+		    CXTT.ROUTE_ID ,
+		    CXRT.ROUTE_NAME,
+		    CXTT.TRIP_ID ,
+		    CXTT.TYPE ,
+		    TSTATION.START_TIME ,
+		    TSTATION.END_TIME ,
+		    TSTATION.SITECOUNT ,
+		    NVL(
+		        TDRIVER.DRIVERCOUNT ,
+		        0
+		    ) DRIVERCOUNT ,
+		    NVL(
+		        TSICHENG.SICHENCOUNT ,
+		        0
+		    ) SICHENCOUNT ,
+		    TSTUDENT.STUDENTCOUNT
+		FROM
+		    CLW_XC_TRIP_T CXTT ,
+		    (
+		        SELECT
+		            TRIP_ID ,
+		            COUNT(1) SITECOUNT ,
+		            TO_CHAR(
+		                MIN(
+		                    TO_DATE(
+		                        PLAN_IN_TIME ,
+		                        'HH24:MI:SS'
+		                    )
+		                ) ,
+		                'HH24:MI:SS'
+		            ) START_TIME ,
+		            TO_CHAR(
+		                MAX(
+		                    TO_DATE(
+		                        PLAN_OUT_TIME ,
+		                        'HH24:MI:SS'
+		                    )
+		                ) ,
+		                'HH24:MI:SS'
+		            ) END_TIME
+		        FROM
+		            CLW_XC_VSS_SITE_T
+		        GROUP BY
+		            TRIP_ID
+		    ) TSTATION ,
+		    (
+		        SELECT
+		            TRIP_ID ,
+		            COUNT(DISTINCT STUDENT_ID) STUDENTCOUNT
+		        FROM
+		            CLW_XC_VSS_T
+		        GROUP BY
+		            TRIP_ID
+		    ) TSTUDENT ,
+		    (
+		        SELECT
+		            TRIP_ID ,
+		            COUNT(1) DRIVERCOUNT
+		        FROM
+		            CLW_XC_VEHDRIVER_T
+		        GROUP BY
+		            TRIP_ID
+		    ) TDRIVER ,
+		    (
+		        SELECT
+		            TRIP_ID ,
+		            COUNT(1) SICHENCOUNT
+		        FROM
+		            CLW_XC_VEHSICHEN_T
+		        GROUP BY
+		            TRIP_ID
+		    ) TSICHENG,
+		    CLW_XC_ROUTE_T CXRT
+		WHERE
+		    CXTT.TRIP_ID = TSTATION.TRIP_ID
+		    AND CXTT.TRIP_ID = TSTUDENT.TRIP_ID
+		    AND CXTT.TRIP_ID = TDRIVER.TRIP_ID(+)
+		    AND CXTT.TRIP_ID = TSICHENG.TRIP_ID(+)
+		    AND CXTT.VALID_FLAG = '0'
+		    AND CXTT.TRIP_ID = #trip_id#
+		    AND CXTT.ROUTE_ID=CXRT.ROUTE_ID
+	</select>
+	
+	<resultMap id="Site-result" class="Site">
+	    <result property="site_name" column="SITE_NAME" />
+	    <result property="site_id" column="SITE_ID" />
+	    <result property="sichen_addr" column="SICHEN_ADDR" />
+		<result property="site_longitude" column="SITE_LONGITUDE" />
+		<result property="site_latitude" column="SITE_LATITUDE" />
+		<result property="plan_in_time" column="PLAN_IN_TIME" />
+		<result property="plan_out_time" column="PLAN_OUT_TIME" />
+	</resultMap>
+	
+	<select id="getSiteInfo"  parameterClass="String" resultMap="Site-result">
+		SELECT
+		    CVST.SITE_ID ,
+		    CXSS.SITE_NAME ,
+		    CXSS.SICHEN_ADDR ,
+		    CXSS.SITE_LONGITUDE ,
+		    CXSS.SITE_LATITUDE ,
+		    TO_CHAR(
+		        TO_DATE(
+		            CVST.PLAN_IN_TIME ,
+		            'HH24:MI'
+		        ) ,
+		        'HH24:MI'
+		    ) PLAN_IN_TIME ,
+		    TO_CHAR(
+		        TO_DATE(
+		            CVST.PLAN_OUT_TIME ,
+		            'HH24:MI'
+		        ) ,
+		        'HH24:MI'
+		    ) PLAN_OUT_TIME
+		FROM
+		    CLW_XC_TRIP_T CXTT ,
+		    CLW_XC_VSS_SITE_T CVST ,
+		    (SELECT CXRS.ROUTE_ID, CXST.SITE_ID,CXST.SITE_NAME ,
+		    	CXST.SICHEN_ADDR ,
+		    	CXST.SITE_LONGITUDE ,
+		    	CXST.SITE_LATITUDE ,
+		    	CXRS.RS_ORDER 
+		    FROM 
+		    	CLW_XC_SITE_T CXST, 
+		    	CLW_XC_ROUTESITE_T CXRS
+		    WHERE CXST.SITE_ID=CXRS.SITE_ID) CXSS
+		WHERE
+		    CXTT.TRIP_ID = CVST.TRIP_ID
+		    AND CVST.SITE_ID = CXSS.SITE_ID
+		    AND CVST.ROUTE_ID=CXSS.ROUTE_ID
+		    AND CXTT.TRIP_ID = #trip_id#
+		ORDER BY CXSS.RS_ORDER
+	</select>
+	
+	<resultMap id="Student-result" class="Student">
+	    <result property="stu_name" column="STU_NAME" />
+	    <result property="stu_id" column="STU_ID" />
+	    <result property="stu_card_id" column="STU_CARD_ID" />
+		<result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />
+		<result property="teacher_tel" column="TEACHER_TEL" />
+		<result property="relative_tel" column="RELATIVE_TEL" />
+		<result property="photo_name" column="PHOTONAME" />
+		<result property="getonbus" column="GETONBUS" />
+		<result property="getdownbus" column="GETDOWNBUS" />
+		<result property="stu_photo" column="STU_PHOTO" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler" />
+	</resultMap>
+	
+	<select id="getStudentInfo" parameterClass="String" resultMap="Student-result">
+		SELECT
+		    INFODATA.STU_NAME STU_NAME ,
+		    INFODATA.STU_ID ,
+		    INFODATA.STU_CARD_ID STU_CARD_ID ,
+		    INFODATA.STU_SCHOOL STU_SCHOOL ,
+		    INFODATA.STU_CLASS STU_CLASS ,
+		    INFODATA.TEACHER_TEL TEACHER_TEL ,
+		    INFODATA.RELATIVE_TEL RELATIVE_TEL ,
+		    INFODATA.PHOTONAME PHOTONAME ,
+		    INFODATA.GETONBUS GETONBUS ,
+		    INFODATA.GETDOWNBUS GETDOWNBUS ,
+		    PHOTODATA.STU_PHOTO STU_PHOTO
+		FROM
+		    (
+		        SELECT
+		            MAX(CXST.STU_NAME) STU_NAME ,
+		            CXST.STU_ID ,
+		            MAX(CXST.STU_CARD_ID) STU_CARD_ID ,
+		            MAX(CXST.STU_SCHOOL) STU_SCHOOL ,
+		            MAX(CXST.STU_CLASS) STU_CLASS ,
+		            MAX(CXST.TEACHER_TEL) TEACHER_TEL ,
+		            MAX(CXST.RELATIVE_TEL) RELATIVE_TEL ,
+		            MAX(
+		                CASE
+		                    WHEN CXST.PHOTO_NAME IS NULL
+		                    THEN NULL
+		                    ELSE CXST.STU_CARD_ID || '_' || CXST.PHOTO_NAME
+		                END
+		            ) PHOTONAME ,
+		            WM_CONCAT(
+		                CASE
+		                    WHEN VSS_STATE = '0'
+		                    THEN CXVT.SITE_ID
+		                END
+		            ) GETONBUS ,
+		            WM_CONCAT(
+		                CASE
+		                    WHEN VSS_STATE = '1'
+		                    THEN CXVT.SITE_ID
+		                END
+		            ) GETDOWNBUS
+		        FROM
+		            CLW_XC_VSS_T CXVT ,
+		            CLW_XC_STUDENT_T CXST
+		        WHERE
+		            CXVT.STUDENT_ID = CXST.STU_ID
+		            AND CXVT.TRIP_ID = #trip_id#
+		        GROUP BY
+		            CXST.STU_ID
+		    ) INFODATA ,
+		    CLW_XC_STUDENT_T PHOTODATA
+		WHERE
+		    INFODATA.STU_ID = PHOTODATA.STU_ID
+	</select>
+	
+	<resultMap id="Driver-result" class="Driver">
+	    <result property="driver_id" column="DRIVER_ID" />
+	    <result property="driver_card_id" column="DRIVER_CARD_ID" />
+	    <result property="driver_name" column="DRIVER_NAME" />
+	</resultMap>
+	
+	<select id="getDriverInfo" parameterClass="String" resultMap="Driver-result">
+		SELECT
+		    CYDT.DRIVER_ID ,
+		    CYDT.DRIVER_CARD_ID DRIVER_CARD_ID ,
+		    CYDT.DRIVER_NAME DRIVER_NAME
+		FROM
+		    CLW_YW_DRIVER_T CYDT ,
+		    CLW_XC_VEHDRIVER_T CXVT
+		WHERE
+		    CYDT.DRIVER_ID = CXVT.DRIVER_ID
+		    AND CXVT.TRIP_ID = #trip_id#
+	</select>
+	
+	<select id="getDriverInfoByVin" parameterClass="String" resultMap="Driver-result">
+		SELECT DISTINCT CYDT.DRIVER_ID,
+                CYDT.DRIVER_CARD_ID DRIVER_CARD_ID,
+                CYDT.DRIVER_NAME DRIVER_NAME
+  		FROM CLW_YW_DRIVER_T CYDT
+ 		WHERE CYDT.ENTERPRISE_ID =
+       				(SELECT BT.ENTERPRISE_ID
+          				FROM CLW_CL_BASE_INFO_T BT
+         				WHERE BT.VEHICLE_VIN = #vin#
+           				AND BT.VALID_FLAG = '0')
+   			  and CYDT.VALID_FLAG = '0'    
+	</select>
+	
+	<resultMap id="Sichen-result" class="Sichen">
+	    <result property="sichen_id" column="SICHEN_ID" />
+	    <result property="sichen_card_id" column="SICHEN_CARD_ID" />
+	    <result property="sichen_name" column="SICHEN_NAME" />
+	</resultMap>
+	
+	<select id="getSichenInfo" parameterClass="String" resultMap="Sichen-result">
+		SELECT
+		    CXST.SICHEN_ID ,
+		    CXST.SICHEN_CARD_ID SICHEN_CARD_ID ,
+		    CXST.SICHEN_NAME SICHEN_NAME
+		FROM
+		    CLW_XC_SICHEN_T CXST ,
+		    CLW_XC_VEHSICHEN_T CXVT
+		WHERE
+		    CXST.SICHEN_ID = CXVT.SICHEN_ID
+		    AND CXVT.TRIP_ID = #trip_id#
+	</select>
+	
+	<select id="getSichenInfoByVin" parameterClass="String" resultMap="Sichen-result">
+		SELECT CXST.SICHEN_ID,
+       		CXST.SICHEN_CARD_ID SICHEN_CARD_ID,
+       		CXST.SICHEN_NAME SICHEN_NAME
+  		FROM CLW_XC_SICHEN_T CXST
+ 		WHERE CXST.ENTERPRISE_ID =
+       			(SELECT BT.ENTERPRISE_ID
+          			FROM CLW_CL_BASE_INFO_T BT
+         			WHERE BT.VEHICLE_VIN = #vin#
+           			AND BT.VALID_FLAG = '0')
+   			and CXST.VALID_FLAG = '0'
+		    
+	</select>
+	
+	<resultMap id="vehcileinfo-result" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="enterprise_name" column="SHORT_NAME" />
+		<result property="choiceflag" column="CHOICEFLAG" />
+	</resultMap>
+	
+	<!-- 获取车辆列表中车辆总数 -->
+	<select id="getInfosCount" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1)
+	     FROM CLW_JC_CLEN_VI CJCV,(SELECT DISTINCT VEHICLE_VIN FROM CLW_XC_VSS_T) CXVT
+	     WHERE CJCV.VEHICLE_VIN=CXVT.VEHICLE_VIN   
+	     	AND CJCV.ORGANIZATION_ID in 
+			(select enterprise_id
+	         from clw_jc_enterprise_vi
+	         where left_num >= (select left_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	         and <![CDATA[right_num <=(select right_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	             ]]>
+	         
+			)
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+			VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+			VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>   
+	</select>
+	
+	<!-- 获取车辆列表 -->
+	<select id="getInfosVeh" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT CJCV.VEHICLE_VIN,
+		       CJCV.VEHICLE_ID,
+		       CJCV.VEHICLE_LN,
+		       CJCV.ORGANIZATION_ID,
+		       CJCV.ENTERPRISE_ID,
+		       CJCV.SHORT_ALLNAME,
+		       CJCV.VEHICLE_CODE,
+		       CJCV.SHORT_NAME,
+		       '1' as CHOICEFLAG
+	     FROM CLW_JC_CLEN_VI CJCV,(SELECT DISTINCT VEHICLE_VIN FROM CLW_XC_VSS_T) CXVT
+	     WHERE CJCV.VEHICLE_VIN=CXVT.VEHICLE_VIN   
+	     	AND CJCV.ORGANIZATION_ID in 
+			(select enterprise_id
+	         from clw_jc_enterprise_vi
+	         where left_num >= (select left_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	         and <![CDATA[right_num <=(select right_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	             ]]>
+	         
+			)
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+			VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+			VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+	   
+	     <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>    
+	</select>
+</sqlMap>

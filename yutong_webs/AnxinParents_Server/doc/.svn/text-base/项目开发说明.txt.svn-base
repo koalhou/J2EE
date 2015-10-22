@@ -1,0 +1,59 @@
+简称：
+WS：Web Service
+
+1.架构说明
+项目使用CXF+spring+mybatis框架，提供RESTful WS供手机端调用
+
+2.目录说明
+java    
+ |-com.yutong.axxc.parents.common  常量定义类
+ |-com.yutong.axxc.parents.tools   常用工具类
+ |-com.yutong.axxc.parents.entity  mybatis的实体类
+ |-com.yutong.axxc.parents.mapper  mybatis的DAO
+ |-com.yutong.axxc.parents.service WS中使用的Service
+ |-com.yutong.axxc.parents.process.delivermsg  消息分发的Service
+resources   配置文件
+ |--mapper  //mybatis的SQL操作文件
+ |--mybatis //mybatis的配置文件
+ |--restApi //WS的配置文件，设置处理类、拦截器、异常处理、URI
+ |-applicationContext-datasource.xml
+ |-applicationContext-memcached.xml
+ |-applicationContext-rest-services.xml
+ |-jdbc.properties
+ |-logback.xml   //日志配置文件
+ |-systemConfig.properties
+test  测试源码包
+ |-WSBaseTest.java
+ |-BaseSpringTest.java
+3.开发流程
+建议从WS开始，下面以登录和资源获取为例：
+3.1 设计接口
+a.在resources/restApi目录下编写WS的定义文件oauthApi.xml，定义WS的实现类，定义访问地址、用户有效登录拦截器、异常处理链、日志记录器
+
+b.定义Java接口：com.yutong.axxc.parents.service.oauth.LoginService
+定义接口的HTTP访问约定：
+	com.yutong.axxc.parents.service.oauth.LoginService中的
+	@PUT 是HTTP的method，是必须的。CXF提供GET、PUT、POST、DELETE四种注解，GET用来读取资源，POST用来更新资源，PUT用来新建资源，DELETE用来删除资源。
+	@Consumes({ MediaType.APPLICATION_JSON }) 定义APP传输内容的格式，一般内容为字符串内容都定为JSON格式，二进制内容必须进行Base64编码，然后传输
+	@Produces({ HttpConstant.MEDIATYPE_JSON_UTF_8 }) 定义服务端返回内容的格式和编码
+	
+	com.yutong.axxc.parents.service.oauth.ResourceService中的
+	@Path(value = "getresource/{type}/{resId}") 定义改方法的地址，如果没有则为WS定义xml中的地址
+	Object getResource(@HeaderParam("access_token") String token,@PathParam("type") String type, @PathParam("resId") String resId)：
+	@HeaderParam("access_token")  定义参数从Header中获取，访问token等非业务数据放在Header中
+	@PathParam("type")            定义参数从URL中获取，注意@Path中必须有相应的设置{type}，path中的参数必须能定位到具体资源
+
+3.2 实现接口并按接口约定返回JSON格式的数据
+           参考com.yutong.axxc.parents.service.oauth.LoginServiceImpl.java
+	事务配置需要在方法前加@Transaction
+	
+3.3 数据库读写程序，使用Mybatis，类似于ibatis，可查阅  doc/MyBatis-3-User-Guide.pdf
+	a.在mybatis-configuration.xml定义映射文件
+	b.在resources/mapper中增加映射文件
+	c.在com.yutong.axxc.parents.mapper中定义映射文件对应的DAO类，注意DAO类的方法名与映射文件中的id相同
+	d.在service中注入DAO：@Autowired  private OauthMapper oauthMapper;
+	
+4.测试流程
+	测试类放在test下，并类路径与java下的相同
+	WS测试继承WSBaseTest.java
+	DAO的测试使用BaseSpringTest

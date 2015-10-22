@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.org/dwr/dwr20.dtd">
+
+<dwr>
+	<!-- <allow>标签中包括可以暴露给javascript访问的东西 -->
+	<allow>
+		<!-- 用户管理DWR -->
+		<create javascript="UserManageDwr" creator="spring" scope="application">
+			<param name="beanName" value="userManageDwr"></param>
+		</create>
+	
+		<!-- 终端属性管理DWR -->
+		<create javascript="TmAttributeDwr" creator="spring" scope="application">
+			<param name="beanName" value="tmAttributeDwr"></param>
+		</create>
+		<convert match="com.neusoft.clw.yw.zd.protocal.ds.ValueInfo"
+			converter="bean">
+		</convert>
+		
+		<!-- 终端厂家管理DWR -->
+		<create javascript="OemManageDWR" creator="spring" scope="application">
+			<param name="beanName" value="oemManageDWR"></param>
+		</create>
+		
+		<!-- 终端管理DWR -->
+		<create javascript="TerminalManageDWR" creator="spring" scope="application">
+			<param name="beanName" value="terminalManageDWR"></param>
+		</create>
+		
+		<!-- SIM卡管理DWR -->
+		<create javascript="SimManageDWR" creator="spring" scope="application">
+			<param name="beanName" value="simManageDWR"></param>
+		</create>
+		<convert converter="bean" match="java.lang.StackTraceElement" />
+  		<convert converter="exception" match="java.lang.Exception" />
+  
+		<!-- 企业管理  -->
+		<create javascript="EntiDwr" creator="spring" scope="application">
+			<param name="beanName" value="entiManageDwr"></param>
+		</create>
+		<convert match="com.neusoft.clw.yw.qx.entimanage.ds.EnterpriseDataInfo"
+			converter="bean">
+		</convert>
+		
+		<!-- 省市信息  -->
+		<create javascript="ZoneDwr" creator="spring" scope="application">
+			<param name="beanName" value="zoneManageDWR"></param>
+		</create>
+		<convert match="com.neusoft.clw.yw.xs.zonemanage.ds.ZoneXsInfo"
+			converter="bean">
+		</convert>
+		
+		<!-- 车辆信息  -->
+		<create javascript="CarDwr" creator="spring" scope="application">
+			<param name="beanName" value="carBaseDWR"></param>
+		</create>
+		
+		<!-- 基础信息管理DWR -->
+		<create javascript="BaseInfoManageDwr" creator="spring" scope="application">
+			<param name="beanName" value="baseInfoManageDwr"></param>
+		</create>
+		
+		<!-- 服务点管理DWR -->
+		<create javascript="PoiManageDwr" creator="spring" scope="application">
+			<param name="beanName" value="poiManageDwr"></param>
+		</create>
+		
+		<!-- 按天统计图表DWR -->
+		<create javascript="ReportDayChartDwr" creator="spring" scope="application">
+			<param name="beanName" value="operationsAction"></param>
+		</create>
+		
+		<!-- 按小时统计图表DWR -->
+		<create javascript="ReportHourChartDwr" creator="spring" scope="application">
+			<param name="beanName" value="operationsAction"></param>
+		</create>
+		
+		<!-- 获取附件信息DWR -->
+		<create javascript="AccessoryDwr" creator="spring" scope="application">
+			<param name="beanName" value="accessoryDwr"></param>
+		</create>
+		<convert match="com.neusoft.clw.yw.common.ds.AccessoryInfo"
+			converter="bean">
+		</convert>
+		
+		<!-- 实时通知DWR -->
+		<create javascript="NoticeCoreDwr" creator="spring" scope="application">
+			<param name="beanName" value="noticeCoreDwr"></param>
+		</create>
+		
+		<!-- 获取车工号DWR -->
+		<create javascript="MaintDWR" creator="spring" scope="application">
+			<param name="beanName" value="maintenanceDWR"></param>
+		</create>
+		
+		<!-- 手持设备注册DWR -->
+		<create javascript="HandheldDeviceDWR" creator="spring" scope="application">
+			<param name="beanName" value="handheldDeviceDWR"></param>
+		</create>
+	</allow>
+</dwr>

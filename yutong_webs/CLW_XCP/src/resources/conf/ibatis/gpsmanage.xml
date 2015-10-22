@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="GPS">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="EnterpriseResInfo" type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseResInfo" />
+	<typeAlias alias="alarm" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.Alarm" />
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="terminalViBean"
+		type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TerminalViBean" />
+	<typeAlias alias="serverPointBean"
+		type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.ServerPointBean" />
+	<typeAlias alias="PhotoRoutewayBean"
+		type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.PhotoRoutewayBean" />	
+		
+	
+    
+    <resultMap class="terminalViBean" id="terminalViBeanResultnew">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_ID" column="VEHICLE_ID"/>
+       <result property="VEHICLE_CODE" column="VEHICLE_CODE"/>
+       <result property="ORGANIZATION_ID" column="ORGANIZATION_ID"/>
+       <result property="ENTERPRISE_ID" column="ENTERPRISE_ID"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+       <result property="CR_CONFIG_ID" column="CR_CONFIG_ID"/>
+       <result property="ENGINE_NUMBER" column="ENGINE_NUMBER"/>
+       <result property="ENGINE_TYPE" column="ENGINE_TYPE"/>
+       <result property="LATITUDE" column="LATITUDE"/>
+       <result property="LONGITUDE" column="LONGITUDE"/>
+       <result property="SPEEDING" column="SPEEDING"/>
+       <result property="DIRECTION" column="DIRECTION"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+       <result property="USER_ID" column="USER_ID"/>
+       <result property="ID" column="ID"/>
+       <result property="OIL_INSTANT" column="OIL_INSTANT"/>
+       <result property="ENGINE_ROTATE_SPEED" column="ENGINE_ROTATE_SPEED"/>
+       
+    </resultMap>
+	 
+	<resultMap class="EnterpriseResInfo" id="enterprise_tree">
+       <result property="enterprise_id" column="enterprise_id"/>
+       <result property="short_name" column="short_name"/>
+       <result property="left_num" column="left_num"/>
+       <result property="right_num" column="right_num"/>
+       <result property="treeleve" column="treeleve"/>
+       <result property="parent_id" column="parent_id"/>
+       <result property="concate_cr_flag" column="concate_cr_flag"/>
+    </resultMap>
+	
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="enterprise_tree"/>
+    </parameterMap>
+    
+    <resultMap id="vehcileinfo-result" class="vehcileinfo">
+    	<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+	</resultMap>
+	
+	 <resultMap id="videoByVin" class="terminalViBean">
+    	<result property="VIDEO_ID" column="VIDEO_ID" />
+	</resultMap>
+	
+	<resultMap id="alarm-result" class="alarm">
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_id" column="ALARM_ID" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_type_comments" column="ALARM_TYPE_COMMENTS" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="enterprise_id" column="enterprise_id"/>
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="direction" column="DIRECTION" />
+	</resultMap>
+	
+	<resultMap class="serverPointBean" id="ServerPoint-result">
+       <result property="POI_ID" column="POI_ID"/>
+       <result property="POI_NAME" column="POI_NAME"/>
+       <result property="POI_LAT" column="POI_LAT"/>
+       <result property="POI_LON" column="POI_LON"/>
+       <result property="REMARK" column="REMARK"/>
+       <result property="CREATER" column="CREATER"/>
+       <result property="CREATE_TIME" column="CREATE_TIME"/>
+       <result property="MODIFIER" column="MODIFIER"/>
+       <result property="MODIFY_TIME" column="MODIFY_TIME"/>
+       <result property="VALID_FLAG" column="VALID_FLAG"/>
+       <result property="VASET_USER_ID" column="VASET_USER_ID"/>
+       <result property="VASET_TIME" column="VASET_TIME"/>
+       <result property="POI_ADDRESS" column="POI_ADDRESS"/>
+       <result property="CONCATE_PERSON" column="CONCATE_PERSON"/>
+       <result property="CONCATE_TEL" column="CONCATE_TEL"/>
+       
+    </resultMap>
+    
+    <resultMap class="PhotoRoutewayBean" id="PhotoRouteway-result">
+       <result property="TERMINAL_ID" column="TERMINAL_ID"/>
+       <result property="ROUTEWAY_NO" column="ROUTEWAY_NO"/>
+       <result property="ROUTEWAY_NAME" column="ROUTEWAY_NAME"/>
+    </resultMap>
+    
+   <resultMap class="terminalViBean" id="terminalViBeanResultNewNew">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+       <result property="CELLPHONE" column="CELLPHONE"/>
+       <result property="VEH_EXT_INFO" column="VEH_EXT_INFO"/>
+       <result property="STAT_INFO" column="STAT_INFO"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+    </resultMap>
+    
+    
+                 
+	
+	
+	
+	 
+	 
+	<select id="getAlarmInfos" parameterClass="alarm" resultMap="alarm-result">
+		select * from (select * from (SELECT ccbi.VEHICLE_LN,ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		ctt.ALARM_TYPE_COMMENTS,
+		cyat.DEAL_FLAG,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		ccbi.enterprise_id,
+		cyat.SPEEDING,
+    	cyat.latitude,cyat.longitude,cyat.alarm_id,
+    	cyat.engine_rotate_speed,
+    	cyat.mileage,
+    	cyat.direction
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_CL_BASE_INFO_T ccbi
+		where cyat.alarm_type_id=ctt.alarm_type_id
+		and cyat.vehicle_vin=ccbi.vehicle_vin
+		and ccbi.ORGANIZATION_ID in
+				(select enterprise_id
+		         from clw_jc_enterprise_vi
+		         where <![CDATA[left_num >= (select left_num
+		                      from clw_jc_enterprise_vi
+		                      where enterprise_id = #organization_id#)
+		         and  right_num <=(select right_num
+		                  from clw_jc_enterprise_vi
+		                  where enterprise_id = #organization_id#)
+		          ]]>
+				)
+		ORDER BY ALARM_TIME  DESC  ) 
+					<![CDATA[
+		where rownum<=3
+		 ]]> )
+		 where 1=1 
+		  <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<select id="getAlarmInfosforchezhu" parameterClass="alarm" resultMap="alarm-result">
+		select * from (select * from (SELECT ccbi.VEHICLE_LN,ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		ctt.ALARM_TYPE_COMMENTS,
+		cyat.DEAL_FLAG,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		ccbi.enterprise_id,
+		cyat.SPEEDING,
+    	cyat.latitude,cyat.longitude,cyat.alarm_id,
+    	cyat.engine_rotate_speed,
+    	cyat.mileage,
+    	cyat.direction
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_CL_BASE_INFO_T ccbi
+		where cyat.alarm_type_id=ctt.alarm_type_id
+		and cyat.vehicle_vin=ccbi.vehicle_vin
+		and ccbi.user_id=#userid#
+		ORDER BY ALARM_TIME  DESC  ) 
+					<![CDATA[
+		where rownum<=3
+		 ]]> )
+		 where 1=1 
+		  <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<select id="getvehln" parameterClass="String" resultClass="String">
+	   SELECT 
+	   VEHICLE_LN
+       FROM CLW_CL_BASE_INFO_T 
+       WHERE VEHICLE_VIN=#vehicle_vin#
+       and valid_flag='0'
+	</select>
+	
+	<select id="getVideoByVIN" parameterClass="terminalViBean" resultClass="terminalViBean">
+	  	SELECT 
+	  	T.VIDEO_ID,
+	  	T.VIDEO_FACTORY,
+	  	T.VIDEO_SERVER_IP,
+	  	T.STREAM_SERVER_IP,
+	  	T.VIDEO_USER,
+	  	T.VIDEO_PASSWORD
+ 		FROM CLW_JC_TERMINAL_T T
+ 		WHERE T.VEHICLE_VIN =#VEHICLE_VIN# 
+	</select>
+	
+	<select id="newgetVideoByVIN" parameterClass="terminalViBean" resultClass="terminalViBean">
+	  	SELECT 
+	  	T.VIDEO_ID,
+	  	T.VIDEO_FACTORY,
+	  	T.VIDEO_SERVER_IP,
+	  	T.STREAM_SERVER_IP,
+	  	T.VIDEO_USER,
+	  	T.VIDEO_PASSWORD,
+        CL.VEHICLE_LN
+ 		FROM CLW_JC_TERMINAL_T T,clw_cl_base_info_t CL
+ 		WHERE T.VEHICLE_VIN =cl.vehicle_vin
+        AND T.valid_flag='0'
+        AND T.DEVICE_TYPE='0'
+        AND CL.VALID_FLAG='0'
+        AND CL.FEE_FLAG='0'
+        AND CL.DEVICE_TYPE='0'
+        AND T.VEHICLE_VIN =#VEHICLE_VIN# 
+	</select>
+	
+	<update id="updateDealFlag" parameterClass="alarm">
+		UPDATE CLW_YW_ALERM_RECORD_T
+		SET DEAL_FLAG= 1
+	   	WHERE  ALARM_ID=#alarm_id#
+	</update>
+	
+	
+	
+	
+	<select id="getVehcileByRouteNameCount" parameterClass="Map" resultClass="Integer">
+	select COUNT(1)
+	      FROM CLW_JC_CL_TERMINAL_NEWVI 
+	
+	where VEHICLE_VIN in 
+	
+	(SELECT VEHICLE_VIN       
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #ORGANIZATION_ID#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #ORGANIZATION_ID#)
+             ]]>
+         
+		)
+		and ROUTE_NAME like '%'||#ROUTE_NAME#||'%')
+	 
+	
+	</select>
+	
+	
+	<select id="getVehcileByRouteName" parameterClass="Map" resultMap="terminalViBeanResultnew">
+	select VEHICLE_VIN,
+			    VEHICLE_ID,
+			    VEHICLE_CODE,
+			    ORGANIZATION_ID,
+			    ENTERPRISE_ID,
+			    VEHICLE_LN,
+			    CR_CONFIG_ID,
+			    ENGINE_NUMBER,
+			    ENGINE_TYPE,
+			    USER_ID,
+			    LATITUDE,
+			    LONGITUDE,
+			    SPEEDING,
+			    DIRECTION,
+			    TERMINAL_TIME,
+				ID,
+				OIL_INSTANT,
+				ENGINE_ROTATE_SPEED
+				
+	      FROM CLW_JC_CL_TERMINAL_NEWVI 
+	      where VEHICLE_VIN in 
+	     (SELECT VEHICLE_VIN   
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #ORGANIZATION_ID#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #ORGANIZATION_ID#)
+             ]]>
+         
+		)
+		and ROUTE_NAME like '%'||#ROUTE_NAME#||'%')
+	</select>
+	<select id="getVehcileByRouteNameNew" parameterClass="Map" resultMap="terminalViBeanResultNewNew">
+    SELECT TT.VEHICLE_VIN,TT.VEHICLE_LN,TT.CELLPHONE,TT.VEH_EXT_INFO,TT.STAT_INFO,TT.TERMINAL_TIME 
+    FROM
+	(SELECT DISTINCT T.VEHICLE_VIN,B.VEHICLE_LN,S.CELLPHONE,T.VEH_EXT_INFO,T.STAT_INFO,T.TERMINAL_TIME 
+	FROM CLW_JC_TERMINAL_T T,CLW_CL_BASE_INFO_T B,CLW_CL_SIM_T S
+	WHERE ORGANIZATION_ID IN 
+		(SELECT ENTERPRISE_ID
+         FROM CLW_JC_ENTERPRISE_VI
+         <![CDATA[WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ORGANIZATION_ID#)
+         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ORGANIZATION_ID#)
+         ]]>
+		)
+	AND B.VALID_FLAG = '0'
+	AND B.FEE_FLAG = '0'
+	AND S.VALID_FLAG = '0'
+	AND T.VALID_FLAG = '0'
+	AND T.DEVICE_TYPE = '0'
+	AND T.VEHICLE_VIN=B.VEHICLE_VIN(+)
+	AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)) TT
+	WHERE TT.VEHICLE_VIN in 
+	     (SELECT DISTINCT V.VEHICLE_VIN 
+	      FROM CLW_XC_VSS_T V
+		  WHERE  V.ROUTE_ID IN (SELECT ROUTE_ID
+	  								FROM CLW_XC_ROUTE_T  R
+	  								WHERE ROUTE_ORGANIZATION_ID IN 
+									(SELECT ENTERPRISE_ID
+							         FROM CLW_JC_ENTERPRISE_VI
+							        <![CDATA[ WHERE LEFT_NUM >= (SELECT LEFT_NUM
+							                      FROM CLW_JC_ENTERPRISE_VI
+							                      WHERE ENTERPRISE_ID = #ORGANIZATION_ID#)
+							         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+							                      FROM CLW_JC_ENTERPRISE_VI
+							                      WHERE ENTERPRISE_ID = #ORGANIZATION_ID#)
+							        ]]>
+									) 
+								  AND VALID_FLAG='0'
+								  AND R.ROUTE_NAME LIKE '%'||#ROUTE_NAME#||'%' escape '\'))  
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+     </select>
+	 
+	
+	
+	<select id="getVehcileByVin" parameterClass="Map" resultMap="terminalViBeanResultnew">
+	select VEHICLE_VIN,
+			    VEHICLE_ID,
+			    VEHICLE_CODE,
+			    ORGANIZATION_ID,
+			    ENTERPRISE_ID,
+			    VEHICLE_LN,
+			    CR_CONFIG_ID,
+			    ENGINE_NUMBER,
+			    ENGINE_TYPE,
+			    USER_ID,
+			    LATITUDE,
+			    LONGITUDE,
+			    SPEEDING,
+			    DIRECTION,
+			    TERMINAL_TIME,
+				ID,
+				OIL_INSTANT,
+				ENGINE_ROTATE_SPEED
+				
+	      FROM CLW_JC_CL_TERMINAL_NEWVI 
+	      WHERE VEHICLE_VIN =#VEHICLE_VIN#
+	</select>
+	
+	
+	<select id="getSevicepointlook" parameterClass="serverPointBean" resultMap="ServerPoint-result">
+		select
+		      POI_ID,                      
+			  POI_NAME,                   
+			  POI_LAT,                  
+			  POI_LON,                   
+			  REMARK,        
+			  CREATER,                    
+			  CREATE_TIME,                    
+			  MODIFIER,       
+			  MODIFY_TIME,    
+			  VALID_FLAG,                 
+			  VASET_USER_ID,  
+			  VASET_TIME,
+			  POI_ADDRESS,
+			  CONCATE_PERSON,
+			  CONCATE_TEL
+    	from CLW_JC_POI_T 
+		where VALID_FLAG='0' and 
+		(POI_LAT between #MIN_Y# and #MAX_Y#) and 
+		(POI_LON between #MIN_X# and #MAX_X#)
+	    
+	</select>
+	
+	<select id="getPhotoRoutteway" parameterClass="Map" resultMap="PhotoRouteway-result">
+	
+		select r.TERMINAL_ID,
+	       r.ROUTEWAY_NO ,  
+		   r.ROUTEWAY_NAME 
+		from CLW_YW_TERMINAL_ROUTEWAY_T r
+		where TERMINAL_ID=(select t.TERMINAL_ID 
+	                   from CLW_JC_TERMINAL_T t
+	                   where t.VEHICLE_VIN =#VEHICLE_VIN#)
+	    order by r.ROUTEWAY_NO
+	</select>
+	
+	<select id="getVehcileByAreaCount" parameterClass="Map" resultClass="Integer">
+	select COUNT(*)
+	      FROM CLW_JC_CL_TERMINAL_VI   
+	     WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #ENTERPRISE_ID#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #ENTERPRISE_ID#)
+             ]]>
+          
+         
+		)
+		and 
+		(LATITUDE between #MIN_Y# and #MAX_Y#) and 
+		(LONGITUDE between #MIN_X# and #MAX_X#)
+	
+	
+	
+	</select>
+	
+	
+		 
+		
+		
+		<select id="getVehcileByAreaByUseridCount" parameterClass="Map" resultClass="Integer">
+	select COUNT(*)
+	      FROM CLW_JC_CL_TERMINAL_VI   
+	     WHERE USER_ID =#USER_ID# 
+		and 
+		(LATITUDE between #MIN_Y# and #MAX_Y#) and 
+		(LONGITUDE between #MIN_X# and #MAX_X#)
+	
+	</select>
+	
+	
+		
+	
+	 <procedure id="show_enterprise_tree" parameterMap="pm_in_example" >
+       { call tree_enterprise_pack.show_enterprise_tree(?, ? ,? ,?) }
+     </procedure> 
+     
+   
+</sqlMap>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="FileUpload">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="uploadFileInfo" type="com.neusoft.clw.infomanage.fileupload.domain.UploadFileInfo" />
+	
+	<resultMap class="uploadFileInfo" id="stewardphoto-result">
+		<result property="photo_name" column="ACCESSORY_NAME"/>
+       <result property="photoContent" column="ACCESSORY_CONTENT" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler"/>
+    </resultMap>
+	
+	<insert id="insertPhoto" parameterClass="uploadFileInfo">
+		INSERT INTO CLW_YW_ACCESSORY_T
+		  (ACCESSORY_ID,
+		   NOTICE_ID)
+		VALUES
+		  (#dataId#,
+		   'INFOMANAGE_PHOTO')
+	</insert>
+	
+	<select id="getPhoto" parameterClass="uploadFileInfo" resultMap="stewardphoto-result">
+		SELECT ACCESSORY_NAME,
+		       ACCESSORY_CONTENT
+		  FROM CLW_YW_ACCESSORY_T
+		 WHERE ACCESSORY_ID=#dataId# 
+	</select>
+	
+	<update id="updatePhoto" parameterClass="uploadFileInfo">
+	    UPDATE CLW_YW_ACCESSORY_T
+		   SET ACCESSORY_NAME = #photo_name#,
+		       ACCESSORY_CONTENT   = #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#
+		 WHERE ACCESSORY_ID = #dataId#
+	</update>
+	
+</sqlMap>

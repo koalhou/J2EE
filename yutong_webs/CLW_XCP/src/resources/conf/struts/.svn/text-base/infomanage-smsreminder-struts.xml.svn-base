@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="smsreminder" namespace="/smsreminder" extends="clw-default">
+		<action name="init" class="smsReminderAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/infomanage/smsreminder/smsreminder.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/smsreminder/smsreminder.jsp</result>	
+			<result name="forbid">/WEB-INF/jsp/infomanage/studentmanage/studentforbid.jsp</result>	
+		</action>
+		<!-- 修改 -->
+		<action name="configSmsByStuId" class="smsReminderAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/smsreminder/configsms.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">init</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="configSms" class="smsReminderAction" method="configSms">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/smsreminder/configsms.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">init</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/smsreminder/configsms.jsp
+			</result>			
+		</action>
+	</package>
+	
+	<package name="smsreminderGrid" namespace="/smsreminderGrid" extends="json-default">
+		<!-- 短信提醒初始化列表页面 -->
+		<action name="messageBrowse" class="smsReminderAction"  method="messageBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+        </action>
+	</package>
+</struts>

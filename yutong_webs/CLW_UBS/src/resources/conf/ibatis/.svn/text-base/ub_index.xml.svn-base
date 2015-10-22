@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="UBIndex">
+ 
+    <typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="meta" type="com.neusoft.clw.yw.ub.custom.ds.Meta" />
+	<typeAlias alias="Gather" type="com.neusoft.clw.yw.ub.custom.ds.Gather" />
+	<typeAlias alias="CAStatistics" type="com.neusoft.clw.yw.ub.index.ds.CAStatistics" />
+	<typeAlias alias="serviceInfo" type="com.neusoft.clw.yw.ub.srv.ds.ServiceInfo" />
+	<typeAlias alias="question" type="com.neusoft.clw.yw.ub.passivity.ds.Question" />
+
+	<!-- 车辆数和开通企业 -->
+	  <select id="getEntAndBus" parameterClass="Map" resultClass="Gather">
+	      select nvl(count(a.enterprise_id),0) as openEntCnt,nvl(sum(a.VEHICLE_COUNT),0) as busCnt                   
+	       from clw_ub_entcustomer_day_t a
+	       where     a.report_day =to_date(#endDay#, 'yyyy-MM-dd')              
+	  </select>
+
+	<!-- 企业访问bars-->
+	<select id="getCABar" parameterClass="Map" resultClass="CAStatistics">
+			 select substr(#startDay#,0,7) as reportDate,
+			 		decode(nvl(sum(c.isopen_app), 0),0,0,round(nvl(sum(c.appEp), 0)/sum(c.isopen_app),3)*100) as  appEp,
+       				decode(nvl(count(c.enterprise_id), 0),0,0,round(nvl(sum(c.webEp), 0)/count(c.enterprise_id),3)*100) as  webEp
+			  from (
+					   select 
+					          a.enterprise_id,
+					 a.isopen_app,         
+                       
+                    case  sign(a.month_end - b.open_time - 29)
+                    when -1 then 0
+                    when 0  then 0
+                    else decode(sign(a.web_dvis-countholidays(a.month_begin,a.month_end)),-1,0,1)    
+                    end as webEp,
+                                        case  sign(a.month_end - b.open_time - 29)
+                    when -1 then 0
+                    when 0  then 0
+                    else decode(sign(a.app_dvis-countholidays(a.month_begin,a.month_end)),-1,0,1)    
+                    end as appEp
+                      
+               from clw_ub_entcustomer_month_t a,CLW_JC_ENTERPRISE_T b
+                
+               where a.enterprise_id=b.enterprise_id 
+              <![CDATA[
+               and a.month_begin =to_date(#startDay#, 'yyyy-MM-dd')
+              ]]>
+              
+           ) c  
+	</select>
+	<!-- 上月的企业访问-->
+	<select id="getCALastMonth" parameterClass="Map" resultClass="CAStatistics">
+			 select substr(#startDay#,0,7) as reportDate,
+			 		decode(nvl(sum(c.isopen_app), 0),0,0,round(nvl(sum(c.appEp), 0)/sum(c.isopen_app),3)*100) as  appEp,
+       				decode(nvl(count(c.enterprise_id), 0),0,0,round(nvl(sum(c.webEp), 0)/count(c.enterprise_id),3)*100) as  webEp,
+			  		
+				  	nvl(sum(c.webEp),0)  as webEmEntCnt,
+				  	nvl(sum(c.appEp),0)  as appEmEntCnt,
+				  	
+                    nvl(sum(c.webDayVis),0)  as webDayVis,
+                    nvl(sum(c.appDayVis),0)  as appDayVis
+             
+
+			  from (
+					   select to_char(a.month_begin,'yyyy-MM') as report_day,
+					          a.enterprise_id,
+					 a.isopen_app,         
+					 a.web_dvis as webVis,
+                      round(a.web_dvis/(countholidays(a.month_begin,a.month_end)),1)  as webDayVis,
+				          
+                      a.app_dvis as appVis,
+                       round(a.app_dvis/(countholidays(a.month_begin,a.month_end)),1)  as appDayVis,
+                       
+                    case  sign(a.month_end - b.open_time - 29)
+                    when -1 then 0
+                    when 0  then 0
+                    else decode(sign(a.web_dvis-countholidays(a.month_begin,a.month_end)),-1,0,1)    
+                    end as webEp,
+                                        case  sign(a.month_end - b.open_time - 29)
+                    when -1 then 0
+                    when 0  then 0
+                    else decode(sign(a.app_dvis-countholidays(a.month_begin,a.month_end)),-1,0,1)    
+                    end as appEp
+                      
+               from clw_ub_entcustomer_month_t a,CLW_JC_ENTERPRISE_T b
+                
+               where a.enterprise_id=b.enterprise_id 
+              <![CDATA[
+               and a.month_begin =to_date(#startDay#, 'yyyy-MM-dd')
+              ]]>
+              
+           ) c  group by c.report_day 
+	</select>
+	<!-- Web平台企业访问排名-->
+	<select id="getEntRank" parameterClass="Map" resultClass="serviceInfo">
+			select *
+		  from (select s.*, rownum as rownum_2
+		          from (
+		          select d.short_name name, nvl(c.vis, 0) as vis
+					  from (select a.enterprise_id, a.web_dvis as vis
+					          from clw_ub_entcustomer_month_t a
+					         where a.month_begin = to_date(#startDay#, 'yyyy-MM-dd')
+					        
+					         ) c,
+					       CLW_JC_ENTERPRISE_T d
+					 where d.enterprise_id = c.enterprise_id
+					 order by vis desc) s
+		<![CDATA[
+		         where rownum <= 10)
+		 where rownum_2 > 0
+		]]>
+	</select>
+	<!-- Web服务活跃度排名-->
+	<select id="getServiceRank" parameterClass="Map" resultClass="serviceInfo">
+			select *
+		  from (select s.*, rownum as rownum_2
+		          from (
+		          select d.service_name name, nvl(c.visActivity, 0) as visActivity
+					  from (select a.service_id,
+					               decode(nvl(a.web_open_ep, 0),0,0,round(nvl(a.web_vis_ep, 0) / a.web_open_ep,
+			                     3) * 100) as visActivity
+					          from clw_ub_service_month_t a
+					         where  <![CDATA[a.service_id <> 0]]>
+					           and a.month_begin = to_date(#startDay#, 'yyyy-MM-dd')
+					         ) c,
+					       CLW_JC_SERVICE_T d
+					 where d.service_id = c.service_id(+)
+					   and d.SYSTEM_TYPE = '1' order by visActivity desc) s
+		<![CDATA[
+		         where rownum <= 10)
+		 where rownum_2 > 0
+		]]>
+	</select>
+	<!-- Web服务活跃度柱状图-->
+	<select id="getServicePerMonth" parameterClass="Map" resultClass="String">
+		          select distinct a.service_id as id
+				  from clw_ub_service_month_t a,CLW_JC_SERVICE_T b
+				 where <![CDATA[ a.service_id <> 0 ]]>  and a.service_id=b.service_id and b.system_type='1'
+				   and a.month_begin = to_date(#startDay#, 'yyyy-MM-dd')
+	</select>
+	<select id="get100Vis" parameterClass="Map" resultClass="Integer">
+		select 
+		          nvl(sum(a.web_vis_cnt),0) 
+		  from clw_ub_service_day_t a 
+		   where a.service_id = #id# and a.is_holiday='0' 
+			   <![CDATA[
+			   and a.report_day <=  to_date(#endDay#, 'yyyy-MM-dd') 
+			   ]]>
+	</select>
+	<!-- Web服务活跃度柱状图-->
+	<select id="getServiceInfoBySrvID" parameterClass="Map" resultClass="serviceInfo">
+		          select a.service_id as id,
+				       nvl(a.web_open_ep, 0) as openEntCnt,
+				       nvl(a.web_vis_ep, 0) visEntCnt,
+				       decode(nvl(a.web_open_ep, 0),
+				              0,
+				              0,
+				              round(nvl(a.web_vis_ep, 0) / nvl(a.web_open_ep, 0), 3) * 100) as visActivity
+				  from clw_ub_service_month_t a,CLW_JC_SERVICE_T b
+				 where  a.service_id =#id# and a.service_id=b.service_id
+				   and a.month_begin between to_date(substr(#startDay#,0,4)||'-01-01','yyyy-MM-dd') and to_date(#startDay#, 'yyyy-MM-dd')
+				   order by a.month_begin
+	</select>
+	<!-- 推送 -->
+	<select id="questionList" parameterClass="Map" resultClass="question">
+		select *
+		  from (select s.* , rownum as rownum_2
+		          from (
+					select b.ques_content as name,
+					       nvl(c.vis, 0) vis,
+					       nvl(c.visPercent, 0) as visPercent
+					  from (select a.ques_id,
+					               a.vis,
+					               decode(nvl(a.app_open_ep, 0),
+					                      0,
+					                      0,
+					                      round(a.app_vis_ep / a.app_open_ep, 3)) * 100 as visPercent
+					          from clw_ub_quesvisit_month_t a
+					         where  <![CDATA[ ques_id <> 0 ]]>
+					           and a.month_begin = to_date(#startDay#, 'yyyy-MM-dd')) c,
+					       clw_m_q_question_t b
+					 where c.ques_id(+) = b.ques_id
+					 order by visPercent desc) s
+		<![CDATA[
+		         where rownum <= 5)
+		 where rownum_2 > 0
+		]]>
+	</select>
+
+	
+</sqlMap>

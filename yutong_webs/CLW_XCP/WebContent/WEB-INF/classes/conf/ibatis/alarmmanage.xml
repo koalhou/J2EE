@@ -1,0 +1,1718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="AlarmManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="AlarmMana"
+		type="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.AlarmManage" />
+	<typeAlias alias="TabCount"
+		type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TabCount" />
+	<typeAlias alias="stuAlarm"
+		type="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.StuAlarm" />
+    <typeAlias alias="photoroute"
+		type="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.PhotoRoute" />
+		<typeAlias alias="alarm" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.Alarm" />
+
+	<resultMap id="alarmmanage-result" class="AlarmMana">
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_id" column="ALARM_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_comments" column="ALARM_TYPE_COMMENTS" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="row_num" column="row_num" />
+	</resultMap>
+
+	<resultMap id="busalarm-result" class="AlarmMana">
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_id" column="ALARM_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="alarm_end_time" column="ALARM_END_TIME" />
+		<result property="keeptime" column="KEEPTIME" />
+	</resultMap>
+
+	<resultMap class="AlarmMana" id="alarm-result">
+		<result property="alarm_type_id" column="ALARM_TYPE_ID" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+	</resultMap>
+
+	<resultMap id="tabsosalarm-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="driver_name" column="driver_name" />
+		<result property="sichen_name" column="SICHEN_NAME" />
+		<result property="stu_num" column="STU_NUM" />
+		<result property="direction" column="DIRECTION" />
+	</resultMap>
+	
+	<resultMap id="moresosalarm-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="driver_name" column="driver_name" />
+		<result property="sichen_name" column="SICHEN_NAME" />
+		<result property="stu_num" column="STU_NUM" />
+		<result property="direction" column="DIRECTION" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="opeerate_desc" column="OPEERATE_DESC" />
+	</resultMap>
+	
+	<resultMap id="tabalarm-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_type_comments" column="ALARM_TYPE_COMMENTS" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="direction" column="DIRECTION" />
+	</resultMap>
+	
+	<resultMap id="morevehalarm-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="deal_flag" column="DEAL_FLAG" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="direction" column="DIRECTION" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="opeerate_desc" column="OPEERATE_DESC" />
+	</resultMap>
+
+	<resultMap id="stutabalarm-result" class="stuAlarm">
+		<result property="id" column="id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="vehicle_vin" />
+		<result property="alarm_type_name" column="alarm_type_name" />
+		<result property="alarm_type_comments" column="alarm_type_comments" />
+		<result property="operate_flag" column="operate_flag" />
+		<result property="terminal_time" column="terminal_time" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="site_name" column="site_name" />
+		<result property="stu_card_id" column="stu_card_id" />
+	</resultMap>
+	
+	<resultMap id="stutabalarm-result1" class="stuAlarm">
+		<result property="id" column="id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="vehicle_vin" />
+		<result property="alarm_type_name" column="alarm_type_name" />
+		<result property="alarm_type_comments" column="alarm_type_comments" />
+		<result property="operate_flag" column="operate_flag" />
+		<result property="terminal_time" column="terminal_time" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="site_name" column="site_name" />
+		<result property="student_code" column="stu_code" />
+		<result property="stu_name" column="stu_name" />
+		<result property="stu_school" column="stu_school" />
+		<result property="stu_class" column="stu_class" />
+		<result property="route_name" column="route_name" />	
+	</resultMap>
+	
+	<resultMap id="morestualarm-result1" class="stuAlarm">
+		<result property="id" column="id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="vehicle_vin" />
+		<result property="alarm_type_name" column="alarm_type_name" />
+		<result property="operate_flag" column="operate_flag" />
+		<result property="terminal_time" column="terminal_time" />
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="site_name" column="site_name" />
+		<result property="student_code" column="stu_code" />
+		<result property="stu_name" column="stu_name" />
+		<result property="stu_school" column="stu_school" />
+		<result property="stu_class" column="stu_class" />
+		<result property="route_name" column="route_name" />	
+		<result property="user_name" column="USER_NAME" />
+		<result property="operate_desc" column="OPERATE_DESC" />
+	</resultMap>
+	
+	<resultMap id="dealvehalarm-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="enterprise_id" column="enterprise_id" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="direction" column="DIRECTION" />
+	</resultMap>
+	
+	<!-- 摄像头通道号 -->
+	<resultMap id="routeway-result" class="photoroute">
+		<result property="routeway_no" column="routeway_no" />
+		<result property="routeway_name" column="routeway_name" />
+	</resultMap>
+	
+	<!-- 新TAB处数字获取优化 ,暂时不用begin-->
+	  <parameterMap id="show_alarmcount" class="Map">
+		<parameter property="in_org_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_starttime" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_endtime" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_count" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+     </parameterMap>
+    
+    
+    <procedure id="show_tab_alarmcount" parameterMap="show_alarmcount" >
+       { call GET_ALARMTABCOUNT_PACK.show_tabalarmcount_result(?, ? ,? ,?,? ) }
+    </procedure>
+	<!-- 新TAB处数字获取优化 ,暂时不用end-->
+	
+	<!-- 更多处数字获取优化 ,暂时不用begin-->
+	   <parameterMap id="more_alarmcount" class="Map">
+		<parameter property="in_org_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_starttime" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_endtime" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_vehln" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_alarmtypeid" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="in_dealflag" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_count" javaType="Integer" jdbcType="INTEGER" mode="OUT" />
+      </parameterMap>
+      <procedure id="get_alarmcount" parameterMap="more_alarmcount" >
+       { call GET_ALARMTABCOUNT_PACK.getbusalarmcount(?, ? ,? ,?,?,?,?,? ) }
+      </procedure>
+	<!-- 更多处数字获取优化 ,暂时不用end-->
+	
+	
+	<!-- 告警显示设置  start-->
+	<select id="listShow" parameterClass="String" resultClass="String">
+		select ALARM_TYPE as alarm_id from CLW_JC_ENT_ALARM_SET_T where ENT_ID=#enterprise_id#
+	</select>
+	
+	<select id="countShow" parameterClass="String" resultClass="Integer">
+		select count(*) from CLW_JC_ENT_ALARM_SET_T where ENT_ID=#enterprise_id#
+	</select>
+	
+	<insert id="setShow"  parameterClass="alarm">
+		insert into CLW_JC_ENT_ALARM_SET_T(ENT_ID,ALARM_TYPE) values(#enterprise_id#,#alarm_id#)
+	</insert>
+	
+	<update id="updateShow" parameterClass="alarm">
+		update CLW_JC_ENT_ALARM_SET_T set ALARM_TYPE=#alarm_id# where ENT_ID=#enterprise_id#
+	</update>
+	<!-- 告警显示设置   end-->
+	
+	<!-- TAB处数字获取SQL -->
+	<select id="getTabAlarmCount" parameterClass="AlarmMana" resultClass="TabCount">
+		select t1.*, t2.*
+   from (select /*+INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat)*/
+          count(case
+                  when cyat.alarm_type_id in ('40', '72') then
+                   1
+                  else
+                   null
+                end) as tab1count,
+          count(case
+                  when cyat.alarm_type_id in ('32') then
+                   1
+                  else
+                   null
+                end) as tab2count,
+          count(case
+                  when cyat.alarm_type_id in
+                       ('09', '10', '13', '25', '26', '64', '65', '66', '67', '68', '69', '70', '71','88','89','90') then
+                   1
+                  else
+                   null
+                end) as tab3count
+           FROM CLW_YW_ALERM_RECORD_T cyat, clw_jc_cl_vi ccbi
+          where cyat.vehicle_vin = ccbi.vehicle_vin
+            and cyat.deal_flag = '0'
+            and cyat.alarm_type_id in
+                ('40', '72', '32', '09', '10', '13', '25', '26', '64','65', '66', '67', '68', '69', '70', '71','88','89','90')
+            and cyat.alarm_time >=
+                to_date(#start_time#, 'yyyy-mm-dd HH24:MI:SS')
+            and <![CDATA[ cyat.alarm_time <=
+                to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')]]>
+            and ccbi.ORGANIZATION_ID in
+                <![CDATA[ (select enterprise_id
+                   from CLW_JC_ENTERPRISE_T
+                  where left_num >=
+                        (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)
+                    and right_num <=
+                        (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)) ]]> ) t1,
+        (select /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi xscr) use_nl(xscr stu)*/
+          count(1) as tab4count
+           FROM CLW_XC_ST_CHECK_RECORD_T xscr,
+                clw_jc_cl_vi           ccbi,
+                clw_xc_student_t         stu
+          where xscr.vehicle_vin = ccbi.vehicle_vin
+            and xscr.stu_id = stu.stu_id
+            and stu.valid_flag = '0'
+            and xscr.OPERATE_FLAG = '0'
+            and xscr.alarm_type_id in ('73', '74', '79', '80')
+            and xscr.TERMINAL_TIME >=
+                to_date(#start_time#, 'yyyy-mm-dd HH24:MI:SS')
+            and <![CDATA[ xscr.TERMINAL_TIME <=
+                to_date(#end_time#, 'yyyy-mm-dd hh24:mi:ss')]]>
+            and ccbi.ORGANIZATION_ID in
+                <![CDATA[ (select enterprise_id
+                   from CLW_JC_ENTERPRISE_T
+                  where left_num >=
+                        (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)
+                    and right_num <=
+                        (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)) ]]>) t2
+	 </select>
+	 
+    <!-- 获取SOS处TAB数据 -->
+	<select id="getTAbSosAlarmInfos" parameterClass="AlarmMana" resultMap="tabsosalarm-result">
+		   SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat) */
+		     cyat.alarm_id,
+             cyat.ALARM_TYPE_ID,
+             ccbi.VEHICLE_LN,
+             ccbi.VEHICLE_VIN,
+             ctt.ALARM_TYPE_NAME,
+             cyat.DEAL_FLAG,
+             to_char(cyat.ALARM_TIME, 'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+             cyat.latitude,
+    	     cyat.longitude,
+             cyat.direction,
+             cyat.stu_num,
+             dri.driver_name,
+             sichen.sichen_name
+             FROM CLW_YW_ALERM_RECORD_T cyat,
+             CLW_CL_ALARMTYPE_T    ctt,
+             clw_jc_cl_vi        ccbi,
+             clw_yw_driver_t       dri,
+             clw_xc_sichen_t       sichen
+             where cyat.alarm_type_id = ctt.alarm_type_id
+              AND cyat.vehicle_vin = ccbi.vehicle_vin
+              AND cyat.driver_id=dri.driver_id(+)
+              AND cyat.sichen_id=sichen.sichen_id(+)
+              AND cyat.DEAL_FLAG = '0'
+              AND cyat.alarm_type_id in ('40','72')
+              and cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              and <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+              AND ccbi.ORGANIZATION_ID in
+				(select enterprise_id
+		         from CLW_JC_ENTERPRISE_T
+		         where <![CDATA[left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+		                      from CLW_JC_ENTERPRISE_T t
+		                      where enterprise_id = #organization_id#)
+		         and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+		                  from CLW_JC_ENTERPRISE_T t
+		                  where enterprise_id = #organization_id#)
+		          ]]>
+				)   
+		ORDER BY ALARM_TIME  DESC
+	</select>
+	
+	<!-- TAB处其他车辆告警列表获取 -->
+	<select id="getTAbVehAlarmInfos" parameterClass="AlarmMana" resultMap="tabalarm-result">
+		SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat) */
+		cyat.alarm_id,
+		cyat.ALARM_TYPE_ID,
+		ccbi.VEHICLE_LN,
+		ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		ctt.ALARM_TYPE_COMMENTS,
+		cyat.DEAL_FLAG,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		cyat.SPEEDING,
+    	cyat.latitude,
+    	cyat.longitude,
+    	cyat.engine_rotate_speed,
+    	cyat.mileage,
+    	cyat.direction
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,clw_jc_cl_vi ccbi
+		where cyat.alarm_type_id=ctt.alarm_type_id
+		AND cyat.vehicle_vin=ccbi.vehicle_vin
+		AND cyat.deal_flag = '0'
+		<isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in ($alarm_type_id$)
+        </isNotEmpty>
+        AND cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+        AND <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+		AND ccbi.ORGANIZATION_ID in
+				(select enterprise_id
+		         from CLW_JC_ENTERPRISE_T
+		         where <![CDATA[left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+		                      from CLW_JC_ENTERPRISE_T t
+		                      where enterprise_id = #organization_id#)
+		         AND  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+		                  from CLW_JC_ENTERPRISE_T t
+		                  where enterprise_id = #organization_id#)
+		          ]]>
+				)
+		ORDER BY ALARM_TIME  DESC 
+	</select>
+
+	 <!-- TAB处学生告警列表获取 -->
+	 <select id="getTAbStuAlarmInfos" parameterClass="stuAlarm" resultMap="stutabalarm-result1">
+		select /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi xscr) use_nl(xscr stu) */ xscr.id,
+		       stu.stu_name,
+               stu.stu_code,
+               stu.stu_school,
+               stu.stu_class,
+               route.route_name,
+               xscr.operate_flag,
+               ccbi.vehicle_ln,
+               xscr.alarm_type_id,
+               alarmtype.alarm_type_name,
+               alarmtype.alarm_type_comments,
+               site.site_name,
+               xscr.latitude,
+               xscr.longitude,
+               to_char(xscr.terminal_time, 'yyyy-mm-dd HH24:MI:SS') terminal_time,
+               xscr.vehicle_vin
+               FROM CLW_XC_ST_CHECK_RECORD_T xscr,
+               clw_jc_cl_vi           ccbi,
+               clw_xc_student_t         stu,
+               clw_xc_site_t            site,
+               clw_cl_alarmtype_t       alarmtype,
+               clw_xc_route_t route
+                where xscr.stu_id = stu.stu_id
+                and xscr.vehicle_vin = ccbi.vehicle_vin
+                and xscr.site_id = site.site_id(+)
+                and xscr.route_id=route.route_id(+)
+                and xscr.alarm_type_id = alarmtype.alarm_type_id
+                and xscr.operate_flag = '0'
+                and stu.valid_flag='0'
+                <isNotEmpty prepend="AND" property="alarm_type_id">
+                        xscr.alarm_type_id in ('73', '74', '79', '80')
+                </isNotEmpty>
+                and xscr.TERMINAL_TIME >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+                and <![CDATA[ xscr.TERMINAL_TIME <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+                and ccbi.ORGANIZATION_ID in
+				   (select enterprise_id
+		               from CLW_JC_ENTERPRISE_T
+		               where <![CDATA[left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+		                                                 from CLW_JC_ENTERPRISE_T t
+		                                                where enterprise_id = #organization_id#)
+		                               and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+		                                              from CLW_JC_ENTERPRISE_T t
+		                                               where enterprise_id = #organization_id#))
+		                               ]]>
+                ORDER BY terminal_time DESC
+	</select>
+
+    <!-- 更多处车辆告警获取总数 -->
+	<select id="getBusAlarmCount" parameterClass="AlarmMana" resultClass="Integer">
+		SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat)*/ count(1)
+		FROM CLW_YW_ALERM_RECORD_T cyat,clw_jc_cl_vi ccbi
+		where cyat.vehicle_vin=ccbi.vehicle_vin
+		<isNotEmpty prepend="AND" property="deal_flag">
+			cyat.deal_flag =#deal_flag#
+        </isNotEmpty>  
+        <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in ($alarm_type_id$)
+        </isNotEmpty> 
+        <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+         </isNotEmpty>   
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+	         ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+        </isNotEmpty>      
+		and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]> 
+	</select>
+	
+	<!-- 更多处SOS告警获取列表 -->
+	<select id="getSosAlarmInfos" parameterClass="AlarmMana" resultMap="moresosalarm-result">
+		SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat)*/
+		     cyat.alarm_id,
+             cyat.ALARM_TYPE_ID,
+             ccbi.VEHICLE_LN,
+             ccbi.VEHICLE_VIN,
+             ctt.ALARM_TYPE_NAME,
+             cyat.DEAL_FLAG,
+             to_char(cyat.ALARM_TIME, 'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+             cyat.latitude,
+    	     cyat.longitude,
+             cyat.direction,
+             cyat.stu_num,
+             cyat.OPEERATE_DESC,
+             US.USER_NAME,
+             dri.driver_name,
+             sichen.sichen_name
+             FROM CLW_YW_ALERM_RECORD_T cyat,
+             CLW_CL_ALARMTYPE_T    ctt,
+             clw_jc_cl_vi         ccbi,
+             clw_yw_driver_t       dri,
+             clw_xc_sichen_t       sichen,
+             CLW_JC_USER_T US
+             where cyat.alarm_type_id = ctt.alarm_type_id
+              and cyat.vehicle_vin = ccbi.vehicle_vin
+              and cyat.driver_id=dri.driver_id(+)
+              and cyat.sichen_id=sichen.sichen_id(+)
+              and cyat.USER_ID=US.USER_ID(+)
+             <isNotEmpty prepend="AND" property="deal_flag">
+			   cyat.deal_flag =#deal_flag#
+             </isNotEmpty> 
+             <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in ($alarm_type_id$)
+             </isNotEmpty> 
+             <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+             </isNotEmpty>
+             <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+             </isNotEmpty>
+             <isNotEmpty prepend="AND" property="vehicle_ln">
+			  ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+             </isNotEmpty>
+    	      and ccbi.ORGANIZATION_ID in
+		   <![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T
+			                  where enterprise_id =#organization_id#)        
+			)
+	        ]]>
+	     <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic>    
+	</select>
+	
+	<!-- 导出紧急告警 -->
+	<select id="expSosAlarmInfos" parameterClass="AlarmMana" resultMap="tabsosalarm-result">
+		SELECT /*+ INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat) */
+		     cyat.alarm_id,
+             cyat.ALARM_TYPE_ID,
+             ccbi.VEHICLE_LN,
+             ccbi.VEHICLE_VIN,
+             ctt.ALARM_TYPE_NAME,
+             decode(cyat.DEAL_FLAG,'0','未处理','1','已处理','处理中') DEAL_FLAG,
+             to_char(cyat.ALARM_TIME, 'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+             cyat.latitude,
+    	     cyat.longitude,
+             cyat.direction,
+             nvl(cyat.stu_num,0) stu_num,
+             nvl(dri.driver_name,'未登录') driver_name,
+             nvl(sichen.sichen_name,'未登录') sichen_name
+             FROM CLW_YW_ALERM_RECORD_T cyat,
+             CLW_CL_ALARMTYPE_T    ctt,
+             clw_jc_cl_vi        ccbi,
+             clw_yw_driver_t       dri,
+             clw_xc_sichen_t       sichen
+             where cyat.alarm_type_id = ctt.alarm_type_id
+              and cyat.vehicle_vin = ccbi.vehicle_vin
+              and cyat.driver_id=dri.driver_id(+)
+              and cyat.sichen_id=sichen.sichen_id(+)
+              <isNotEmpty prepend="AND" property="deal_flag">
+			   cyat.deal_flag =#deal_flag#
+              </isNotEmpty>   
+             <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in ($alarm_type_id$)
+            </isNotEmpty>
+             <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+             </isNotEmpty>
+             <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+             </isNotEmpty>
+            <isNotEmpty prepend="AND" property="vehicle_ln">
+	          ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+             </isNotEmpty>
+    	      and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+	     <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic>    
+	</select>
+	
+	<!-- 更多处其他车辆告警获取列表 -->
+	<select id="getBusAlarmInfos" parameterClass="AlarmMana" resultMap="morevehalarm-result">
+	    SELECT /*+ INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat) */
+		cyat.alarm_id,
+		cyat.ALARM_TYPE_ID,
+		ccbi.VEHICLE_LN,
+		ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		cyat.DEAL_FLAG,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		cyat.SPEEDING,
+    	cyat.latitude,
+    	cyat.longitude,
+    	cyat.engine_rotate_speed,
+    	cyat.mileage,
+    	cyat.direction,
+    	cyat.OPEERATE_DESC,
+    	US.USER_NAME
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,clw_jc_cl_vi ccbi,
+		CLW_JC_USER_T US
+		where cyat.alarm_type_id=ctt.alarm_type_id
+		and cyat.vehicle_vin=ccbi.vehicle_vin
+		and cyat.USER_ID=US.USER_ID(+)
+		<isNotEmpty prepend="AND" property="deal_flag">
+			cyat.deal_flag =#deal_flag#
+        </isNotEmpty>  
+        <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in ($alarm_type_id$)
+        </isNotEmpty> 
+        <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+    	and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+	     <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic>    
+	</select>
+	
+	<!-- 更多处其他车辆告警导出-->
+	<select id="exportBusAlarmInfos" parameterClass="AlarmMana" resultMap="tabalarm-result">
+	    SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VE_U_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat)*/
+		cyat.alarm_id,
+		cyat.ALARM_TYPE_ID,
+		ccbi.VEHICLE_LN,
+		ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		ctt.ALARM_TYPE_COMMENTS,
+		decode(cyat.DEAL_FLAG,'0','未处理','已处理') DEAL_FLAG,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+	    decode(cyat.SPEEDING,'FFFF','无效',NULL,'',cyat.SPEEDING||'km/h') SPEEDING,
+    	cyat.latitude,
+    	cyat.longitude,
+    	decode(cyat.engine_rotate_speed,'FFFF','无效',NULL,'',cyat.engine_rotate_speed||'rpm') engine_rotate_speed,
+    	decode(cyat.mileage,'FFFF','无效',NULL,'',cyat.mileage||'km')  mileage,
+    	cyat.direction
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,clw_jc_clen_vi ccbi
+		where cyat.alarm_type_id=ctt.alarm_type_id
+		and cyat.vehicle_vin=ccbi.vehicle_vin
+		<isNotEmpty prepend="AND" property="deal_flag">
+			cyat.deal_flag =#deal_flag#
+        </isNotEmpty> 
+        <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in ($alarm_type_id$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+    	and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+	     <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic>    
+	</select>
+	
+	<!-- 更多处学生告警数量获取 -->
+	<select id="getStuAlarmCount" parameterClass="stuAlarm" resultClass="Integer">
+		select  /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi xscr) use_nl(xscr stu) */ count(1)
+          FROM CLW_XC_ST_CHECK_RECORD_T xscr, clw_jc_cl_vi ccbi,clw_xc_student_t stu
+         where xscr.vehicle_vin = ccbi.vehicle_vin
+           and xscr.stu_id=stu.stu_id
+           and stu.valid_flag='0'
+         <isNotEmpty prepend="AND" property="operate_flag">
+             xscr.OPERATE_FLAG =#operate_flag# 
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             xscr.alarm_type_id in ($alarm_type_id$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            xscr.TERMINAL_TIME >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ xscr.TERMINAL_TIME <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+         </isNotEmpty>      
+          <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>      
+           and ccbi.ORGANIZATION_ID in
+               <![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id =#organization_id#)        
+			) ]]>    
+	</select>
+	
+	<!-- 更多处学生告警获取列表 -->
+	<select id="getStuAlarmInfos" parameterClass="stuAlarm" resultMap="morestualarm-result1">
+	    select  /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi xscr) use_nl(xscr stu) */ xscr.id,
+               stu.stu_code,
+               stu.stu_name,
+               stu.stu_school,
+               stu.stu_class,
+               route.route_name,
+               xscr.operate_flag,
+               ccbi.vehicle_ln,
+               xscr.alarm_type_id,
+               alarmtype.alarm_type_name,
+               site.site_name,
+               xscr.latitude,
+               xscr.longitude,
+               to_char(xscr.terminal_time, 'yyyy-mm-dd HH24:MI:SS') terminal_time,
+               xscr.vehicle_vin,
+               xscr.OPERATE_DESC,
+               US.USER_NAME
+               FROM CLW_XC_ST_CHECK_RECORD_T xscr,
+               clw_jc_cl_vi           ccbi,
+               clw_xc_student_t         stu,
+               clw_xc_site_t            site,
+               clw_cl_alarmtype_t       alarmtype,
+               clw_xc_route_t route,
+               CLW_JC_USER_T US
+              where xscr.stu_id = stu.stu_id
+              and stu.valid_flag='0'
+              and xscr.vehicle_vin = ccbi.vehicle_vin
+              and xscr.site_id = site.site_id(+)
+              and xscr.alarm_type_id = alarmtype.alarm_type_id
+              and xscr.route_id=route.route_id(+)
+              and xscr.USER_ID=US.USER_ID(+)
+              <isNotEmpty prepend="AND" property="operate_flag">
+                            xscr.OPERATE_FLAG =#operate_flag# 
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="alarm_type_id">
+                        xscr.alarm_type_id in ($alarm_type_id$)
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="start_time">
+                        xscr.TERMINAL_TIME >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="end_time">
+                          <![CDATA[ xscr.TERMINAL_TIME <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+              </isNotEmpty>   
+              <isNotEmpty prepend="AND" property="vehicle_ln">
+			              ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+              </isNotEmpty>     
+              and ccbi.ORGANIZATION_ID in
+				      (select enterprise_id
+		                  from CLW_JC_ENTERPRISE_T
+		                    where <![CDATA[left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+		                                                 from CLW_JC_ENTERPRISE_T
+		                                                where enterprise_id = #organization_id#)
+		                                and  right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+		                                              from CLW_JC_ENTERPRISE_T
+		                                               where enterprise_id = #organization_id#))
+		                                ]]>
+              <dynamic prepend="ORDER BY">  
+	              <isNotEmpty property="sortname">  
+	                      $sortname$   $sortorder$  
+	              </isNotEmpty>  
+	          </dynamic>                
+	</select>
+	
+	<!-- 导出学生告警获取列表 -->
+	<select id="exportStuAlarmInfos" parameterClass="stuAlarm" resultMap="stutabalarm-result1">
+	    select /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi xscr) use_nl(xscr stu) */  xscr.id,
+               stu.stu_code,
+               stu.stu_name,
+               stu.stu_school,
+               stu.stu_class,
+               route.route_name,
+               decode(xscr.operate_flag,'0','未处理','已处理') operate_flag,
+               ccbi.vehicle_ln,
+               xscr.alarm_type_id,
+               alarmtype.alarm_type_name,
+               alarmtype.alarm_type_comments,
+               site.site_name,
+               xscr.latitude,
+               xscr.longitude,
+               to_char(xscr.terminal_time, 'yyyy-mm-dd HH24:MI:SS') terminal_time,
+               xscr.vehicle_vin
+               FROM CLW_XC_ST_CHECK_RECORD_T xscr,
+               clw_jc_cl_vi           ccbi,
+               clw_xc_student_t         stu,
+               clw_xc_site_t            site,
+               clw_cl_alarmtype_t       alarmtype,
+               clw_xc_route_t route
+              where xscr.stu_id = stu.stu_id
+              and xscr.vehicle_vin = ccbi.vehicle_vin
+              and xscr.site_id = site.site_id(+)
+              and xscr.alarm_type_id = alarmtype.alarm_type_id
+              and xscr.route_id=route.route_id(+)
+              and stu.valid_flag='0'
+              <isNotEmpty prepend="AND" property="operate_flag">
+                            xscr.OPERATE_FLAG =#operate_flag# 
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="alarm_type_id">
+                        xscr.alarm_type_id in ($alarm_type_id$)
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="start_time">
+                        xscr.TERMINAL_TIME >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="end_time">
+                          <![CDATA[ xscr.TERMINAL_TIME <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+              </isNotEmpty>
+              <isNotEmpty prepend="AND" property="vehicle_ln">
+			              ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+              </isNotEmpty>     
+              and ccbi.ORGANIZATION_ID in
+				      (select enterprise_id
+		                  from CLW_JC_ENTERPRISE_T
+		                    where <![CDATA[left_num >= (select left_num
+		                                                 from CLW_JC_ENTERPRISE_T
+		                                                where enterprise_id = #organization_id#)
+		                                and  right_num <=(select right_num
+		                                              from CLW_JC_ENTERPRISE_T
+		                                               where enterprise_id = #organization_id#))
+		                                ]]>
+               <dynamic prepend="ORDER BY">  
+	                 <isNotEmpty property="sortname">  
+	                      $sortname$   $sortorder$  
+	                 </isNotEmpty>  
+	          </dynamic>                
+	</select>
+	
+	<!-- 车辆SOS告警处理获取 -->
+	<select id="getalarmbyidandtime" parameterClass="AlarmMana" resultClass="AlarmMana">
+	   SELECT CL.VEHICLE_LN,
+       T.LONGITUDE,
+       T.LATITUDE,
+       T.OPEERATE_DESC,
+       T.VEHICLE_VIN,
+       T.ALARM_TYPE_ID,
+       T.DEAL_FLAG,
+       T.DIRECTION,
+       T.ALARM_ID,
+       TO_CHAR(T.CONFIRM_TIME,'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+       T.OPERATE_TYPE,
+       US.USER_NAME,
+       JCT.STAT_INFO,
+       TO_CHAR(JCT.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') TERMINAL_TIME,
+       JCT.VEH_EXT_INFO
+       FROM CLW_YW_ALERM_RECORD_T T, CLW_CL_BASE_INFO_T CL,CLW_JC_USER_T US,CLW_JC_TERMINAL_T JCT
+       WHERE T.VEHICLE_VIN = CL.VEHICLE_VIN
+       AND T.USER_ID=US.USER_ID(+)
+       AND CL.VALID_FLAG='0'
+       AND CL.DEVICE_TYPE='0'
+       AND T.VEHICLE_VIN=JCT.VEHICLE_VIN
+       AND JCT.VALID_FLAG='0'
+       AND JCT.DEVICE_TYPE='0'      
+       AND T.ALARM_ID=#alarm_id#
+       AND T.ALARM_TIME=TO_DATE(#alarm_time#,'yyyy-mm-dd HH24:MI:SS')
+	</select>
+	
+	<!-- 车辆其他告警处理获取-->
+	<select id="getotheralarmbyidandtime" parameterClass="AlarmMana" resultClass="AlarmMana">
+	   SELECT CL.VEHICLE_LN,
+       T.LONGITUDE,
+       T.LATITUDE,
+       T.OPEERATE_DESC,
+       T.VEHICLE_VIN,
+       T.ALARM_TYPE_ID,
+       T.DEAL_FLAG,
+       decode(T.SPEEDING,'FFFF','0',NULL,'0',T.SPEEDING)||'km/h' SPEEDING,
+       T.DIRECTION,
+       T.ALARM_ID,
+       TO_CHAR(T.ALARM_TIME,'YYYY-MM-DD HH24:MI:SS') ALARM_TIME,
+       TO_CHAR(T.CONFIRM_TIME,'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+       T.OPERATE_TYPE,
+       US.USER_NAME,
+       JCT.STAT_INFO,
+       TO_CHAR(JCT.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') TERMINAL_TIME,
+       JCT.VEH_EXT_INFO,
+       DR.DRIVER_NAME,
+       DR.DRIVER_TEL
+       FROM CLW_YW_ALERM_RECORD_T T, CLW_CL_BASE_INFO_T CL,
+       CLW_JC_USER_T US,CLW_JC_TERMINAL_T JCT,CLW_YW_DRIVER_T DR
+       WHERE T.VEHICLE_VIN = CL.VEHICLE_VIN
+       AND T.USER_ID=US.USER_ID(+)
+       AND T.DRIVER_ID=DR.DRIVER_ID(+)
+       AND CL.VALID_FLAG='0'
+       AND CL.DEVICE_TYPE='0'
+       AND T.VEHICLE_VIN=JCT.VEHICLE_VIN
+       AND JCT.VALID_FLAG='0'
+       AND JCT.DEVICE_TYPE='0'      
+       AND T.ALARM_ID=#alarm_id#
+       AND T.ALARM_TIME=TO_DATE(#alarm_time#,'yyyy-mm-dd HH24:MI:SS')
+	</select>
+	
+	<!-- 学生告警处理获取页面 -->
+	<select id="getstualarmbyid" parameterClass="String" resultClass="stuAlarm">
+	   SELECT T.LONGITUDE,
+              T.LATITUDE,
+              T.OPERATE_FLAG,
+              T.OPERATE_DESC,
+              T.ID,
+              T.ALARM_TYPE_ID,
+              T.STU_ID,
+              T.VEHICLE_VIN,
+              T.OPERATE_TYPE,
+              TO_CHAR(T.OPERATE_TIME,'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+              CL.VEHICLE_LN,
+              US.USER_NAME,
+              STU.STU_NAME,
+              STU.RELATIVE_TEL,
+              STU.TEACHER_TEL,
+              JCT.TERMINAL_TIME AS VEHTERMINAL_TIME,
+              JCT.STAT_INFO,
+              JCT.VEH_EXT_INFO
+              FROM CLW_XC_ST_CHECK_RECORD_T T, 
+                   CLW_CL_BASE_INFO_T CL,
+                   CLW_XC_STUDENT_T STU,
+                   CLW_JC_USER_T US,
+                   CLW_JC_TERMINAL_T JCT
+              WHERE T.ID=#id#
+              AND T.VEHICLE_VIN = CL.VEHICLE_VIN
+              AND T.STU_ID=STU.STU_ID
+              AND STU.VALID_FLAG='0'
+              AND T.USER_ID=US.USER_ID(+)
+              AND CL.VALID_FLAG='0'
+              AND CL.DEVICE_TYPE='0'
+              AND CL.VEHICLE_VIN=JCT.VEHICLE_VIN
+              AND JCT.VALID_FLAG='0'
+              AND JCT.DEVICE_TYPE='0'
+	</select>
+
+    <!-- 车辆告警处理 -->
+    <update id="updateVehAlarmFlag" parameterClass="AlarmMana">
+		UPDATE CLW_YW_ALERM_RECORD_T
+		SET DEAL_FLAG=#deal_flag#,
+		    OPERATE_TYPE='1',
+		    OPEERATE_DESC=#opeerate_desc#,
+		    CONFIRM_TIME=SYSDATE,
+		    USER_ID=#user_id#
+	   	WHERE  ALARM_ID=#alarm_id#
+	   	<isNotEmpty prepend="AND" property="alarm_time">
+	   	     alarm_time=to_date(#alarm_time#,'yyyy-mm-dd hh24:mi:ss')
+	   	</isNotEmpty>
+	 </update>
+  
+  
+    <!-- 学生告警处理 -->  
+    <update id="updateStuAlarmFlag" parameterClass="stuAlarm">
+		UPDATE CLW_XC_ST_CHECK_RECORD_T
+		SET OPERATE_FLAG='1',
+		    OPERATE_TYPE='1',
+		    OPERATE_DESC=#operate_desc#,
+		    OPERATE_TIME=SYSDATE,
+		    USER_ID=#user_id#
+	   	WHERE  ID=#id#
+	   	<isNotEmpty prepend="AND" property="terminal_time">
+	   	     TERMINAL_TIME=to_date(#terminal_time#,'yyyy-mm-dd hh24:mi:ss')
+	   	</isNotEmpty>
+	</update>
+
+
+	<select id="getAlarmCount" parameterClass="AlarmMana"
+		resultClass="Integer">
+		SELECT count(1)
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T
+		ctt,clw_jc_clen_vi ccbi
+		where cyat.vehicle_vin=ccbi.vehicle_vin
+		and
+		cyat.alarm_type_id = ctt.alarm_type_id
+		and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+		<isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+               cyat.alarm_time >=to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id=#alarm_type_id#
+         </isNotEmpty>
+		
+	</select>
+	
+	<select id="getAlarmInfos" parameterClass="AlarmMana" resultMap="alarmmanage-result">
+	select rownum row_num,VEHICLE_LN,VEHICLE_VIN,ALARM_TYPE_NAME,ALARM_TYPE_COMMENTS,SPEEDING,DEAL_FLAG,ALARM_TIME,latitude,longitude,alarm_id
+	from (
+		SELECT ccbi.VEHICLE_LN,ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		ctt.ALARM_TYPE_COMMENTS,to_number(cyat.SPEEDING) SPEEDING ,
+		cyat.DEAL_FLAG,to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		cyat.latitude,cyat.longitude,cyat.alarm_id
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_CL_BASE_INFO_T ccbi
+		where cyat.vehicle_vin=ccbi.vehicle_vin
+    	and  cyat.alarm_type_id = ctt.alarm_type_id
+    	and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+	    <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            cyat.alarm_time >=to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id=#alarm_type_id#
+         </isNotEmpty>
+     )    
+  <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>    
+	</select>
+	
+	<!-- 获取告警下拉列表 -->
+	<select id="getAlarmList" parameterClass="AlarmMana" resultMap="alarm-result">
+		SELECT ALARM_TYPE_ID,ALARM_TYPE_NAME
+	    FROM CLW_CL_ALARMTYPE_T
+	    WHERE ALARM_REALTIME_TYPE='0'
+	</select>
+	
+	<select id="getOwnerAlarmInfos" parameterClass="AlarmMana" resultMap="alarmmanage-result">
+		SELECT rownum row_num,ccbi.VEHICLE_LN,ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		ctt.ALARM_TYPE_COMMENTS,cyat.SPEEDING,
+		cyat.DEAL_FLAG,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		cyat.latitude,cyat.longitude,cyat.alarm_id
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_CL_BASE_INFO_T ccbi
+		where ccbi.vehicle_vin=cyat.vehicle_vin(+)
+    	and  cyat.alarm_type_id=ctt.alarm_type_id(+)
+		and ccbi.user_id=#user_id#
+	    <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+			 cyat.ALARM_TIME(+) between to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS') and to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="month">
+			 cyat.ALARM_TIME(+) between TRUNC(SYSDATE, 'MONTH') and last_day(sysdate)
+         </isNotEmpty>
+       
+         <isNotEmpty prepend="AND" property="quarter">
+			 cyat.ALARM_TIME(+) between TRUNC(SYSDATE,'Q') and last_day(add_months(TRUNC(SYSDATE,'Q'),2))
+         </isNotEmpty>
+         
+         <isNotEmpty prepend="AND" property="year">
+			 cyat.ALARM_TIME(+) between TRUNC(SYSDATE, 'Y') and last_day(add_months(TRUNC(sysdate,'Y'),11))
+         </isNotEmpty>
+		ORDER BY cyat.ALARM_TIME  DESC   
+	</select>
+	<select id="getOwnerAlarmCount" parameterClass="AlarmMana" resultClass="Integer">
+		SELECT count(1)
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_CL_BASE_INFO_T ccbi
+		where ccbi.vehicle_vin=cyat.vehicle_vin(+)
+    	and  cyat.alarm_type_id=ctt.alarm_type_id(+)
+		and ccbi.user_id=#user_id#
+	    <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+			 cyat.ALARM_TIME(+) between to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS') and to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="month">
+			 cyat.ALARM_TIME(+) between TRUNC(SYSDATE, 'MONTH') and last_day(sysdate)
+         </isNotEmpty>
+       
+         <isNotEmpty prepend="AND" property="quarter">
+			 cyat.ALARM_TIME(+) between TRUNC(SYSDATE,'Q') and last_day(add_months(TRUNC(SYSDATE,'Q'),2))
+         </isNotEmpty>
+         
+         <isNotEmpty prepend="AND" property="year">
+			 cyat.ALARM_TIME(+) between TRUNC(SYSDATE, 'Y') and last_day(add_months(TRUNC(sysdate,'Y'),11))
+         </isNotEmpty>
+	</select>
+		
+	
+	<update id="updateDealFlag" parameterClass="AlarmMana">
+		UPDATE CLW_YW_ALERM_RECORD_T
+		SET DEAL_FLAG= 1
+	   	WHERE  ALARM_ID=#alarm_id#
+	</update>
+	
+	
+	
+	
+	<select id="getOwnerBusAlarmInfos" parameterClass="AlarmMana" resultMap="busalarm-result">
+		SELECT ccbi.VEHICLE_LN,ccbi.VEHICLE_CODE,ccbi.ROUTE_NAME,ccbi.DRIVER_NAME,ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		to_number(cyat.SPEEDING) SPEEDING ,
+		cyat.DEAL_FLAG,to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		to_char(cyat.ALARM_END_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_END_TIME,
+		to_number(to_char((cyat.ALARM_END_TIME-cyat.ALARM_TIME)*24*60*60,'fm9999999990')) KEEPTIME,
+		cyat.latitude,cyat.longitude,cyat.alarm_id
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_JC_VEHICLE_BASEINFO_VI ccbi
+		where cyat.vehicle_vin=ccbi.vehicle_vin(+)
+    	and  cyat.alarm_type_id = ctt.alarm_type_id(+)
+		and ccbi.user_id=#user_id#
+	    <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#||'23:59:59','yyyy-mm-dd hh24:mi:ss')  ]]>
+         </isNotEmpty> 
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id=#alarm_type_id#
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		     <isNotEmpty property="sortname">  
+		      $sortname$   $sortorder$  
+		     </isNotEmpty>  
+		   </dynamic>  
+	</select>
+	
+	<select id="getOwnerBusAlarmCount" parameterClass="AlarmMana" resultClass="Integer">
+		SELECT count(1)
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,CLW_JC_VEHICLE_BASEINFO_VI ccbi
+		where ccbi.vehicle_vin=cyat.vehicle_vin(+)
+    	and  cyat.alarm_type_id=ctt.alarm_type_id(+)
+		and ccbi.user_id=#user_id#
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd ')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#||'23:59:59','yyyy-mm-dd hh24:mi:ss')  ]]>
+         </isNotEmpty>         
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id=#alarm_type_id#
+         </isNotEmpty>
+	</select>
+	
+		
+	
+	<select id="getTAbStuAlarmInfosByUserid" parameterClass="Map" resultMap="stutabalarm-result">
+		select * from 
+		(select xscr.id,
+                stu.stu_card_id,
+                xscr.operate_flag,
+                ccbi.vehicle_ln,
+                xscr.alarm_type_id,
+                alarmtype.alarm_type_name,
+                alarmtype.alarm_type_comments,
+                site.site_name,
+                xscr.latitude,
+                xscr.longitude,
+                to_char(xscr.terminal_time,'yyyy-mm-dd HH24:MI:SS') terminal_time,
+                xscr.vehicle_vin
+                FROM CLW_XC_ST_CHECK_RECORD_T xscr,
+                     clw_jc_clen_vi           ccbi,
+                     clw_xc_student_t         stu,
+                     clw_xc_site_t            site,
+                     clw_cl_alarmtype_t       alarmtype
+               where xscr.stu_id = stu.stu_id
+                     and xscr.operate_flag = '0'
+                     and xscr.vehicle_vin = ccbi.vehicle_vin
+                     and xscr.site_id = site.site_id
+                     and xscr.alarm_type_id = alarmtype.alarm_type_id
+                     
+                     and xscr.alarm_type_id in ($alarm_type_id$)
+                     and xscr.STU_ID in (
+					 	 select t.STU_ID from CLW_XC_ST_PR_T t
+						 where t.PR_USERID = #PR_USERID#
+						 )
+          
+                     ORDER BY terminal_time DESC)
+                     <![CDATA[
+                     where rownum <=3
+		              ]]>
+	</select>
+	
+	<select id="getvehln" parameterClass="String" resultClass="String">
+	   SELECT 
+	   VEHICLE_LN
+       FROM CLW_CL_BASE_INFO_T 
+       WHERE VEHICLE_VIN=#id#
+       and VALID_FLAG='0'
+	</select>
+	
+	<select id="getalarmbyid" parameterClass="String" resultClass="AlarmMana">
+	   SELECT CL.VEHICLE_LN,
+       T.LONGITUDE,
+       T.LATITUDE,
+       T.OPEERATE_DESC,
+       T.VEHICLE_VIN,
+       T.ALARM_TYPE_ID,
+       T.DEAL_FLAG,
+       T.DIRECTION,
+       T.ALARM_ID,
+       TO_CHAR(T.CONFIRM_TIME,'YYYY-MM-DD HH24:MI:SS') OPERATE_TIME,
+       T.OPERATE_TYPE,
+       US.USER_NAME
+       FROM CLW_YW_ALERM_RECORD_T T, CLW_CL_BASE_INFO_T CL,CLW_JC_USER_T US
+       WHERE T.ALARM_ID=#id#
+       AND  T.VEHICLE_VIN = CL.VEHICLE_VIN
+       AND T.USER_ID=US.USER_ID(+)
+       AND CL.VALID_FLAG='0'
+       AND CL.DEVICE_TYPE='0'
+	</select>
+	
+	
+	<update id="batchupdatelist" parameterClass="AlarmMana">
+	    UPDATE CLW_YW_ALERM_RECORD_T
+		SET DEAL_FLAG=#deal_flag#,
+		    OPERATE_TYPE=#operate_type#,
+		  <isNotEmpty  property="opeerate_desc">
+		    OPEERATE_DESC=#opeerate_desc#,
+		   </isNotEmpty>   
+		    CONFIRM_TIME=SYSDATE,
+		    USER_ID=#user_id#
+	   	WHERE  ALARM_ID=#alarm_id#
+	   	and ALARM_TIME=to_date(#alarm_time#,'yyyy-mm-dd hh24:mi:ss')
+	</update>
+	
+	<update id="batchupdatestulist" parameterClass="stuAlarm">
+	    UPDATE CLW_XC_ST_CHECK_RECORD_T
+		SET OPERATE_FLAG=#operate_flag#,
+		    OPERATE_TYPE=#operate_type#,
+		    <isNotEmpty  property="operate_desc">
+		    OPERATE_DESC=#operate_desc#,
+		    </isNotEmpty>
+		    OPERATE_TIME=SYSDATE,
+		    USER_ID=#user_id#
+	   	WHERE  ID=#id#
+	   	AND TERMINAL_TIME=to_date(#terminal_time#,'yyyy-mm-dd hh24:mi:ss')
+	</update>
+	
+
+	<select id="getdealvehAlarmCount" parameterClass="AlarmMana" resultClass="Integer">
+		SELECT count(1)
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,clw_jc_clen_vi ccbi
+		where cyat.vehicle_vin=#vehicle_vin#
+		and   cyat.vehicle_vin=ccbi.vehicle_vin(+)
+    	and   cyat.alarm_type_id = ctt.alarm_type_id(+)
+    	and   cyat.deal_flag!='1'
+		and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>      
+         <isNotEmpty prepend="AND" property="start_time">
+              <![CDATA[ cyat.alarm_time <= to_date(#alarm_time#,'yyyy-mm-dd hh24:mi:ss')]]>
+         </isNotEmpty>       
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in (#alarm_type_id#)
+         </isNotEmpty>
+	</select>
+	
+	
+	<!-- 告警处理页的摄像头通道 -->
+	<select id="getPhotoRoutteway" parameterClass="AlarmMana" resultMap="routeway-result">
+		select r.ROUTEWAY_NO ,  
+		   r.ROUTEWAY_NAME 
+		from CLW_YW_TERMINAL_ROUTEWAY_T r
+		where TERMINAL_ID=(select t.TERMINAL_ID 
+	                   from CLW_JC_TERMINAL_T t
+	                   where t.VEHICLE_VIN =#vehicle_vin#)
+	</select>
+	
+	<!-- 告警处理页的列表 -->
+	<select id="getdealvehAlarmInfos" parameterClass="AlarmMana" resultMap="dealvehalarm-result">
+	    SELECT 
+		cyat.alarm_id,
+		cyat.ALARM_TYPE_ID,
+		ccbi.VEHICLE_LN,
+		ccbi.VEHICLE_VIN,
+		ctt.ALARM_TYPE_NAME,
+		to_char(cyat.ALARM_TIME,'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+		ccbi.enterprise_id,
+		cyat.SPEEDING,
+    	cyat.latitude,
+    	cyat.longitude,
+    	cyat.engine_rotate_speed,
+    	cyat.mileage,
+    	cyat.direction
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,clw_jc_clen_vi ccbi
+		where 
+		cyat.vehicle_vin=#vehicle_vin#
+		and cyat.deal_flag!='1'
+		and cyat.alarm_type_id=ctt.alarm_type_id
+		and cyat.vehicle_vin=ccbi.vehicle_vin
+    	and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+         <isNotEmpty prepend="AND" property="start_time">
+             <![CDATA[ cyat.ALARM_TIME <= to_date(#start_time#,'yyyy-mm-dd') ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="alarm_type_id">
+             cyat.alarm_type_id in (#alarm_type_id#)
+         </isNotEmpty>
+	      order by ALARM_TIME desc
+	</select>
+	
+	<!-- 获取坐标 -->
+	<select id="getRealVehcileByVin" parameterClass="Map" resultClass="AlarmMana">
+	    select VEHICLE_VIN,
+			    VEHICLE_LN,
+			    LATITUDE,
+			    LONGITUDE
+	      FROM CLW_JC_CL_TERMINAL_NEWVI 
+	      WHERE VEHICLE_VIN = #VEHICLE_VIN#
+	      and TERMINAL_TIME is not null
+	</select>
+	
+	<!-- 2.0泡泡处告警总数 -->
+	<select id="newgetAlarmCount" parameterClass="AlarmMana"
+		resultClass="Integer">
+		SELECT SUM(num) FROM (
+		SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VEU_IDX) */ count(1) as num
+		FROM CLW_YW_ALERM_RECORD_T cyat
+		where cyat.vehicle_vin=#vehicle_vin#
+		and cyat.deal_flag='0'
+		and cyat.alarm_type_id in ('40', '72', '32', '09', '10', '13', '25', '26', '64', '65', '66', '67', '68', '69', '70', '71','88','89','90')
+		<isNotEmpty prepend="AND" property="start_time">
+               cyat.alarm_time >=to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+        </isNotEmpty>
+        <isEqual  property="en_mould" compareValue="3">
+        union all
+        SELECT /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) use_nl(xscr stu)*/count(1) as num
+        FROM CLW_XC_ST_CHECK_RECORD_T xscr,clw_xc_student_t stu
+        where xscr.stu_id=stu.stu_id
+        and xscr.vehicle_vin=#vehicle_vin#
+        AND stu.valid_flag='0'
+        and xscr.operate_flag='0'
+        AND xscr.alarm_type_id in ('73', '74', '79', '80')
+        <isNotEmpty prepend="AND" property="start_time">
+               xscr.TERMINAL_TIME >=to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ xscr.TERMINAL_TIME <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+        </isNotEmpty>
+        </isEqual>
+       )
+	</select>
+	
+	<resultMap id="newalarmdeal-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="alarm_type_id" column="alarm_type_id" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="direction" column="DIRECTION" />
+		<result property="driver_name" column="driver_name" />
+	</resultMap>
+	
+	<!-- 2.0泡泡处告警列表-->
+	<select id="newgetBusAlarmInfos" parameterClass="AlarmMana" resultMap="newalarmdeal-result">
+	        select * FROM 
+             (SELECT /*+INDEX(cyat CLW_YW_ALERM_RECORD_VEU_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi cyat)*/
+              cyat.alarm_id,
+              cyat.ALARM_TYPE_ID,
+              ccbi.VEHICLE_LN,
+              cyat.VEHICLE_VIN,
+              ctt.ALARM_TYPE_NAME,
+              to_char(cyat.ALARM_TIME, 'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+              cyat.SPEEDING,
+              cyat.latitude,
+              cyat.longitude,
+              cyat.direction,
+              dri.driver_name
+             FROM CLW_YW_ALERM_RECORD_T cyat,
+             CLW_CL_ALARMTYPE_T    ctt,
+             clw_jc_cl_vi        ccbi,
+             clw_yw_driver_t       dri
+            where cyat.alarm_type_id = ctt.alarm_type_id
+             and cyat.vehicle_vin = ccbi.vehicle_vin
+             and cyat.driver_id = dri.driver_id(+)
+             and cyat.vehicle_vin=#vehicle_vin#
+             and cyat.deal_flag = '0'
+             and cyat.alarm_type_id in (40, 72, 32, 9, 10, 13, 25, 26, 64, 65, 66, 67, 68, 69, 70, 71, 88, 89, 90)
+             <isNotEmpty prepend="AND" property="start_time">
+               cyat.alarm_time >=to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+             </isNotEmpty>
+              <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+             </isNotEmpty>
+             <isEqual  property="en_mould" compareValue="3">
+             union all
+             select /*+INDEX(xscr CLW_XC_ST_CHECK_RECORD_U_IDX) index(stu CLW_XC_STUID_VLD_IDX) NO_MERGE(ccbi) leading(ccbi) use_nl(ccbi xscr) use_nl(xscr stu)*/ xscr.id as alarm_id,
+                    xscr.alarm_type_id,
+                    ccbi.VEHICLE_LN,
+                    xscr.vehicle_vin,
+                    alarmtype.alarm_type_name,
+                    to_char(xscr.terminal_time, 'yyyy-mm-dd HH24:MI:SS') ALARM_TIME,
+                    '' SPEEDING,
+                    xscr.latitude,
+                    xscr.longitude,
+                    '' direction,
+                    dri.driver_name
+              FROM CLW_XC_ST_CHECK_RECORD_T xscr,
+                   clw_jc_cl_vi           ccbi,
+                   clw_cl_alarmtype_t       alarmtype,
+                   clw_xc_student_t stu,
+                   clw_yw_driver_t       dri
+             where xscr.alarm_type_id = alarmtype.alarm_type_id
+               and xscr.vehicle_vin=ccbi.vehicle_vin
+               AND xscr.stu_id=stu.stu_id
+               and xscr.driver_id = dri.driver_id(+)
+               AND stu.valid_flag='0'
+               and xscr.vehicle_vin=#vehicle_vin#
+               and xscr.operate_flag = '0'
+               and xscr.alarm_type_id in ('73', '74', '79', '80')
+              <isNotEmpty prepend="AND" property="start_time">
+               xscr.terminal_time >=to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+             </isNotEmpty>
+              <isNotEmpty prepend="AND" property="end_time">
+               <![CDATA[ xscr.terminal_time <=to_date(#end_time#,'yyyy-mm-dd HH24:MI:SS')  ]]>
+             </isNotEmpty>
+             </isEqual>
+               ) T
+   order by T.ALARM_TIME DESC
+	</select>
+	
+	<!-- 2.0单条告警信息提取-->
+	<select id="newgetalarmbyidandtime" parameterClass="AlarmMana" resultClass="AlarmMana">
+	  SELECT 
+       T.LONGITUDE,
+       T.LATITUDE,
+       T.OPEERATE_DESC,
+       T.VEHICLE_VIN,
+       T.ALARM_TYPE_ID,
+       alarmtype.alarm_type_name,
+       T.DEAL_FLAG,
+       T.SPEEDING,
+       T.DIRECTION,
+       T.ALARM_ID,
+       TO_CHAR(T.ALARM_TIME,'YYYY-MM-DD HH24:MI:SS') ALARM_TIME,
+       DR.DRIVER_NAME,
+       DR.DRIVER_TEL
+       FROM CLW_YW_ALERM_RECORD_T T,clw_cl_alarmtype_t alarmtype,CLW_YW_DRIVER_T DR
+       WHERE  T.DRIVER_ID=DR.DRIVER_ID(+)
+       AND T.alarm_type_id=alarmtype.alarm_type_id    
+       AND T.ALARM_ID=#alarm_id#
+       <isNotEmpty prepend="AND" property="alarm_time">
+       T.ALARM_TIME=TO_DATE(#alarm_time#,'yyyy-mm-dd HH24:MI:SS') 
+       </isNotEmpty>
+       AND T.DEAL_FLAG!='1'
+	</select>
+	
+	<!-- 2.0学生告警单条提取 -->
+	<select id="newgetstualarmbyidandtime" parameterClass="AlarmMana" resultClass="AlarmMana">
+	    SELECT T.LONGITUDE,
+       T.LATITUDE,
+       T.OPERATE_DESC OPEERATE_DESC,
+       T.VEHICLE_VIN,
+       T.ALARM_TYPE_ID,
+       alarmtype.alarm_type_name,
+       T.OPERATE_FLAG deal_flag,
+       '' SPEEDING,
+       '' direction,
+       T.ID alarm_id,
+       TO_CHAR(T.Terminal_Time, 'YYYY-MM-DD HH24:MI:SS') ALARM_TIME,
+       DR.DRIVER_NAME,
+       DR.DRIVER_TEL
+      FROM CLW_XC_ST_CHECK_RECORD_T T,clw_cl_alarmtype_t alarmtype,CLW_YW_DRIVER_T DR
+      where t.alarm_type_id=alarmtype.alarm_type_id
+      and t.driver_id=DR.DRIVER_ID(+)
+      AND T.ID=#alarm_id#
+      <isNotEmpty prepend="AND" property="alarm_time">
+       T.Terminal_Time=TO_DATE(#alarm_time#,'yyyy-mm-dd HH24:MI:SS')
+      </isNotEmpty>
+      AND T.OPERATE_FLAG='0'
+	</select>
+	
+	<select id="newgetvehln" parameterClass="String" resultClass="String">
+	   SELECT 
+	   VEHICLE_LN
+       FROM CLW_CL_BASE_INFO_T 
+       WHERE VEHICLE_VIN=#id#
+       and VALID_FLAG='0'
+       and DEVICE_TYPE='0'
+	</select>
+	
+	<resultMap id="realTimealarm-result" class="AlarmMana">
+		<result property="alarm_id" column="alarm_id" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="terminal_time" column="terminal_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="topSpeed" column="top_speed" />
+		<result property="route_name" column="route_name" />
+		<result property="dvr_stat" column="ONLINE_FLAG" />
+	</resultMap>
+	
+	<select id="getVehicleAlarmListCount" resultClass="Integer" parameterClass="Map">
+		 with terminal as (
+           select term.* from (
+           select vehicle_vin,max(terminal_time) terminal_time
+                  from clw_yw_terminal_record_t partition($partition$)
+             group by vehicle_vin) re,clw_yw_terminal_record_t term
+             where 1=1 and term.terminal_time(+) = re.terminal_time
+             and term.vehicle_vin(+) = re.vehicle_vin      
+			 )
+			 select count(1)
+			        from clw_cl_base_info_t t,clw_jc_terminal_t jt,
+			        terminal,clw_xc_route_t route,clw_jc_terminal_para_t para
+			        where 1=1 and t.vehicle_vin = terminal.vehicle_vin(+)
+			        and t.vehicle_vin = jt.vehicle_vin
+			        and terminal.route_id = route.route_id(+)
+			        and terminal.terminal_id = para.terminal_id(+)
+			        and t.ORGANIZATION_ID IS NOT NULL
+			        <![CDATA[
+					AND EXISTS 
+                   (SELECT 1
+                          FROM CLW_JC_ENTERPRISE_VI
+                         WHERE LEFT_NUM >=
+                               (SELECT LEFT_NUM
+                                  FROM CLW_JC_ENTERPRISE_VI
+                                 WHERE ENTERPRISE_ID =
+                                       #enterprise_id#)
+                           AND RIGHT_NUM <=
+                               (SELECT RIGHT_NUM
+                                  FROM CLW_JC_ENTERPRISE_VI
+                                 WHERE ENTERPRISE_ID =
+                                       #enterprise_id#)
+                           AND t.ORGANIZATION_ID = ENTERPRISE_ID)
+                           ]]>
+		            and t.device_type = '0'
+		            and t.valid_flag = '0'
+	</select>
+	<select id="getVehicleAlarmList" resultMap="realTimealarm-result" parameterClass="Map">
+		 with terminal as (
+           select term.* from (
+           select vehicle_vin,max(terminal_time) terminal_time
+                  from clw_yw_terminal_record_t partition($partition$)
+             group by vehicle_vin) re,clw_yw_terminal_record_t term
+             where 1=1 and term.terminal_time(+) = re.terminal_time
+             and term.vehicle_vin(+) = re.vehicle_vin      
+			 )
+			 select rownum as alarm_id,t.vehicle_ln,t.vehicle_vin,route.route_name,jt.speeding,para.top_speed
+			        ,jt.terminal_time,jt.longitude,jt.latitude,
+              CASE
+                     WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+                          (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+                      '0'
+                     WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+                          (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+                      '0'
+                      WHEN 
+                          JT.TERMINAL_TIME is null THEN
+                      '0'
+                     ELSE
+                      '1'
+                   END ONLINE_FLAG 
+			        from clw_cl_base_info_t t,clw_jc_terminal_t jt,
+			        terminal,clw_xc_route_t route,clw_jc_terminal_para_t para
+			        where 1=1 and t.vehicle_vin = terminal.vehicle_vin(+)
+			        and t.vehicle_vin = jt.vehicle_vin
+			        and terminal.route_id = route.route_id(+)
+			        and terminal.terminal_id = para.terminal_id(+)
+			        and t.ORGANIZATION_ID IS NOT NULL
+			        <![CDATA[
+					AND EXISTS 
+                   (SELECT 1
+                          FROM CLW_JC_ENTERPRISE_VI
+                         WHERE LEFT_NUM >=
+                               (SELECT LEFT_NUM
+                                  FROM CLW_JC_ENTERPRISE_VI
+                                 WHERE ENTERPRISE_ID =
+                                       #enterprise_id#)
+                           AND RIGHT_NUM <=
+                               (SELECT RIGHT_NUM
+                                  FROM CLW_JC_ENTERPRISE_VI
+                                 WHERE ENTERPRISE_ID =
+                                       #enterprise_id#)
+                           AND t.ORGANIZATION_ID = ENTERPRISE_ID)
+                           ]]>
+		            and t.device_type = '0'
+		            and t.valid_flag = '0'
+		            ORDER BY ONLINE_FLAG DESC,NLSSORT(VEHICLE_LN,'NLS_SORT=SCHINESE_PINYIN_M') ASC
+	</select>
+	
+	
+	
+	<!-- 超速汇总记录导出-->
+	<select id="exportChaosuReport" parameterClass="AlarmMana" resultClass="AlarmMana">
+	    SELECT 
+		ccbi.VEHICLE_LN,
+		ccbi.VEHICLE_VIN,
+		COUNT(1) csCount
+		FROM CLW_YW_ALERM_RECORD_T cyat,CLW_CL_ALARMTYPE_T ctt,clw_cl_base_info_t ccbi
+		where cyat.alarm_type_id=ctt.alarm_type_id
+		and cyat.vehicle_vin=ccbi.vehicle_vin
+        and cyat.alarm_type_id ='32'
+         <isNotEmpty prepend="AND" property="start_time">
+              cyat.alarm_time >= to_date(#start_time#,'yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+              <![CDATA[ cyat.alarm_time <=to_date(#end_time#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+			ccbi.VEHICLE_LN  like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+    	and ccbi.ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from CLW_JC_ENTERPRISE_T
+			     where left_num >= (select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ left_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select /*+index(t CLW_JENPSE_ENPID_LR_IDX)*/ right_num
+			                  from CLW_JC_ENTERPRISE_T t
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+	    GROUP BY ccbi.VEHICLE_LN, ccbi.VEHICLE_VIN
+	    ORDER BY csCount DESC,NLSSORT(ccbi.VEHICLE_LN,'NLS_SORT=SCHINESE_PINYIN_M') ASC
+	</select>
+	
+</sqlMap>

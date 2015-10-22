@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StewardManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="stewardinfo" type="com.neusoft.clw.infomanage.stewardmanage.domain.StewardInfo" />
+	  
+	<resultMap class="stewardinfo" id="stewardinfos-result">
+       <result property="steward_id" column="SICHEN_ID"/>
+       <result property="steward_ID_Card" column="SICHEN_LICENSE"/>
+       <result property="steward_card" column="SICHEN_CARD_ID"/>
+       <result property="steward_name" column="SICHEN_NAME"/>
+       <result property="steward_sex" column="SICHEN_SEX"/>
+       <result property="steward_birth" column="SICHEN_BIRTH"/>
+       <result property="steward_address" column="SICHEN_ADDR"/>
+       <result property="cell_number" column="SICHEN_TEL"/>
+       <result property="remarks" column="SICHEN_REMARK"/>
+    </resultMap>  
+    
+    <select id="getCount" parameterClass="stewardinfo" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM CLW_XC_SICHEN_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		   AND VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="steward_name">
+               SICHEN_NAME like '%' || #steward_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="steward_card">
+               SICHEN_CARD_ID like '%' || #steward_card# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getInfos" parameterClass="stewardinfo" resultMap="stewardinfos-result">
+		SELECT SICHEN_ID,
+		       SICHEN_LICENSE,
+		       SICHEN_CARD_ID,
+		       SICHEN_NAME,
+		       SICHEN_SEX,
+		       TO_CHAR(SICHEN_BIRTH, 'YYYY-MM-DD') AS SICHEN_BIRTH,
+		       SICHEN_ADDR,
+		       SICHEN_TEL,
+		       SICHEN_REMARK
+	      FROM CLW_XC_SICHEN_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		   AND VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="steward_name">
+               SICHEN_NAME like '%' || #steward_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="steward_card">
+               SICHEN_CARD_ID like '%' || #steward_card# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="exportStewardInfos" parameterClass="stewardinfo" resultMap="stewardinfos-result">
+		SELECT SICHEN_ID,
+		       SICHEN_LICENSE,
+		       SICHEN_CARD_ID,
+		       SICHEN_NAME,
+		       CASE
+                 WHEN SICHEN_SEX = '0' THEN
+                  '男'
+                 ELSE
+                  '女'
+               END AS SICHEN_SEX,
+		       TO_CHAR(SICHEN_BIRTH, 'YYYY-MM-DD') AS SICHEN_BIRTH,
+		       SICHEN_ADDR,
+		       SICHEN_TEL,
+		       SICHEN_REMARK
+	      FROM CLW_XC_SICHEN_T   
+		 WHERE ENTERPRISE_ID=#enterprise_id# 
+		   AND ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		   AND VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="steward_name">
+               SICHEN_NAME like '%' || #steward_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="steward_card">
+               SICHEN_CARD_ID like '%' || #steward_card# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<insert id="insertStewardInfo" parameterClass="stewardinfo">
+		INSERT INTO CLW_XC_SICHEN_T
+		  (SICHEN_ID,
+		   SICHEN_NAME,
+		   SICHEN_LICENSE,
+		   SICHEN_CARD_ID,
+		   SICHEN_SEX,
+		   SICHEN_ADDR,
+		   SICHEN_BIRTH,
+		   SICHEN_TEL,
+		   SICHEN_REMARK,
+		   ENTERPRISE_ID,
+		   ORGANIZATION_ID,
+		   CREATER,
+		   CREATE_TIME,
+		   MODIFIER,
+		   MODIFY_TIME,
+		   VALID_FLAG,
+		   PHOTO_NAME,
+		   SICHEN_PHOTO)
+		VALUES
+		  (SEQ_XC_SICHEN_T.NEXTVAL,
+		   #steward_name#,
+		   #steward_ID_Card#,
+		   #steward_card#,
+		   #steward_sex#,
+		   #steward_address#,
+		   TO_DATE(#steward_birth#, 'YYYY-MM-DD'),
+		   #cell_number#,
+		   #remarks#,
+		   #enterprise_id#,
+		   #organization_id#,
+		   #creater#,
+		   sysdate,
+		   #modifier#,
+		   sysdate,
+		   '0',
+		   #photo_name#,
+		   #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#)
+	</insert>
+	
+	<resultMap class="stewardinfo" id="stewardinfo-result">
+       <result property="steward_id" column="SICHEN_ID"/>
+       <result property="steward_ID_Card" column="SICHEN_LICENSE"/>
+       <result property="steward_card" column="SICHEN_CARD_ID"/>
+       <result property="steward_name" column="SICHEN_NAME"/>
+       <result property="steward_sex" column="SICHEN_SEX"/>
+       <result property="steward_birth" column="SICHEN_BIRTH"/>
+       <result property="steward_address" column="SICHEN_ADDR"/>
+       <result property="cell_number" column="SICHEN_TEL"/>
+       <result property="remarks" column="SICHEN_REMARK"/>
+       <result property="photo_name" column="PHOTO_NAME"/>
+       <result property="photoContent" column="SICHEN_PHOTO" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler"/>
+       <result property="vehicle_ln" column="VEHICLE_LN"/>
+       <result property="route_name" column="ROUTE_NAME"/>
+       <result property="organization_id" column="ORGANIZATION_ID"/>
+       <result property="short_allname" column="ORGANIZATION_NAME"/>
+    </resultMap>
+	
+	<select id="getStewardInfo" parameterClass="stewardinfo" resultMap="stewardinfo-result">
+		SELECT SICHEN_ID,
+		       SICHEN_LICENSE,
+		       SICHEN_CARD_ID,
+		       SICHEN_NAME,
+		       SICHEN_SEX,
+		       TO_CHAR(SICHEN_BIRTH, 'YYYY-MM-DD') AS SICHEN_BIRTH,
+		       SICHEN_ADDR,
+		       SICHEN_TEL,
+		       SICHEN_REMARK,
+		       PHOTO_NAME,
+		       SICHEN_PHOTO,
+		       (SELECT WM_CONCAT(CCBI.VEHICLE_LN)
+				  FROM CLW_CL_BASE_INFO_T CCBI
+				 WHERE EXISTS (SELECT CXV.VEHICLE_VIN
+				          FROM CLW_XC_VEHSICHEN_T CXV
+				         WHERE CXV.SICHEN_ID = #steward_id#
+				           AND CXV.VEHICLE_VIN = CCBI.VEHICLE_VIN)) 
+			   AS VEHICLE_LN,
+			   (SELECT WM_CONCAT(CXRT.ROUTE_NAME)
+				  FROM CLW_XC_ROUTE_T CXRT
+				 WHERE EXISTS (SELECT 1
+				          FROM CLW_XC_VSS_T XV
+				         WHERE EXISTS (SELECT 1
+				                  FROM CLW_XC_VEHSICHEN_T CXV
+				                 WHERE CXV.SICHEN_ID = #steward_id#
+				                   AND CXV.TRIP_ID = XV.TRIP_ID)
+				           AND XV.ROUTE_ID = CXRT.ROUTE_ID)
+				   AND CXRT.VALID_FLAG = '0')
+			    AS ROUTE_NAME,
+			   ORGANIZATION_ID,
+			    (SELECT CJET.FULL_NAME
+				  FROM CLW_JC_ENTERPRISE_T CJET
+				 WHERE CJET.ENTERPRISE_ID =
+				       (SELECT ORGANIZATION_ID FROM CLW_XC_SICHEN_T WHERE SICHEN_ID = #steward_id#))
+			   AS ORGANIZATION_NAME
+		  FROM CLW_XC_SICHEN_T T
+		 WHERE SICHEN_ID=#steward_id# 
+	</select>
+	
+	<update id="updateInfoAndPhotobyStewardId" parameterClass="stewardinfo">
+	    UPDATE CLW_XC_SICHEN_T
+		   SET SICHEN_NAME    = #steward_name#,
+		       SICHEN_LICENSE = #steward_ID_Card#,
+		       SICHEN_CARD_ID = #steward_card#,
+		       SICHEN_SEX     = #steward_sex#,
+		       SICHEN_ADDR = #steward_address#,
+		       SICHEN_BIRTH   = TO_DATE(#steward_birth#, 'YYYY-MM-DD'),
+		       SICHEN_TEL     = #cell_number#,
+		       SICHEN_REMARK  = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       ORGANIZATION_ID = #organization_id#,
+		       PHOTO_NAME     = #photo_name#,
+		       SICHEN_PHOTO   = #photoContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#
+		 WHERE SICHEN_ID = #steward_id#
+	</update>
+	
+	<update id="updateInfoDelPhotobyStewardId" parameterClass="stewardinfo">
+	    UPDATE CLW_XC_SICHEN_T
+		   SET SICHEN_NAME    = #steward_name#,
+		       SICHEN_LICENSE = #steward_ID_Card#,
+		       SICHEN_CARD_ID = #steward_card#,
+		       SICHEN_SEX     = #steward_sex#,
+		       SICHEN_ADDR = #steward_address#,
+		       SICHEN_BIRTH   = TO_DATE(#steward_birth#, 'YYYY-MM-DD'),
+		       SICHEN_TEL     = #cell_number#,
+		       SICHEN_REMARK  = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       ORGANIZATION_ID = #organization_id#,
+		       PHOTO_NAME     = NULL,
+		       SICHEN_PHOTO   = NULL
+		 WHERE SICHEN_ID = #steward_id#
+	</update>
+	
+	<update id="updateInfoOnlybyStewardId" parameterClass="stewardinfo">
+	    UPDATE CLW_XC_SICHEN_T
+		   SET SICHEN_NAME    = #steward_name#,
+		       SICHEN_LICENSE = #steward_ID_Card#,
+		       SICHEN_CARD_ID = #steward_card#,
+		       SICHEN_SEX     = #steward_sex#,
+		       SICHEN_ADDR = #steward_address#,
+		       SICHEN_BIRTH   = TO_DATE(#steward_birth#, 'YYYY-MM-DD'),
+		       SICHEN_TEL     = #cell_number#,
+		       SICHEN_REMARK  = #remarks#,
+		       MODIFIER       = #modifier#,
+		       MODIFY_TIME    = SYSDATE,
+		       ORGANIZATION_ID = #organization_id#
+		 WHERE SICHEN_ID = #steward_id#
+	</update>
+	
+	<select id="getvehCount" parameterClass="stewardinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_XC_VEHSICHEN_T WHERE SICHEN_ID = #steward_id#   
+	</select>
+	
+	<update id="deletebyStewardId" parameterClass="stewardinfo">
+	   UPDATE CLW_XC_SICHEN_T 
+	   SET VALID_FLAG='1',
+	       VASET_USER_ID=#vaset_user_id#,
+	       VASET_TIME=SYSDATE
+	    WHERE SICHEN_ID = #steward_id#
+	</update>
+	
+	<select id="checkStewardCard" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM CLW_XC_SICHEN_T T
+		 WHERE T.SICHEN_CARD_ID = #value#
+		   AND T.VALID_FLAG = '0'
+	</select>
+	
+	<update id="mergeStewardInfo" parameterClass="stewardinfo">
+		MERGE INTO CLW_XC_SICHEN_T XS
+		USING DUAL
+		ON (XS.SICHEN_CARD_ID = #steward_card# AND XS.VALID_FLAG = '0')
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET SICHEN_NAME    = #steward_name#,
+		         SICHEN_LICENSE = #steward_ID_Card#,
+		         SICHEN_SEX     = #steward_sex#,
+		         SICHEN_ADDR = #steward_address#,
+		         SICHEN_BIRTH   = TO_DATE(#steward_birth#, 'YYYY-MM-DD'),
+		         SICHEN_TEL     = #cell_number#,
+		         SICHEN_REMARK  = #remarks#,
+		         MODIFIER       = #modifier#,
+		         MODIFY_TIME    = SYSDATE,
+                 ENTERPRISE_ID  = #enterprise_id#,
+		         ORGANIZATION_ID = #organization_id#
+		WHEN NOT MATCHED THEN
+		  INSERT
+		  (SICHEN_ID,
+		   SICHEN_NAME,
+		   SICHEN_LICENSE,
+		   SICHEN_CARD_ID,
+		   SICHEN_SEX,
+		   SICHEN_ADDR,
+		   SICHEN_BIRTH,
+		   SICHEN_TEL,
+		   SICHEN_REMARK,
+		   ENTERPRISE_ID,
+		   ORGANIZATION_ID,
+		   CREATER,
+		   CREATE_TIME,
+		   MODIFIER,
+		   MODIFY_TIME,
+		   VALID_FLAG)
+		VALUES
+		  (SEQ_XC_SICHEN_T.NEXTVAL,
+		   #steward_name#,
+		   #steward_ID_Card#,
+		   #steward_card#,
+		   #steward_sex#,
+		   #steward_address#,
+		   TO_DATE(#steward_birth#, 'YYYY-MM-DD'),
+		   #cell_number#,
+		   #remarks#,
+		   #enterprise_id#,
+		   #organization_id#,
+		   #creater#,
+		   sysdate,
+		   #modifier#,
+		   sysdate,
+		   '0')
+	</update>	
+	
+	<update id="updateStewardCardById" parameterClass="Map">
+	    UPDATE CLW_XC_SICHEN_T
+		   SET SICHEN_CARD_ID = #stewardCard#,
+		       MODIFY_TIME    = SYSDATE
+		 WHERE SICHEN_ID = #stewardId#
+	</update>
+    
+    <select id="checkStewardCardId" parameterClass="String" resultClass="Integer">
+        SELECT COUNT(1)
+          FROM CLW_XC_SICHEN_T T
+         WHERE T.SICHEN_LICENSE = #value#
+           AND T.VALID_FLAG = '0'
+    </select>
+</sqlMap>

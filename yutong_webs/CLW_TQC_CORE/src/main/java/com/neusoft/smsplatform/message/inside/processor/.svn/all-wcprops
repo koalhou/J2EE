@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor
+END
+MessageAbstractInsideProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/MessageAbstractInsideProcessor.java
+END
+IMessageInsideProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 158
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/IMessageInsideProcessor.java
+END
+MessageInsideProcessorMap.java
+K 25
+svn:wc:ra_dav:version-url
+V 160
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/MessageInsideProcessorMap.java
+END

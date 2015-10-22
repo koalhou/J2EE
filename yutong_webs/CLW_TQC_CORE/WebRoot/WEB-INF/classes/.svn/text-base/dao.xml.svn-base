@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="false"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${database.driver}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+        
+        <property name="connectionProperties"
+			value="oracle.jdbc.ReadTimeout=120000" />
+		<property name="initialSize" value="${database.initialSize}" />
+		<property name="maxActive" value="${database.MaximumActiveConnections}" />
+		<property name="maxIdle" value="${database.MaximumIdleConnections}" />
+		<property name="minIdle" value="${database.MinimumIdleConnections}" />
+		<property name="maxWait" value="${database.MaxWait}" />
+		<property name="validationQuery" value="select 1 from dual" />
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="${database.RemoveAbandonedTimeout}" />
+		<property name="logAbandoned" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="${database.TimeBetweenEvictionRunsMillis}" />
+		<property name="numTestsPerEvictionRun" value="${database.NumTestsPerEvictionRun}" />
+		<property name="minEvictableIdleTimeMillis" value="${database.MinEvictableIdleTimeMillis}" />
+	</bean>
+
+	<!--jdbcTemplate-->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<bean id="abstractDaoManager" class="com.neusoft.tag.dao.support.AbstractDaoManager"
+		abstract="true">
+		<property name="jdbcTemplate">
+			<ref bean="jdbcTemplate" />
+		</property>
+	</bean>
+	<!--数据同步开始-->
+	<bean id="vehicInfoDAO" class="com.neusoft.clw.info.dao.VehicInfoDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+	<bean id="terminalInfoDAO" class="com.neusoft.clw.info.dao.TerminalInfoDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+	<bean id="terminalBizDAO" class="com.neusoft.clw.info.dao.TerminalBizDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+	<bean id="sendCommandDAO" class="com.neusoft.clw.info.dao.SendCommandDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+	<!--数据同步结束-->
+	<!--报表统计-->
+	<bean id="reportDAO" class="com.neusoft.clw.info.dao.ReportDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+	<!--报表统计-->
+	<bean id="appconfigDAO" class="com.neusoft.clw.vncs.dao.impl.AppConfigDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+
+	<bean id="configParamDao" class="com.neusoft.clw.vncs.dao.impl.ConfigParamDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+
+	<bean id="terminalDAO" class="com.neusoft.clw.vncs.dao.impl.TerminalDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+
+	<bean id="harmdefDAO" class="com.neusoft.clw.vncs.dao.impl.HarmDefDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+    <bean id="commonDAO" class="com.neusoft.clw.vncs.dao.impl.CommonDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+
+	<bean id="vehicleDAO" class="com.neusoft.clw.vncs.dao.impl.VehicleDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+
+	<bean id="cerFailDAO" class="com.neusoft.clw.vncs.dao.impl.CerFailDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+    <bean id="ter_paramDAO" class="com.neusoft.clw.vncs.dao.impl.Terminal_ParamDAO"
+		scope="singleton" parent="abstractDaoManager"></bean>
+	<bean id="activeCoreDAO" class="com.neusoft.clw.vncs.dao.impl.ActiveCoreDAO"
+		scope="singleton" parent="abstractDaoManager"></bean>
+	<bean id="msgCfgDAO" class="com.neusoft.clw.vncs.dao.impl.MsgCfgDAO" 
+	    scope="singleton" parent="abstractDaoManager">
+		<property name="terminalDAO" ref="terminalDAO"></property>    
+	</bean>
+	<bean id="smsCfgDAO" class="com.neusoft.clw.vncs.dao.impl.SmsCfgDAO" 
+		scope="singleton" parent="abstractDaoManager"></bean>
+	<bean id="appDAO" class="com.neusoft.clw.info.dao.AppDAO" scope="singleton" parent="abstractDaoManager"></bean>
+	<bean id="driverVehicleDAO" class="com.neusoft.clw.vncs.dao.impl.DriverVehicleDAO" scope="singleton" parent="abstractDaoManager"></bean>
+    <!-- 学生短信发送 -->	
+	<bean id="sendXcSmsDAO" class="com.neusoft.SchoolBus.vncs.dao.impl.XcSmsDAO"
+		scope="singleton" parent="abstractDaoManager"></bean>
+	<bean id="qdao" class="com.neusoft.SchoolBus.vncs.dao.impl.QuartzDAO" parent="abstractDaoManager"
+		scope="singleton"></bean>
+	<bean id="updatedao" class="com.neusoft.smsplatform.message.dao.UpdateDAO" parent="abstractDaoManager"
+		scope="singleton"></bean>
+	<bean id="smssyncdao" class="com.neusoft.smsplatform.message.dao.SmsSyncDAO" parent="abstractDaoManager"
+		scope="singleton"></bean>
+	<bean id="qtdao" class="com.neusoft.SchoolBus.vncs.dao.impl.QuartzTripDAO" parent="abstractDaoManager"
+		scope="singleton"></bean>	
+		
+	<!-- **********************************通勤车平台************************************* -->	
+    <!-- 通勤车发车与客流统计 -->
+	<bean id="tqcStatisticDao" class="com.neusoft.tqcpt.dao.impl.TqcStatisticDaoImpl"
+		scope="singleton" parent="abstractDaoManager">
+		<property name="tqcStatisticSQL">
+			<ref bean="tqcStatisticSQL" />
+		</property>		
+    </bean>	
+    <bean id="tqcStatisticSQL" class="com.neusoft.tqcpt.service.TqcStatisticSQL"
+		scope="singleton" parent="abstractDaoManager"></bean>				
+    <!-- 防透漏油 -->
+	<bean id="ftlyBuildSQL" class="com.neusoft.tqcpt.service.FtlyBuildSQL" scope="singleton"></bean>
+	<!-- 油耗统计 -->
+	<bean id="tqcOilWearDao" class="com.neusoft.tqcpt.dao.impl.TqcOilWearDaoImpl" scope="singleton" parent="abstractDaoManager">
+		<property name="oilWearSQL">
+			<ref bean="oilWearSQL" />
+		</property>		
+    </bean>	
+    <bean id="oilWearSQL" class="com.neusoft.tqcpt.service.OilWearSQL" scope="singleton" parent="abstractDaoManager"></bean>	
+    
+    <bean id="parentsDAO"
+		class="com.neusoft.parents.dao.impl.ParentsDAO" scope="singleton"
+		parent="abstractDaoManager">
+	</bean>
+	
+	<!--偏航 -->
+	<bean id="overPreLineDao"
+		class="com.neusoft.parents.overpreline.dao.impl.OverPreLineDAO" scope="singleton"
+		parent="abstractDaoManager">
+	</bean>
+	
+	<!--公车私用 -->
+	<bean id="privateUseDAO"
+		class="com.neusoft.privateuse.dao.impl.PrivateUseDAO" scope="singleton"
+		parent="abstractDaoManager">
+	</bean>
+	
+	<bean id="algorithmDAO" class="com.neusoft.parents.algorithm.dao.impl.AlgorithmDAO"
+		scope="singleton" parent="abstractDaoManager">
+	</bean>
+	
+	<bean id="pushDAO" class="com.neusoft.mobile.dao.impl.PushDAO"
+		parent="abstractDaoManager" scope="singleton">
+	</bean>
+	<bean id="ridingPlanDAO" class="com.neusoft.clw.vncs.dao.impl.RidingPlanDAO" scope="singleton" parent="abstractDaoManager"></bean>
+	
+</beans>

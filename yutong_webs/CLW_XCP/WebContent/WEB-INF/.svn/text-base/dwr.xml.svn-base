@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.org/dwr/dwr20.dtd">
+
+<dwr>
+	<!-- <allow>标签中包括可以暴露给javascript访问的东西 -->
+	<allow>
+		<create javascript="GPSDwr" creator="spring"
+			scope="application">
+			<param name="beanName" value="gpsPostionDwr"></param>
+		</create>
+	
+		<create javascript="EntiDwr" creator="spring" scope="application">
+			<param name="beanName" value="entiManageDwr"></param>
+		</create>
+	
+	<!-- 车辆管理DWR -->
+		<create javascript="VehicleManageDWR" creator="spring" scope="application">
+			<param name="beanName" value="vehiclemanageDWR"></param>
+		</create>
+	
+	<!-- 省市信息  -->
+		<create javascript="ZoneDwr" creator="spring" scope="application">
+			<param name="beanName" value="zoneManageDWR"></param>
+		</create>
+
+	<!-- 车辆状态报告 -->
+		<create javascript="VehicleStatus" creator="spring"
+			scope="application">
+			<param name="beanName" value="vehicleStatusAction"></param>
+		</create>	
+
+	<!-- 考核油耗月度设置 -->
+		<create javascript="Ocktimeset" creator="spring"
+			scope="application">
+			<param name="beanName" value="ockTimeSetAction"></param>
+		</create>
+		
+		<!-- 考核油耗设置 -->
+		<create javascript="OilSet" creator="spring"
+			scope="application">
+			<param name="beanName" value="oilSetAction"></param>
+		</create>
+	<!-- 用户名重复校验 -->	
+		<create javascript="UserNameSameDwr" creator="spring"
+			scope="application">
+			<param name="beanName" value="UserNameSameDwr"></param>
+		</create>
+	<!-- 用户禁用 -->
+		<create javascript="updateValidflagDwr" creator="spring"
+			scope="application">
+			<param name="beanName" value="updateValidflagDwr"></param>
+		</create>
+		<create javascript="OilSetDwr" creator="spring"
+			scope="application">
+			<param name="beanName" value="OilSetDwr"></param>
+		</create>
+	
+	<!-- 线路管理判断线路编号唯一 -->
+	   <create javascript="Route" creator="spring"
+			scope="application">
+			<param name="beanName" value="routeAction"></param>
+		</create>
+	<!-- 油耗管理-单车时间段内的累计油耗曲线图 -->
+		<create javascript="OilLine" creator="spring"
+			scope="application">
+			<param name="beanName" value="OilUsedAction"></param>
+		</create>		
+
+	<!--告警处理 -->
+	   <!-- add by chengjin start-->
+	   <create javascript="AlarmDwr" creator="spring"
+			scope="application">
+			<param name="beanName" value="alarmManageAction"></param>
+		</create>
+	<!-- add by chengjin end-->
+		
+		<convert match="com.neusoft.clw.sysmanage.sysset.oilset.domain.OilSet"
+			converter="bean">
+		</convert>
+		
+		<convert match="com.neusoft.clw.businessmanage.businessmanage.vehiclerun.domain.VehicleRun"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.safemanage.vehiclesafe.domain.VehicleStatus"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.sysmanage.datamanage.zonemanage.domain.ZoneXsInfo"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.itsmanage.oilmanage.oilused.domain.OilUsed"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseDataInfo"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.Alarm"
+			converter="bean">
+		</convert>	
+		<convert match="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TerminalViBean"
+			converter="bean">
+		</convert>	
+		<convert match="com.neusoft.clw.itsmanage.oilmanage.carrun.domain.RunOilRecord"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.Enter_Info_bean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.PhotoInfoBean"
+			converter="bean">
+		</convert>	
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.XCRouteBean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.SiteBean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TerminalPointInfoBean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TipInfoBean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.XS_CHECK_RECORD_Bean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.ServerPointBean"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.sysmanage.datamanage.routemanage.domain.RouteInfo"
+			converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.MsgBean"
+			converter="bean">
+		</convert>
+		<!-- 运行管理dwr(学生刷卡记录)add by fanxy (StuRidingDWR) -->
+		<create javascript="StuRidingDWR" creator="spring" scope="application">
+				<param name="beanName" value="stuRidingDWR"></param>
+		</create>
+		
+		<!-- 运行管理dwr add by susu-->
+		<create javascript="RouteChartDWR" creator="spring" scope="application">
+				<param name="beanName" value="routeChartDWR"></param>
+		</create>	
+		<convert match="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart"
+				converter="bean">
+		</convert>
+		<convert match="com.neusoft.clw.yunxing.car.runhistory.domain.CarRunHistory"
+				converter="bean">
+		</convert>		
+		<!-- 运行管理dwr -->		
+		
+		<create javascript="PasswordConfirmDWR" creator="spring" scope="application">
+			<param name="beanName" value="passwordConfirmAction"></param>
+		</create>
+		
+		<!-- 线路管理取得真实坐标 -->
+		<create javascript="RouteStationLONLAT" creator="spring" scope="application">
+				<param name="beanName" value="routeAction"></param>
+		</create>	
+
+		<convert match="com.neusoft.clw.safemanage.humanmanage.alarmmanage.domain.AlarmManage"
+			converter="bean">
+		</convert>
+		
+		<create javascript="roleDWR" creator="spring" scope="application">
+				<param name="beanName" value="roleDWR"></param>
+		</create>				
+	</allow>
+</dwr>

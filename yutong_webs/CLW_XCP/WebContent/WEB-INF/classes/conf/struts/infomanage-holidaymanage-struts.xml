@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="holiday" namespace="/holiday" extends="clw-default">
+		<action name="holidaymanage" class="holidayManageAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/infomanage/holidaymanage/holidaymanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/holidaymanage/holidaymanage.jsp</result>	
+		</action>
+		<action name="addholidaybefore" class="holidayManageAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/holidaymanage/addholiday.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		
+		<action name="getStudentList" class="holidayManageAction" method="stuListReady">
+			<result name="error">/WEB-INF/jsp/infomanage/holidaymanage/student_list.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/holidaymanage/student_list.jsp</result>	
+		</action>
+		
+		<action name="holiday_add" class="holidayManageAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/holidaymanage/addholiday.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addholidaybefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>		
+		</action>
+		<action name="holiday_edit_form" class="holidayManageAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/holidaymanage/alterholiday.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		
+		<action name="holiday_edit" class="holidayManageAction" method="updateHoliday">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/holidaymanage/alterholiday.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holiday_edit_form</param>
+				<param name="message">${message}</param>
+				<param name="holidayId">${holidayInfo.holiday_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="holiday_cancel" class="holidayManageAction" method="cancelHoliday">
+			<result name="success" type="redirect-action">
+				<param name="actionName">holidaymanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">holiday_edit_form</param>
+				<param name="message">${message}</param>
+				<param name="holidayId">${holidayInfo.holiday_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+	</package>
+	<package name="holidayGrid" namespace="/holidayGrid" extends="json-default">
+		<action name="holidayList" class="holidayManageAction"  method="holidayBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="stuList" class="holidayManageAction" method="getStudentList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="getStudentNameById" class="holidayManageAction" method="getStudentNameById">
+            <result name="success" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">studentName</param>
+            </result>
+            <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">studentName</param>
+           </result>
+        </action>
+	</package>
+</struts>

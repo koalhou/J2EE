@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SystemEnvironment">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="ResultSet" type="java.sql.ResultSet" />
+	
+	
+	<typeAlias alias="SystemVisitStaticsDataInfo" type="com.neusoft.clw.yw.ub.system.ds.VisitStaticsDataInfo" />
+	<typeAlias alias="SystemStaticsDataInfo" type="com.neusoft.clw.yw.ub.system.ds.StaticsDataInfo" />
+	
+	
+	<resultMap id="result-map" class="SystemStaticsDataInfo">  
+		<!--在Java对象跟Oracle列之间转换 -->  
+	    <result property="systemname" column="systemname" />  
+	    <result property="visitCount" column="visitCount" />  
+	    <result property="allVisitCount" column="allVisitCount" />  
+	    <result property="visitPercent" column="visitPercent" />  
+	    <result property="visitEpCount" column="visitEpCount" />  
+	    <result property="allVisitEpCount" column="allVisitEpCount" />  
+	    <result property="visitEpPercent" column="visitEpPercent" />  
+	    <result property="visitUserCount" column="visitUserCount" />  
+	    <result property="allVisitUserCount" column="allVisitUserCount" />  
+	    <result property="visitUserPercent" column="visitUserPercent" />
+	</resultMap>  
+
+	<parameterMap id="parameter-map" class="Map" >   
+	    <parameter property="p_systemType" jdbcType="VARCHAR2" javaType="String" mode="IN"/>   
+	    <parameter property="p_is_Holiday" jdbcType="VARCHAR2" javaType="String" mode="IN"/> 
+	    <parameter property="p_startDate" jdbcType="VARCHAR2" javaType="String" mode="IN"/>   
+	    <parameter property="p_endDate" jdbcType="VARCHAR2" javaType="String" mode="IN"/>  
+
+	    <parameter property="p_statisInfo_Cursor" jdbcType="ORACLECURSOR" javaType="ResultSet" mode="OUT"  resultMap="result-map" />  
+	</parameterMap>  
+	
+	<parameterMap id="parameter-page-map" class="Map" >   
+	    <parameter property="p_systemType" jdbcType="VARCHAR2" javaType="String" mode="IN"/>   
+	    <parameter property="p_is_Holiday" jdbcType="VARCHAR2" javaType="String" mode="IN"/> 
+	    <parameter property="p_startDate" jdbcType="VARCHAR2" javaType="String" mode="IN"/>   
+	    <parameter property="p_endDate" jdbcType="VARCHAR2" javaType="String" mode="IN"/>  
+	    <parameter property="p_pageSize" jdbcType="INTEGER" javaType="Integer" mode="IN"/>   
+	    <parameter property="p_curPage" jdbcType="INTEGER" javaType="Integer" mode="IN"/>  
+
+	    <parameter property="p_totalCount" jdbcType="INTEGER" javaType="Integer" mode="OUT"/> 
+	    <parameter property="p_statisInfo_Cursor" jdbcType="ORACLECURSOR" javaType="java.sql.ResultSet" mode="OUT"  resultMap="result-map" />  
+	</parameterMap>  
+
+	<resultMap id="result-visit-map" class="SystemVisitStaticsDataInfo">
+		<result property="systemname" column="systemname" />
+		<result property="visitCount" column="visitCount" />
+		<result property="visitEpCount" column="visitEpCount" />
+		<result property="visitUserCount" column="visitUserCount" />
+	</resultMap>
+
+	<!-- 通用统计 start -->
+	<procedure id="getStatisticsList" parameterMap="parameter-map">   
+	    {call GET_SYSTEM_STATISTICS_PROC(?, ?, ?, ?, ?)}   
+	</procedure>  
+
+	<procedure id="getStatisticsPageList" parameterMap="parameter-page-map">   
+	    {call GET_SYSTEM_STATISTICSPAGE_PROC(?, ?, ?, ?, ?, ?, ?, ?)}   
+	</procedure>  
+
+	<!-- 大区统计 -->
+	<select id="getAreaStatisticsList" parameterClass="Map" resultMap="result-visit-map">
+		 select  systemname,visitCount,visitEpCount,visitUserCount
+		 from(
+		select u.region_name as systemname, 
+		decode(u1.visitCount,null,0,u1.visitCount) as visitCount, 
+		decode(u1.visitEpCount,null,0,u1.visitEpCount) as visitEpCount, 
+		decode(u2.visitUserCount,null,0,u2.visitUserCount) as visitUserCount
+		    from 
+		    (select a.region_id as region_id, a.region_name as region_name 
+		    from clw_m_area_info_t a 
+		    order by a.region_id) u,
+		    
+		    (select a1.region_id as region_id, sum(t1.sysenm_allvis) as visitCount, count(distinct(t1.enterprise_id)) as visitEpCount
+		         from clw_ub_sysenmid_t t1,
+		              clw_jc_enterprise_t e1, 
+		              clw_m_area_info_t a1,
+		              clw_jc_zone_t z1, 
+		              clw_m_area_province_t ap1   
+		         where t1.enterprise_id = e1.enterprise_id
+		         and e1.enterprise_province = z1.zone_id
+		         and z1.zone_id = ap1.province_id
+		         and a1.region_id = ap1.region_id
+		         and t1.is_holiday = '0'
+		         and to_char(t1.report_day, 'yyyy-MM-dd') &gt;= #startDate#
+         		 and to_char(t1.report_day, 'yyyy-MM-dd') &lt;= #endDate#
+		         group by a1.region_id) u1,
+		        
+		    
+		    (select a1.region_id as region_id, a1.region_name as region_name, count(distinct(u1.userid)) as visitUserCount
+		         from clw_ub_sysenusmid_t u1,
+		              clw_jc_enterprise_t e1, 
+		              clw_m_area_info_t a1,
+		              clw_jc_zone_t z1, 
+		              clw_m_area_province_t ap1   
+		         where u1.enterprise_id = e1.enterprise_id
+		         and e1.enterprise_province = z1.zone_id
+		         and z1.zone_id = ap1.province_id
+		         and a1.region_id = ap1.region_id
+		         and u1.is_holiday = '0'
+		         and to_char(u1.report_day, 'yyyy-MM-dd') &gt;= #startDate#
+        		 and to_char(u1.report_day, 'yyyy-MM-dd') &lt;= #endDate#
+		         group by a1.region_id, a1.region_name) u2
+		         
+		     where u.region_id =  u1.region_id(+)
+		       and u.region_id = u2.region_id(+))
+		  <!--  
+		  <dynamic prepend="order by">
+			   <isNotEmpty property="order">
+			    	$order$ 
+			   </isNotEmpty>
+			   <isNotEmpty property="direction">
+			    	$direction$
+			   </isNotEmpty>
+		  </dynamic>
+		  -->
+	</select>
+
+		<!-- 省份统计 -->
+	<select id="getProvinceStatisticsList" parameterClass="Map" resultMap="result-visit-map">
+		 select  systemname,visitCount,visitEpCount,visitUserCount
+		from(select u.zone_id as id, u.zone_name as systemname, decode(u1.visitCount, null, 0,u1.visitCount) as visitCount, 
+		decode(u1.visitEpCount, null, 0,u1.visitEpCount) as visitEpCount
+		 , decode(u2.visitUserCount, null, 0,u2.visitUserCount) as visitUserCount
+		    from 
+		    (select a.zone_id as zone_id, a.zone_name as zone_name 
+		    from clw_jc_zone_t a
+		    where a.zone_level = '2'
+		    order by a.zone_code) u,
+		    
+		    (select z1.zone_id as zone_id, sum(t1.sysenm_allvis) as visitCount, count(distinct(t1.enterprise_id)) as visitEpCount
+		         from clw_ub_sysenmid_t t1,
+		              clw_jc_enterprise_t e1,
+		              clw_jc_zone_t z1 
+		         where t1.enterprise_id = e1.enterprise_id
+		         and e1.enterprise_province = z1.zone_id
+		         and z1.zone_level = '2'
+		         and t1.is_holiday = '0'
+		         and to_char(t1.report_day, 'yyyy-MM-dd') &gt;= #startDate#
+		         and to_char(t1.report_day, 'yyyy-MM-dd') &lt;= #endDate#
+		         group by z1.zone_id) u1,
+		         
+		    (select z1.zone_id as zone_id, count(distinct(u1.userid)) as visitUserCount
+		         from clw_ub_sysenusmid_t u1,
+		              clw_jc_enterprise_t e1,
+		              clw_jc_zone_t z1
+		         where u1.enterprise_id = e1.enterprise_id
+		         and e1.enterprise_province = z1.zone_id
+		         and z1.zone_level = '2'
+		         and u1.is_holiday = '0'
+		         and to_char(u1.report_day, 'yyyy-MM-dd') &gt;= #startDate#
+		         and to_char(u1.report_day, 'yyyy-MM-dd') &lt;= #endDate#
+		         group by z1.zone_id) u2
+		       
+		   where u.zone_id =  u1.zone_id(+)
+		     and u.zone_id = u2.zone_id(+))
+		  <!-- 
+		  <dynamic prepend="order by">
+			   <isNotEmpty property="order">
+			    	$order$ 
+			   </isNotEmpty>
+			   <isNotEmpty property="direction">
+			    	$direction$
+			   </isNotEmpty>
+		  </dynamic>
+		   -->
+		   
+	</select>
+	
+</sqlMap>

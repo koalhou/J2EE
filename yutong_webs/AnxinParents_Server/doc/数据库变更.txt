@@ -1,0 +1,8 @@
+2013-09-09：
+alter table CLW_BSP_ACCOUNT_T add constraint unique_account_name unique(account_name);
+alter table CLW_BSP_ACCOUNT_T add constraint unique_ACCOUNT_PHONE unique(ACCOUNT_PHONE);
+alter table CLW_BSP_ACCOUNT_T add constraint unique_ACCOUNT_EMAIL unique(ACCOUNT_EMAIL);
+
+alter table CLW_JZ_PUSHRULE_T modify update_time null;
+2013-09-10
+alter table CLW_BSP_UNSTRUCTUR_FILE_T modify module_id default 0;

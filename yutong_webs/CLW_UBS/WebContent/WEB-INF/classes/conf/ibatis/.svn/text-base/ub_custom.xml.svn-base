@@ -1,0 +1,1096 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CustomActivity">
+ 
+    <typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="meta" type="com.neusoft.clw.yw.ub.custom.ds.Meta" />
+	<typeAlias alias="gather" type="com.neusoft.clw.yw.ub.custom.ds.Gather" />
+	<typeAlias alias="accountGather" type="com.neusoft.clw.yw.ub.custom.ds.AccountGather" />
+	<typeAlias alias="serviceInfo" type="com.neusoft.clw.yw.ub.srv.ds.ServiceInfo" />
+
+
+	<select id="getRegionList" parameterClass="String" resultClass="meta">
+		select 
+			a.region_id as code,
+			a.region_name  as name 
+		from clw_m_area_info_t a 
+		where a.region_status=0
+	</select>
+	
+	<select id="getProvinceList" parameterClass="String" resultClass="meta">
+		select b.zone_id code , b.zone_name as name
+		  from clw_m_area_province_t a, CLW_JC_ZONE_T b
+		 where a.province_id = b.zone_id and a.region_id=#value#
+		   and b.valid_flag = 0
+	</select>
+	
+	<select id="getCityList" parameterClass="String" resultClass="meta">
+		select b.zone_id code , b.zone_name as name
+		  from  CLW_JC_ZONE_T b
+		 where b.zone_parent_id=#value#
+		   and b.valid_flag = 0
+	</select>
+	
+	
+	<!-- ================================================================ -->
+	<!-- ====================所有企业的图表、表格========================== -->
+	<!-- ================================================================ -->
+			<sql id="getAcEntID">
+			select  b.enterprise_id
+			       			
+			 from CLW_JC_ENTERPRISE_T b,
+			 		  ( select a.enterprise_id,
+					        case sign(to_date(#endDay#, 'yyyy-MM-dd') - b.open_time - 29)
+					          when -1 then
+					           0
+					          else
+					           decode(sign(a.sum_dvis - a.cnt), -1, 0, 1)
+					        end as ac
+					   from (select enterprise_id, count(*) cnt ,
+						   <isEqual   compareValue="all" property="plat">	
+						     sum(all_dvis) sum_dvis
+						   </isEqual>
+						   <isEqual   compareValue="app" property="plat">	
+						     sum(app_dvis) sum_dvis
+						   </isEqual>
+						   <isEqual   compareValue="web" property="plat">	
+						     sum(web_dvis) sum_dvis
+						   </isEqual>
+					           from clw_ub_entcustomer_day_t
+					          where report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+					                to_date(#endDay#, 'yyyy-MM-dd')
+					            and is_holiday = '0'
+					          group by enterprise_id) a,
+					        CLW_JC_ENTERPRISE_T b
+					  where a.enterprise_id = b.enterprise_id) z
+			      <isNotEmpty prepend="," property="area">
+					 clw_m_area_province_t d
+			      </isNotEmpty>
+			 where   
+			      z.enterprise_id =b.enterprise_id 
+				 <isNotEmpty prepend="and" property="area">
+					 d.province_id = b.enterprise_province
+			         and d.region_id =#area#
+			     </isNotEmpty>			 
+				  <isNotEmpty prepend="and" property="province">
+				 	 b.enterprise_province = #province#
+				 </isNotEmpty>	
+				 <isNotEmpty prepend="and" property="city">
+				 	 b.enterprise_city = #city#
+				 </isNotEmpty>
+				 <isNotEmpty prepend="and" property="customerType">
+			         b.CUSTOMER_TYPE =#customerType#
+			    </isNotEmpty>
+			    <isNotEmpty prepend="and" property="ac">
+			    	 z.ac=#ac#
+			    </isNotEmpty>
+				 
+	</sql>
+			<sql id="getAcEntInfo">
+			select  b.*,z.ac
+			       			
+			 from CLW_JC_ENTERPRISE_T b,
+			 		  ( select a.enterprise_id,
+					        case sign(to_date(#endDay#, 'yyyy-MM-dd') - b.open_time - 29)
+					          when -1 then
+					           0
+					          else
+					           decode(sign(a.sum_dvis - a.cnt), -1, 0, 1)
+					        end as ac
+					   from (select enterprise_id, count(*) cnt ,
+						   <isEqual   compareValue="all" property="plat">	
+						     sum(all_dvis) sum_dvis
+						   </isEqual>
+						   <isEqual   compareValue="app" property="plat">	
+						     sum(app_dvis) sum_dvis
+						   </isEqual>
+						   <isEqual   compareValue="web" property="plat">	
+						     sum(web_dvis) sum_dvis
+						   </isEqual>
+					           from clw_ub_entcustomer_day_t
+					          where report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+					                to_date(#endDay#, 'yyyy-MM-dd')
+					            and is_holiday = '0'
+					          group by enterprise_id) a,
+					        CLW_JC_ENTERPRISE_T b
+					  where a.enterprise_id = b.enterprise_id) z
+			      <isNotEmpty prepend="," property="area">
+					 clw_m_area_province_t d
+			      </isNotEmpty>
+			 where   
+			      z.enterprise_id =b.enterprise_id 
+				 <isNotEmpty prepend="and" property="area">
+					 d.province_id = b.enterprise_province
+			         and d.region_id =#area#
+			     </isNotEmpty>			 
+				  <isNotEmpty prepend="and" property="province">
+				 	 b.enterprise_province = #province#
+				 </isNotEmpty>	
+				 <isNotEmpty prepend="and" property="city">
+				 	 b.enterprise_city = #city#
+				 </isNotEmpty>
+				 <isNotEmpty prepend="and" property="customerType">
+			         b.CUSTOMER_TYPE =#customerType#
+			    </isNotEmpty>
+			    <isNotEmpty prepend="and" property="ac">
+			    	 z.ac=#ac#
+			    </isNotEmpty>
+				 
+	</sql>
+	<!-- 各个服务的统计Bar图 -->
+	<select id="getServiceVisBars" parameterClass="Map" resultClass="serviceInfo">
+			select nvl(g.vis, 0) as vis,
+		       f.service_name as name
+		  from (select a.service_id,
+		                     <isEqual   compareValue="web" property="plat">	
+			  				nvl(sum(a.web_allvis),0) as vis
+			  			</isEqual>
+			  			<isEqual   compareValue="app" property="plat">	
+			  				nvl(sum(a.app_allvis),0) as vis
+			  			</isEqual>
+		                  from clw_ub_entservice_day_t a
+		                 where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+				       		to_date(#endDay#, 'yyyy-MM-dd') and a.ENTERPRISE_ID in ( <include refid="getAcEntID"/> )
+		                 group by a.service_id) g,
+		       CLW_JC_SERVICE_T f
+		 where f.service_id = g.service_id(+)
+		 		<isEqual   compareValue="web" property="plat" >
+		       		and	f.SYSTEM_TYPE='1'
+		          </isEqual>
+			 		<isEqual   compareValue="app" property="plat" >
+		       		and	f.SYSTEM_TYPE='2'
+		          </isEqual>
+	</select>
+	<!-- 各个服务的统计表格 -->
+	<select id="getServiceVisGrid" parameterClass="Map" resultClass="serviceInfo">
+			select nvl(g.vis, 0) as vis,
+		       nvl(g.visEntCnt, 0) as visEntCnt,
+		       nvl(g.openEntCnt, 0) as openEntCnt,
+		       decode(nvl(g.openEntCnt, 0),0,0,round(nvl(g.visEntCnt, 0)/nvl(g.openEntCnt, 0),3)*100)  as visActivity,
+		       f.service_name as name,
+		       f.service_id as id
+		  from (select c.service_id, c.vis, d.visEntCnt, e.openEntCnt
+		          from (select a.service_id,
+		                     <isEqual   compareValue="web" property="plat">	
+			  				nvl(sum(a.web_allvis),0) as vis
+			  			</isEqual>
+			  			<isEqual   compareValue="app" property="plat">	
+			  				nvl(sum(a.app_allvis),0) as vis
+			  			</isEqual>
+		                  from clw_ub_entservice_day_t a
+		                 where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+				       		to_date(#endDay#, 'yyyy-MM-dd') and a.ENTERPRISE_ID in ( <include refid="getAcEntID"/> )
+		                 group by a.service_id) c,
+		               (select a.service_id,
+		                       
+		                       count(distinct a.enterprise_id) as visEntCnt
+		                
+		                  from clw_ub_entservice_day_t a
+		                 where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+				       		to_date(#endDay#, 'yyyy-MM-dd') and a.ENTERPRISE_ID in ( <include refid="getAcEntID"/> )
+		                   <isEqual   compareValue="web" property="plat">	
+			  				 and  <![CDATA[  a.web_allvis <> 0 ]]>
+			  			</isEqual>
+			  			<isEqual   compareValue="app" property="plat">	
+			  				and  <![CDATA[ a.app_allvis <> 0 ]]>
+			  			</isEqual>
+		                 group by a.service_id) d,
+		               (select a.service_id,
+		                       
+		                       count(*) as openEntCnt
+		                
+		                  from clw_ub_entservice_day_t a
+		                 where a.report_day = to_date(#endDay#, 'yyyy-MM-dd') and a.ENTERPRISE_ID in ( <include refid="getAcEntID"/> )
+		                 group by a.service_id) e
+		         where c.service_id = e.service_id
+		           and d.service_id(+) = e.service_id) g,
+		       CLW_JC_SERVICE_T f
+		 where f.service_id = g.service_id(+)
+		 		<isEqual   compareValue="web" property="plat" >
+		       		and	f.SYSTEM_TYPE='1'
+		          </isEqual>
+			 		<isEqual   compareValue="app" property="plat" >
+		       		and	f.SYSTEM_TYPE='2'
+		          </isEqual>
+	
+			
+	</select>
+	<!-- 获取开通企业数、车辆数、活跃企业数 -->
+		<select id="getEntAndBus" parameterClass="Map" resultClass="gather">
+			select  #endDay#  reportDate,nvl(sum(z.ac),0) as emEntCnt,nvl(count(a.enterprise_id),0) as openEntCnt,nvl(sum(a.VEHICLE_COUNT),0) as busCnt
+			       			
+			 from clw_ub_entcustomer_day_t a, ( <include refid="getAcEntInfo"/> ) z
+			 where   z.enterprise_id =a.enterprise_id and  a.report_day =to_date(#endDay#, 'yyyy-MM-dd')
+			        <isEqual   compareValue="app" property="plat">
+					          and  a.isopen_app='1' 
+					    </isEqual>
+	</select>
+	<!-- 获取总访次和工作日访次 -->
+		<select id="getEntSum" parameterClass="Map" resultClass="gather">
+			select 
+							<isEqual   compareValue="web" property="plat">	
+			nvl(sum(a.web_DVIS),0) vis, decode(nvl(count(distinct a.report_day),0),0,0,round(nvl(sum(a.web_DVIS),0)/count(distinct a.report_day),1))  as dayVis
+				  			</isEqual>
+				  			<isEqual   compareValue="app" property="plat">	
+			nvl(sum(a.App_DVIS),0) vis,decode(nvl(count(distinct a.report_day),0),0,0,round(nvl(sum(a.app_DVIS),0)/count(distinct a.report_day),1))  as dayVis
+				  			</isEqual>
+				  			<isEqual   compareValue="all" property="plat">	
+				  				 
+			nvl(sum(a.ALL_DVIS),0) vis,decode(nvl(count(distinct a.report_day),0),0,0,round(nvl(sum(a.all_DVIS),0)/count(distinct a.report_day),1))  as dayVis
+				  			</isEqual>
+			
+			 from clw_ub_entcustomer_day_t a, ( <include refid="getAcEntInfo"/> ) z
+			 where  z.enterprise_id =a.enterprise_id 
+			     and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+					               to_date(#endDay#, 'yyyy-MM-dd') 
+				 and a.is_holiday='0'
+	</select>
+	
+		<select id="getLinesDay" parameterClass="Map" resultClass="gather">
+			select * from (select s.*, rownum as rownum_2 from (
+			  select to_char(c.report_day,'yyyy/MM/dd') as reportDate,
+			  		count(c.enterprise_id) as openEntCnt,
+			  		nvl(sum(c.ac),0) as emEntCnt,
+			  		nvl(sum(c.vehicle_count),0) as busCnt,
+				  		nvl(sum(c.vis),0)  as vis,
+				  		nvl(sum(c.amvis),0)  as amvis,
+				  		nvl(sum(c.pmvis),0)  as pmvis,
+				  		nvl(sum(c.nivis),0)  as nivis,
+				  		nvl(sum(c.addvis),0)  as addvis,
+				  		sign(sum(c.is_holiday)) as isHoliday
+			  from (
+					   select a.report_day,
+					          a.enterprise_id,
+					          a.vehicle_count,
+					          a.is_holiday,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis,
+					          </isEqual>
+					          case  sign(a.report_day - b.open_time - 29)
+					          when -1 then 0
+					          when 0  then 0
+					          <isEqual   compareValue="all" property="plat">
+					          else decode(sign(a.all_dvis-1),-1,0,1) 
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+					          else decode(sign(a.web_dvis-1),-1,0,1) 
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+					          else decode(sign(a.app_dvis-1),-1,0,1) 
+					          </isEqual>
+					          end as ac 
+					     from clw_ub_entcustomer_day_t a,CLW_JC_ENTERPRISE_T b
+					      <isNotEmpty prepend="," property="area">
+							 clw_m_area_province_t d
+					      </isNotEmpty>
+					     where a.enterprise_id=b.enterprise_id 
+					     <isEqual prepend="and"  compareValue="app" property="plat">
+					          a.isopen_app='1' 
+					       </isEqual>
+					     <isNotEmpty prepend="and" property="area">
+							 d.province_id = b.enterprise_province
+					         and d.region_id =#area#
+					     </isNotEmpty>			 
+						  <isNotEmpty prepend="and" property="province">
+						 	 b.enterprise_province = #province#
+						 </isNotEmpty>	
+						 <isNotEmpty prepend="and" property="city">
+						 	 b.enterprise_city = #city#
+						 </isNotEmpty>
+						 <isNotEmpty prepend="and" property="customerType">
+					         b.CUSTOMER_TYPE =#customerType#
+					    </isNotEmpty>
+					    <isEqual   compareValue="app" property="plat">
+					          and  a.isopen_app='1' 
+					    </isEqual>
+					     
+			     ) c
+			     where 1=1  <isNotEmpty prepend="and" property="ac"> c.ac=#ac# </isNotEmpty>
+			     and c.report_day between to_date(#startDay#, 'yyyy-MM-dd') and to_date(#endDay#, 'yyyy-MM-dd')
+			      group by c.report_day order by c.report_day $sortOrder$ 
+			) s 
+				<isNotEmpty prepend="where" property="rowEnd">
+			    <![CDATA[  rownum<= #rowEnd#]]>  
+				</isNotEmpty>
+			 )
+			 <isNotEmpty prepend="where" property="rowEnd">
+		    <![CDATA[  rownum_2 > #rowStart#]]>  
+			</isNotEmpty>
+				 
+	</select>
+	<select id="getOvis4LinesDay" parameterClass="Map" resultClass="gather">
+			<isEqual   compareValue="all" property="plat">
+				select c.reportDate,c.oVis+d.oVis  as oVis from 
+					(select to_char(trunc(a.operate_time),'yyyy/MM/dd') as reportDate,count(*) as oVis from clw_jc_log_t a 
+				where trunc(a.operate_time) between to_date(#startDay#, 'yyyy-MM-dd') and to_date(#endDay#, 'yyyy-MM-dd')  
+				and a.enterprise_id in (<include refid="getAcEntID"/>) and a.apply_id='1' 
+				group by trunc(a.operate_time))  c,
+					(select to_char(trunc(a.operate_time),'yyyy/MM/dd') as reportDate,count(*) as oVis from clw_m_user_behavior_t a  
+				where trunc(a.operate_time) between to_date(#startDay#, 'yyyy-MM-dd') and to_date(#endDay#, 'yyyy-MM-dd')
+				and a.enterprise_id in (<include refid="getAcEntID"/>)      
+				group by trunc(a.operate_time)) d
+				where c.reportDate=d.reportDate(+) 
+			</isEqual>
+			<isEqual   compareValue="web" property="plat">
+				select to_char(trunc(a.operate_time),'yyyy/MM/dd') as reportDate,count(*) as oVis from clw_jc_log_t a 
+				where trunc(a.operate_time) between to_date(#startDay#, 'yyyy-MM-dd') and to_date(#endDay#, 'yyyy-MM-dd')  
+				and a.enterprise_id in (<include refid="getAcEntID"/>) and a.apply_id='1'
+				group by trunc(a.operate_time)
+			</isEqual>
+			<isEqual   compareValue="app" property="plat">
+				select to_char(trunc(a.operate_time),'yyyy/MM/dd') as reportDate,count(*) as oVis from clw_m_user_behavior_t a  
+				where trunc(a.operate_time) between to_date(#startDay#, 'yyyy-MM-dd') and to_date(#endDay#, 'yyyy-MM-dd')
+				and a.enterprise_id in (<include refid="getAcEntID"/>)      
+				group by trunc(a.operate_time)	         
+			</isEqual>
+	
+	
+	</select>
+	
+		<select id="getLinesDayCnt" parameterClass="Map" resultClass="Integer">
+			  select count(*)  from (select * 
+			  from (
+					   select a.report_day,
+					          a.enterprise_id,
+					          a.vehicle_count,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis,
+					          </isEqual>
+					          case  sign(a.report_day - b.open_time - 29)
+					          when -1 then 0
+					          when 0  then 0
+					          <isEqual   compareValue="all" property="plat">
+					          else decode(sign(a.all_dvis-1),-1,0,1) 
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+					          else decode(sign(a.web_dvis-1),-1,0,1) 
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+					          else decode(sign(a.app_dvis-1),-1,0,1) 
+					          </isEqual>
+					          end as ac 
+					     from clw_ub_entcustomer_day_t a,CLW_JC_ENTERPRISE_T b
+					      <isNotEmpty prepend="," property="area">
+							 clw_m_area_province_t d
+					      </isNotEmpty>
+					     where a.enterprise_id=b.enterprise_id 
+					     <isEqual prepend="and"  compareValue="app" property="plat">
+					          a.isopen_app='1' 
+					       </isEqual>
+					     <isNotEmpty prepend="and" property="area">
+							 d.province_id = b.enterprise_province
+					         and d.region_id =#area#
+					     </isNotEmpty>			 
+						  <isNotEmpty prepend="and" property="province">
+						 	 b.enterprise_province = #province#
+						 </isNotEmpty>	
+						 <isNotEmpty prepend="and" property="city">
+						 	 b.enterprise_city = #city#
+						 </isNotEmpty>
+						 <isNotEmpty prepend="and" property="customerType">
+					         b.CUSTOMER_TYPE =#customerType#
+					    </isNotEmpty>
+					     
+			     ) c
+			     where 1=1  <isNotEmpty prepend="and" property="ac"> c.ac=#ac# </isNotEmpty>
+			     and c.report_day between to_date(#startDay#, 'yyyy-MM-dd') and to_date(#endDay#, 'yyyy-MM-dd')
+			      group by c.report_day )
+				 
+	</select>
+	
+		<select id="getLinesWeek" parameterClass="Map" resultClass="gather">
+			  select c.report_day as reportDate,
+			  		count(c.enterprise_id) as openEntCnt,
+			  		nvl(sum(c.ac),0) as emEntCnt,
+			  		nvl(sum(c.vehicle_count),0) as busCnt,
+				  		nvl(sum(c.vis),0)  as vis,
+				  		nvl(sum(c.amvis),0)  as amvis,
+				  		nvl(sum(c.pmvis),0)  as pmvis,
+				  		nvl(sum(c.nivis),0)  as nivis,
+				  		nvl(sum(c.addvis),0)  as addvis
+			  from (
+					   select to_char(a.week_begin,'yyyy/MM/dd')||'-'||to_char(a.week_end,'yyyy/MM/dd') as report_day,
+					          a.enterprise_id,
+					          a.vehicle_count,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis,
+					          </isEqual>
+					          case  sign(a.week_end - b.open_time - 29)
+					          when -1 then 0
+					          when 0  then 0
+					          <isEqual   compareValue="all" property="plat">
+					          else decode(sign(a.all_dvis-( countholidays(a.week_begin,a.week_end))),-1,0,1)  
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+					          else decode(sign(a.web_dvis-( countholidays(a.week_begin,a.week_end))),-1,0,1)   
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+					          else decode(sign(a.app_dvis-( countholidays(a.week_begin,a.week_end))),-1,0,1)  
+					          </isEqual>
+					          end as ac 
+					     from clw_ub_entcustomer_week_t a,CLW_JC_ENTERPRISE_T b
+					      <isNotEmpty prepend="," property="area">
+							 clw_m_area_province_t d
+					      </isNotEmpty>
+					     where a.enterprise_id=b.enterprise_id 
+					     <![CDATA[
+					     and a.week_begin >=to_date(#startDay#,'yyyy-MM-dd') and a.week_end <=to_date(#endDay#,'yyyy-MM-dd')
+					     ]]>
+					     <isNotEmpty prepend="and" property="area">
+							 d.province_id = b.enterprise_province
+					         and d.region_id =#area#
+					     </isNotEmpty>			 
+						  <isNotEmpty prepend="and" property="province">
+						 	 b.enterprise_province = #province#
+						 </isNotEmpty>	
+						 <isNotEmpty prepend="and" property="city">
+						 	 b.enterprise_city = #city#
+						 </isNotEmpty>
+						 <isNotEmpty prepend="and" property="customerType">
+					         b.CUSTOMER_TYPE =#customerType#
+					    </isNotEmpty>
+					     
+			     ) c
+			     where 1=1  <isNotEmpty prepend="and" property="ac"> c.ac=#ac# </isNotEmpty>
+			      group by c.report_day order by c.report_day
+	</select>
+	
+			<select id="getLinesMonth" parameterClass="Map" resultClass="gather">
+			  select c.report_day as reportDate,
+			  		count(c.enterprise_id) as openEntCnt,
+			  		nvl(sum(c.ac),0) as emEntCnt,
+			  		nvl(sum(c.vehicle_count),0) as busCnt,
+				  		nvl(sum(c.vis),0)  as vis,
+				  		nvl(sum(c.amvis),0)  as amvis,
+				  		nvl(sum(c.pmvis),0)  as pmvis,
+				  		nvl(sum(c.nivis),0)  as nivis,
+				  		nvl(sum(c.addvis),0)  as addvis
+			  from (
+					   select to_char(a.month_begin,'yyyy/MM/dd')||'-'||to_char(a.month_end,'yyyy/MM/dd') as report_day,
+					          a.enterprise_id,
+					          a.vehicle_count,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis,
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis,
+					          </isEqual>
+					          case  sign(a.month_end - b.open_time - 29)
+					          when -1 then 0
+					          when 0  then 0
+					          <isEqual   compareValue="all" property="plat">
+					          else decode(sign(a.all_dvis-(countholidays(a.month_begin,a.month_end))),-1,0,1) 
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+					          else decode(sign(a.web_dvis-(countholidays(a.month_begin,a.month_end))),-1,0,1)  
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+					          else decode(sign(a.app_dvis-(countholidays(a.month_begin,a.month_end))),-1,0,1)  
+					          </isEqual>
+					          end as ac 
+					     from clw_ub_entcustomer_month_t a,CLW_JC_ENTERPRISE_T b
+					      <isNotEmpty prepend="," property="area">
+							 clw_m_area_province_t d
+					      </isNotEmpty>
+					     where a.enterprise_id=b.enterprise_id 
+					     <![CDATA[
+					     and a.month_begin >=to_date(#startDay#,'yyyy-MM-dd') and a.month_end <=to_date(#endDay#,'yyyy-MM-dd')
+					     ]]>
+					     <isNotEmpty prepend="and" property="area">
+							 d.province_id = b.enterprise_province
+					         and d.region_id =#area#
+					     </isNotEmpty>			 
+						  <isNotEmpty prepend="and" property="province">
+						 	 b.enterprise_province = #province#
+						 </isNotEmpty>	
+						 <isNotEmpty prepend="and" property="city">
+						 	 b.enterprise_city = #city#
+						 </isNotEmpty>
+						 <isNotEmpty prepend="and" property="customerType">
+					         b.CUSTOMER_TYPE =#customerType#
+					    </isNotEmpty>
+			     ) c
+			     where 1=1  <isNotEmpty prepend="and" property="ac"> c.ac=#ac# </isNotEmpty>
+			      group by c.report_day order by c.report_day
+	</select>
+	<select id="getLinesRange" parameterClass="Map" resultClass="gather">
+			  select c.report_day as reportDate,
+				  		nvl(sum(c.vis),0)  as vis,
+				  		nvl(sum(c.amvis),0)  as amvis,
+				  		nvl(sum(c.pmvis),0)  as pmvis,
+				  		nvl(sum(c.nivis),0)  as nivis,
+				  		nvl(sum(c.addvis),0)  as addvis
+			  from (
+					   select to_char(to_date(#startDay#,'yyyy-MM-dd'),'yyyy/MM/dd')||'-'||to_char(to_date(#endDay#,'yyyy-MM-dd'),'yyyy/MM/dd') as report_day,
+					          a.enterprise_id,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis
+					          </isEqual>
+					         
+					     from clw_ub_entcustomer_day_t a,CLW_JC_ENTERPRISE_T b
+					      <isNotEmpty prepend="," property="area">
+							 clw_m_area_province_t d
+					      </isNotEmpty>
+					     where a.enterprise_id=b.enterprise_id 
+					     	and a.report_day between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+					     	<isEqual prepend="and"  compareValue="app" property="plat">
+					          a.isopen_app='1' 
+					       </isEqual>
+					     <isNotEmpty prepend="and" property="area">
+							 d.province_id = b.enterprise_province
+					         and d.region_id =#area#
+					     </isNotEmpty>			 
+						  <isNotEmpty prepend="and" property="province">
+						 	 b.enterprise_province = #province#
+						 </isNotEmpty>	
+						 <isNotEmpty prepend="and" property="city">
+						 	 b.enterprise_city = #city#
+						 </isNotEmpty>
+						 <isNotEmpty prepend="and" property="customerType">
+					         b.CUSTOMER_TYPE =#customerType#
+					    </isNotEmpty>
+			     ) c
+			     where 1=1  <isNotEmpty prepend="and" property="ac"> c.ac=#ac# </isNotEmpty>
+			      group by c.report_day order by c.report_day
+	</select>
+	<!-- 查询企业 -->
+	  	<select id="getEveryEntRang" parameterClass="Map" resultClass="gather">
+			 select 
+			 		b.enterprise_id as entID,
+			 		b.enterprise_code as entCode,
+			 		b.short_name as entName,
+			 		b.customer_type as entType,
+			 		to_char(b.open_time, 'yyyy-MM-dd') as entOpenTime,
+			 		b.ac    as ac,
+			 		nvl(t.vis,0) as vis,
+			        nvl(t.amvis,0) as amvis,
+			        nvl(t.pmvis,0) as pmvis,
+			        nvl(t.nivis,0) as nivis,
+			        nvl(t.addvis,0) as addvis
+			 		
+			  from 
+			       (select a.enterprise_id,
+			      	  <isEqual   compareValue="all" property="plat">
+			               sum(a.all_dvis) as vis,
+			               sum(a.all_amvis) as amvis,
+			               sum(a.all_pmvis) as pmvis,
+			               sum(a.all_nivis) as nivis,
+			               sum(a.all_addvis) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="web" property="plat">
+			               sum(a.web_dvis) as vis,
+			               sum(a.web_amvis) as amvis,
+			               sum(a.web_pmvis) as pmvis,
+			               sum(a.web_nivis) as nivis,
+			               sum(a.web_addvis) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="app" property="plat">
+			               sum(a.app_dvis) as vis,
+			               sum(a.app_amvis) as amvis,
+			               sum(a.app_pmvis) as pmvis,
+			               sum(a.app_nivis) as nivis,
+			               sum(a.app_addvis) as addvis
+			            </isEqual>   
+			          from clw_ub_entcustomer_day_t a
+			         where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+			               to_date(#endDay#, 'yyyy-MM-dd')
+			               <isEqual prepend="and"  compareValue="app" property="plat">
+					          a.isopen_app='1' 
+					       </isEqual>
+			         group by a.enterprise_id) t,( <include refid="getAcEntInfo"/> ) b
+			 where b.enterprise_id = t.enterprise_id
+			   <isNotEmpty prepend="and" property="id">
+					 (b.enterprise_code =#id#  or  b.short_name like '%$id$%')
+			   </isNotEmpty>
+	</select>
+	<!-- ================================================================ -->
+	<!-- ====================单个企业的图表、表格========================== -->
+	<!-- ================================================================ -->
+		  	<select id="getOneGather" parameterClass="Map" resultClass="gather">
+		select z.enterprise_id as entID,
+	       z.short_name    as entName,
+	       z.vehicle_count as busCnt,       
+	       nvl(t.vis, 0) as vis,
+	       nvl(t.amvis, 0) as amvis,
+	       nvl(t.pmvis, 0) as pmvis,
+	       nvl(t.nivis, 0) as nivis,
+	       nvl(t.addvis, 0) as addvis,
+	      round( nvl(t.vis, 0) /
+	       (
+	        countholidays(to_date(#startDay#, 'yyyy-MM-dd'),
+	                      to_date(#endDay#, 'yyyy-MM-dd'))),1) as dayVis,
+	       
+	       case sign(to_date(#startDay#, 'yyyy-MM-dd') - z.open_time - 29)
+	         when -1 then
+	          0
+	         when 0 then
+	          0
+	         else
+	          decode(sign(nvl(t.vis, 0) -
+	                      (
+	                       countholidays(to_date(#startDay#, 'yyyy-MM-dd'),
+	                                     to_date(#endDay#, 'yyyy-MM-dd')))),
+	                 -1,
+	                 0,
+	                 1)
+	       end as ac
+	
+	  from (select a.enterprise_id, b.short_name, a.vehicle_count, b.open_time
+	          from clw_ub_entcustomer_day_t a, CLW_JC_ENTERPRISE_T b
+	         where a.enterprise_id = b.enterprise_id
+	           and a.enterprise_id = #id#
+	           and a.report_day = to_date(#endDay#, 'yyyy-MM-dd')) z,
+	       (select a.enterprise_id,
+	       			<isEqual   compareValue="all" property="plat">
+			               sum(a.all_dvis) as vis,
+			               sum(a.all_amvis) as amvis,
+			               sum(a.all_pmvis) as pmvis,
+			               sum(a.all_nivis) as nivis,
+			               sum(a.all_addvis) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="web" property="plat">
+			               sum(a.web_dvis) as vis,
+			               sum(a.web_amvis) as amvis,
+			               sum(a.web_pmvis) as pmvis,
+			               sum(a.web_nivis) as nivis,
+			               sum(a.web_addvis) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="app" property="plat">
+			               sum(a.app_dvis) as vis,
+			               sum(a.app_amvis) as amvis,
+			               sum(a.app_pmvis) as pmvis,
+			               sum(a.app_nivis) as nivis,
+			               sum(a.app_addvis) as addvis
+			            </isEqual>   
+	          from clw_ub_entcustomer_day_t a
+	         where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+	               to_date(#endDay#, 'yyyy-MM-dd')
+	               <isEqual prepend="and"  compareValue="app" property="plat">
+			              a.isopen_app=1
+			       </isEqual> 
+	           and a.enterprise_id = #id#
+	         group by a.enterprise_id) t
+	 where z.enterprise_id = t.enterprise_id(+)	   
+	</select>
+			<select id="getOneLinesDayCnt" parameterClass="Map" resultClass="Integer">
+		
+			 select      count(*)  
+			          from clw_ub_entcustomer_day_t a
+			         where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+			               to_date(#endDay#, 'yyyy-MM-dd')
+			               and a.enterprise_id=#id#
+			         
+	</select>
+		<select id="getOneLinesDay" parameterClass="Map" resultClass="gather">
+		select * from (select s.*, rownum as rownum_2 from (
+			 select      to_char(a.report_day,'yyyy/MM/dd') as reportDate,
+			             a.is_holiday as isHoliday,
+			      	  <isEqual   compareValue="all" property="plat">
+			               nvl(a.all_dvis,0) as vis,
+			               nvl(a.all_amvis,0) as amvis,
+			               nvl(a.all_pmvis,0) as pmvis,
+			               nvl(a.all_nivis,0) as nivis,
+			               nvl(a.all_addvis,0) as addvis
+			               
+			            </isEqual>   
+			      	  <isEqual   compareValue="web" property="plat">
+			               nvl(a.web_dvis,0) as vis,
+			               nvl(a.web_amvis,0) as amvis,
+			               nvl(a.web_pmvis,0) as pmvis,
+			               nvl(a.web_nivis,0) as nivis,
+			               nvl(a.web_addvis,0) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="app" property="plat">
+			               nvl(a.app_dvis,0) as vis,
+			               nvl(a.app_amvis,0) as amvis,
+			               nvl(a.app_pmvis,0) as pmvis,
+			               nvl(a.app_nivis,0) as nivis,
+			               nvl(a.app_addvis,0) as addvis
+			            </isEqual>   
+			          from clw_ub_entcustomer_day_t a
+			         where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+			               to_date(#endDay#, 'yyyy-MM-dd')
+			               and a.enterprise_id=#id#
+			          order by a.report_day  $sortOrder$ 
+			) s 
+				<isNotEmpty prepend="where" property="rowEnd">
+			    <![CDATA[  rownum<= #rowEnd#]]>  
+				</isNotEmpty>
+			 )
+			 <isNotEmpty prepend="where" property="rowEnd">
+		    <![CDATA[  rownum_2 > #rowStart#]]>  
+			</isNotEmpty>
+			         
+	</select>
+		<select id="getOneLinesRange" parameterClass="Map" resultClass="gather">
+			 select      to_char(to_date(#startDay#,'yyyy-MM-dd'),'yyyy/MM/dd')||'-'||to_char(to_date(#endDay#,'yyyy-MM-dd'),'yyyy/MM/dd') as reportDate,
+			      	  <isEqual   compareValue="all" property="plat">
+			               nvl(sum(a.all_dvis),0) as vis,
+			               nvl(sum(a.all_amvis),0) as amvis,
+			               nvl(sum(a.all_pmvis),0) as pmvis,
+			               nvl(sum(a.all_nivis),0) as nivis,
+			               nvl(sum(a.all_addvis),0) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="web" property="plat">
+			               nvl(sum(a.web_dvis),0) as vis,
+			               nvl(sum(a.web_amvis),0) as amvis,
+			               nvl(sum(a.web_pmvis),0) as pmvis,
+			               nvl(sum(a.web_nivis),0) as nivis,
+			               nvl(sum(a.web_addvis),0) as addvis
+			            </isEqual>   
+			      	  <isEqual   compareValue="app" property="plat">
+			               nvl(sum(a.app_dvis),0) as vis,
+			               nvl(sum(a.app_amvis),0) as amvis,
+			               nvl(sum(a.app_pmvis),0) as pmvis,
+			               nvl(sum(a.app_nivis),0) as nivis,
+			               nvl(sum(a.app_addvis),0) as addvis
+			            </isEqual>   
+			          from clw_ub_entcustomer_day_t a
+			         where a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+			               to_date(#endDay#, 'yyyy-MM-dd')
+			               and a.enterprise_id=#id#
+			         group by a.enterprise_id
+	</select>
+		<select id="getOneLinesWeek" parameterClass="Map" resultClass="gather">
+			 select c.report_day as reportDate,
+				  		nvl(sum(c.vis),0)  as vis,
+				  		nvl(sum(c.amvis),0)  as amvis,
+				  		nvl(sum(c.pmvis),0)  as pmvis,
+				  		nvl(sum(c.nivis),0)  as nivis,
+				  		nvl(sum(c.addvis),0)  as addvis
+			  from (
+					   select to_char(a.week_begin,'yyyy/MM/dd')||'-'||to_char(a.week_end,'yyyy/MM/dd') as report_day,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis
+					          </isEqual>
+					          
+					     from clw_ub_entcustomer_week_t a
+					     where  a.enterprise_id=#id#
+					     <![CDATA[
+					     	and a.week_begin >= to_date(#startDay#,'yyyy-MM-dd') 
+					     	and a.week_end <=   to_date(#endDay#,'yyyy-MM-dd') ]]>
+			     ) c
+			      group by c.report_day order by c.report_day
+	</select>
+		<select id="getOneLinesMonth" parameterClass="Map" resultClass="gather">
+			 select c.report_day as reportDate,
+				  		nvl(sum(c.vis),0)  as vis,
+				  		nvl(sum(c.amvis),0)  as amvis,
+				  		nvl(sum(c.pmvis),0)  as pmvis,
+				  		nvl(sum(c.nivis),0)  as nivis,
+				  		nvl(sum(c.addvis),0)  as addvis
+			  from (
+					   select to_char(a.month_begin,'yyyy/MM/dd')||'-'||to_char(a.month_end,'yyyy/MM/dd') as report_day,
+					          <isEqual   compareValue="all" property="plat">
+						          a.all_dvis as vis,
+						          a.all_amvis as amvis,
+						          a.all_pmvis as pmvis,
+						          a.all_nivis as nivis,
+						          a.all_addvis as addvis
+					          </isEqual>
+					          <isEqual   compareValue="web" property="plat">
+						          a.web_dvis as vis,
+						          a.web_amvis as amvis,
+						          a.web_pmvis as pmvis,
+						          a.web_nivis as nivis,
+						          a.web_addvis as addvis
+					          </isEqual>
+					          <isEqual   compareValue="app" property="plat">
+						          a.app_dvis as vis,
+						          a.app_amvis as amvis,
+						          a.app_pmvis as pmvis,
+						          a.app_nivis as nivis,
+						          a.app_addvis as addvis
+					          </isEqual>
+					          
+					     from clw_ub_entcustomer_month_t a
+					     where  a.enterprise_id=#id#
+					     <![CDATA[
+					     	and a.month_begin >= to_date(#startDay#,'yyyy-MM-dd') 
+					     	and a.month_end <=   to_date(#endDay#,'yyyy-MM-dd') ]]>
+			     ) c
+			      group by c.report_day order by c.report_day
+	</select>
+	<select id="getAccountGrid" parameterClass="Map" resultClass="accountGather">
+			select e.id,e.name,to_char(e.create_time, 'yyyy.MM.dd') as createdTime, nvl(f.loginCnt,0) as loginCnt, e.roleName,
+       nvl(f.vis,0) as vis,
+       nvl(f.amvis,0) as amVis,
+       nvl(f.pmvis,0) as pmVis,
+       nvl(f.nivis,0) as niVis,
+       nvl(f.addvis,0) as addVis,
+       nvl(f.dayVis,0) as dayVis
+			  from (select b.user_id as id,
+			               b.user_name as name,
+			               b.create_time,
+			               wm_concat(d.role_name) as roleName
+			          from clw_jc_user_t b, clw_jc_user_role_t c, clw_jc_role_t d
+			         where b.user_id = c.user_id and b.enterprise_id=#id#
+			           and c.role_id = d.role_id
+			         group by b.user_id, b.user_name, b.create_time) e,
+			       (select a.user_id,
+			       	   <isEqual   compareValue="web" property="plat">
+			               nvl(sum(a.login_count_web) + sum(a.login_count_app), 0) as loginCnt,
+			               nvl(sum(a.web_dvis), 0) as vis,
+			               nvl(sum(a.web_amvis), 0) as amvis,
+			               nvl(sum(a.web_pmvis), 0) as pmvis,
+			               nvl(sum(a.web_nivis), 0) as nivis ,
+			               nvl(sum(a.web_addvis), 0) as addvis,
+			               round(nvl(sum(a.web_dvis), 0)/(countholidays(to_date(#startDay#,'yyyy-MM-dd'),to_date(#endDay#,'yyyy-MM-dd'))),1)  as dayVis
+			             </isEqual>                    
+			       	   <isEqual   compareValue="all" property="plat">
+			               nvl(sum(a.login_count_web) + sum(a.login_count_app), 0) as loginCnt,
+			               nvl(sum(a.all_dvis), 0) as vis,
+			               nvl(sum(a.all_amvis), 0) as amvis,
+			               nvl(sum(a.all_pmvis), 0) as pmvis,
+			               nvl(sum(a.all_nivis), 0) as nivis ,
+			               nvl(sum(a.all_addvis), 0) as addvis,
+			               round(nvl(sum(a.all_dvis), 0)/(countholidays(to_date(#startDay#,'yyyy-MM-dd'),to_date(#endDay#,'yyyy-MM-dd'))),1)  as dayVis
+			             </isEqual>                    
+			       	   <isEqual   compareValue="app" property="plat">
+			               nvl(sum(a.login_count_app), 0) as loginCnt,
+			               nvl(sum(a.app_dvis), 0) as vis,
+			               nvl(sum(a.app_amvis), 0) as amvis,
+			               nvl(sum(a.app_pmvis), 0) as pmvis,
+			               nvl(sum(a.app_nivis), 0) as nivis ,
+			               nvl(sum(a.app_addvis), 0) as addvis,
+			               round(nvl(sum(a.app_dvis), 0)/(countholidays(to_date(#startDay#,'yyyy-MM-dd'),to_date(#endDay#,'yyyy-MM-dd'))),1)  as dayVis
+			             </isEqual>                    
+			          from CLW_UB_USER_STATISTICS_DAY_T a
+			         where a.report_day between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+			         and a.enterprise_id=#id#
+			         group by a.user_id) f
+			 where e.id = f.user_id(+) order by e.create_time desc
+	</select>
+		<select id="getOneAccountBars" parameterClass="Map" resultClass="meta">
+		select t.service_name as name,nvl(d.vis,0)  as code from CLW_JC_SERVICE_T t,
+		(select z.srvName,count(z.srvName) as vis from (
+		<isEqual property="plat"  compareValue="web">
+			select c.service_name as srvName
+				     from CLW_JC_LOG_T a, CLW_JC_SERVICE_MODULE_T b, CLW_JC_SERVICE_T c
+				         where a.module_id = b.module_id
+				           and b.service_id = c.service_id
+				           and a.user_id = #id#
+				           and a.operate_time between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+		</isEqual>
+		<isEqual property="plat"  compareValue="app"> 
+				select c.service_name as srvName
+				          from clw_m_user_behavior_t a, CLW_JC_SERVICE_MODULE_T b, CLW_JC_SERVICE_T c
+				         where a.module_id = b.module_id
+				           and b.service_id = c.service_id
+				           and a.user_id = #id#
+				           and a.operate_time between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+			 </isEqual>
+		) z
+		group by z.srvName) d where t.service_name=d.srvName(+)
+		<isEqual property="plat"  compareValue="web">
+	     and t.system_type=1
+		</isEqual>
+		<isEqual property="plat"  compareValue="app"> 
+		and t.system_type=2
+		</isEqual>
+	</select>
+		<select id="getOneAccountGridCnt" parameterClass="Map" resultClass="Integer">
+	<isEqual property="plat"  compareValue="web">
+	    select count(*)
+		          from CLW_JC_LOG_T a, CLW_JC_SERVICE_MODULE_T b, CLW_JC_SERVICE_T c
+		         where a.module_id = b.module_id
+		           and b.service_id = c.service_id
+		           <isNotEqual prepend="and" property="srvID" compareValue="0">  
+						c.service_id=#srvID#   
+				    </isNotEqual>
+		           and a.user_id = #id#
+		           and a.operate_time between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+		 </isEqual>
+		 <isEqual property="plat"  compareValue="app"> 
+		select count(*)
+		          from clw_m_user_behavior_t a, CLW_JC_SERVICE_MODULE_T b, CLW_JC_SERVICE_T c
+		         where a.module_id = b.module_id
+		           and b.service_id = c.service_id
+		           <isNotEqual prepend="and" property="srvID" compareValue="0">  
+						c.service_id=#srvID#   
+				    </isNotEqual>
+		           and a.user_id = #id#
+		           and a.operate_time between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+		  </isEqual>
+	</select>
+	<select id="getOneAccountGrid" parameterClass="Map" resultClass="accountGather">
+	select * from (select s.*, rownum as rownum_2 from (
+	<isEqual property="plat"  compareValue="web">
+	select a.user_id as id,
+		               c.service_name as srvName,
+		               a.operate_desc as opDesc,
+		               to_char(a.operate_time,'yyyy-MM-dd hh24:mi') as opTime,
+		               a.operate_ip as ip,
+		               '' as addr
+		          from CLW_JC_LOG_T a, CLW_JC_SERVICE_MODULE_T b, CLW_JC_SERVICE_T c
+		         where a.module_id = b.module_id
+		           and b.service_id = c.service_id
+		           	<isNotEqual prepend="and" property="srvID" compareValue="0">  
+						c.service_id=#srvID#   
+				    </isNotEqual>
+		           and a.user_id = #id#
+		           and a.operate_time between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+		 		   order by a.operate_time desc
+		</isEqual> 
+		 <isEqual property="plat"  compareValue="app">
+		select a.user_id as id,
+		               c.service_name as srvName,
+		               '' as opDesc,
+		               to_char(a.operate_time,'yyyy-MM-dd hh24:mi') as opTime,
+		               '' as ip,
+		               '' as addr
+		          from clw_m_user_behavior_t a, CLW_JC_SERVICE_MODULE_T b, CLW_JC_SERVICE_T c
+		         where a.module_id = b.module_id
+		           and b.service_id = c.service_id
+		           <isNotEqual prepend="and" property="srvID" compareValue="0">  
+						c.service_id=#srvID#   
+				    </isNotEqual>
+		           and a.user_id = #id#
+		           and a.operate_time between to_date(#startDay#,'yyyy-MM-dd') and to_date(#endDay#,'yyyy-MM-dd')
+		           order by a.operate_time desc
+		 </isEqual>
+	    
+		<![CDATA[
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</select>
+
+		<select id="getServiceVisChart4One" parameterClass="Map" resultClass="serviceInfo">
+			select d.service_id id, d.service_name name,d.Release_Time as releaseTime , nvl(c.vis,0) as vis
+			  from (select 
+			  				a.service_id,
+			  			<isEqual   compareValue="web" property="plat">	
+			  				nvl(sum(a.web_allvis),0) as vis
+			  			</isEqual>
+			  			<isEqual   compareValue="app" property="plat">	
+			  				nvl(sum(a.app_allvis),0) as vis
+			  			</isEqual>
+			          from clw_ub_entservice_day_t a
+			         where a.IS_HOLIDAY = '0'  
+			         <isNotEmpty prepend="and" property="id">
+			         	 a.ENTERPRISE_ID =#id#
+			         </isNotEmpty>
+					   and a.report_day between to_date(#startDay#, 'yyyy-MM-dd') and
+				       to_date(#endDay#, 'yyyy-MM-dd')
+			         group by a.service_id) c,
+			       CLW_JC_SERVICE_T d
+			 where d.service_id = c.service_id(+) and
+			 	  <isEqual   compareValue="web" property="plat" >
+		       			d.SYSTEM_TYPE='1'
+		          </isEqual>
+			 		<isEqual   compareValue="app" property="plat" >
+		       			d.SYSTEM_TYPE='2'
+		          </isEqual>
+	</select>
+	
+</sqlMap>

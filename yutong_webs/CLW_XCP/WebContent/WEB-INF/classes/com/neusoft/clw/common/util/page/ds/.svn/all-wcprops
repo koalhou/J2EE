@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds
+END
+DetailPage.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/DetailPage.java
+END
+detailPageModalDialog.ftl
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/detailPageModalDialog.ftl
+END
+page.ftl
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/page.ftl
+END
+selectPage.ftl
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/selectPage.ftl
+END
+detailPage.ftl
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/detailPage.ftl
+END
+pageforModalDialog.ftl
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/pageforModalDialog.ftl
+END
+leftPage.ftl
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/leftPage.ftl
+END
+Page.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/Page.java
+END
+PageHelper.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/PageHelper.java
+END
+SelectPage.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/common/util/page/ds/SelectPage.java
+END

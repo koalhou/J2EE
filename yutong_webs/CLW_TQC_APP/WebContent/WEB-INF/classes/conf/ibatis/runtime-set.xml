@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RuntimeSetManage">
+<typeAlias alias="RuntimeSet" type="com.neusoft.clw.runtimeset.domain.RuntimeSet"/>
+<typeAlias alias="TreeNodeInfo" type="com.neusoft.clw.tree.domain.TreeNodeInfo" />
+
+<!-- 运行时间设置列表 -->
+ <select id="getRuntimeSetList" parameterClass="java.util.Map" resultClass="RuntimeSet">
+    select * from (
+	select a.time_id,
+	       b.short_name org_name,
+	       a.start_time,
+	       a.end_time,
+	       a.effect_often,
+	       a.remark,
+	       a.status,
+	       c.user_name oper_name,
+	       to_char(a.modify_time,'yyyy-mm-dd hh24:mi:ss') modify_time
+	  from TQC_LAWFUL_RUN_TIME_T a,
+	       CLW_JC_ENTERPRISE_T b,
+	       CLW_JC_USER_T c
+	 where a.organization_id=b.enterprise_id
+	   and a.operator=c.user_id
+	   <dynamic>
+	   	<isNotEmpty property="org_id">
+	   	<![CDATA[
+	   and a.organization_id in 
+
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = $org_id$ )
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = $org_id$ )        
+								)
+	   ]]>
+	   	</isNotEmpty>
+	   	)
+	   	<isNotEmpty property="sortName">
+	    order by $sortName$ $sortOrder$
+   	 	</isNotEmpty>
+   	 	<isEmpty property="sortName">
+	    order by modify_time desc
+   	    </isEmpty>
+	   </dynamic>
+ </select>
+<select id="getRuntimeSetCount" parameterClass="java.lang.String" resultClass="int">
+	select count(a.time_id)
+	  from TQC_LAWFUL_RUN_TIME_T a,
+	       CLW_JC_ENTERPRISE_T b,
+	       CLW_JC_USER_T c
+	 where a.organization_id=b.enterprise_id
+	   and a.operator=c.user_id
+	   <dynamic>
+	   	<isNotEmpty property="value">
+	   	<![CDATA[
+	   and a.organization_id in 
+
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = $value$ )
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = $value$ )        
+								)
+	
+	    ]]>
+	   	</isNotEmpty>
+	   </dynamic>
+ </select>
+
+<resultMap class="TreeNodeInfo" id="searchRouteTreeNodes">
+     <result property="id" column="id"/>
+     <result property="name" column="name"/>
+     <result property="pId" column="pId"/>
+     <result property="open" column="open"/>
+     <result property="iconSkin" column="iconSkin"/>
+</resultMap>
+<select id="getOrgTree" parameterClass="java.util.Map" resultMap="searchRouteTreeNodes">
+select *
+  from (
+select t.enterprise_id id,
+       t.short_name name,
+       t.parent_id pId,
+       'true' open,
+       'pIcon' as iconSkin
+  from CLW_JC_ENTERPRISE_T t
+ where t.parent_id=#enterpriseId#
+ <dynamic>
+ <isNotEmpty property="name">
+ <![CDATA[
+  and t.SHORT_NAME like '%$name$%'
+ ]]>
+ </isNotEmpty>
+ </dynamic>
+union all
+select t.enterprise_id id,
+       t.short_name name,
+       t.parent_id pId,
+       'true' open,
+       'pIcon' as iconSkin
+  from CLW_JC_ENTERPRISE_T t
+ where t.enterprise_id=#enterpriseId#
+ <dynamic>
+ <isNotEmpty property="name">
+ <![CDATA[
+  and t.SHORT_NAME like '%$name$%'
+ ]]>
+ </isNotEmpty>
+ </dynamic>
+ )
+ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC
+</select>
+
+<select id="getOrgTreeNoSelected" parameterClass="java.util.Map" resultMap="searchRouteTreeNodes">
+select t.*
+  from (
+select t.enterprise_id id,
+       t.short_name name,
+       t.parent_id pId,
+       'true' open,
+       'pIcon' as iconSkin
+  from CLW_JC_ENTERPRISE_T t
+  where (t.parent_id in
+               (SELECT ENTERPRISE_ID
+
+                                      FROM CLW_JC_ENTERPRISE_T
+                                     WHERE parent_id = '111')
+                                     
+                                     or t.enterprise_id in
+               (SELECT ENTERPRISE_ID
+
+                                      FROM CLW_JC_ENTERPRISE_T
+                                     WHERE parent_id = '111'))
+  and t.enterprise_id in 
+  <![CDATA[
+	(SELECT ENTERPRISE_ID
+                     FROM CLW_JC_ENTERPRISE_VI
+                     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #enterpriseId#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #enterpriseId#)        
+								)
+  ]]>
+<!--  where t.parent_id=#enterpriseId# -->
+ <dynamic>
+ <isNotEmpty property="name">
+ <![CDATA[
+  and t.SHORT_NAME like '%$name$%'
+ ]]>
+ </isNotEmpty>
+ </dynamic>
+<!-- union all -->
+<!-- select t.enterprise_id id, -->
+<!--        t.short_name name, -->
+<!--        t.parent_id pId, -->
+<!--        'true' open, -->
+<!--        'pIcon' as iconSkin -->
+<!--   from CLW_JC_ENTERPRISE_T t -->
+<!--  where t.enterprise_id=#enterpriseId# -->
+ )t
+where t.id not in(select r.organization_id from TQC_LAWFUL_RUN_TIME_T r)
+ORDER BY NLSSORT(name, 'NLS_SORT=SCHINESE_PINYIN_M') DESC
+</select>
+
+<!-- 新增 -->
+<insert id="addRuntime" parameterClass="RuntimeSet">
+	insert into TQC_LAWFUL_RUN_TIME_T
+	(
+	time_id,
+	organization_id,
+	start_time,
+	end_time,
+	effect_often,
+	remark,
+	status,
+	operator,
+	modify_time
+	)
+	values
+	(
+	 SEQ_LAWFUL_RUN_TIME_ID.NEXTVAL,
+	 #organization_id#,
+	 #start_time#,
+	 #end_time#,
+	 #effect_often#,
+	 #remark#,
+	 #status#,
+	 #operator#,
+	 SYSDATE
+	)
+</insert>
+<!-- 根据id查询 -->
+<select id="getRuntimeById" parameterClass="string" resultClass="RuntimeSet">
+    select a.time_id,
+           a.organization_id,
+           a.start_time,
+           a.end_time,
+           a.effect_often,
+           a.remark,
+           b.short_name org_name,
+           a.status
+     from TQC_LAWFUL_RUN_TIME_T a,
+          CLW_JC_ENTERPRISE_T b
+    where a.organization_id=b.enterprise_id
+      and a.time_id=#time_id#
+</select>
+<!-- 修改 -->
+<update id="updateRuntimeById" parameterClass="RuntimeSet">
+	update TQC_LAWFUL_RUN_TIME_T t
+	   set t.organization_id=#organization_id#,
+	       t.start_time=#start_time#,
+           t.end_time=#end_time#,
+           t.effect_often=#effect_often#,
+           t.remark=#remark#,
+           t.operator=#operator#,
+           t.status=#status#,
+	       t.modify_time=SYSDATE
+	where  t.time_id=#time_id#
+</update>
+<!-- 修改状态 -->
+<update id="updateRuntimeStatus" parameterClass="RuntimeSet">
+	update TQC_LAWFUL_RUN_TIME_T t
+	   set t.status=#status#,
+	   	   t.modify_time=SYSDATE,
+	   	   t.operator=#operator#
+	where  t.time_id=#time_id#
+</update>
+<!-- 根据组织ID查询一套时间运行设置信息 -->
+<select id="getRuntimeByOrgId" parameterClass="string" resultClass="int">
+	select count(t.TIME_ID)
+	  from TQC_LAWFUL_RUN_TIME_T t
+	 where t.ORGANIZATION_ID=#org_id#
+</select>
+</sqlMap>

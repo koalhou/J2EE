@@ -1,0 +1,63 @@
+@media screen, print { 
+	/* Turn off list bullets */
+	ul.mktree  li { list-style: none; font-size:12px; font-family:Arial, Helvetica, sans-serif; white-space:nowrap; margin:0 1px 0 0; background: url(../images/checktree/node.gif) no-repeat;
+	 padding: 0 0 0 16px; cursor: default;} 
+	*html ul.mktree  li { list-style: none; font-size:12px; font-family:Arial, Helvetica, sans-serif; white-space:nowrap; margin:0 2px 0 0;} 
+	/* Control how "spaced out" the tree is */
+	ul.mktree, ul.mktree ul , ul.mktree li { margin-left:0px; padding:0px; line-height:20px;}
+	/* Provide space for our own "bullet" inside the LI */
+	ul.mktree  li           .bullet { padding-left: 15px; line-height:px; height:20px;}
+	/* Show "bullets" in the links, depending on the class of the LI that the link's in 
+	ul.mktree  li.liOpen    .bullet { cursor: pointer; background: url(images/minus.gif)  center left no-repeat; }
+	ul.mktree  li.liClosed  .bullet { cursor: pointer; background: url(images/plus.gif)   center left no-repeat; }*/
+	
+	ul.mktree li.node {
+	 background-image: url(images/node.gif); margin: 0 0 0 20px;
+	}
+	ul.mktree li.node-last {
+	 background-image: url(images/node-last.gif); margin: 0 0 0 20px;
+	}
+	ul.mktree li.plus {
+	 background-image: url(images/plus.gif); margin: 0 0 0 20px;
+	}
+	ul.mktree li.plus-last {
+	 background-image: url(images/plus-last.gif);  margin: 0 0 0 20px;
+	}
+	ul.mktree li.minus {
+	 background-image: url(images/minus.gif); margin: 0 0 0 20px;
+	}
+	ul.mktree li.minus-last {
+	 background-image: url(images/minus-last.gif); margin: 0 0 0 20px;
+	}
+	ul.mktree li.plus-only {
+	 background-image: url(images/plus-only.gif); margin: 0;
+	}
+	ul.mktree li.minus-only {
+	 background-image: url(images/minus-only.gif);  margin: 0;
+	}
+	/*控制没有下级菜单的图片前面是不是显示小黑点*/
+	/*ul.mktree  li.liBullet  .bullet { cursor: default; background: url(images/bullet.gif) center left no-repeat; }
+	*/
+	.liGongsi_nc{ background: url(images/gongsi.gif) center left no-repeat; height:20px; padding:5px 10px 1px 20px; line-height:20px;}
+	.liFengongsi_nc{ background: url(images/fengongsi.gif) center left no-repeat; height:20px; padding:5px 10px 1px 20px; line-height:20px;}
+	
+	.liGongsi{ background: url(images/gongsi.gif) center left no-repeat; height:20px; padding:5px 10px 1px 20px; line-height:20px; cursor:pointer;}
+	.liFengongsi{ background: url(images/fengongsi.gif) center left no-repeat; height:20px; padding:5px 10px 1px 20px; line-height:20px; cursor:pointer;}
+	.liChedui{ background: url(images/chedui.gif) center left no-repeat; height:20px; padding:5px 10px 1px 20px; line-height:20px; cursor:pointer;}
+	/* Sublists are visible or not based on class of parent LI */
+	ul.mktree  li.minus    ul { display: block; }
+	ul.mktree  li.minus-last.gif    ul { display: block; }
+	ul.mktree  li.minus-only.gif    ul { display: block; }
+	ul.mktree  li.plus  ul { display: none; }
+	ul.mktree  li.plus-last  ul { display: none; }
+	ul.mktree  li.plus-only  ul { display: none; }
+	
+	
+	
+	/* Format menu items differently depending on what level of the tree they are in */
+	/* Uncomment this if you want your fonts to decrease in size the deeper they are in the tree */
+/*
+	ul.mktree  li ul li { font-size: 90% }
+*/
+.phyfile  {height: 17px;line-height: 17px;font-size: 12px;border: #006699 1px solid;padding-left: 2px;padding-top: 1px;}
+}

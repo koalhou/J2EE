@@ -1,0 +1,135 @@
+[2013-04-28 11:25:54,203 INFO ]org.springframework.context.support.AbstractApplicationContext.prepareRefresh(AbstractApplicationContext.java:411) Refreshing org.springframework.context.support.FileSystemXmlApplicationContext@1861086: display name [org.springframework.context.support.FileSystemXmlApplicationContext@1861086]; startup date [Sun Apr 28 11:25:54 CST 2013]; root of context hierarchy
+[2013-04-28 11:25:54,375 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [main.xml]
+[2013-04-28 11:25:54,484 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [config.xml]
+[2013-04-28 11:25:54,593 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [dao.xml]
+[2013-04-28 11:25:54,640 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [clwapplication.xml]
+[2013-04-28 11:25:54,671 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [transactionDao.xml]
+[2013-04-28 11:25:54,718 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [service.xml]
+[2013-04-28 11:25:54,750 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [quartz.xml]
+[2013-04-28 11:25:54,843 INFO ]org.springframework.context.support.AbstractApplicationContext.obtainFreshBeanFactory(AbstractApplicationContext.java:426) Bean factory for application context [org.springframework.context.support.FileSystemXmlApplicationContext@1861086]: org.springframework.beans.factory.support.DefaultListableBeanFactory@102ae84
+[2013-04-28 11:25:55,390 INFO ]org.springframework.core.io.support.PropertiesLoaderSupport.loadProperties(PropertiesLoaderSupport.java:178) Loading properties file from URL [file:F:/rkspace/CLW_XC/config/clw.properties]
+[2013-04-28 11:25:55,390 INFO ]org.springframework.core.io.support.PropertiesLoaderSupport.loadProperties(PropertiesLoaderSupport.java:178) Loading properties file from URL [file:F:/rkspace/CLW_XC/config/db.properties]
+[2013-04-28 11:25:55,437 INFO ]org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:414) Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@102ae84: defining beans [propertyConfigurer,dataSource,jdbcTemplate,abstractDaoManager,vehicInfoDAO,terminalInfoDAO,terminalBizDAO,sendCommandDAO,reportDAO,appconfigDAO,configParamDao,terminalDAO,harmdefDAO,commonDAO,vehicleDAO,cerFailDAO,ter_paramDAO,activeCoreDAO,msgCfgDAO,smsCfgDAO,appDAO,driverVehicleDAO,sendXcSmsDAO,qdao,updatedao,smssyncdao,qtdao,ClwCommunicateService,tagCoreServer,abstractServer,coreTasksManager,transDataSource,transactionManager,baseServiceProxy,transJdbcTemplate,transAbstractDaoManager,transactionDaoServersProxy,transactionDaoServers,transactionDao,appConfigCacheManager,terminalCacheManager,sendCommandManager,reportManager,harmDefCacheManager,vehicleCacheManager,sendxcmsmCommandManager,fullQuantityCacheManager,quartzCommandManager,syncCommandManager,sendBuffer,quartzTripCommandManager,smsOrderManager,dataSyncJob,appConfigCache,appConfigCacheTrigger,terminalCache,terminalCacheTrigger,sendCommand,sendCommandTrigger,reportManagerJobDetail,reportManagerTrigger,harmDefCache,harmDefCacheTrigger,vehicleCache,vehicleCacheTrigger,sendxcmsmCommand,sendxcmsmCommandTrigger,quartzTripManager,quartzTripManagerTrigger,syncManager,syncManagerTrigger,smsOrder,smsOrderTrigger,fullQuantity,fullQuantityTrigger,startQuartz]; root of factory hierarchy
+[2013-04-28 11:25:56,906 INFO ]com.neusoft.clw.vncs.dao.impl.SmsCfgDAO.start(SmsCfgDAO.java:114) <SmsCfgDAO>start the sms param timer task.
+[2013-04-28 11:25:56,906 INFO ]com.neusoft.clw.vncs.dao.impl.ConfigParamDAO.start(ConfigParamDAO.java:82) <ConfigParamDao>start the config param timer task.
+[2013-04-28 11:25:56,906 INFO ]com.neusoft.clw.vncs.dao.impl.MsgCfgDAO.start(MsgCfgDAO.java:282) <MsgCfgDAO>start the msg param timer task.
+[2013-04-28 11:25:56,953 INFO ]com.neusoft.clw.vncs.back.BackMap.put(BackMap.java:40) the back 10.10.125.94:5101 has been put into the back map.
+[2013-04-28 11:25:57,281 INFO ]com.neusoft.clw.nio.client.TcpNioService.connect(TcpNioService.java:157) <TcpNioService>connecting 10.10.125.94:5101
+[2013-04-28 11:25:57,406 INFO ]com.neusoft.clw.vncs.nio.ClwCommunicateHandler.connectionOpen(ClwCommunicateHandler.java:62) <ClwCommunicateHandler>send a bind request message.
+[2013-04-28 11:25:57,406 INFO ]com.neusoft.clw.nio.client.AbstractNioHandler$Adapter.sessionOpened(AbstractNioHandler.java:98) <AbstractNioHandler>the session with 10.10.125.94:5101 is open.
+[2013-04-28 11:25:58,468 INFO ]org.quartz.core.SchedulerSignalerImpl.<init>(SchedulerSignalerImpl.java:60) Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+[2013-04-28 11:25:58,468 INFO ]org.quartz.core.QuartzScheduler.<init>(QuartzScheduler.java:220) Quartz Scheduler v.1.7.3 created.
+[2013-04-28 11:25:58,468 INFO ]org.quartz.simpl.RAMJobStore.initialize(RAMJobStore.java:139) RAMJobStore initialized.
+[2013-04-28 11:25:58,468 INFO ]org.quartz.impl.StdSchedulerFactory.instantiate(StdSchedulerFactory.java:1240) Quartz scheduler 'startQuartz' initialized from an externally provided properties instance.
+[2013-04-28 11:25:58,468 INFO ]org.quartz.impl.StdSchedulerFactory.instantiate(StdSchedulerFactory.java:1244) Quartz scheduler version: 1.7.3
+[2013-04-28 11:25:58,484 INFO ]org.quartz.core.QuartzScheduler.setJobFactory(QuartzScheduler.java:2075) JobFactory set to: org.springframework.scheduling.quartz.AdaptableJobFactory@1787005
+[2013-04-28 11:25:58,500 INFO ]org.springframework.scheduling.quartz.SchedulerFactoryBean.startScheduler(SchedulerFactoryBean.java:626) Starting Quartz Scheduler now
+[2013-04-28 11:25:58,500 INFO ]org.quartz.core.QuartzScheduler.start(QuartzScheduler.java:472) Scheduler startQuartz_$_NON_CLUSTERED started.
+[2013-04-28 11:25:58,578 INFO ]com.neusoft.clw.vncs.nio.ClwCommunicateHandler.doMsg(ClwCommunicateHandler.java:87) <ClwCommunicateHandler>hand:::00000020002000000620
+[2013-04-28 11:25:58,609 INFO ]org.springframework.context.support.AbstractApplicationContext.prepareRefresh(AbstractApplicationContext.java:411) Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@c8aeb3: display name [org.springframework.context.support.ClassPathXmlApplicationContext@c8aeb3]; startup date [Sun Apr 28 11:25:58 CST 2013]; root of context hierarchy
+[2013-04-28 11:25:58,609 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [xmemcache.xml]
+[2013-04-28 11:25:58,609 INFO ]com.neusoft.clw.vncs.cachemanager.AppConfigCacheManager.init(AppConfigCacheManager.java:46) <AppConfigCacheManager>开始初始化应用配置信息缓存。。
+[2013-04-28 11:25:58,640 INFO ]com.neusoft.clw.vncs.cachemanager.AppConfigCacheManager.init(AppConfigCacheManager.java:58) <AppConfigCacheManager>数据库中共有6个应用配置信息
+[2013-04-28 11:25:58,656 INFO ]com.neusoft.clw.vncs.cachemanager.AppConfigCacheManager.init(AppConfigCacheManager.java:65) <AppConfigCacheManager>应用配置缓存初始化完毕。
+[2013-04-28 11:25:58,656 INFO ]org.springframework.context.support.AbstractApplicationContext.obtainFreshBeanFactory(AbstractApplicationContext.java:426) Bean factory for application context [org.springframework.context.support.ClassPathXmlApplicationContext@c8aeb3]: org.springframework.beans.factory.support.DefaultListableBeanFactory@1f71773
+[2013-04-28 11:25:58,656 INFO ]org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:414) Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@1f71773: defining beans [cacheClient]; root of factory hierarchy
+[2013-04-28 11:25:58,796 INFO ]com.neusoft.clw.vncs.cachemanager.HarmDefCacheManager.init(HarmDefCacheManager.java:69) <HarmDefCacheManager>本次启动共加载20个不良驾驶信息
+[2013-04-28 11:25:58,843 WARN ]net.rubyeye.xmemcached.XMemcachedClient.buildConnector(XMemcachedClient.java:633) XMemcachedClient use Text protocol
+[2013-04-28 11:25:58,859 INFO ]com.neusoft.SchoolBus.vncs.manage.SmsOrderManager.xcstuSmsCacheVersionTwo(SmsOrderManager.java:206) <smsOrderManager>本次启动共加载7个V2.0学生短信配置信息
+[2013-04-28 11:25:58,859 INFO ]com.neusoft.SchoolBus.vncs.manage.SmsOrderManager.xcstuSmsCacheVersionTwo(SmsOrderManager.java:213) <smsOrderManager>当前V2.0学生短信配置信息缓存大小：7
+[2013-04-28 11:25:59,031 INFO ]com.google.code.yanf4j.nio.impl.SelectorManager.<init>(SelectorManager.java:37) Creating 2 rectors...
+[2013-04-28 11:25:59,062 WARN ]com.google.code.yanf4j.core.impl.AbstractController.start(AbstractController.java:368) The Controller started at localhost/127.0.0.1:0 ...
+[2013-04-28 11:25:59,109 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,109 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,109 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,125 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,140 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,140 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,140 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,140 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,140 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,140 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,156 WARN ]net.rubyeye.xmemcached.XMemcachedClient.buildConnector(XMemcachedClient.java:633) XMemcachedClient use Text protocol
+[2013-04-28 11:25:59,171 INFO ]com.google.code.yanf4j.nio.impl.SelectorManager.<init>(SelectorManager.java:37) Creating 2 rectors...
+[2013-04-28 11:25:59,171 WARN ]com.google.code.yanf4j.core.impl.AbstractController.start(AbstractController.java:368) The Controller started at localhost/127.0.0.1:0 ...
+[2013-04-28 11:25:59,187 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,187 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,187 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.terminalCache(FullQuantityCacheManager.java:619) <FullQuantityCacheManager>当前终端信息缓存大小：643
+[2013-04-28 11:25:59,187 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,187 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.vehicleCache(FullQuantityCacheManager.java:490) <FullQuantityCacheManager>开始加载车辆缓存。。
+[2013-04-28 11:25:59,265 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,265 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,265 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,265 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,265 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,265 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,281 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,296 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,296 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,296 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,296 WARN ]net.rubyeye.xmemcached.impl.MemcachedConnector.addMainSession(MemcachedConnector.java:227) Add a session: 10.10.129.34:11211
+[2013-04-28 11:25:59,453 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.vehicleCache(FullQuantityCacheManager.java:546) <FullQuantityCacheManager>当前车辆基本信息684
+[2013-04-28 11:25:59,453 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.siteCache(FullQuantityCacheManager.java:371) <FullQuantityCacheManager>开始加载站点全量缓存。。
+[2013-04-28 11:25:59,468 INFO ]com.neusoft.clw.vncs.nio.ClwCommunicateHandler.doMsg(ClwCommunicateHandler.java:87) <ClwCommunicateHandler>hand:::00000020100100000001
+[2013-04-28 11:25:59,593 INFO ]com.neusoft.clw.vncs.nio.ClwCommunicateHandler.doLogin(ClwCommunicateHandler.java:145) <ClwCommunicateHandler>receive bind response. ------Login 10.10.125.94:5101 successfully------
+[2013-04-28 11:25:59,609 INFO ]com.neusoft.clw.vncs.nio.ActiveTest.start(ActiveTest.java:52) <CLW ActiveTest>start the active message timer task.
+[2013-04-28 11:25:59,609 INFO ]com.neusoft.clw.vncs.nio.ActiveTest$ActiveTestTimerTask.run(ActiveTest.java:92) <Clw ActiveTest>send active test message.currentNum=0,activemsg:00000020002000000002
+[2013-04-28 11:25:59,625 INFO ]com.neusoft.clw.vncs.nio.ClwCommunicateHandler.doMsg(ClwCommunicateHandler.java:87) <ClwCommunicateHandler>hand:::00000020102000000002
+[2013-04-28 11:25:59,625 INFO ]com.neusoft.clw.vncs.nio.ActiveTest.doActiveTestResp(ActiveTest.java:110) <CLW ActiveTest>receive a active test response message.currentNum=0
+[2013-04-28 11:25:59,625 INFO ]com.neusoft.clw.vncs.dao.impl.ActiveCoreDAO.operateParamTable(ActiveCoreDAO.java:26) keepalive 's core_id :core02
+[2013-04-28 11:25:59,718 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.siteCache(FullQuantityCacheManager.java:425) <FullQuantityCacheManager>站点信息加载完毕。
+[2013-04-28 11:25:59,718 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.siteCache(FullQuantityCacheManager.java:426) <FullQuantityCacheManager>当前站点信息缓存大小：691
+[2013-04-28 11:25:59,734 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcEnterpriseCache(FullQuantityCacheManager.java:308) <FullQuantityCacheManager>开始加载企业模式信息全量缓存。。
+[2013-04-28 11:25:59,828 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcEnterpriseCache(FullQuantityCacheManager.java:359) <FullQuantityCacheManager>企业模式信息加载完毕。
+[2013-04-28 11:25:59,828 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcEnterpriseCache(FullQuantityCacheManager.java:360) <FullQuantityCacheManager>当前企业模式信息缓存大小：214
+[2013-04-28 11:25:59,828 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstuSmsCache(FullQuantityCacheManager.java:83) <FullQuantityCacheManager>开始加载学生短信配置缓存。。
+[2013-04-28 11:25:59,875 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstuSmsCache(FullQuantityCacheManager.java:164) <FullQuantityCacheManager>学生短信配置信息加载完毕。
+[2013-04-28 11:25:59,875 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstuSmsCache(FullQuantityCacheManager.java:166) <FullQuantityCacheManager>当前学生短信配置信息缓存大小：9
+[2013-04-28 11:25:59,875 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcRouteSiteCache(FullQuantityCacheManager.java:188) <FullQuantityCacheManager>开始加载线路站点信息全量缓存。。
+[2013-04-28 11:26:00,031 INFO ]com.neusoft.SchoolBus.vncs.manage.SmsOrderManager.xcstuSmsCacheVersionTwo(SmsOrderManager.java:206) <smsOrderManager>本次启动共加载7个V2.0学生短信配置信息
+[2013-04-28 11:26:00,046 INFO ]com.neusoft.SchoolBus.vncs.manage.SmsOrderManager.xcstuSmsCacheVersionTwo(SmsOrderManager.java:213) <smsOrderManager>当前V2.0学生短信配置信息缓存大小：7
+[2013-04-28 11:26:00,109 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcRouteSiteCache(FullQuantityCacheManager.java:232) <FullQuantityCacheManager>线路站点关系信息加载完毕。
+[2013-04-28 11:26:00,109 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcRouteSiteCache(FullQuantityCacheManager.java:233) <FullQuantityCacheManager>当前线路站点关系缓存大小：754
+[2013-04-28 11:26:00,187 INFO ]com.neusoft.clw.vncs.manage.ReportManager.init(ReportManager.java:101) <ReportManager> 报表统计开始！runflag:true
+[2013-04-28 11:26:00,203 INFO ]com.neusoft.clw.vncs.manage.ReportManager.init(ReportManager.java:236) ReportManager 本次报表统计结束！ runflag:true
+[2013-04-28 11:26:00,421 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstudentCache(FullQuantityCacheManager.java:441) <FullQuantityCacheManager>开始加载学生相关信息全量缓存。。
+[2013-04-28 11:26:00,421 INFO ]com.neusoft.SchoolBus.vncs.manage.SendxcmsmCommandManager.allstudentidCache(SendxcmsmCommandManager.java:684) <SendSmsCommandManager>,<B color='red'>啊非法，不加载到学生编号缓存中
+[2013-04-28 11:26:00,421 INFO ]com.neusoft.SchoolBus.vncs.manage.SendxcmsmCommandManager.allstudentidCache(SendxcmsmCommandManager.java:684) <SendSmsCommandManager>,3 非法，不加载到学生编号缓存中
+[2013-04-28 11:26:00,437 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstudentCache(FullQuantityCacheManager.java:476) <FullQuantityCacheManager>当前学生信息缓存大小：1242
+[2013-04-28 11:26:00,437 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstudentCache(FullQuantityCacheManager.java:477) <FullQuantityCacheManager>学生信息加载完毕。
+[2013-04-28 11:26:00,437 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstudentCache(FullQuantityCacheManager.java:478) <FullQuantityCacheManager>当前学生编号信息缓存大小：1240
+[2013-04-28 11:26:00,437 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcstudentCache(FullQuantityCacheManager.java:479) <FullQuantityCacheManager>学生编号信息加载完毕。
+[2013-04-28 11:26:00,437 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcVssCache(FullQuantityCacheManager.java:245) <FullQuantityCacheManager>开始加载站点订购信息缓存。。
+[2013-04-28 11:26:00,781 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcVssCache(FullQuantityCacheManager.java:288) <FullQuantityCacheManager>线路站点订购信息加载完毕。
+[2013-04-28 11:26:00,781 INFO ]com.neusoft.clw.vncs.cachemanager.FullQuantityCacheManager.xcVssCache(FullQuantityCacheManager.java:289) <FullQuantityCacheManager>当前站点订购信息缓存大小：2058
+[2013-04-28 11:26:00,890 INFO ]com.neusoft.clw.main.start.init(start.java:105) 核心服务子系统已成功启动！
+[2013-04-28 11:26:00,890 INFO ]org.springframework.context.support.AbstractApplicationContext.prepareRefresh(AbstractApplicationContext.java:411) Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@1bd8993: display name [org.springframework.context.support.ClassPathXmlApplicationContext@1bd8993]; startup date [Sun Apr 28 11:26:00 CST 2013]; root of context hierarchy
+[2013-04-28 11:26:00,906 INFO ]org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(XmlBeanDefinitionReader.java:323) Loading XML bean definitions from class path resource [smsplatform.xml]
+[2013-04-28 11:26:00,984 INFO ]org.springframework.context.support.AbstractApplicationContext.obtainFreshBeanFactory(AbstractApplicationContext.java:426) Bean factory for application context [org.springframework.context.support.ClassPathXmlApplicationContext@1bd8993]: org.springframework.beans.factory.support.DefaultListableBeanFactory@1cd8bf7
+[2013-04-28 11:26:01,093 INFO ]org.springframework.core.io.support.PropertiesLoaderSupport.loadProperties(PropertiesLoaderSupport.java:178) Loading properties file from URL [file:F:/rkspace/CLW_XC/config/smsplatform.properties]
+[2013-04-28 11:26:01,093 INFO ]org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:414) Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@1cd8bf7: defining beans [messageCommunicateService,messageConfigurer]; root of factory hierarchy
+[2013-04-28 11:26:01,203 INFO ]com.neusoft.clw.vncs.nio.ClwCommunicateHandler.doMsg(ClwCommunicateHandler.java:87) <ClwCommunicateHandler>hand:::00000145001100000624DB000000000000002   0000009700041000350800001001020101301114010010c1304281125561E080000e09c0702001008517c96c4580c023628154701
+[2013-04-28 11:26:01,203 INFO ]com.neusoft.smsplatform.message.back.MessageBackMap.put(MessageBackMap.java:34) the back 10.10.125.94:9779 has been put into the back map.
+[2013-04-28 11:26:01,265 INFO ]com.neusoft.clw.vncs.inside.processor.req.UploadDataReqProcessor.parse(UploadDataReqProcessor.java:107) <UploadDataReqProcessor>上行实时数据处理流程开始.
+[2013-04-28 11:26:01,437 INFO ]com.neusoft.clw.vncs.inside.msg.content.value.Up_RealTimeValue.setUpRealTimeContent(Up_RealTimeValue.java:241) <Up_RealTimeValue>报文元素错误，不包含元素58
+[2013-04-28 11:26:01,437 INFO ]com.neusoft.smsplatform.nio.client.SmsTcpNioService.connect(SmsTcpNioService.java:157) <Sms TcpNioService>connecting 10.10.125.94:9779
+[2013-04-28 11:26:01,484 ERROR]com.neusoft.clw.vncs.inside.processor.req.UploadDataReqProcessor.parse(UploadDataReqProcessor.java:341) <UploadDataReqProcessor>parse upload data failed:java.lang.NullPointerException
+[2013-04-28 11:26:01,500 INFO ]com.neusoft.clw.vncs.inside.processor.req.UploadDataReqProcessor.handle(UploadDataReqProcessor.java:69) <UploadDataReqProcessor>接收到上行消息，并返回应答：00000020101100010624
+[2013-04-28 11:26:02,421 INFO ]com.neusoft.smsplatform.nio.client.SmsTcpNioService.reconnect(SmsTcpNioService.java:164) <Sms TcpNioService>it will reconnect sms platform in the 1 minutes later.
+[2013-04-28 11:26:02,453 INFO ]com.neusoft.smsplatform.message.buffer.sync.SyncBuffer.run(SyncBuffer.java:91) <SyncBuffer>MessageBackMap2:{10.10.125.94=com.neusoft.smsplatform.message.back.MessageBack@16132c4}

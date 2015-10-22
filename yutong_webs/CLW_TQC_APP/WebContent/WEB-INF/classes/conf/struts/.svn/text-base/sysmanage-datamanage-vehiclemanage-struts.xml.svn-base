@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="vehiclemanage" namespace="/vehicle" extends="clw-default">
+		
+		<action name="vehiclemanage" class="vehiclemanageAction" method="init">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/vehiclemanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/vehiclemanage.jsp</result>	
+		</action>
+		<action name="addvehicleb" class="vehiclemanageAction" method="addvehiclebefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/addvehiclebefore.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="vehicle_add" class="vehiclemanageAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/addvehiclebefore.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/addvehiclebefore.jsp
+			</result>			
+		</action>
+		<action name="vehicle_edit_form" class="vehiclemanageAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/altervehbefore.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="show_vehicle_pic" class="vehiclemanageAction" method="showVehiclePhoto">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="vehicle_edit" class="vehiclemanageAction" method="updateVehicle">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/altervehbefore.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/altervehbefore.jsp
+			</result>			
+		</action>
+		<action name="vehicle_cancle" class="vehiclemanageAction" method="cancleVehicle">
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 车辆批量去除分配 -->
+		<action name="batchVehicleCancle" class="vehiclemanageAction" method="batchCancleVehicle">
+			<result name="success" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="messageFlag">${messageFlag}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">vehiclemanage</param>
+				<param name="message">${message}</param>
+				<param name="messageFlag">${messageFlag}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!--  
+		<action name="vehicle_driver" class="vehiclemanageAction" method="selectDriver">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/driverbrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/altervehbefore.jsp
+			</result>
+		</action>
+		-->
+		<action name="vehicle_driver" class="vehiclemanageAction" method="readyselDriver">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/driverbrowse2.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/driverbrowse2.jsp</result>	
+		</action>
+		
+		<!-- 
+		<action name="vehicle_user" class="vehiclemanageAction" method="selectUser">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/userbrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/userbrowse.jsp
+			</result>
+		</action>
+		 -->
+		 <action name="vehicle_user" class="vehiclemanageAction" method="readyselUser">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/userbrowse2.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/vehiclemanage/userbrowse2.jsp</result>	
+		</action>
+		
+		<action name="vehiclemanagetreeAction" class="vehiclemanageAction" method="getTreeInit">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/treeModalWindow.jsp</result>
+		</action>
+	</package>
+	
+	<package name="vehiclemanagepkg" namespace="/vehiclemanagepkg" extends="json-default">
+		<action name="vehiclebrowse" class="vehiclemanageAction" method="vehiclebrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="selectdriver" class="vehiclemanageAction" method="selectDriver2">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="selectuser" class="vehiclemanageAction" method="selectUser2">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="vehicleList" class="vehiclemanageAction" method="vehicleList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+	
+	
+</struts>

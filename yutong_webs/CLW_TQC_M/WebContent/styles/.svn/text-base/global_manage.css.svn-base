@@ -1,0 +1,35 @@
+@charset "utf-8";
+/* Created 2011-2-25, Designer Peng Zhang, Version of 1.0 */
+
+#wrapper{ height: auto; margin: 0; padding: 0; width: 100%;}
+#header{ background: url(../images/header_bg.png) repeat-x left top; float: left; height: 100px; min-width: 1008px; width:100%;}
+#headBg{ background: url(../images/header_bg2.png) no-repeat left top; float: left; height: 98px; width:100%;}
+.logo{ background: url(../images/header_line.png) no-repeat right top; float: left; height: 98px; text-align: left; width: 335px;}
+.userInfo{ background: url(../images/ico_user2.gif) no-repeat left top; float: left; height: 50px; line-height: 30px; margin: 30px 12px 0; padding-left: 35px; width: 145px;}
+.userInfo a{ color: #fff; }
+.userLink{ color: #fff; line-height: 14px;}
+.navigation{ float: right; padding-top: 10px; height: 80px; width: 500px;}
+.navigation ul{ float: left; height: 76px; margin: 0; width: 500px;}
+.navigation li{ float: left; margin: 0 5px; padding: 0; list-style: none;}
+.navigation a{
+	color: #fff;
+    display: block;
+    margin: 0 3px;
+	padding-top: 52px;
+	text-decoration: none;
+	text-align: center;
+	width: 90px;
+	height: 24px;
+}
+a.nav2{ background: url(../images/menu2.png) no-repeat center top; }
+a.nav2:hover{ background: url(../images/menu2_hover.png) no-repeat center top; }
+a.nav2focus{ background: url(../images/menu2_focus.png) no-repeat center top;}
+a.nav4{ background: url(../images/menu4.png) no-repeat center top;}
+a.nav4:hover{ background: url(../images/menu4_hover.png) no-repeat center top; }
+a.nav4focus{ background: url(../images/menu4_focus.png) no-repeat center top;}
+a.nav5{ background: url(../images/menu5.png) no-repeat center top;}
+a.nav5:hover{ background: url(../images/menu5_hover.png) no-repeat center top; }
+a.nav5focus{ background: url(../images/menu5_focus.png) no-repeat center top;}
+a.nav6{ background: url(../images/menu6.png) no-repeat center top;}
+a.nav6:hover{ background: url(../images/menu6_hover.png) no-repeat center top; }
+a.nav6focus{ background: url(../images/menu6_focus.png) no-repeat center top;}

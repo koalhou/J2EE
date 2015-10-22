@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="AndroidDownload">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="RegionManageInfo" type="com.neusoft.clw.android.domain.RegionManageInfo" />
+	<typeAlias alias="APKInfo" type="com.neusoft.clw.android.domain.VersionDomain"></typeAlias>  
+	<resultMap class="RegionManageInfo" id="person-result">
+       <result property="regionName" column="REGION_NAME"/>
+       <result property="managerName" column="MANAGER_NAME"/>
+       <result property="cellPhone" column="MANAGER_MP"/>
+       <result property="isMobileAllow" column="IS_MOBILE_ALLOW"/>
+       <result property="photoPath" column="PHOTO_PATH"/>
+    </resultMap>
+	<resultMap class="APKInfo" id="apk-info">
+       <result property="version_id" column="version_id"/>
+       <result property="apply_id" column="apply_id"/>
+       <result property="version_name" column="version_name"/>
+       <result property="valid_flag" column="valid_flag"/>
+       <result property="version_time" column="version_time"/>
+       <result property="software_uri" column="software_uri"/>
+    </resultMap>
+    <!-- 获取最新版本信息 -->
+    <select id="getAPK"  resultClass="APKInfo">
+		SELECT
+			version_id,
+			apply_id,
+			version_name,
+			valid_flag,
+			TO_CHAR(
+				version_time,
+				'yyyy-mm-dd hh24:mi:ss'
+			)version_time,
+			software_uri
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					CLW_CL_SYSVERSION_T
+				WHERE
+					APPLY_ID = 'M'
+				AND VALID_FLAG = '0'
+				AND OS_NAME='android'
+				ORDER BY
+					VERSION_TIME DESC
+			)
+		WHERE
+			ROWNUM = 1
+	</select>
+    <select id="getMobileAllow" parameterClass="String" resultClass="String">
+        SELECT JET.IS_MOBILE_ALLOW
+          FROM CLW_JC_USER_T JUT, CLW_JC_ENTERPRISE_T JET
+         WHERE JUT.ENTERPRISE_ID = JET.ENTERPRISE_ID
+           AND JUT.USER_ID = #value#
+           AND ROWNUM = 1
+    </select>
+    
+	<!-- 获取配置列表 -->
+	<select id="getRegionManagerInfos" parameterClass="String" resultMap="person-result">
+		SELECT MAI.REGION_NAME,
+               MAPI.MANAGER_NAME,
+               MAPI.MANAGER_MP,
+               JET.IS_MOBILE_ALLOW,
+               MAPI.PHOTO_PATH
+          FROM CLW_M_AREA_PERSONNEL_INFO_T MAPI,
+               CLW_M_AREA_INFO_T           MAI,
+               CLW_M_AREA_PROVINCE_T       MAPT,
+               CLW_JC_USER_T               JUT,
+               CLW_JC_ENTERPRISE_T         JET
+         WHERE MAPI.REGION_ID = MAI.REGION_ID
+           AND MAI.REGION_ID = MAPT.REGION_ID
+           AND MAPT.PROVINCE_ID = JET.ENTERPRISE_PROVINCE
+           AND JUT.ENTERPRISE_ID = JET.ENTERPRISE_ID
+           AND JUT.USER_ID = #value#
+           AND MAPI.MANAGER_TYPE = '1'
+           AND ROWNUM = 1
+	</select>
+</sqlMap>

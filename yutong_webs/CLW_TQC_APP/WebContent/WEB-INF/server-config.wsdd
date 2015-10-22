@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+	xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+	<globalConfiguration>
+		<parameter name="sendMultiRefs" value="true" />
+		<parameter name="disablePrettyXML" value="true" />
+		<parameter name="dotNetSoapEncFix" value="true" />
+		<parameter name="enableNamespacePrefixOptimization" value="false" />
+		<parameter name="sendXMLDeclaration" value="true" />
+		<parameter name="sendXsiTypes" value="true" />
+		<parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl" />
+	</globalConfiguration>
+
+	<handler type="java:org.apache.axis.handlers.http.URLMapper" name="URLMapper" />
+	<service name="getCheckRecordList" provider="java:RPC">
+		<parameter name="className" value="com.neusoft.clw.ws.service.Stcheckrecord" />
+		<beanMapping languageSpecificType="java:com.neusoft.clw.ws.bean.ClwXcStCheckRecordT" qname="ns:ClwXcStCheckRecordT" xmlns:ns="urn:BeanService" />
+		<parameter name="scope" value="request" />
+		<parameter name="allowedMethods" value="*" />
+		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+	</service>
+	<service name="getVehicleRecord" provider="java:RPC">
+		<parameter name="className" value="com.neusoft.clw.ws.service.VehicleRecord" />
+		<beanMapping languageSpecificType="java:com.neusoft.clw.yw.webservice.DT_SernrInfo_ResponseBus_ResponseReturn_Sernr_Record" qname="ns:DT_SernrInfo_ResponseBus_ResponseReturn_Sernr_Record" xmlns:ns="urn:BeanService" />
+		<parameter name="scope" value="request" />
+		<parameter name="allowedMethods" value="*" />
+		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+	</service>
+	<transport name="http">
+		<requestFlow>
+			<handler type="URLMapper" />
+		</requestFlow>
+	</transport>
+</deployment>

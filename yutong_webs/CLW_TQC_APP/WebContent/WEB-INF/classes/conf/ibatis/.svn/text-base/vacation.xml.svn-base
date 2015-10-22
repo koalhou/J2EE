@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="vacation">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="vacation" type="com.neusoft.clw.sysmanage.vacation.domain.Vacation" />
+	  
+
+    <select id="count" parameterClass="Map" resultClass="Integer">
+		SELECT count(wm_concat(decode(t.VACATION_DAY, t.VACATION_DAY, to_char(t.VACATION_DAY, 'DD') )))
+  		FROM   tqc_organize_set   t
+		 where t.valid_flag='0' and t.organization_id in
+		    <![CDATA[
+		       (select enterprise_id
+		          from clw_jc_enterprise_vi
+		         where left_num >=
+		               (select left_num
+		                  from clw_jc_enterprise_vi
+		                 where enterprise_id = #orgID#)
+		           and right_num <=
+		               (select right_num
+		                  from clw_jc_enterprise_vi
+		                 where enterprise_id = #orgID#))
+		        ]]>
+		   	<isNotEmpty prepend="AND" property="year">
+			         	set_year = $year$
+			</isNotEmpty>
+		   	<isNotEmpty prepend="AND" property="month">
+			         	set_month = #month#
+			</isNotEmpty>
+			GROUP BY t.organization_id, t.set_year, t.set_month
+ 			
+	</select>
+	
+    <select id="list" parameterClass="Map" resultClass="vacation">
+		select * from (select s.*, rownum as rownum_2 from (
+		select a.*,b.short_name as orgName
+		from 
+		(SELECT t.set_year as year,
+	       t.set_month as month,
+	       t.organization_id as orgID,
+	       wm_concat(decode(t.VACATION_DAY,
+	                        t.VACATION_DAY,
+	                        to_char(t.VACATION_DAY, 'DD') )) as collection,
+		t.create_date
+	  FROM  tqc_organize_set   t
+			 where t.valid_flag='0' and t.organization_id in
+			    <![CDATA[
+			       (select enterprise_id
+			          from clw_jc_enterprise_vi
+			         where left_num >=
+			               (select left_num
+			                  from clw_jc_enterprise_vi
+			                 where enterprise_id = #orgID#)
+			           and right_num <=
+			               (select right_num 
+			                  from clw_jc_enterprise_vi
+			                 where enterprise_id = #orgID#))
+			        ]]>
+			   	<isNotEmpty prepend="AND" property="year">
+				         	set_year = $year$
+				</isNotEmpty>
+			   	<isNotEmpty prepend="AND" property="month">
+				         	set_month = #month#
+				</isNotEmpty>
+				GROUP BY t.organization_id, t.set_year, t.set_month,t.create_date) a ,clw_jc_enterprise_vi b
+ 			where a.orgID=b.enterprise_id
+ 			
+ 			<isNotEmpty property="sortname">  
+			order by $sortname$   $sortorder$  
+	    </isNotEmpty>
+		<![CDATA[
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</select>
+	
+	<insert id="add" parameterClass="vacation">
+		INSERT INTO TQC_ORGANIZE_SET
+		  (
+		    SET_ID,
+		    SET_YEAR,
+		    SET_MONTH,
+		    VACATION_DAY,
+		    ORGANIZATION_ID,
+		    CREATE_BY
+		  )
+		  VALUES
+		  (
+		    seq_organize_set.nextval,
+			#year#,
+			#month#,
+			#day#,
+			#orgID#,
+			#createdBy#
+		  )
+	</insert>
+    	
+	
+	 <update id="del" parameterClass="vacation">
+		UPDATE TQC_ORGANIZE_SET set VALID_FLAG='1', UPDATE_BY=#updatedBy#,UPDATE_DATE=sysdate where SET_YEAR=#year# and SET_MONTH=#month# 
+		and organization_id in
+			    <![CDATA[
+			       (select enterprise_id
+			          from clw_jc_enterprise_vi
+			         where left_num >=
+			               (select left_num
+			                  from clw_jc_enterprise_vi
+			                 where enterprise_id = #orgID#)
+			           and right_num <=
+			               (select right_num
+			                  from clw_jc_enterprise_vi
+			                 where enterprise_id = #orgID#))
+			        ]]>
+	</update>
+</sqlMap>

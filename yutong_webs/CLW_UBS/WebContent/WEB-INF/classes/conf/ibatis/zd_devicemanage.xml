@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DeviceManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="OemInfo" type="com.neusoft.clw.yw.zd.oem.ds.OemInfo" />
+	<typeAlias alias="DeviceInfo" type="com.neusoft.clw.yw.zd.device.ds.DeviceInfo" />
+	
+	<resultMap id="oemInfo-result" class="OemInfo">
+		<result property="oemId" column="TERMINAL_OEM_ID" />
+		<result property="fullName" column="FULL_NAME" />
+	</resultMap>
+	
+	<resultMap id="deviceInfo-result" class="DeviceInfo">
+		<result property="rowNum" column="ROWNUM" />
+		<result property="typeId" column="TERMINAL_TYPE_ID" />
+		<result property="typeName" column="TERMINAL_TYPE_NAME" />
+		<result property="oemId" column="TERMINAL_OEM_ID" />
+		<result property="oemName" column="OEMNAME" />
+	</resultMap>
+	
+	<resultMap id="deviceDetail-result" class="DeviceInfo">
+		<result property="typeName" column="TERMINAL_TYPE_NAME" />
+		<result property="oemId" column="TERMINAL_OEM_ID" />
+	</resultMap>
+	
+	<select id="getOemInfos" resultMap="oemInfo-result">
+		SELECT T.TERMINAL_OEM_ID,
+               T.FULL_NAME
+          FROM CLW_CL_TMOEM_T T
+         WHERE T.VALID_FLAG = '0'
+	</select>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+          FROM CLW_CL_TMTYPE_T T1, CLW_CL_TMOEM_T T2
+         WHERE T1.TERMINAL_OEM_ID = T2.TERMINAL_OEM_ID
+           AND T1.VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="deviceName">
+               T1.TERMINAL_TYPE_NAME LIKE '%$deviceName$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="oemId">
+               T1.TERMINAL_OEM_ID = #oemId#
+         </isNotEmpty>
+	</select>
+	
+	<select id="getDeviceInfos" parameterClass="Map" resultMap="deviceInfo-result">
+		SELECT ROWNUM,
+               T1.TERMINAL_TYPE_ID,
+               T1.TERMINAL_TYPE_NAME,
+               T1.TERMINAL_OEM_ID,
+               T2.FULL_NAME AS OEMNAME
+          FROM CLW_CL_TMTYPE_T T1, CLW_CL_TMOEM_T T2
+         WHERE T1.TERMINAL_OEM_ID = T2.TERMINAL_OEM_ID
+           AND T1.VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="deviceName">
+               T1.TERMINAL_TYPE_NAME LIKE '%$deviceName$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="oemId">
+               T1.TERMINAL_OEM_ID = #oemId#
+         </isNotEmpty>
+	</select>
+	
+	<insert id="insertDevice" parameterClass="DeviceInfo">
+		INSERT INTO CLW_CL_TMTYPE_T T
+          (T.TERMINAL_TYPE_ID,
+           T.TERMINAL_TYPE_NAME,
+           T.TERMINAL_OEM_ID,
+           T.CREATER,
+           T.CREATE_TIME,
+           T.MODIFIER,
+           T.MODIFY_TIME,
+           T.VALID_FLAG)
+        VALUES
+          (#typeId#,
+           #typeName#,
+           #oemId#,
+           #creator#,
+           SYSDATE,
+           #creator#,
+           SYSDATE,
+           '0')
+	</insert>
+	
+	<select id="getDeviceInfoById" parameterClass="String" resultMap="deviceDetail-result">
+		SELECT T.TERMINAL_TYPE_NAME,
+               T.TERMINAL_OEM_ID
+          FROM CLW_CL_TMTYPE_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.TERMINAL_TYPE_ID = #typeId#
+	</select>
+	
+	<update id="updateDeviceInfo" parameterClass="DeviceInfo">
+		UPDATE CLW_CL_TMTYPE_T T
+           SET T.TERMINAL_TYPE_NAME = #typeName#,
+               T.TERMINAL_OEM_ID = #oemId#,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.TERMINAL_TYPE_ID = #typeId#
+	</update>
+	
+	<update id="updateDeviceValid" parameterClass="String">
+	    UPDATE CLW_CL_TMTYPE_T T
+           SET T.VALID_FLAG = '1'
+         WHERE T.TERMINAL_TYPE_ID = #typeId#
+	</update>
+	
+	<select id="getTypeProtocalCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*) FROM CLW_CL_TMPROTOCOL_T T
+         WHERE T.TERMINAL_TYPE_ID = #typeId#
+           AND T.VALID_FLAG = '0'
+	</select>
+</sqlMap>

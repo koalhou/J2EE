@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Stushuaka">
+	<typeAlias alias="rideInfo"
+		type="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart" />
+		
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="StuLocationInfo" type="com.neusoft.clw.yunxing.stu.stushuaka.domain.StuLocationInfo" />
+			
+	<resultMap class="rideInfo" id="infos">
+		<result property="id" column="ID" />
+		<result property="stu_id" column="STU_ID" />
+		<result property="stu_code" column="STU_CODE" />
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="stu_name" column="STU_NAME" />
+		<result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="st_ride_flag" column="ST_RIDE_FLAG" />	
+	</resultMap>				
+	
+	<!--  
+	<select id="getCountStushuaka" parameterClass="rideInfo" resultClass="Integer">
+		SELECT COUNT(T1.TERMINAL_TIME)
+		FROM CLW_XC_ST_CHECK_RECORD_T T1, CLW_XC_STUDENT_T T2, 
+		(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0' AND A.DEVICE_TYPE = '0') T3
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T2.VALID_FLAG = '0'
+		AND T1.VSS_FLAG != '2'
+		AND T1.ALARM_TYPE_ID IS NULL
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME like '%$stu_name$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+               (T2.STU_SCHOOL like '%$stu_school$%' OR T2.STU_CLASS like '%$stu_class$%')
+         </isNotEmpty>
+ 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+               upper(T3.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>        
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="st_ride_flag">
+			   T1.VSS_FLAG=#st_ride_flag#
+         </isNotEmpty>         
+	</select>
+	-->
+	
+	<!--  
+	<select id="getStuShuakaInfos" parameterClass="rideInfo" resultMap="infos">
+	SELECT  T1.ID,T1.STU_ID,T2.STU_NAME,T2.STU_CODE,T2.STU_SCHOOL,T2.STU_CLASS,
+	        T3.VEHICLE_LN,
+		    T1.VSS_FLAG ST_RIDE_FLAG,
+			TO_CHAR(T1.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME
+		FROM CLW_XC_ST_CHECK_RECORD_T T1,CLW_XC_STUDENT_T T2,
+			(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0'AND A.DEVICE_TYPE = '0') T3
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T1.ALARM_TYPE_ID IS NULL
+		AND T2.VALID_FLAG = '0'	
+		AND T1.VSS_FLAG != '2'
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME like '%$stu_name$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+               (T2.STU_SCHOOL like '%$stu_school$%' OR T2.STU_CLASS like '%$stu_class$%')
+         </isNotEmpty>
+ 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+               upper(T3.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>        
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="st_ride_flag">
+			 T1.VSS_FLAG=#st_ride_flag#
+         </isNotEmpty>         
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	-->
+	
+	<select id="getCountStushuakaList" parameterClass="rideInfo" resultClass="Integer">
+	SELECT COUNT(T1.TERMINAL_TIME)
+		FROM CLW_XC_ST_CHECK_RECORD_T T1,CLW_XC_STUDENT_T T2,
+			(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0'AND A.DEVICE_TYPE = '0') T3
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T1.ALARM_TYPE_ID IS NULL
+		AND T2.VALID_FLAG = '0'	
+		AND T1.VSS_FLAG != '2'
+		AND T1.VEHICLE_VIN in ($VIN$) 
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME LIKE '%' || #stu_name# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+               T2.STU_SCHOOL LIKE '%' || #stu_school# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+               T2.STU_CLASS LIKE '%' || #stu_class# ||'%' ESCAPE '\'
+         </isNotEmpty>       
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <isNotEmpty property="st_ride_flag">
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="00">
+					   1=2
+			  </isEqual>
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="11">
+					  T1.VSS_FLAG in ('0','1')
+			  </isEqual>
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="10">
+					  T1.VSS_FLAG = '0'
+			  </isEqual>
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="01">
+					  T1.VSS_FLAG ='1'
+			  </isEqual>		 
+         </isNotEmpty>         
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getStuShuakaInfosList" parameterClass="rideInfo" resultMap="infos">
+	SELECT  T1.ID,T1.STU_ID,T2.STU_NAME,T2.STU_CODE,T2.STU_SCHOOL,T2.STU_CLASS,
+	        T3.VEHICLE_LN,
+		    CASE 
+			WHEN T1.VSS_FLAG='0' THEN '上车刷卡'
+			WHEN T1.VSS_FLAG='1' THEN '下车刷卡'				
+			ELSE '--' END ST_RIDE_FLAG,
+			TO_CHAR(T1.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME
+		FROM CLW_XC_ST_CHECK_RECORD_T T1,CLW_XC_STUDENT_T T2,
+			(SELECT A.VEHICLE_VIN,A.VEHICLE_LN,A.ORGANIZATION_ID FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0'AND A.DEVICE_TYPE = '0') T3
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN
+		AND T1.ALARM_TYPE_ID IS NULL
+		AND T2.VALID_FLAG = '0'	
+		AND T1.VSS_FLAG != '2'
+		AND T1.VEHICLE_VIN in ($VIN$)
+		 <isNotEmpty prepend="AND" property="user_organization_id">
+			   T3.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #user_organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="stu_name">
+               T2.STU_NAME LIKE '%' || #stu_name# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+               T2.STU_SCHOOL LIKE '%' || #stu_school# ||'%' ESCAPE '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+               T2.STU_CLASS LIKE '%' || #stu_class# ||'%' ESCAPE '\'
+         </isNotEmpty>      
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+          <isNotEmpty property="st_ride_flag">
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="00">
+					   1=2
+			  </isEqual>
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="11">
+					  T1.VSS_FLAG in ('0','1')
+			  </isEqual>
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="10">
+					  T1.VSS_FLAG = '0'
+			  </isEqual>
+			  <isEqual prepend="AND" property="st_ride_flag" compareValue="01">
+					  T1.VSS_FLAG ='1'
+			  </isEqual>		 
+         </isNotEmpty>        
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	
+	<resultMap class="StuLocationInfo" id="studentLocation_result">
+       <result property="studentName" column="STU_NAME"/>
+       <result property="studentCode" column="STU_CODE"/>
+       <result property="vssFlag" column="VSS_FLAG"/>
+       <result property="studentSchool" column="STU_SCHOOL"/>
+       <result property="studentClass" column="STU_CLASS"/>
+       <result property="vehicleLn" column="VEHICLE_LN"/>
+       <result property="terminalTime" column="TERMINAL_TIME"/>
+       <result property="lat" column="LATITUDE"/>
+       <result property="lon" column="LONGITUDE"/>
+    </resultMap>
+    
+	<select id="getStuLocationById" parameterClass="String" resultMap="studentLocation_result">
+		SELECT XS.STU_NAME,
+		       XS.STU_CODE,
+		       CASE 
+			   WHEN CR.VSS_FLAG='0' THEN '上车刷卡'
+			   WHEN CR.VSS_FLAG='1' THEN '下车刷卡'				
+			   ELSE '--' END VSS_FLAG,
+		       XS.STU_SCHOOL,
+		       XS.STU_CLASS,
+		       (SELECT CBI.VEHICLE_LN
+		          FROM CLW_CL_BASE_INFO_T CBI
+		         WHERE CBI.VEHICLE_VIN = CR.VEHICLE_VIN
+		           AND CBI.VALID_FLAG = '0'
+		           AND ROWNUM = 1) AS VEHICLE_LN,
+		       TO_CHAR(CR.TERMINAL_TIME, 'YYYY-MM-DD HH24:MI:SS') TERMINAL_TIME,
+		       CR.LATITUDE,
+		       CR.LONGITUDE
+		  FROM CLW_XC_ST_CHECK_RECORD_T CR,
+		       CLW_XC_STUDENT_T XS
+		 WHERE CR.STU_ID = XS.STU_ID
+		   AND CR.ID = #value#
+		   AND ROWNUM = 1
+	</select>
+	
+</sqlMap>

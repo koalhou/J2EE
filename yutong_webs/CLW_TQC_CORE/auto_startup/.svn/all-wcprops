@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup
+END
+Auto_memcache.sh
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup/Auto_memcache.sh
+END
+Auto_startup.sh
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup/Auto_startup.sh
+END
+check_app_log.sh
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup/check_app_log.sh
+END
+check_clwxc_log.sh
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup/check_clwxc_log.sh
+END
+clwxc_startup.sh
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup/clwxc_startup.sh
+END
+memcache_startup.sh
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/auto_startup/memcache_startup.sh
+END

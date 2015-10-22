@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 配置mybatis的缓存，延迟加载等等一系列属性 -->
+	<settings>
+		<!-- 全局映射器启用缓存 -->
+		<setting name="cacheEnabled" value="true" />
+		<!-- 查询时，关闭关联对象即时加载以提高性能 -->
+		<setting name="lazyLoadingEnabled" value="true" />
+		<!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指 定)，不会加载关联表的所有字段，以提高性能 -->
+		<setting name="aggressiveLazyLoading" value="false" />
+		<!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<!-- 允许使用列标签代替列名 -->
+		<setting name="useColumnLabel" value="true" />
+		<!-- 允许使用自定义的主键值(比如由程序生成的UUID 32位编码作为键值)，数据表的PK生成策略将被覆盖 -->
+		<!-- <setting name="useGeneratedKeys" value="true" /> -->
+		<!-- 给予被嵌套的resultMap以字段-属性的映射支持 -->
+		<setting name="autoMappingBehavior" value="FULL" />
+		<!-- 对于批量更新操作缓存SQL以提高性能 <setting name="defaultExecutorType" value="BATCH" 
+			/> -->
+		<!-- 数据库超过25000秒仍未响应则超时 -->
+		<setting name="defaultStatementTimeout" value="30" />
+	</settings>
+	<!-- 全局别名设置，在映射文件中只需写别名，而不必写出整个类路径 -->
+	<typeAliases>
+		<typeAlias alias="UserSeesion" type="com.yutong.axxc.tqc.entity.UserSeesion" />
+		<typeAlias alias="Remind" type="com.yutong.axxc.tqc.entity.site.Remind" />
+		<typeAlias alias="GPS" type="com.yutong.axxc.tqc.entity.site.GPS" />
+		<typeAlias alias="Route" type="com.yutong.axxc.tqc.entity.site.Route" />
+		<typeAlias alias="LinePoint" type="com.yutong.axxc.tqc.entity.site.LinePoint" />
+		<typeAlias alias="Site" type="com.yutong.axxc.tqc.entity.site.Site" />
+		<typeAlias alias="Area" type="com.yutong.axxc.tqc.entity.site.Area" />
+		<typeAlias alias="Driver" type="com.yutong.axxc.tqc.entity.site.Driver" />
+		<typeAlias alias="vehicle" type="com.yutong.axxc.tqc.entity.vehicle.Vehicle" />
+		<typeAlias alias="VehicleReal" type="com.yutong.axxc.tqc.entity.vehicle.VehicleReal" />
+		<typeAlias alias="Account" type="com.yutong.axxc.tqc.entity.account.Account" />
+		<typeAlias alias="UserInfo" type="com.yutong.axxc.tqc.entity.account.UserInfo" />
+		<typeAlias alias="Child" type="com.yutong.axxc.tqc.entity.Child" />
+		<typeAlias alias="HistoryMsg" type="com.yutong.axxc.tqc.entity.HistoryMsg" />
+		<typeAlias alias="RidingMsg" type="com.yutong.axxc.tqc.entity.RidingMsg" />
+		<typeAlias alias="softversion" type="com.yutong.axxc.tqc.entity.oauth.SoftwareVersion" />
+		<typeAlias alias="StorageFile" type="com.yutong.axxc.tqc.entity.StorageFile" />
+		<typeAlias alias="envInfo" type="com.yutong.axxc.tqc.entity.env.EnvInfo" />
+		<typeAlias alias="pushRuleInfo"	type="com.yutong.axxc.tqc.entity.pushRule.PushRuleInfo" />
+		<typeAlias alias="News" type="com.yutong.axxc.tqc.entity.News" />
+		<typeAlias alias="Advises" type="com.yutong.axxc.tqc.entity.Advises" />
+
+
+	</typeAliases>
+	<mappers>
+		<mapper resource="mapper/CommonMapper.xml" />
+		<mapper resource="mapper/AccountMapper.xml" />
+		<mapper resource="mapper/ChildrenMapper.xml" />
+		<mapper resource="mapper/MessageMapper.xml" />
+		<mapper resource="mapper/FileMapper.xml" />
+		<mapper resource="mapper/LogMapper.xml" />
+		<mapper resource="mapper/SystemMapper.xml" />
+		<mapper resource="mapper/StationMapper.xml" />
+		<mapper resource="mapper/VehicleMapper.xml" />
+		<mapper resource="mapper/NewsMapper.xml" />
+		<mapper resource="mapper/AlgorithmMapper.xml" />
+	</mappers>
+</configuration>

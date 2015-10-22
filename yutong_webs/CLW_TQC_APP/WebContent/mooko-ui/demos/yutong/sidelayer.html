@@ -1,0 +1,67 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<link href="stylesheets/pop.css" rel="stylesheet" type="text/css" />
+<link href="../../themes/default/mk.sidelayer.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://app.mapabc.com/apis?&t=ajaxmap&v=2.1.2&key=b0a7db0b3a30f944a21c3682064dc70ef5b738b062f6479a5eca39725798b1ee300bd8d5de3a4ae3|29e8ed1f7f6a97d8e99fc568cea6a7dc0ccd920856e07c0718b9885faf7551a18141699c81f526d7"></script> 
+<script src="../../libs/jquery-1.7.2.min.js"></script>
+    <script src="../../core/mk.parser.js"></script>
+    <script src="../../core/mk.sidelayer.js"></script>
+    <script src="./scripts/sidelayer.js"></script>
+    <script>
+      var obj;
+      $(function() {
+
+        obj = mapInit('iCenter');
+      });
+
+      function change_li(target) {
+        $('.mk-sidelayer-tools').find('li').removeClass('selected');
+        $(target).addClass('selected');
+      }
+
+      function mapInit(target) {   
+        var mapOptions = new MMapOptions();//构建地图辅助类   
+        mapOptions.zoom=13;//设置地图zoom级别   
+        mapOptions.center=new MLngLat(116.397428,39.90923);   //设置地图中心点   
+        mapOptions.toolbar = DEFAULT;//工具条   
+        mapOptions.toolbarPos = new MPoint(15,15);  //工具条   
+        mapOptions.overviewMap = SHOW;//是否显示鹰眼   
+        mapOptions.scale = SHOW;//是否显示比例尺   
+        mapOptions.returnCoordType = COORD_TYPE_OFFSET;//返回数字坐标   
+        mapOptions.zoomBox = true;//鼠标滚轮缩放和双击放大时是否有红框动画效果。   
+        return new MMap(target,mapOptions); //地图初始   
+    } 
+    </script>
+</head>
+
+<body><button id="show_hide">Click</button>
+<body><button id="side_close">Close</button>
+<body><button id="a1">A1</button>
+<body><button id="a2">A2</button>
+<body><button id="a3">A3</button>
+  <div id="iCenter" style="width:400px; height:400px;"></div>   
+<div id="popArea" class="mk-sidelayer mk-sidelayer-small">
+  <div class="mk-sidelayer-toolbar">        
+        <span class="mk-sidelayer-bar-btn show"></span>
+        <h1 class="mk-sidelayer-bar-title">辽A888888</h1>
+        <div class="mk-sidelayer-tools">
+          <ul>
+              <li id="aa1"><a href="#"><img src="images/pop_btn_0.png"/></a></li>
+              <li id="aa2"><a href="#"><img src="images/pop_btn_1.png"/></a></li>
+              <li id="aa3"><a href="#"><img src="images/pop_btn_2.png"/></a></li>
+              <li id="aa4"><a href="#"><img src="images/pop_btn_3.png"/></a></li>
+              <li><a href="#"><img src="images/pop_btn_4.png"/></a></li>
+              <li><a href="#"><img src="images/pop_btn_5.png"/></a></li>
+              <li class="selected"><a href="#"><img src="images/pop_btn_6.png"/></a></li>
+          </ul>
+        </div>
+  </div>
+  <div class="mk-sidelayer-content">
+  </div>
+</div>
+</body>
+</html>

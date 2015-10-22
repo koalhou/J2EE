@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="student" namespace="/student" extends="clw-default">
+		<action name="passwordConfirm" class="passwordConfirmAction" method="init">
+			<result name="error">/WEB-INF/jsp/infomanage/studentmanage/modulePasswordConfirm.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/studentmanage/modulePasswordConfirm.jsp</result>
+		</action>
+		
+		<action name="studentmanage" class="studentManageAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/infomanage/studentmanage/studentmanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/studentmanage/studentmanage.jsp</result>	
+			<result name="forbid">/WEB-INF/jsp/infomanage/studentmanage/studentforbid.jsp</result>	
+		</action>
+		<action name="addstudentbefore" class="studentManageAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/studentmanage/addstudent.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="student_add" class="studentManageAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/studentmanage/addstudent.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addstudentbefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>		
+		</action>
+		<action name="student_edit_form" class="studentManageAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/infomanage/studentmanage/alterstudent.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		
+		<action name="show_pic" class="studentManageAction" method="showStudentPhoto">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="student_edit" class="studentManageAction" method="updateStudent">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/studentmanage/alterstudent.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">student_edit_form</param>
+				<param name="studentInfo.student_id">${studentInfo.student_id}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="student_delete" class="studentManageAction" method="deleteStudent">
+			<result name="success" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="forbid" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/studentmanage/alterstudent.jsp
+			</result>			
+		</action>
+		
+		<action name="importStudentBefore" class="studentManageAction" method="importStudentBefore">
+			<result name="success">
+				/WEB-INF/jsp/infomanage/studentmanage/studentImport.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<action name="importStudent" class="studentManageAction" method="importStudent">
+			<result name="input">
+				/WEB-INF/jsp/infomanage/studentmanage/studentImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/infomanage/studentmanage/studentImport.jsp
+			</result>
+		</action>
+		
+		<action name="exportStudent" class="studentManageAction" method="exportStudent">
+			<result name="error" type="redirect-action">
+				<param name="actionName">studentmanage</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="studentGrid" namespace="/studentGrid" extends="json-default">
+		<action name="studentList" class="studentManageAction"  method="studentBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

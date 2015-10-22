@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/buffer/sync
+END
+SyncClass.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/buffer/sync/SyncClass.java
+END
+SyncBuffer.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/buffer/sync/SyncBuffer.java
+END
+SyncPooledThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/buffer/sync/SyncPooledThread.java
+END
+SyncThreadPool.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/buffer/sync/SyncThreadPool.java
+END

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Appcfg">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="appcfg"
+		type="com.neusoft.clw.sysmanage.datamanage.appconfig.domain.Appcfg" />
+	  
+	  <resultMap class="appcfg" id="appcfgs-result">
+       <result property="app_id" column="app_id"/>
+       <result property="app_name" column="app_name"/>
+       <result property="app_ip" column="app_ip"/>
+       <result property="send_path" column="send_path"/>
+       <result property="core_id" column="core_id"/>
+       <result property="core_pass" column="core_pass"/>
+      </resultMap>
+	
+	<!-- 获取配置列表 -->
+	<select id="getInfos" parameterClass="String" resultMap="appcfgs-result">
+		SELECT APP_ID,APP_NAME,APP_IP,SEND_PATH,
+		       CORE_ID,
+		       CORE_PASS
+	    FROM CLW_YW_APP_CFG_T   
+		WHERE APP_ID=#value# 
+	</select>
+	
+</sqlMap>

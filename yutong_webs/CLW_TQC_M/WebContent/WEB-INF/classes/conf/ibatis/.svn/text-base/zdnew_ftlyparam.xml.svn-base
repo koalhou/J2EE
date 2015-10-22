@@ -1,0 +1,28 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ftlyParam">
+	<typeAlias alias="ftlyParamInfo" type="com.neusoft.clw.yw.zdnew.ftlyparam.ds.FtlyParamInfo" />
+	<resultMap class="ftlyParamInfo" id="paramsInfo">
+       <result property="oilDemarcate" column="OIL_DEMARCATE"/>
+       <result property="adGap" column="AD_GAP"/>
+       <result property="addOilLimit" column="ADDOIL_LIMIT"/>
+       <result property="stealOilLimit" column="STEALOIL_LIMIT"/>
+    </resultMap>
+    
+	<delete id="deleteParamsByVehicleId" parameterClass="String">
+		DELETE FROM ZSPT_FTLY_PARAM
+		 WHERE VIN_CODE = (SELECT VEHICLE_VIN
+		                  FROM CLW_CL_BASE_INFO_T
+		                 WHERE VEHICLE_ID = #value#
+		           AND ROWNUM = 1)
+	</delete>
+	
+	<select id="getParamsByVehicleId" parameterClass="String" resultMap="paramsInfo">
+		SELECT OIL_DEMARCATE,AD_GAP,ADDOIL_LIMIT,STEALOIL_LIMIT
+		FROM ZSPT_FTLY_PARAM
+		WHERE VIN_CODE = (SELECT VEHICLE_VIN
+		                  FROM CLW_CL_BASE_INFO_T
+		                 WHERE VEHICLE_ID = #value#
+		           AND ROWNUM = 1)
+	</select>
+</sqlMap>

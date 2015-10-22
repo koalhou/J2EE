@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	 
+ 
+	<!-- 被动活跃度action start-->
+ <package name="ubmarket" namespace="/ub/market" extends="clw-default">
+		
+		<action name="task" class="marketAction" method="taskInit">
+			<result name="success" >/WEB-INF/jsp/ub/market/task.jsp</result>
+		</action>
+		<action name="preEditTask"  class="marketAction"   method="preEditTask">
+			<result  name="success" >/WEB-INF/jsp/ub/market/edit.jsp</result>
+		</action>
+		<action name="linesInit" class="marketAction"   method="linesInit">
+			<result>/WEB-INF/jsp/ub/market/lines.jsp</result>
+		</action>
+		<action name="rankListInit"  class="marketAction"   method="rankListInit">
+			<result  name="success">/WEB-INF/jsp/ub/market/rankList.jsp</result>
+		</action>
+		
+</package>
+	<!-- 被动活跃度action end-->
+	
+	 <package name="ubmarketjson" namespace="/ub/market/json" extends="json-default">
+	<!-- 读取任务 -->
+		<action name="listTask" class="marketAction" method="listTask">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 设置任务 -->
+		<action name="editTask" class="marketAction" method="editTask">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 趋势图 -->
+		<action name="lines" class="marketAction" method="lines">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 客户经理排名 -->
+		<action name="amRank" class="marketAction" method="amRank">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+           <!-- 技术经理排名 -->
+		<action name="acRank" class="marketAction" method="acRank">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+
+        </package>
+	
+</struts>

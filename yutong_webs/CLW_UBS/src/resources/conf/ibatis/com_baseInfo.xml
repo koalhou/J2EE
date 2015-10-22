@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CommonBaseInfo">
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="CommonMapBean" type="com.neusoft.clw.yw.common.ds.CommonMapBean" />
+    <typeAlias alias="AccessoryInfo" type="com.neusoft.clw.yw.common.ds.AccessoryInfo" />
+    
+    <resultMap class="CommonMapBean" id="commonBaseInfo-result">
+		<result property="codeId" column="CODE_ID"/>
+		<result property="codeName" column="CODE_NAME"/>
+	</resultMap>
+    
+    <resultMap class="AccessoryInfo" id="accessoryInfos">
+       <result property="accessoryName" column="ACCESSORY_NAME"/>
+       <result property="accessoryId" column="ACCESSORY_ID"/>
+    </resultMap>
+    
+    <select id="getCommonBaseInfos" parameterClass="String" resultMap="commonBaseInfo-result">
+		SELECT JC.CODE_ID, 
+		       JC.CODE_NAME
+          FROM CLW_JC_CODEDEF_T JC
+         WHERE JC.CODE_TYPE = #value#
+           AND JC.VALID_FLAG = '0'
+         ORDER BY JC.CODE_ID
+	</select>
+	
+	 <select id="getCommonBaseIdInfos" parameterClass="String" resultMap="commonBaseInfo-result">
+		SELECT JC.DEF_ID AS CODE_ID, 
+		       JC.CODE_NAME
+          FROM CLW_JC_CODEDEF_T JC
+         WHERE JC.CODE_TYPE = #value#
+           AND JC.VALID_FLAG = '0'
+	</select>
+	
+	<select id="getBaseInfoTypes" parameterClass="String" resultMap="commonBaseInfo-result">
+		SELECT JC.CODE_ID, JC.CODE_NAME
+          FROM CLW_JC_CODEDEF_T JC
+         WHERE JC.CODE_TYPE = #value#
+           AND JC.VALID_FLAG = '0'
+           <!-- 
+           AND JC.CODE_ID != 'BIZTYPE'
+            -->
+         ORDER BY JC.CODE_LEVEL, JC.REMARK
+	</select>
+	
+	<select id="getAccessoriesByID" parameterClass="String" resultMap="accessoryInfos">
+		SELECT ACCESSORY_ID,
+			   ACCESSORY_NAME
+		  FROM CLW_YW_ACCESSORY_T
+		 WHERE NOTICE_ID = #noticeId#
+	</select>
+	
+	<insert id="saveAccessories" parameterClass="AccessoryInfo">
+		INSERT INTO CLW_YW_ACCESSORY_T T
+          (T.ACCESSORY_ID,
+           T.NOTICE_ID,
+           T.ACCESSORY_NAME,
+           T.ACCESSORY_CONTENT,
+           T.ACCESSORY_TYPE)
+        VALUES
+          (#accessoryId#, 
+           #noticeId#, 
+           #accessoryName#, 
+           #accessoryContent,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#, 
+           '0')
+	</insert>
+	
+</sqlMap>

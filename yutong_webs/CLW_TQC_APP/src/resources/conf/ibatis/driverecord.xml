@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="driverecord">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="driverecord" type="com.neusoft.clw.infomanage.driverecord.domain.TqcDriverCard" />
+	
+	<resultMap id="driverecordResult" class="driverecord" >
+		<result property="driver_name" column="driver_name" />
+		<result property="vehicle_code" column="vehicle_code" />
+		<result property="vehicle_ln" column="vehicle_ln" />
+		<result property="route_name" column="route_name" />
+		<result property="terminal_time" column="terminal_time" />
+	</resultMap>
+	
+	<select id="getdriverecordListCount" parameterClass="Map" resultClass="int">		
+		select count(count(1))
+	  from TQC_DRIVER_CARD    t,
+	       clw_yw_driver_t    g,
+	       clw_cl_base_info_t info,
+	       tqc_trip_execute   trip,
+	       clw_xc_route_t     route
+	 where t.vin_code = info.vehicle_vin
+	   and t.driver_id = g.driver_id(+) 
+	   and trip.route_id = route.route_id
+	   and t.trip_id = trip.trip_id(+)
+	   <isNotEmpty prepend="and" property="drivername">
+	       g.driver_name like '%$drivername$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclecode">
+	       info.vehicle_code like '%$vehiclecode$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="begintime">
+	       t.terminal_time > to_date(#begintime#,'yyyy-mm-dd')
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="endtime">
+	       t.terminal_time &lt; to_date(#endtime#,'yyyy-mm-dd')+1
+	   </isNotEmpty>
+	   and info.valid_flag = '0'
+	   and info.ORGANIZATION_ID in
+               (select enterprise_id
+                   from CLW_JC_ENTERPRISE_T
+                  where left_num >=
+                        (select  left_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)
+                    and right_num &lt;=
+                        (select  right_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#))
+		group by g.driver_name,
+	       info.vehicle_code,
+	       info.vehicle_ln,
+	       route.route_name,
+	       t.terminal_time
+	</select>
+	<select id="getdriverecordList" parameterClass="Map" resultMap="driverecordResult">
+	    select t.* from (select s.*, rownum as rownum_2 from (
+		select 
+	       g.driver_name,
+	       info.vehicle_code,
+			info.vehicle_ln,
+			route.route_name,
+			to_char(t.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+	  from TQC_DRIVER_CARD    t,
+	       clw_yw_driver_t    g,
+	       clw_cl_base_info_t info,
+	       tqc_trip_execute   trip,
+	       clw_xc_route_t     route
+	 where t.vin_code = info.vehicle_vin
+	   and t.driver_id = g.driver_id(+)
+	   and trip.route_id = route.route_id
+	   and t.trip_id = trip.trip_id(+)
+	   <isNotEmpty prepend="and" property="drivername">
+	       g.driver_name like '%$drivername$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclecode">
+	       info.vehicle_code like '%$vehiclecode$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="begintime">
+	       t.terminal_time > to_date(#begintime#,'yyyy-mm-dd')
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="endtime">
+	       t.terminal_time &lt; to_date(#endtime#,'yyyy-mm-dd')+1
+	   </isNotEmpty>
+	   and info.valid_flag = '0'
+	   and info.ORGANIZATION_ID in
+               (select enterprise_id
+                   from CLW_JC_ENTERPRISE_T
+                  where left_num >=
+                        (select  left_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)
+                    and right_num &lt;=
+                        (select  right_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#))
+           group by g.driver_name,
+	       info.vehicle_code,
+	       info.vehicle_ln,
+	       route.route_name,
+	       t.terminal_time
+	       
+	 <isNotEmpty property="sortname">
+	   order by $sortname$ $sortorder$
+   	 </isNotEmpty>
+		) s where rownum&lt;= #rowEnd# ) t where rownum_2 &gt; #rowStart#
+	</select>
+	
+	
+	<select id="getdriverecordvinListCount" parameterClass="Map" resultClass="int">		
+		select count(count(1))
+	  from TQC_DRIVER_CARD    t,
+	       clw_yw_driver_t    g,
+	       clw_cl_base_info_t info,
+	       tqc_trip_execute   trip,
+	       clw_xc_route_t     route
+	 where t.vin_code = info.vehicle_vin
+	   and t.driver_id = g.driver_id(+)
+	   and trip.route_id = route.route_id
+	   and t.trip_id = trip.trip_id(+)
+	   and info.valid_flag = '0'
+	   <isNotEmpty prepend="and" property="drivername">
+	       g.driver_name like '%$drivername$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclecode">
+	       info.vehicle_code like '%$vehiclecode$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclevin">
+	       t.vin_code like '%$vehiclevin$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="begintime">
+	       t.terminal_time > to_date(#begintime#,'yyyy-mm-dd')
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="endtime">
+	       t.terminal_time &lt; to_date(#endtime#,'yyyy-mm-dd')+1
+	   </isNotEmpty>
+	   group by g.driver_name,
+       info.vehicle_code,
+       info.vehicle_ln,
+       route.route_name,
+       t.terminal_time
+	</select>
+	<select id="getdriverecordvinList" parameterClass="Map" resultMap="driverecordResult">
+	    select t.* from (select s.*, rownum as rownum_2 from (
+		select 
+	       g.driver_name,
+	       info.vehicle_code,
+			info.vehicle_ln,
+			route.route_name,
+			to_char(t.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+	  from TQC_DRIVER_CARD    t,
+	       clw_yw_driver_t    g,
+	       clw_cl_base_info_t info,
+	       tqc_trip_execute   trip,
+	       clw_xc_route_t     route
+	 where t.vin_code = info.vehicle_vin
+	   and t.driver_id = g.driver_id(+)
+	   and trip.route_id = route.route_id
+	   and t.trip_id = trip.trip_id(+)
+	   and info.valid_flag = '0'
+	   <isNotEmpty prepend="and" property="drivername">
+	       g.driver_name like '%$drivername$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclecode">
+	       info.vehicle_code like '%$vehiclecode$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclevin">
+	       t.vin_code like '%$vehiclevin$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="begintime">
+	       t.terminal_time > to_date(#begintime#,'yyyy-mm-dd')
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="endtime">
+	       t.terminal_time &lt; to_date(#endtime#,'yyyy-mm-dd')+1
+	   </isNotEmpty>
+	   
+	   group by g.driver_name,
+       info.vehicle_code,
+       info.vehicle_ln,
+       route.route_name,
+       t.terminal_time
+       
+     <isNotEmpty property="sortname">
+	   order by $sortname$ $sortorder$
+   	 </isNotEmpty>
+       
+	   ) s where rownum&lt;= #rowEnd# ) t where rownum_2 &gt; #rowStart#
+	</select>
+	
+	
+	<select id="exportdriverecordList" parameterClass="Map" resultMap="driverecordResult">
+		select 
+	       g.driver_name,
+	       info.vehicle_code,
+			info.vehicle_ln,
+			route.route_name,
+			to_char(t.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+	  from TQC_DRIVER_CARD    t,
+	       clw_yw_driver_t    g,
+	       clw_cl_base_info_t info,
+	       tqc_trip_execute   trip,
+	       clw_xc_route_t     route
+	 where t.vin_code = info.vehicle_vin
+	   and t.driver_id = g.driver_id(+)
+	   and trip.route_id = route.route_id
+	   and t.trip_id = trip.trip_id(+)
+	   <isNotEmpty prepend="and" property="drivername">
+	       g.driver_name like '%$drivername$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclecode">
+	       info.vehicle_code like '%$vehiclecode$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="begintime">
+	       t.terminal_time > to_date(#begintime#,'yyyy-mm-dd')
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="endtime">
+	       t.terminal_time &lt; to_date(#endtime#,'yyyy-mm-dd')+1
+	   </isNotEmpty>
+	   and info.valid_flag = '0'
+	   and info.ORGANIZATION_ID in
+               (select enterprise_id
+                   from CLW_JC_ENTERPRISE_T
+                  where left_num >=
+                        (select  left_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#)
+                    and right_num &lt;=
+                        (select  right_num
+                           from CLW_JC_ENTERPRISE_T t
+                          where enterprise_id =
+                                #organization_id#))
+           group by g.driver_name,
+	       info.vehicle_code,
+	       info.vehicle_ln,
+	       route.route_name,
+	       t.terminal_time
+	       
+	 <isNotEmpty property="sortname">
+	   order by $sortname$ $sortorder$
+   	 </isNotEmpty>
+   	 
+	</select>
+	<select id="exportdriverecordvinList" parameterClass="Map" resultMap="driverecordResult">
+		select 
+	       g.driver_name,
+	       info.vehicle_code,
+			info.vehicle_ln,
+			route.route_name,
+			to_char(t.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+	  from TQC_DRIVER_CARD    t,
+	       clw_yw_driver_t    g,
+	       clw_cl_base_info_t info,
+	       tqc_trip_execute   trip,
+	       clw_xc_route_t     route
+	 where t.vin_code = info.vehicle_vin
+	   and t.driver_id = g.driver_id(+)
+	   and trip.route_id = route.route_id
+	   and t.trip_id = trip.trip_id(+)
+	   and info.valid_flag = '0'
+	   <isNotEmpty prepend="and" property="drivername">
+	       g.driver_name like '%$drivername$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclecode">
+	       info.vehicle_code like '%$vehiclecode$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="vehiclevin">
+	       t.vin_code like '%$vehiclevin$%'
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="begintime">
+	       t.terminal_time > to_date(#begintime#,'yyyy-mm-dd')
+	   </isNotEmpty>
+	   <isNotEmpty prepend="and" property="endtime">
+	       t.terminal_time &lt; to_date(#endtime#,'yyyy-mm-dd')+1
+	   </isNotEmpty>
+	   
+	   group by g.driver_name,
+       info.vehicle_code,
+       info.vehicle_ln,
+       route.route_name,
+       t.terminal_time
+       
+       <isNotEmpty property="sortname">
+	   order by $sortname$ $sortorder$
+   	 </isNotEmpty>
+	</select>
+</sqlMap>

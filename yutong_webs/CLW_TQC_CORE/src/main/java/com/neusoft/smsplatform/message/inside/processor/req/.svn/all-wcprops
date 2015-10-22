@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/req
+END
+ReceiveStuInfoReqProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/req/ReceiveStuInfoReqProcessor.java
+END
+OrderRelationsReqProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 165
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/req/OrderRelationsReqProcessor.java
+END
+ChangePhoneReqProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/req/ChangePhoneReqProcessor.java
+END
+MessageActiveTestReqProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 168
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/processor/req/MessageActiveTestReqProcessor.java
+END

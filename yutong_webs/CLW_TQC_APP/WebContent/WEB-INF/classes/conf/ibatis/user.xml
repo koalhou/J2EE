@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="User">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="UserInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" />
+	<typeAlias alias="ST_PR_Info"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.ST_PR_Info" />
+	<typeAlias alias="UserRoleInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserRoleInfo" />
+    <typeAlias alias="StudentInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo" />		
+	<resultMap id="student-result" class="StudentInfo">
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="stu_id" column="STU_ID" />
+		<result property="stu_card_id" column="STU_CARD_ID" />
+		<result property="stu_code" column="STU_CODE" />
+		<result property="stu_name" column="STU_NAME" />
+		<result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />
+	</resultMap>
+	<resultMap id="ST_PR-result" class="ST_PR_Info">
+		<result property="stu_name" column="STU_NAME" />
+		<result property="pr_userid" column="PR_USERID" />
+		<result property="stu_id" column="STU_ID" />	
+	</resultMap>
+	<resultMap id="user-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="sex" column="USER_SEX" />
+		<result property="birthday" column="USER_BIRTH" />
+		<result property="countyID" column="USER_COUNTRY" />
+		<result property="provinceID" column="USER_PROVINCE" />
+		<result property="cityID" column="USER_CITY" />
+		<result property="moblie" column="USER_MOBILE" />
+		<result property="tel" column="USER_OFFICE_TEL" />
+		<result property="email" column="USER_EMAIL" />
+		<result property="idCard" column="USER_IDT_CARD" />
+		<result property="duty" column="USER_DUTY" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+        <result property="student_pwd" column="STUDENT_PWD" />
+        <result property="student_flag" column="STUDENT_FLAG" />
+		<result property="valideFlg" column="VALID_FLAG" />
+		<result property="vUserID" column="VASET_USER_ID" />
+		<result property="vTime" column="VASET_TIME" />
+		<result property="organizationName" column="ORGANIZATIONNAME" />
+	</resultMap>
+	<resultMap id="personal-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="sex" column="USER_SEX" />
+		<result property="userBirth" column="USER_BIRTH" />
+		<result property="countyID" column="USER_COUNTRY" />
+		<result property="provinceID" column="USER_PROVINCE" />
+		<result property="cityID" column="USER_CITY" />
+		<result property="moblie" column="USER_MOBILE" />
+		<result property="tel" column="USER_OFFICE_TEL" />
+		<result property="email" column="USER_EMAIL" />
+		<result property="idCard" column="USER_IDT_CARD" />
+		<result property="duty" column="USER_DUTY" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+        <result property="student_flag" column="STUDENT_FLAG" />
+		
+		<result property="valideFlg" column="VALID_FLAG" />
+		<result property="vUserID" column="VASET_USER_ID" />
+		<result property="vTime" column="VASET_TIME" />
+		<result property="organizationName" column="ORGANIZATIONNAME" />
+	</resultMap>
+	
+	
+	<resultMap id="user-role-result" class="UserRoleInfo">
+		<result property="USER_ID" column="USER_ID" />
+		<result property="ROLE_ID" column="ROLE_ID" />
+		<result property="ENTERPRISE_ID" column="ENTERPRISE_ID" />
+		<result property="APPLY_ID" column="APPLY_ID" />
+		<result property="CREATER" column="CREATER" />
+		<result property="CREATE_TIME" column="CREATE_TIME" />
+		<result property="ROLE_NAME" column="ROLE_NAME" />
+	</resultMap>
+	<select id="getStudentList" parameterClass="StudentInfo" resultMap="student-result">		
+		SELECT 
+        T.ORGANIZATION_ID,
+        T.STU_ID,
+        T.STU_CARD_ID,
+        T.STU_CODE,
+        T.STU_NAME,
+        T.STU_SCHOOL,
+        T.STU_CLASS
+		FROM clw_xc_student_t T
+		WHERE 
+		T.stu_name like '%$stu_name$%'  and
+		T.stu_code like '%$stu_code$%'  and
+		T.stu_school like '%$stu_school$%'  and
+		T.stu_class like '%$stu_class$%'  and
+		T.organization_id in					
+       (select enterprise_id						
+          from clw_jc_enterprise_vi	
+          	<![CDATA[						
+         where left_num >= (select left_num						
+                              from clw_jc_enterprise_vi						
+                             where enterprise_id = #organization_id# )
+           and right_num <= (select right_num
+                               from clw_jc_enterprise_vi
+                              where enterprise_id = #organization_id# ))	
+            ]]>		
+		and T.VALID_FLAG != '1'		
+		
+	</select>
+	<select id="getCountST" parameterClass="StudentInfo" resultClass="Integer">
+	   SELECT 
+        count(1)
+		FROM clw_xc_student_t T
+		WHERE 
+		 T.stu_name like '%$stu_name$%'  and
+		 T.stu_code like '%$stu_code$%'  and
+		 T.stu_school like '%$stu_school$%'  and
+		 T.stu_class like '%$stu_class$%'  and
+		 T.organization_id in					
+       (select enterprise_id						
+          from clw_jc_enterprise_vi	
+          	<![CDATA[						
+         where left_num >= (select left_num						
+                              from clw_jc_enterprise_vi						
+                             where enterprise_id = #organization_id# )
+           and right_num <= (select right_num
+                               from clw_jc_enterprise_vi
+                              where enterprise_id = #organization_id# ))	
+            ]]>	
+		 and T.VALID_FLAG != '1'	
+	</select>
+
+	<!--
+	<select id="getUserInfo" parameterClass="String" resultMap="user-result">
+		SELECT USER_ID,
+		LOGIN_NAME,
+		LOGIN_PWD,
+		USER_TYPE,
+		USER_NAME,
+		USER_SEX,
+		USER_BIRTH,
+		USER_COUNTRY,
+		USER_PROVINCE,
+		USER_CITY,
+		USER_MOBILE,
+		USER_OFFICE_TEL,
+		USER_EMAIL,
+		USER_IDT_CARD,
+		ENTERPRISE_ID,
+		ORGANIZATION_ID,
+		USER_DUTY,
+		CREATER,
+		CREATE_TIME,
+		MODIFIER,
+		MODIFY_TIME,
+		VALID_FLAG,
+		VASET_USER_ID,
+		VASET_TIME
+		FROM CLW_JC_USER_T T
+
+		WHERE T.USER_TYPE = '1'
+		AND T.VALID_FLAG = '0'
+	</select>
+	
+	<select id="getUserInfoCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM CLW_JC_USER_T T
+
+		WHERE T.USER_TYPE = '1'
+		AND T.VALID_FLAG = '0'
+	</select>
+	-->
+	<select id="getConditionselect" parameterClass="Map" resultMap="user-result">
+		
+		SELECT 
+		T.USER_ID,
+		T.LOGIN_NAME,
+		T.LOGIN_PWD,
+		T.USER_TYPE,
+		T.USER_NAME,
+		T.USER_SEX,
+		to_char(T.USER_BIRTH,'yyyy-mm-dd') USER_BIRTH,
+		T.USER_COUNTRY,
+		T.USER_PROVINCE,
+		T.USER_CITY,
+		T.USER_MOBILE,
+		T.USER_OFFICE_TEL,
+		T.USER_EMAIL,
+		T.USER_IDT_CARD,
+		T.ENTERPRISE_ID,
+		T.ORGANIZATION_ID,
+		T.USER_DUTY,
+		T.CREATER,
+		T.CREATE_TIME,
+		T.MODIFIER,
+		T.MODIFY_TIME,
+		T.VALID_FLAG,
+		T.VASET_USER_ID,
+		T.VASET_TIME,
+		T.STUDENT_PWD,
+		T.STUDENT_FLAG,
+		show_names_fun(T.ENTERPRISE_ID,T.ORGANIZATION_ID) ORGANIZATIONNAME
+		FROM CLW_JC_USER_T T
+
+		WHERE 
+		 T.VALID_FLAG != '1'
+		<isNotEmpty prepend="AND" property="validFlag">
+		 T.VALID_FLAG=#validFlag#
+		</isNotEmpty>
+		 and T.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+		 
+		 <isNotEmpty prepend="AND" property="organizidtreeID">
+		 T.ORGANIZATION_ID in 
+			<![CDATA[
+				(select enterprise_id
+				     from clw_jc_enterprise_vi
+				     where left_num >= (select left_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id = #organizidtreeID#)
+				     and right_num <=(select right_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id =#organizidtreeID#)        
+				)
+		     ]]>
+
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="creater">
+			
+				t.creater <![CDATA[ <> ]]> 'yutongsuperadmin'
+		 	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="loginName">
+		 T.LOGIN_NAME like '%' || #loginName# ||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="userID">
+		 T.USER_ID=#userID#
+			</isNotEmpty>
+		AND T.APPLY_ID = '1'
+		<dynamic prepend="ORDER BY">  
+     	  	<isNotEmpty property="sortname">  
+            	$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		  </dynamic> 
+ 		
+	</select>
+	<select id="getConditionselectCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM CLW_JC_USER_T T
+		WHERE 
+		 T.VALID_FLAG != '1'
+		<isNotEmpty prepend="AND" property="validFlag">
+		 	T.VALID_FLAG=#validFlag#
+		</isNotEmpty>		 
+ 		and T.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+
+ 		<isNotEmpty prepend="AND" property="organizidtreeID">
+		 T.ORGANIZATION_ID in 
+			<![CDATA[
+				(select enterprise_id
+				     from clw_jc_enterprise_vi
+				     where left_num >= (select left_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id = #organizidtreeID#)
+				     and right_num <=(select right_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id =#organizidtreeID#)        
+				)
+		     ]]>
+
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="creater">
+			
+				t.creater <![CDATA[ <> ]]> 'yutongsuperadmin'
+		 	
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="loginName">
+		 T.LOGIN_NAME like '%' || #loginName# ||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="userID">
+		 T.USER_ID=#userID#
+			</isNotEmpty>
+		AND T.APPLY_ID = '1'
+		<dynamic prepend="ORDER BY">  
+     	  	<isNotEmpty property="sortname">  
+            	$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		  </dynamic> 
+		
+	</select>
+	
+	<select id="getUserNameSameCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+		FROM CLW_JC_USER_T T
+
+		WHERE 
+		 T.VALID_FLAG != '1'
+		
+		and T.LOGIN_NAME = #loginName#
+		and T.USER_TYPE!='2' 
+  		and T.USER_TYPE!='0'	
+
+		and T.ENTERPRISE_ID=#entiID#
+			
+		AND T.APPLY_ID = '1'
+		
+		
+	</select>
+	<!-- add by fanxy -->
+	<select id="getSMMICountFromRole" parameterClass="Map" resultClass="Integer">
+		select count(*) from CLW_JC_ROLE_RIGHT_T where MODULE_ID = #module_id# and ROLE_ID in ($roleids$)	
+	</select>
+
+	<!--<select id="getOneUserInfo" parameterClass="String" resultMap="user-result">
+		SELECT USER_ID,
+		LOGIN_NAME,
+		LOGIN_PWD,
+		USER_TYPE,
+		USER_NAME,
+		USER_SEX,
+		USER_BIRTH,
+		USER_COUNTRY,
+		USER_PROVINCE,
+		USER_CITY,
+		USER_MOBILE,
+		USER_OFFICE_TEL,
+		USER_EMAIL,
+		USER_IDT_CARD,
+		ENTERPRISE_ID,
+		ORGANIZATION_ID,
+		USER_DUTY,
+		CREATER,
+		CREATE_TIME,
+		MODIFIER,
+		MODIFY_TIME,
+		VALID_FLAG,
+		VASET_USER_ID,
+		VASET_TIME
+		FROM CLW_JC_USER_T T
+		WHERE T.USER_ID=#userID#
+	</select>-->
+	
+	<insert id="insertUserInfo" parameterClass="UserInfo">
+		INSERT INTO
+		CLW_JC_USER_T(USER_ID,LOGIN_NAME,LOGIN_PWD,USER_TYPE,USER_NAME,USER_SEX,USER_BIRTH,USER_COUNTRY,
+		USER_PROVINCE,USER_CITY,USER_MOBILE,USER_OFFICE_TEL,USER_EMAIL,USER_IDT_CARD,USER_DUTY,ENTERPRISE_ID,
+		ORGANIZATION_ID,CREATER,CREATE_TIME,MODIFIER,MODIFY_TIME,VALID_FLAG,VASET_USER_ID,VASET_TIME,APPLY_ID,STUDENT_PWD,STUDENT_FLAG)
+		VALUES
+		(#userID#,#loginName#,#loginPwd#,#userType#,#userName#,#sex#,to_date(#birthday#,'yyyy-mm-dd'),#countyID#,
+		#provinceID#,#cityID#,#moblie#,#tel#,#email#,#idCard#,#duty#,#entiID#,
+		#organizationID#,#creater#,sysdate,#modifier#,sysdate,#valideFlg#,#vUserID#,sysdate,'1',#student_pwd#,#student_flag#)
+	
+	</insert>
+	
+	<insert id="insertST_PR_Info" parameterClass="ST_PR_Info">
+		INSERT INTO
+		clw_xc_st_pr_t(PR_USERID,STU_ID,STU_NAME)
+		VALUES
+		(#pr_userid#,#stu_id#,#stu_name#)	
+	</insert>
+
+	<update id="updateUserInfo" parameterClass="UserInfo" >
+		update CLW_JC_USER_T set 
+		LOGIN_NAME = #loginName#,
+		USER_NAME = #userName#,
+		USER_SEX=#sex#,
+		USER_BIRTH = to_date(#birthday#,'yyyy-mm-dd'),
+		USER_COUNTRY =#countyID#,
+		USER_PROVINCE = #provinceID#,
+		USER_CITY=#cityID#,
+		USER_MOBILE=#moblie#,
+		USER_OFFICE_TEL=#tel#,
+		USER_EMAIL=#email#,
+		USER_IDT_CARD=#idCard#,
+		USER_DUTY=#duty#,
+		ORGANIZATION_ID=#organizationID#,
+		MODIFIER=#modifier#,
+		MODIFY_TIME=sysdate,
+		USER_TYPE=#userType#
+		where USER_ID = #userID#
+	</update>
+	<update id="resetUserFAP" parameterClass="Map">
+	    UPDATE CLW_JC_USER_T T
+           SET T.STUDENT_PWD = #student_pwd#,
+           T.STUDENT_FLAG = #student_flag#
+         WHERE T.USER_ID = #userId#
+	</update>
+	<update id="updateUserVALIDFLAG" parameterClass="Map" >
+		update CLW_JC_USER_T set VALID_FLAG=#valideFlg# 
+		where USER_ID = #userID#
+	
+	</update>
+	
+	<select id="getUserRoleinfo" parameterClass="String" resultMap="user-role-result">
+	select t.USER_ID,t.ROLE_ID,t.ENTERPRISE_ID,t.APPLY_ID,t.CREATER,t.CREATE_TIME,r.ROLE_NAME from CLW_JC_USER_ROLE_T t,CLW_JC_ROLE_T r
+	where   t.ROLE_ID = r.ROLE_ID and t.USER_ID=#userID#
+	</select>
+	
+	<select id="getST_PRinfo" parameterClass="String" resultMap="ST_PR-result">
+	select t.PR_USERID,t.STU_ID,t.STU_NAME
+	from clw_xc_st_pr_t t
+	where  t.pr_userid=#userID#
+	</select>
+	
+	<delete id="bachtDeleteUserAndRoleInfo"  parameterClass="UserInfo"> 
+	delete CLW_JC_USER_ROLE_T where USER_ID=#userID#
+	</delete>
+	<delete id="deleteST_PR_Info"  parameterClass="UserInfo"> 
+	 delete clw_xc_st_pr_t where PR_USERID=#userID#
+	</delete>	
+	<insert id="bacthupdateUserAndRoleInfo" parameterClass="UserRoleInfo" >
+		insert into CLW_JC_USER_ROLE_T
+		(USER_ID,ROLE_ID,ENTERPRISE_ID,APPLY_ID,CREATER,CREATE_TIME)
+		values
+		(#USER_ID#,#ROLE_ID#,#ENTERPRISE_ID#,'1',#CREATER#,sysdate)
+	
+	</insert>
+	<!--  获得个人信息 -->
+<select id="getPersonal" parameterClass="Map" resultMap="personal-result">
+		
+		SELECT 
+		T.USER_ID,
+		T.LOGIN_NAME,
+		T.LOGIN_PWD,
+		T.USER_TYPE,
+		T.USER_NAME,
+		T.USER_SEX,
+		to_char(T.USER_BIRTH,'yyyy-mm-dd') USER_BIRTH,
+		T.USER_COUNTRY,
+		T.USER_PROVINCE,
+		T.USER_CITY,
+		T.USER_MOBILE,
+		T.USER_OFFICE_TEL,
+		T.USER_EMAIL,
+		T.USER_IDT_CARD,
+		T.ENTERPRISE_ID,
+		T.ORGANIZATION_ID,
+		T.USER_DUTY,
+		T.CREATER,
+		T.CREATE_TIME,
+		T.MODIFIER,
+		T.MODIFY_TIME,
+		T.VALID_FLAG,
+		T.VASET_USER_ID,
+		T.VASET_TIME,
+		T.STUDENT_FLAG,
+		show_names_fun(T.ENTERPRISE_ID,T.ORGANIZATION_ID) ORGANIZATIONNAME
+		FROM CLW_JC_USER_T T
+		WHERE T.USER_ID
+		= #userID#
+		AND T.VALID_FLAG =
+		'0'
+	</select>
+	<!-- 修改个人信息 -->
+	<update id="modifyPersonalInfo" parameterClass="UserInfo" >
+		update CLW_JC_USER_T set USER_NAME = #userName#,
+		USER_SEX=#sex# ,USER_BIRTH = to_date(#userBirth#,'yyyy-mm-dd') ,USER_COUNTRY =#countyID#,
+		USER_PROVINCE = #provinceID#,
+		USER_CITY=#cityID#,USER_MOBILE=#moblie#,USER_OFFICE_TEL=#tel#,USER_EMAIL=#email#,USER_IDT_CARD=#idCard#,
+		MODIFIER=#modifier#,MODIFY_TIME=sysdate
+		where USER_ID = #userID#
+	</update>
+	<update id="resetUserPwd" parameterClass="Map">
+	    UPDATE CLW_JC_USER_T T
+           SET T.STUDENT_PWD = #password#
+         WHERE T.USER_ID = #userId#
+	</update>
+	<update id="resetUserPwdP" parameterClass="Map">
+	    UPDATE CLW_JC_USER_T T
+           SET T.LOGIN_PWD = #password#
+         WHERE T.USER_ID = #userId#
+	</update>
+</sqlMap>

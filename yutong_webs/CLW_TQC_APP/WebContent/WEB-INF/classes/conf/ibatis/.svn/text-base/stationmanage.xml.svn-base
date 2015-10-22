@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StationManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="station" type="com.neusoft.clw.infomanage.sitemanage.domain.Site" />
+    <typeAlias alias="terminalViBean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TerminalViBean" />
+    
+	<resultMap class="station" id="stationinfos-result">
+       <result property="site_id" column="SITE_ID"/>
+       <result property="site_name" column="SITE_NAME"/>
+       <result property="control_station" column="CONTROL_STATION"/>
+       <result property="site_longitude" column="SITE_LONGITUDE"/>
+       <result property="site_latitude" column="SITE_LATITUDE"/>
+       <result property="sichen_addr" column="SICHEN_ADDR"/>
+       <result property="organization_id" column="ORGANIZATION_ID"/>
+       <result property="organizationName" column="ORGANIZATIONNAME"/>
+    </resultMap>  
+    
+    <resultMap class="terminalViBean" id="mapList-result">
+       <result property="LONGITUDE" column="SITE_LONGITUDE"/>
+       <result property="LATITUDE" column="SITE_LATITUDE"/>
+       <result property="ST_LONGITUDE" column="ST_LONGITUDE"/>
+       <result property="ST_LATITUDE" column="ST_LATITUDE"/>
+       <result property="ID" column="ID"/>
+       <result property="INOUT_FLAG" column="POINTTYPE"/>
+       <result property="DIRECTION" column="DIRECTION"/>
+       <result property="CONTROL_STATION" column="CONTROL_STATION"/>
+       <result property="STATION_ADDR" column="SICHEN_ADDR"/>
+       <result property="ORGANIZATION_ID" column="ORGANIZATION_ID"/>
+       <result property="ENTER_SHORT_NAME" column="ORGANIZATIONNAME"/>
+       <result property="sichen_addr" column="SICHEN_ADDR"/>
+       <!-- <result property="SITE_NAME" column="SITE_NAME"/> -->
+       
+    </resultMap>
+    
+    <select id="getLong_Latitude_List" parameterClass="terminalViBean" resultMap="mapList-result">
+		SELECT ID,SITE_LONGITUDE,DIRECTION,SITE_LATITUDE,ST_LONGITUDE,ST_LATITUDE,POINTTYPE,CONTROL_STATION,SICHEN_ADDR,ORGANIZATION_ID,ORGANIZATIONNAME FROM (
+			SELECT COLLECTION_ID ID,'' DIRECTION,CXS.SITE_LONGITUDE,CXS.SITE_LATITUDE,CXS.SITE_LONGITUDE ST_LONGITUDE,
+			   CXS.SITE_LATITUDE ST_LATITUDE,'0' POINTTYPE,'' AS CONTROL_STATION,'' AS SICHEN_ADDR,'' AS ORGANIZATION_ID,'' AS ORGANIZATIONNAME
+			 FROM CLW_XC_SITECOLLECTION_T CXS,CLW_CL_BASE_INFO_T CJCV
+			 WHERE CXS.VEHICLE_VIN=CJCV.VEHICLE_VIN
+	      	 AND CJCV.ORGANIZATION_ID in 
+				<![CDATA[
+				(select enterprise_id
+				     from clw_jc_enterprise_vi
+				     where left_num >= (select left_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id = #ORGANIZATION_ID#)
+				     and right_num <=(select right_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id =#ORGANIZATION_ID#)        
+				)
+		     ]]>
+		     AND CXS.VALID_FLAG='0'
+		     <isNotEmpty prepend="AND" property="START_TIME">
+				 CXS.CREATE_TIME between to_date(#START_TIME#,'yyyy-mm-dd HH24:MI:SS') and to_date(#END_TIME#,'yyyy-mm-dd HH24:MI:SS')
+	         </isNotEmpty>
+	         UNION ALL
+		     SELECT TO_CHAR(SITE_ID) ID,SITE_NAME DIRECTION,SITE_LONGITUDE,SITE_LATITUDE,SITE_LONGITUDE ST_LONGITUDE,
+			 	SITE_LATITUDE ST_LATITUDE,'1' POINTTYPE,CONTROL_STATION,SICHEN_ADDR,CXST.ORGANIZATION_ID,CJCV.SHORT_NAME ORGANIZATIONNAME
+			 FROM CLW_XC_SITE_T CXST,CLW_JC_ENTERPRISE_T CJCV
+			 WHERE CXST.ORGANIZATION_ID=CJCV.ENTERPRISE_ID
+			 AND CXST.ORGANIZATION_ID in 
+				<![CDATA[
+				(select enterprise_id
+				     from clw_jc_enterprise_vi
+				     where left_num >= (select left_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id = #ORGANIZATION_ID#)
+				     and right_num <=(select right_num
+				                  from clw_jc_enterprise_vi
+				                  where enterprise_id =#ORGANIZATION_ID#)        
+				)
+		     ]]>
+		     AND CXST.VALID_FLAG='0'
+		     <isNotEmpty prepend="AND" property="START_TIME">
+				 CXST.CREATE_TIME between to_date(#START_TIME#,'yyyy-mm-dd HH24:MI:SS') and to_date(#END_TIME#,'yyyy-mm-dd HH24:MI:SS')
+	         </isNotEmpty>
+         ) WHERE 1=1
+         <isNotEmpty prepend="AND" property="INOUT_FLAG">
+			 POINTTYPE=#INOUT_FLAG# 
+         </isNotEmpty>
+	</select>
+	
+	<resultMap class="terminalViBean" id="leftstationinfos-result">
+       <result property="LONGITUDE" column="SITE_LONGITUDE"/>
+       <result property="LATITUDE" column="SITE_LATITUDE"/>
+       <result property="ST_LONGITUDE" column="ST_LONGITUDE"/>
+       <result property="ST_LATITUDE" column="ST_LATITUDE"/>
+       <result property="ID" column="SITE_ID"/>
+       <result property="DIRECTION" column="SITE_NAME"/>
+       <result property="CONTROL_STATION" column="CONTROL_STATION"/>
+       <result property="STATION_ADDR" column="SICHEN_ADDR"/>
+       <result property="ORGANIZATION_ID" column="ORGANIZATION_ID"/>
+       <result property="ENTER_SHORT_NAME" column="ORGANIZATIONNAME"/>
+    </resultMap> 
+    
+	<select id="getLeftListInfos" parameterClass="terminalViBean" resultMap="leftstationinfos-result">
+		SELECT SITE_ID,
+		  SITE_NAME,
+		  CONTROL_STATION,
+		  SITE_LONGITUDE,
+		  SITE_LATITUDE,
+		  SITE_LONGITUDE ST_LONGITUDE,
+		  SITE_LATITUDE ST_LATITUDE,
+		  SICHEN_ADDR,
+		  CXST.ORGANIZATION_ID,
+		  CJCV.SHORT_NAME ORGANIZATIONNAME
+		FROM CLW_XC_SITE_T CXST,CLW_JC_ENTERPRISE_T CJCV
+		WHERE CXST.ORGANIZATION_ID=CJCV.ENTERPRISE_ID
+		 AND CXST.ORGANIZATION_ID in 
+			<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #ORGANIZATION_ID#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#ORGANIZATION_ID#)        
+			)
+	     ]]>
+		   AND CXST.VALID_FLAG = '0'		 
+		 <isNotEmpty prepend="AND" property="SITE_NAME">
+               CXST.SITE_NAME like '%' || #SITE_NAME# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getCheckedLeftList" parameterClass="terminalViBean" resultMap="leftstationinfos-result">
+		SELECT SITE_ID,
+			  SITE_NAME,
+			  CONTROL_STATION,
+			  SITE_LONGITUDE,
+			  SITE_LATITUDE,
+			  ST_LONGITUDE,
+			  ST_LATITUDE,
+			  SICHEN_ADDR,
+			  ORGANIZATION_ID,
+			  ORGANIZATIONNAME FROM (
+			  	SELECT ROWNUM orderid,SITE_ID,
+			  SITE_NAME,
+			  CONTROL_STATION,
+			  SITE_LONGITUDE,
+			  SITE_LATITUDE,
+			  ST_LONGITUDE,
+			  ST_LATITUDE,
+			  SICHEN_ADDR,
+			  ORGANIZATION_ID,
+			  ORGANIZATIONNAME FROM(
+					SELECT SITE_ID,
+					  SITE_NAME,
+					  CONTROL_STATION,
+					  SITE_LONGITUDE,
+					  SITE_LATITUDE,
+					  SITE_LONGITUDE ST_LONGITUDE,
+					  SITE_LATITUDE ST_LATITUDE,
+					  SICHEN_ADDR,
+					  CXST.ORGANIZATION_ID,
+					  CJCV.SHORT_NAME ORGANIZATIONNAME
+					FROM CLW_XC_SITE_T CXST,CLW_JC_ENTERPRISE_T CJCV
+					WHERE CXST.ORGANIZATION_ID=CJCV.ENTERPRISE_ID
+					 AND CXST.ORGANIZATION_ID in 
+						<![CDATA[
+						(select enterprise_id
+						     from clw_jc_enterprise_vi
+						     where left_num >= (select left_num
+						                  from clw_jc_enterprise_vi
+						                  where enterprise_id = #ORGANIZATION_ID#)
+						     and right_num <=(select right_num
+						                  from clw_jc_enterprise_vi
+						                  where enterprise_id =#ORGANIZATION_ID#)        
+						)
+				     ]]>
+					   AND CXST.VALID_FLAG = '0'
+					 <isNotEmpty prepend="AND" property="CONTROL_STATION">
+					       CXST.CONTROL_STATION=#CONTROL_STATION#
+					 </isNotEmpty>
+					 <isNotEmpty prepend="AND" property="SITE_NAME">
+			               CXST.SITE_NAME like '%' || #SITE_NAME# ||'%' escape '\'
+			         </isNotEmpty>
+					 <dynamic prepend="ORDER BY">  
+					   <isNotEmpty property="sortname">  
+					    $sortname$   $sortorder$  
+					   </isNotEmpty>  
+					 </dynamic>
+				)
+			) WHERE orderid	BETWEEN $rp$ * ($page$-1) AND $rp$ + $rp$*($page$-1)
+			AND SITE_ID IN ($CR_CONFIG_ID$)
+	</select>
+    
+    <select id="getCount" parameterClass="station" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM CLW_XC_SITE_T   
+		 WHERE ORGANIZATION_ID in 
+			<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+		 AND VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="control_station">
+		       CONTROL_STATION=#control_station#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="site_name">
+               SITE_NAME like '%' || #site_name# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getInfos" parameterClass="station" resultMap="stationinfos-result">
+		SELECT SITE_ID,
+		  SITE_NAME,
+		  CONTROL_STATION,
+		  SITE_LONGITUDE,
+		  SITE_LATITUDE,
+		  SICHEN_ADDR,
+		  CXST.ORGANIZATION_ID,
+		  CJCV.SHORT_NAME ORGANIZATIONNAME
+		FROM CLW_XC_SITE_T CXST,CLW_JC_ENTERPRISE_T CJCV
+		WHERE CXST.ORGANIZATION_ID=CJCV.ENTERPRISE_ID
+		 AND CXST.ORGANIZATION_ID in 
+			<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organization_id#)        
+			)
+	     ]]>
+		   AND CXST.VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="control_station">
+		       CXST.CONTROL_STATION=#control_station#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="site_name">
+               CXST.SITE_NAME like '%' || #site_name# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getAddStationOrder" parameterClass="station" resultClass="String">
+		    SELECT
+	    		CXSTALL.orderid
+			FROM
+		    (
+		        SELECT
+		            ROWNUM AS orderid ,
+		            SITE_ID ,
+		            SITE_NAME ,
+		            CONTROL_STATION
+		        FROM(
+			    	SELECT SITE_ID,SITE_NAME,CONTROL_STATION
+					FROM CLW_XC_SITE_T CXST,CLW_JC_ENTERPRISE_T CJCV
+					WHERE CXST.ORGANIZATION_ID=CJCV.ENTERPRISE_ID
+					AND CXST.ORGANIZATION_ID in 
+						<![CDATA[
+						(select enterprise_id
+						     from clw_jc_enterprise_vi
+						     where left_num >= (select left_num
+						                  from clw_jc_enterprise_vi
+						                  where enterprise_id = #eorganization_id#)
+						     and right_num <=(select right_num
+						                  from clw_jc_enterprise_vi
+						                  where enterprise_id =#eorganization_id#)        
+						)
+				     	]]>
+					 AND CXST.VALID_FLAG = '0'
+					 <isNotEmpty prepend="AND" property="econtrol_station">
+					 	CXST.CONTROL_STATION=#econtrol_station#
+					 </isNotEmpty>
+					 <isNotEmpty prepend="AND" property="esite_name">
+			         	CXST.SITE_NAME like '%' || #esite_name# ||'%' escape '\'
+			         </isNotEmpty>
+					 <dynamic prepend="ORDER BY">  
+					 	<isNotEmpty property="sortname">  
+					    	$sortname$   $sortorder$  
+					 	</isNotEmpty>  
+					 </dynamic>
+				 )) CXSTALL
+	   WHERE CXSTALL.SITE_ID=#site_id#
+	</select>
+	
+	<insert id="insertStationInfo" parameterClass="station">
+		<selectKey resultClass="string" keyProperty="site_id" type="pre">    
+	        <![CDATA[SELECT SEQ_XC_SITE_T.NEXTVAL AS site_id FROM DUAL]]>    
+	    </selectKey>  
+		INSERT
+		INTO CLW_XC_SITE_T
+		  (
+		    SITE_ID,
+		    SITE_NAME,
+		    SICHEN_ADDR,
+		    SITE_LONGITUDE,
+		    SITE_LATITUDE,
+		    SITE_REMARK,
+		    ENTERPRISE_ID,
+		    ORGANIZATION_ID,
+		    CONTROL_STATION,
+		    CREATER,
+		    CREATE_TIME,
+		    VALID_FLAG
+		  )
+		  VALUES
+		  (
+		    #site_id#,
+			#site_name#,
+			#sichen_addr#,
+			#site_longitude#,
+			#site_latitude#,
+			#site_remark#,
+			#enterprise_id#,
+			#organization_id#,
+			'0',
+			#creater#,
+			sysdate,
+			'0'
+		  )	
+	</insert>
+	
+	<resultMap class="station" id="stationinfo-result">
+       <result property="site_id" column="SITE_ID"/>
+       <result property="site_name" column="SITE_NAME"/>
+       <result property="sichen_addr" column="SICHEN_ADDR"/>
+       <result property="site_longitude" column="SITE_LONGITUDE"/>
+       <result property="site_latitude" column="SITE_LATITUDE"/>
+       <result property="site_remark" column="SITE_REMARK"/>
+       <result property="control_station" column="CONTROL_STATION"/>
+       <result property="organization_id" column="ORGANIZATION_ID"/>
+       <result property="organizationName" column="ORGANIZATIONNAME"/>
+       <result property="route_name" column="ROUTE_NAME"/>
+    </resultMap>
+	
+	<select id="getStationInfo" parameterClass="station" resultMap="stationinfo-result">
+		SELECT CXST.SITE_ID,
+		  CXST.SITE_NAME,
+		  CXST.SICHEN_ADDR,
+		  CXST.SITE_LONGITUDE,
+		  CXST.SITE_LATITUDE,
+		  CXST.SITE_REMARK,
+		  CXST.CONTROL_STATION,
+		  CXST.ORGANIZATION_ID,
+		  CJCV.SHORT_NAME ORGANIZATIONNAME,
+		  CXRSST.ROUTE_NAME
+		FROM CLW_XC_SITE_T CXST,CLW_JC_ENTERPRISE_T CJCV,
+		(SELECT CXRST.SITE_ID,WM_CONCAT(CXRT.ROUTE_NAME) ROUTE_NAME FROM CLW_XC_ROUTESITE_T CXRST,CLW_XC_ROUTE_T CXRT 
+			WHERE CXRT.ROUTE_ID=CXRST.ROUTE_ID
+			GROUP BY CXRST.SITE_ID) CXRSST
+		WHERE CXST.ORGANIZATION_ID=CJCV.ENTERPRISE_ID
+			AND CXST.SITE_ID=CXRSST.SITE_ID(+)
+			AND CXST.SITE_ID=#site_id#
+	</select>
+	<resultMap class="station" id="stationinfo-result">
+       <result property="site_id" column="SITE_ID"/>
+       <result property="site_name" column="SITE_NAME"/>
+       <result property="sichen_addr" column="SICHEN_ADDR"/>
+       <result property="site_longitude" column="SITE_LONGITUDE"/>
+       <result property="site_latitude" column="SITE_LATITUDE"/>
+       <result property="site_remark" column="SITE_REMARK"/>
+       <result property="control_station" column="CONTROL_STATION"/>
+    </resultMap>
+	
+	<select id="getStationNoAreaInfo" parameterClass="java.util.Map" resultMap="stationinfo-result">
+	    select distinct t1.SITE_ID,
+                t1.SITE_NAME,
+                t1.SICHEN_ADDR,
+                t1.SITE_LONGITUDE,
+                t1.SITE_LATITUDE,
+                t1.SITE_REMARK,
+                t1.CONTROL_STATION
+		  from clw_xc_site_t t1
+		 where not exists(select site_id from CLW_TQC_SITE_AREA_T t where t.site_id = t1.site_id)
+		 and t1.site_id is not null
+		and t1.valid_flag = 0
+	</select>
+	<select id="getStationAreaInfo" parameterClass="java.util.Map" resultMap="stationinfo-result">
+		select t1.SITE_ID,
+		      t1.SITE_NAME,
+		      t1.SICHEN_ADDR,
+		      t1.SITE_LONGITUDE,
+		      t1.SITE_LATITUDE,
+		      t1.SITE_REMARK,
+		      t1.CONTROL_STATION from CLW_TQC_SITE_AREA_T t,clw_xc_site_t t1
+		WHERE 
+		t.site_id = t1.site_id 
+		and t1.site_id is not null
+		and t.AREA_ID = #areaid#
+		and t1.valid_flag = 0
+	</select>
+	
+	<update id="updateInfobyLeftStation" parameterClass="station">
+		UPDATE  CLW_XC_SITECOLLECTION_T
+			SET valid_flag=1
+		WHERE collection_id=#site_id#
+	</update>
+	
+	<update id="updateInfobyStationId" parameterClass="station">
+		UPDATE CLW_XC_SITE_T
+			SET SITE_NAME=#site_name#,
+			 SICHEN_ADDR=#sichen_addr#,
+			 SITE_LONGITUDE=#site_longitude#,
+			 SITE_LATITUDE=#site_latitude#,	
+			 MODIFIER=#modifier#,
+			 MODIFY_TIME=SYSDATE
+		WHERE SITE_ID=#site_id#
+	</update>
+	<select id="infobyStationIdInRoute" parameterClass="String" resultClass="Integer">
+		select count(1) from CLW_XC_ROUTESITE_T t where t.site_id = #value#
+	</select>
+	<select id="getStaCount" parameterClass="station" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM CLW_XC_ROUTESITE_T XRT, CLW_XC_ROUTE_T XR
+		 WHERE XRT.ROUTE_ID = XR.ROUTE_ID
+		   AND XR.VALID_FLAG = '0'
+		   AND XRT.SITE_ID IN ($site_id$) 
+	</select>
+	
+	<update id="deletebyStationId" parameterClass="station">
+	   UPDATE CLW_XC_SITE_T 
+	   SET VALID_FLAG='1',
+	       VASET_USER_ID=#vaset_user_id#,
+	       VASET_TIME=SYSDATE
+	    WHERE SITE_ID=#site_id#
+	</update>
+	
+	<update id="deletebyStationIdList" parameterClass="station">
+	   UPDATE CLW_XC_SITE_T 
+	   SET VALID_FLAG='1',
+	       VASET_USER_ID=#vaset_user_id#,
+	       VASET_TIME=SYSDATE
+	    WHERE SITE_ID IN ($site_id$)
+	</update>
+	
+	<update id="deletebyCollection_ID" parameterClass="terminalViBean">
+	   UPDATE CLW_XC_SITECOLLECTION_T 
+	   SET VALID_FLAG='1'
+	   WHERE COLLECTION_ID=#ID#
+	</update>
+	
+	<update id="updatebyCollection_ID" parameterClass="terminalViBean">
+	   UPDATE CLW_XC_SITECOLLECTION_T 
+	   SET SITE_LATITUDE=#LATITUDE#,SITE_LONGITUDE=#LONGITUDE#
+	   WHERE COLLECTION_ID=#ID#
+	</update>
+	
+	<!-- 判断是否关联了线路  begin-->
+	<select id="getflagCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM CLW_XC_ROUTESITE_T XRT
+		 WHERE XRT.SITE_ID=#site_id#
+	</select>
+	<!-- 判断是否关联了线路  end-->	
+</sqlMap>

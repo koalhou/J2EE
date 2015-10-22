@@ -1,0 +1,8 @@
+#qas jdbc info
+database.driver=oracle.jdbc.driver.OracleDriver
+database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.8.1.243)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =ORCL)(SERVER=DEDICATED)))
+database.username=clw_tqc
+database.password=tqc
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.8.1.167)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =CLW)(SERVER=DEDICATED)))
+#database.username=clw_tqc
+#database.password=tqc110

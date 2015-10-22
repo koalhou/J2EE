@@ -1,0 +1,215 @@
+/*rm为线路监控样式集专属标记*/
+
+/*
+.mk-rm-route-plan {
+  float: left;
+  min-height: 270px;
+  height: 270px;
+  overflow-y: no;
+  overflow-x: auto;
+  padding: 0 30px 0;
+  min-width: 500px;
+  width: 500px;
+  border:1px solid red;
+}
+
+*/
+/*
+.mk-rm-route-plan {
+  float: left;
+  height: 272px;
+  overflow-y: no;
+  overflow-x: auto;
+  padding: 0 30px;
+  min-width: 500px;
+}
+*/
+
+.mk-rm-route-plan {
+  height: 290px;
+  min-height:290px;
+  overflow-y: no;
+  overflow-x: auto;
+  padding: 0 30px;
+  min-width: 580px;
+}
+
+/*.mk-rm-select-bus rmSelectBus {
+  float: left;
+  height: 30px;
+  width: 100 % ;
+}*/
+
+/*.mk-rm-sel-left rmSelLeft {
+  float: left;
+  line - height: 22px;
+  width: 200px;
+}
+.mk-rm-route { 
+  background: #f5f5f5 url(images/rm_title_bg.png) no-repeat left center;
+  border: 1px solid #ccc;
+  float: left;
+  height: 120px;
+  margin-bottom: 10px;
+  width: 500px;
+}
+*/
+.mk-rm-route { 
+  background: #f5f5f5 url(images/rm_title_bg.png) no-repeat left center;
+  border: 1px solid #ccc;
+  height: 120px;
+  margin-bottom: 10px;
+  width: 500px;
+}
+.mk-rm-route-til {
+  float: left;
+  font-weight: bold;
+  text-align: center;
+  line-height: 120px;
+  width: 60px;
+}
+.mk-rm-route-station {
+  float: left;
+  height: 100px;
+  padding: 10px;
+  width: auto;
+}
+.mk-rm-route-station ul {
+  float: left;
+}
+.mk-rm-route-station li {
+  float: left;
+  height: 100px;
+  text-align: center;
+  width: 140px;
+}
+.mk-rm-route-station a {
+  color: #333; 
+  text-decoration: none;
+}
+.mk-rm-route-station a:hover { 
+  color: #0078c8;
+}
+.mk-rm-route-station li.line-bg-left {
+  background: url(images/rm_line_left_bg.png) no-repeat left center;
+}
+.mk-rm-route-station li.line-bg-right {
+  background: url(images/rm_line_right_bg.png) no-repeat left center;
+}
+.mk-rm-route-station li.line-bg-mid {
+  background: url(images/rm_line_mid_bg.png) no-repeat left center;
+}
+.mk-rm-info {
+  float: left;
+  height: 38px;
+  width: 100% ;
+}
+.mk-rm-btn-green, .mk-rm-btn-blue, .mk-rm-btn-yellow, .mk-rm-btn-red {
+  float: left;
+  display: block;
+  height: 62px;
+  padding: 28px 10px 0 10px;
+  width: 120px;
+}
+.mk-rm-btn-green {
+  background: url(images/rm_station_green.png) no-repeat center top;
+}
+.mk-rm-btn-blue {
+  background: url(images/rm_station_blue.png) no-repeat center top;
+}
+.mk-rm-btn-yellow {
+  background: url(images/rm_station_yellow.png) no-repeat center top;
+}
+.mk-rm-btn-red {
+  background: url(images/rm_station_red.png) no-repeat center top;
+}
+.mk-rm-site{
+  float: left;
+  display: block;
+  height: 62px;
+  padding: 0px 10px 0 10px;
+  width: 120px;
+}
+.mk-rm-btn {
+  height:28px;
+  line-height:24px;
+  width:24px;  
+  margin:0 auto;
+}
+
+a.mk-rm-site-green, a.mk-rm-site-blue, a.mk-rm-site-yellow, a.mk-rm-site-red, a.mk-rm-site-purple {
+  display: block;
+  height: 24px;
+  text-align: center;
+  
+}
+a.mk-rm-site-green {
+  background: url(images/rm_station_green.png) no-repeat center top;
+}
+a.mk-rm-site-blue {
+  background: url(images/rm_station_blue.png) no-repeat center top;
+}
+a.mk-rm-site-yellow {
+  background: url(images/rm_station_yellow.png) no-repeat center top;
+}
+a.mk-rm-site-red {
+  background: url(images/rm_station_red.png) no-repeat center top;
+}
+a.mk-rm-site-purple {
+  background: url(images/rm_station_purple.png) no-repeat center top;
+}
+.mk-rm-arrow-up, .mk-rm-arrow-down, .mk-rm-arrow-up2, .mk-rm-arrow-down2 {
+  display: block;
+  font-size: 10px;
+  height: 32px;
+  text-align: center;
+  width: 12px;
+}
+.mk-rm-arrow-up {
+  background: url(images/rm_arrow_up.png) no-repeat center bottom;
+  float: right;
+  margin-right: 48px;
+}
+.mk-rm-arrow-down {
+  background: url(images/rm_arrow_down.png) no-repeat center bottom;
+  float: left;
+  margin-left: 48px;
+}
+.mk-rm-arrow-up2 {
+  background: url(images/rm_arrow_up.png) no-repeat center bottom;
+  float: right;
+  margin-right: 64px;
+}
+.mk-rm-arrow-down2 {
+  background: url(images/rm_arrow_down.png) no-repeat center bottom;
+  float: left;
+  margin-left: 64px;
+}
+
+.mk-rm-box {
+  background: url(images/rm_tip_bg.png) no-repeat center top;
+  text-align: center;
+  height: 40px;
+  width: 72px;
+  z-index: 101;
+  position: relative;
+}
+.mk-rm-bus-num {
+  float: left;
+  line-height: 20px;
+  text-align: center;
+  width: 100% ;
+}
+a.mk-rm-bus {
+  background: url(images/rm_bus.png) no-repeat center top;
+  display: block;
+  float: left;
+  height: 12px;
+  text-align: center;
+  width: 24px;
+}
+
+.mk-rm-bus-num-list {
+  background-color: '#fff';
+  padding: '5px';
+}

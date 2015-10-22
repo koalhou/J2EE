@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="MarketBoard">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="AccountManangerTask" type="com.neusoft.clw.yw.ub.market.ds.AccountManangerTask" />
+
+	<select id="getTaskList" parameterClass="Map" resultClass="AccountManangerTask">
+	select * from (select s.*, rownum as rownum_2 from (
+		select #month# as month,b.manager_id as id,b.manager_name as name,c.region_name as area,  nvl(a.task,-1) as plan
+		  from CLW_JC_ACCOUNT_MANAGER_TASK_T a, clw_m_area_personnel_info_t b,clw_m_area_info_t c
+		 where a.manager_id(+) = b.manager_id
+		   and b.region_id=c.region_id
+		   and b.manager_type = '1'
+		   and a.month(+)=#month#
+		   <![CDATA[
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</select>
+	<select id="getTask" parameterClass="Map" resultClass="AccountManangerTask">
+	
+		select #month# as month,b.manager_id as id,b.manager_name as name,c.region_name as area,  nvl(a.task,-1) as plan
+		  from CLW_JC_ACCOUNT_MANAGER_TASK_T a, clw_m_area_personnel_info_t b,clw_m_area_info_t c
+		 where a.manager_id(+) = b.manager_id
+		   and b.region_id=c.region_id
+		   and b.manager_type = '1'
+		   and a.month(+)=#month#
+		   and b.manager_id=#id#
+		   
+	</select>
+	<select id="countTask" parameterClass="AccountManangerTask" resultClass="Integer">
+		select count(*)
+		  from CLW_JC_ACCOUNT_MANAGER_TASK_T a
+		 where a.manager_id = #id#
+		   and a.month=#month#
+	</select>
+	<insert id="add" parameterClass="AccountManangerTask">
+		insert into  CLW_JC_ACCOUNT_MANAGER_TASK_T values(#id#,#plan#,#month#,#creater#,sysdate,null,null)
+	</insert>
+	<update id="update" parameterClass="AccountManangerTask">
+		update  CLW_JC_ACCOUNT_MANAGER_TASK_T a 
+		set  a.task=#plan#,a.updater=#creater#,updater_time=sysdate
+		 where a.manager_id = #id#
+		   and a.month=#month#
+	</update>
+	<select id="getAMList" parameterClass="Map" resultClass="AccountManangerTask">
+	select  e.bus as completed,d.name,d.area,nvl(d.plan,-1) as plan,decode(nvl(d.plan,0),0,-1,round(e.bus/d.plan,3)*100) as completedPercent from (
+		select b.manager_id as id,b.manager_name as name,c.region_name as area,  a.task as plan
+		  from CLW_JC_ACCOUNT_MANAGER_TASK_T a, clw_m_area_personnel_info_t b,clw_m_area_info_t c
+		 where a.manager_id(+) = b.manager_id
+		   and b.region_id=c.region_id
+		   and b.manager_type = '1'
+		   and a.month(+)=#month#
+	)d ,CLW_UB_ACCOUNT_MANAGER_T e
+	where d.id=e.manager_id and e.month=#month#  order by completedPercent desc
+	</select>
+	<select id="getTMList" parameterClass="Map" resultClass="AccountManangerTask">
+		select nvl(t.completedPercent,0) as completedPercent, m.region_name as area,x.name
+		  from (select z.region_id as region_id,
+		               decode(count(z.region_id),
+		                      0,
+		                      0,
+		                      round(sum(z.webEp) / count(z.region_id), 3) * 100) as completedPercent
+		          from (select  d.region_id,
+		                       case sign(a.month_end - b.open_time - 29)
+		                         when -1 then
+		                          0
+		                         when 0 then
+		                          0
+		                         else
+		                          decode(sign(a.all_dvis -
+		                                      
+		                                      countholidays(a.month_begin,
+		                                                     a.month_end)),
+		                                 -1,
+		                                 0,
+		                                 1)
+		                       end as webEp
+		                  from clw_ub_entcustomer_month_t a,
+		                       CLW_JC_ENTERPRISE_T        b,
+		                       clw_m_area_province_t      d
+		                 where a.enterprise_id = b.enterprise_id
+		                   and d.province_id = b.enterprise_province
+		                   and a.month_begin = to_date(#month#, 'yyyy-MM-dd')) z
+		         group by z.region_id) t,
+		      (select region_id,  wm_concat(manager_name) as name
+		  from clw_m_area_personnel_info_t h
+		 where manager_type = 2  group by h.region_id
+		 ) x,clw_m_area_info_t m
+		 where t.region_id(+) =x.region_id and x.region_id=m.region_id order by t.completedPercent desc
+	</select>
+	<select id="getAcAndTask" parameterClass="Map" resultClass="AccountManangerTask">
+		select nvl(cm.completedPercent,0) as completedPercent,ac.acPercent,substr(ac.month,6,7) as month,ar.region_name as area from (
+			select b.month,a.manager_id,c.region_id as area,
+			       decode(nvl(a.task, 0), 0, 0, round(b.bus / a.task, 3) * 100) as completedPercent
+			  from CLW_JC_ACCOUNT_MANAGER_TASK_T a, CLW_UB_ACCOUNT_MANAGER_T b,clw_m_area_personnel_info_t c
+			 where a.manager_id = b.manager_id and a.manager_id=c.manager_id and a.month=b.month
+			 and to_date(b.month,'yyyy-MM') between to_date(#startMonth#,'yyyy-MM')  and to_date(#endMonth#,'yyyy-MM')) cm ,
+			(select z.region_id as area,z.month,
+			               decode(count(z.region_id),
+			                      0,
+			                      0,
+			                      round(sum(z.webEp) / count(z.region_id), 4) * 100) as acPercent
+			          from (select d.region_id,
+			                       to_char(a.month_begin,'yyyy-MM') as month,
+			                       case sign(a.month_end - b.open_time - 29)
+			                         when -1 then
+			                          0
+			                         when 0 then
+			                          0
+			                         else
+			                          decode(sign(a.all_dvis -
+			                                      countholidays(a.month_begin,
+			                                                     a.month_end)),
+			                                 -1,
+			                                 0,
+			                                 1)
+			                       end as webEp
+			                  from clw_ub_entcustomer_month_t a,
+			                       CLW_JC_ENTERPRISE_T        b,
+			                       clw_m_area_province_t      d
+			                 where a.enterprise_id = b.enterprise_id
+			                   and d.province_id = b.enterprise_province
+			                   and a.month_begin  between to_date(#startMonth#,'yyyy-MM')  and to_date(#endMonth#,'yyyy-MM') 
+			                   ) z
+			         group by z.region_id,z.month) ac,clw_m_area_info_t ar
+			         where cm.area(+)=ac.area and ac.month=cm.month(+) and ac.area=ar.region_id order by area,month
+	</select>
+</sqlMap>

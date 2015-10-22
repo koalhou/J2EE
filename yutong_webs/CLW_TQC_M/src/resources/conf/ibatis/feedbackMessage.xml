@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+		"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="feedback">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="feedbackmsg" type="com.neusoft.clw.yw.newmodel.domain.FeedBackMsg" />
+	
+	<resultMap class="feedbackmsg" id="feedBack-result">
+		<result property="suggestId" column="SUGGEST_ID"/>
+		<result property="content" column="CONTENT"/>
+		<result property="suggestDate" column="SUGGEST_DATE"/>
+		<result property="owner" column="OWNER"/>
+		<result property="empCode" column="emp_code"/>
+		<result property="type" column="TYPE"/>
+		<result property="ygb_tel" column="ygb_tel"/>
+		<result property="operator" column="operator"/>
+		<result property="operate_time" column="operate_time"/>
+		<result property="operate_content" column="operate_content"/>
+	</resultMap>
+	
+	
+	<select id="searchFeedBackPageCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from CLW_TQC_SUGGEST_T t,clw_tqc_ygb.CLW_TQC_EMP_T t2 where 1=1
+		and t.owner = t2.emp_code
+		<isNotEmpty prepend="AND" property="empName">
+			t2.emp_name like '%' ||  #empName# ||'%' escape '\'
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="beginDate">
+	    <![CDATA[
+	    	trunc(t.SUGGEST_DATE) >= to_date(#beginDate#,'yyyy-mm-dd')
+	    ]]>
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="endDate">
+	    <![CDATA[
+	    	trunc(t.SUGGEST_DATE) <= to_date(#endDate#,'yyyy-mm-dd')
+	    ]]>
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="TYPE">
+			t.TYPE=#TYPE#
+	    </isNotEmpty>
+	</select>
+	
+	<select id="searchFeedBackPage" parameterClass="Map" resultMap="feedBack-result">
+		select SUGGEST_ID,CONTENT,to_char(SUGGEST_DATE,'yyyy-mm-dd hh24:mi:ss') SUGGEST_DATE,t2.emp_name OWNER,t2.emp_code,
+			TYPE,t2.ygb_tel,t.operator,to_char(operate_time,'yyyy-mm-dd hh24:mi:ss') operate_time,t.operate_content
+			from CLW_TQC_SUGGEST_T t,clw_tqc_ygb.CLW_TQC_EMP_T t2 where 1=1
+			and t.owner = t2.emp_code
+		<isNotEmpty prepend="AND" property="empName">
+			t2.emp_name like '%' ||  #empName# ||'%' escape '\'
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="beginDate">
+	    <![CDATA[
+	    	trunc(t.SUGGEST_DATE) >= to_date(#beginDate#,'yyyy-mm-dd')
+	    ]]>
+	    </isNotEmpty>
+	    <isNotEmpty prepend="AND" property="endDate">
+	    <![CDATA[
+	    	trunc(t.SUGGEST_DATE) <= to_date(#endDate#,'yyyy-mm-dd')
+	    ]]>
+	    </isNotEmpty>
+		<isNotEmpty prepend="AND" property="TYPE">
+			t.TYPE=#TYPE#
+	    </isNotEmpty>
+	    <dynamic prepend="ORDER BY">
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		   <isEmpty property="sortname">
+		   nvl(t.operate_time,t.suggest_date) desc
+		   </isEmpty>
+		 </dynamic> 
+	</select>
+	
+	<select id="searchFeedById" parameterClass="Map" resultMap="feedBack-result">
+		select SUGGEST_ID,CONTENT,to_char(SUGGEST_DATE,'yyyy-mm-dd hh24:mi:ss') SUGGEST_DATE,t2.emp_name OWNER,t2.emp_code,
+			TYPE,t2.ygb_tel,t.operator,to_char(operate_time,'yyyy-mm-dd hh24:mi:ss') operate_time,t.operate_content,t.msg_id
+			 from CLW_TQC_SUGGEST_T t,clw_tqc_ygb.CLW_TQC_EMP_T t2 where 1=1 
+			 and t.owner = t2.emp_code
+			 <isNotEmpty prepend="AND" property="feedBackId">
+				SUGGEST_ID=#feedBackId# 
+		     </isNotEmpty>
+			 <isNotEmpty prepend="AND" property="SUGGEST_DATE">
+				SUGGEST_DATE = to_date(#SUGGEST_DATE#,'yyyy-mm-dd hh24:mi:ss')
+		     </isNotEmpty>
+	</select>
+	
+	<update id="feedbackUpdate" parameterClass="com.neusoft.clw.yw.newmodel.domain.FeedBackMsg">
+	      update clw_tqc_suggest_t t
+			 set t.type=#type#,
+		         t.operator=#operator#,
+<!-- 		         t.operate_time=sysdate, -->
+				 t.operate_time=to_date(#operate_time#,'yyyy-mm-dd hh24:mi:ss'),
+		         t.operate_content=#operate_content#
+		   where t.suggest_id=#suggestId#
+	</update>
+</sqlMap>

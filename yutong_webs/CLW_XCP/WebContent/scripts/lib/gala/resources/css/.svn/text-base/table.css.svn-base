@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+.gala_table {
+}
+
+.gala_table td.sorted_asc{
+	text-indent: 9px;
+	background: #B0E4FF url(../images/arrow_down.gif) 2px 50% no-repeat;
+	
+}
+.gala_table td.sorted_desc{
+	text-indent: 9px;
+	background: #B0E4FF url(../images/arrow_up.gif) 2px 50% no-repeat;	
+}

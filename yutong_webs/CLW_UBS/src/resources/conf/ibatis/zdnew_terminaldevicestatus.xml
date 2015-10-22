@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NewTerminalDeviceStatus">
+	<typeAlias alias="TerminalDeviceStatusInfo" type="com.neusoft.clw.yw.zdnew.terminaldevice.ds.TerminalDeviceStatus" />
+	
+	<resultMap class="TerminalDeviceStatusInfo" id="list">
+       <result property="vehicle_ln" column="VEHICLE_LN"/>
+       <result property="vehicle_vin" column="VEHICLE_VIN"/>
+       <result property="terminal_time" column="TERMINAL_TIME"/>
+       <result property="online_flag" column="ONLINE_FLAG"/>
+       <result property="device_state" column="DEVICE_STATE"/>
+       <result property="dvr_flag" column="dvr_flag"/>
+       <result property="card_flag" column="card_flag"/>
+       <result property="driver_helper_flag" column="driver_helper_flag"/>
+       <result property="battery_flag" column="battery_flag"/>
+       <result property="gps_aerial_flag" column="gps_aerial_flag"/> 
+       <result property="gps_mode_flag" column="gps_mode_flag"/>
+       <result property="vss_flag" column="vss_flag"/>
+       <result property="tts_flag" column="tts_flag"/>
+       <result property="camera1" column="camera1"/>
+       <result property="camera2" column="camera2"/>
+       <result property="camera3" column="camera3"/>
+       <result property="camera4" column="camera4"/>                                         
+    </resultMap>
+	
+	<select id="getTerminalDeviceStatusCount" parameterClass="TerminalDeviceStatusInfo" resultClass="Integer">
+	SELECT COUNT(1)
+	FROM 
+      (SELECT 
+			CASE 
+			WHEN JT.TERMINAL_TIME IS NULL THEN '0'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='0' AND ROUND(ABS(SYSDATE-JT.TERMINAL_TIME)*24*60*60,0) &lt;= 30*60 THEN '1'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='1' AND ROUND(ABS(SYSDATE-JT.TERMINAL_TIME)*24*60*60,0) &lt;= 5*60  THEN '1'
+			ELSE '0' END ONLINE_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,21,12),'000000000000') DEVICE_STATE
+      FROM CLW_JC_TERMINAL_T   JT,
+		   CLW_CL_BASE_INFO_T  CBI,
+		   CLW_CL_SIM_T        CS
+	  WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			AND JT.TERMINAL_ID IS NOT NULL
+			AND JT.VEHICLE_VIN IS NOT NULL
+			AND JT.SIM_CARD_NUMBER IS NOT NULL
+			AND JT.VALID_FLAG = '0'
+			AND CBI.VALID_FLAG = '0'
+			AND CS.VALID_FLAG = '0'
+			AND JT.DEVICE_TYPE = '0'
+			AND CBI.DEVICE_TYPE = '0'
+			AND CS.DEVICE_TYPE = '0'
+			AND CBI.ORGANIZATION_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	         OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 AND CBI.ENTERPRISE_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+			 AND CBI.ORGANIZATION_ID IS NULL 
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	    ) T
+	    <dynamic prepend="WHERE">  
+		   <isNotEmpty property="fault_flag">  
+			 <isEqual prepend="AND" property="fault_flag" compareValue="1">
+				   T.ONLINE_FLAG = '1' AND T.DEVICE_STATE != '000000000000'
+			 </isEqual>
+			 <isEqual prepend="AND" property="fault_flag" compareValue="0">
+				   T.ONLINE_FLAG = '0' OR T.DEVICE_STATE = '000000000000'
+			 </isEqual>			   
+		   </isNotEmpty>  
+		</dynamic>			 						 
+	</select>
+	
+	<select id="getTerminalDeviceStatus" parameterClass="TerminalDeviceStatusInfo" resultMap="list">
+	SELECT T.VEHICLE_VIN, T.VEHICLE_LN, T.TERMINAL_TIME, T.ONLINE_FLAG, T.DEVICE_STATE,
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.DVR_FLAG) DVR_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.CARD_FLAG) CARD_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.DRIVER_HELPER_FLAG) DRIVER_HELPER_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.BATTERY_FLAG) BATTERY_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.GPS_AERIAL_FLAG) GPS_AERIAL_FLAG,
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.GPS_MODE_FLAG) GPS_MODE_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.VSS_FLAG) VSS_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.TTS_FLAG) TTS_FLAG, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.CAMERA1) CAMERA1, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.CAMERA2) CAMERA2, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.CAMERA3) CAMERA3, 
+		   DECODE(T.ONLINE_FLAG,'0','00',T.ONLINE_FLAG||T.CAMERA4) CAMERA4
+	FROM 
+      (SELECT JT.VEHICLE_VIN, CBI.VEHICLE_LN, TO_CHAR(JT.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME,
+			CASE 
+			WHEN JT.TERMINAL_TIME IS NULL THEN '0'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='0' AND ROUND(ABS(SYSDATE-JT.TERMINAL_TIME)*24*60*60,0) &lt;= 30*60 THEN '1'
+			WHEN NVL(SUBSTRB(JT.STAT_INFO,32,1),'1')='1' AND ROUND(ABS(SYSDATE-JT.TERMINAL_TIME)*24*60*60,0) &lt;= 5*60  THEN '1'
+			ELSE '0' END ONLINE_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,21,12),'000000000000') DEVICE_STATE,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,32,1),'0') DVR_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,31,1),'0') CARD_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,30,1),'0') DRIVER_HELPER_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,29,1),'0') BATTERY_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,28,1),'0') GPS_AERIAL_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,27,1),'0') GPS_MODE_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,26,1),'0') VSS_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,25,1),'0') TTS_FLAG,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,24,1),'0') CAMERA1,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,23,1),'0') CAMERA2,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,22,1),'0') CAMERA3,
+            NVL(SUBSTRB(JT.DEVICE_FAULT_LIST,21,1),'0') CAMERA4            
+      FROM CLW_JC_TERMINAL_T   JT,
+		   CLW_CL_BASE_INFO_T  CBI,
+		   CLW_CL_SIM_T        CS
+	  WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			AND JT.TERMINAL_ID IS NOT NULL
+			AND JT.VEHICLE_VIN IS NOT NULL
+			AND JT.SIM_CARD_NUMBER IS NOT NULL
+			AND JT.VALID_FLAG = '0'
+			AND CBI.VALID_FLAG = '0'
+			AND CS.VALID_FLAG = '0'
+			AND JT.DEVICE_TYPE = '0'
+			AND CBI.DEVICE_TYPE = '0'
+			AND CS.DEVICE_TYPE = '0'
+			AND CBI.ORGANIZATION_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	         OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 AND CBI.ENTERPRISE_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+			 AND CBI.ORGANIZATION_ID IS NULL 
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	    ) T   
+	    <dynamic prepend="WHERE">  
+		   <isNotEmpty property="fault_flag">  
+			 <isEqual prepend="AND" property="fault_flag" compareValue="1">
+				   T.ONLINE_FLAG = '1' AND T.DEVICE_STATE != '000000000000'
+			 </isEqual>
+			 <isEqual prepend="AND" property="fault_flag" compareValue="0">
+				   T.ONLINE_FLAG = '0' OR T.DEVICE_STATE = '000000000000'
+			 </isEqual>			   
+		   </isNotEmpty>  
+		</dynamic>         
+	    <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		</dynamic>
+	</select>
+</sqlMap>

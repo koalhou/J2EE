@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="false"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="ClwCommunicateService"
+		class="com.neusoft.clw.vncs.nio.ClwCommunicateService" init-method="init" destroy-method="destroy">
+		<property name="configParamDao">
+			<ref bean="configParamDao"/>
+		</property>
+		<property name="msgCfgDAO">
+			<ref bean="msgCfgDAO"/>
+		</property>
+		<property name="smsCfgDAO">
+			<ref bean="smsCfgDAO"/>
+		</property>
+	</bean>
+	
+	<bean id="tagCoreServer" class="com.neusoft.tag.core.server.TagCoreServer" init-method="start" destroy-method="stop"
+		scope="singleton" parent="abstractServer">
+	</bean>
+	
+	<bean id="abstractServer" class="com.neusoft.tag.core.server.AbstractServer"
+		abstract="true">
+		<property name="tasksManager">
+			<ref bean="coreTasksManager"/>
+		</property>
+		<property name="actions">
+			<list>
+				<!--<ref bean="lnjtTerminalInfoAction"/>  -->
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 统一管理定时任务 -->
+	<bean id="coreTasksManager" class="com.neusoft.tag.core.task.TasksManager"
+		scope="singleton">
+		<property name="timerName" value="Timer*CoreTask"/>
+		<property name="tasks">
+			<list>
+			<!-- 
+				<ref bean="lnjtTerminalInfoAsyncTask"/>
+				<ref bean="lnjtTerminalInfoTaskDailyFlush"/>
+				<ref bean="updateVgMsgInfoAsyncTask"/>
+				<ref bean="sendVgMsgInfoFromDBAsyncTask"/>
+				<ref bean="upSendTestFromLnjtClientTask"/>
+				<ref bean="upSessionConnectedTestTask"/>
+				<ref bean="downSessionSendTestTask"/>
+				 -->
+			</list>
+		</property>
+	</bean>
+	<!--  
+    <bean id="lnjtTerminalInfoAsyncTask"
+		class="com.neusoft.clw.task.LnjtTerminalInfoAsyncTask"
+		scope="singleton">
+		<property name="period" value="${lnjt.terminal_info_async.period}"/>
+		<property name="delay" value="${lnjt.terminal_info_async.delay}"/>
+		<property name="lnjtTerminalInfoTable">
+			<ref bean="lnjtTerminalInfoTable"/>
+		</property>
+		<property name="lnjtTerminalInfoDao">
+			<ref bean="lnjtTerminalInfoDao"/>
+		</property>
+	</bean>
+	
+	<bean id="lnjtTerminalInfoTaskDailyFlush"
+		class="com.neusoft.clw.task.LnjtTerminalInfoTaskDailyFlush"
+		scope="singleton" lazy-init="false">
+		<property name="period" value="${lnjt.terminal_info_daily_flush.period}"/>
+		<property name="maxVersion"
+			value="${lnjt.terminal_info_daily_flush.maxVersion}"/>
+		<property name="dateStr" value="${lnjt.terminal_info_daily_flush.date}"/>
+		<property name="fixedRate" value="true"/>
+		<property name="lnjtTerminalInfoTable">
+			<ref bean="lnjtTerminalInfoTable"/>
+		</property>
+		<property name="lnjtTerminalInfoDao">
+			<ref bean="lnjtTerminalInfoDao"/>
+		</property>
+	</bean>
+	
+	<bean id="lnjtTerminalInfoAction"
+		class="com.neusoft.clw.task.LnjtTerminalInfoAction" scope="singleton">
+		<property name="lnjtTerminalInfoTable">
+			<ref bean="lnjtTerminalInfoTable"/>
+		</property>
+		<property name="lnjtTerminalInfoDao">
+			<ref bean="lnjtTerminalInfoDao"/>
+		</property>
+	</bean>
+
+	
+	<bean id="updateVgMsgInfoAsyncTask"
+		class="com.neusoft.clw.task.UpdateVgMsgInfoAsyncTask"
+		scope="singleton">
+		<property name="period" value="${lnjt.batch_insert_vg_msg_info_async.period}"/>
+		<property name="delay" value="${lnjt.batch_insert_vg_msg_info_async.delay}"/>
+		<property name="updateDaoManager">
+			<ref bean="lnjtUpdateVgMsgInfoDao"/>
+		</property>
+	</bean>
+	
+	<bean id="sendVgMsgInfoFromDBAsyncTask"
+		class="com.neusoft.clw.task.SendVgMsgInfoFromDBAsyncTask"
+		scope="singleton">
+		<property name="period" value="${lnjt.batch_send_vg_msg_info_async.period}"/>
+		<property name="delay" value="${lnjt.batch_send_vg_msg_info_async.delay}"/>
+		<property name="updateDaoManager">
+			<ref bean="lnjtUpdateVgMsgInfoDao"/>
+		</property>
+		<property name="lnjtVgMsgInfoDao">
+			<ref bean="lnjtVgMsgInfoDao"/>
+		</property>
+	</bean>
+	
+	<bean id="upSendTestFromLnjtClientTask"
+		class="com.neusoft.clw.task.UpSendTestFromLnjtClientTask"
+		scope="singleton">
+		<property name="period" value="${lnjt.up_send_test_from_lnjt_client_task.period}"/>
+		<property name="delay" value="${lnjt.up_send_test_from_lnjt_client_task.delay}"/>
+	</bean>
+	
+	<bean id="upSessionConnectedTestTask"
+		class="com.neusoft.clw.task.UpSessionConnectedTestTask"
+		scope="singleton">
+		<property name="period" value="${lnjt.up_session_connected_test_task.period}"/>
+		<property name="delay" value="${lnjt.up_session_connected_test_task.delay}"/>
+		<property name="tagLnjtSwapClientService">
+			<ref bean="tagLnjtSwapClientService"/>
+		</property>
+		<property name="lnjtUpDisconnectInfoAction">
+			<ref bean="lnjtUpDisconnectInfoAction"/>
+		</property>
+	</bean>
+	
+	<bean id="downSessionSendTestTask"
+		class="com.neusoft.clw.task.DownSessionSendTestTask"
+		scope="singleton">
+		<property name="period" value="${lnjt.down_session_send_test_task.period}"/>
+		<property name="delay" value="${lnjt.down_session_send_test_task.delay}"/>
+	</bean>
+	
+	<bean id="lnjtUpDisconnectInfoAction"
+		class="com.neusoft.clw.task.LnjtUpDisconnectInfoAction" scope="singleton">
+		<property name="lnjtUpDisconnectInfoDao">
+			<ref bean="lnjtUpDisconnectInfoDao"/>
+		</property>
+	</bean>
+	-->
+</beans>

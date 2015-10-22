@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="busalarm" namespace="/busalarm" extends="clw-default">		
+		<!-- 批量车辆告警处理方法 -->
+		<action name="dealmorealarm" class="alarmManageAction" method="alarmMoreDeal">
+		</action>
+		<!-- 批量学生告警处理方法 -->
+		<action name="dealtqcmorealarm" class="alarmManageAction" method="alarmtqcMoreDeal">
+		</action>
+		<!-- SOS导出 -->
+		<action name="exportsosalarm" class="alarmManageAction" method="exportSosalarm">
+		   <result name="error" type="redirect">
+				newmorealarm.shtml?newalarm_type_id=${alarm_type_id}
+			</result>
+		</action>
+		<!-- 超速告警导出 -->
+		<action name="exportotheralarm" class="alarmManageAction" method="exportOtheralarm">
+		   <result name="error" type="redirect">
+				newmorealarm.shtml?newalarm_type_id=${alarm_type_id}
+			</result>
+		</action>
+		<!-- 通勤车迟到告警导出 -->
+		<action name="exportlatealarm" class="alarmManageAction" method="exportLatealarm">
+			<result name="error" type="redirect-action">
+				<param name="actionName">newlatetalarmlist</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 通勤车非时发车告警导出 -->
+		<action name="exportnon-timealarm" class="alarmManageAction" method="exportnontimealarm">
+			<result name="error" type="redirect-action">
+				<param name="actionName">newnofullalarm</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 通勤车未满发车告警导出 -->
+		<action name="exportstualarm" class="alarmManageAction" method="exportnofullalarm">
+			<result name="error" type="redirect-action">
+				<param name="actionName">newnofullalarm1</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 通勤车非站开门告警导出 -->
+		<action name="exportopendooralarm" class="alarmManageAction" method="exportopendooralarm">
+			<result name="error" type="redirect-action">
+				<param name="actionName">newnofullalarm1</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>	
+		
+		<!-- 2.0弹出页跳转页面 -->
+		<action name="getdetailAlarm" class="alarmManageAction" method="getDetailAlarm">
+			<result name="success">
+				/WEB-INF/jsp/businessmanage/gpsmanage/newalarmControl.jsp
+			</result>
+		</action>
+		<!-- 2.0更多跳转页面 -->
+		<action name="newmorealarm" class="alarmManageAction" method="newmoreAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newmorealarmList.jsp
+			</result>
+		</action>
+		<!-- 2.0其他告警跳转页面 -->
+		<action name="newmoreotheralarm" class="alarmManageAction" method="newotherAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newotheralarmlist.jsp
+			</result>
+		</action>
+		<!-- 2.0 SOS跳转页面 -->
+		<action name="newsosalarm" class="alarmManageAction" method="newsosAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newsosalarmlist.jsp
+			</result>
+		</action>
+		<!-- 2.0 通勤车专用告警跳转页面 -->
+		<action name="newlatealarm" class="alarmManageAction" method="newtqcAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newlatealarmlist.jsp
+			</result>
+		</action>
+		<!--非时发车告警跳转-->
+		<action name="newnofullalarm" class="alarmManageAction" method="newtqcAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newnofullalarmlist.jsp
+			</result>
+		</action>
+		<!--未满发车告警跳转-->
+		<action name="newnofullalarm1" class="alarmManageAction" method="newtqcAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newnofull1alarmlist.jsp
+			</result>
+		</action>		
+		<action name="newnotsitealarm" class="alarmManageAction" method="newtqcAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newnotsitealarmlist.jsp
+			</result>
+		</action>
+		<action name="newoilalarm" class="alarmManageAction" method="newtqcAlarm">
+		    <result name="success">
+				/WEB-INF/jsp/businessmanage/alarmmanage/newoilalarmlist.jsp
+			</result>
+		</action>
+	</package>
+	
+	<package name="busalarmpkg" namespace="/busalarmpkg" extends="json-default">
+	    <!--更多SOS转换MAP -->
+        <action name="alarmsosmanage" class="alarmManageAction" method="alarmOpenSosList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>        
+       </action>
+       <!-- 更多其他车辆告警转换map -->
+       <action name="alarmmanagepkg" class="alarmManageAction" method="alarmOpenManageList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>        
+       </action>
+        <!-- 2.0通勤车告警（迟到）转换map -->
+        <action name="newlatetalarmlist" class="alarmManageAction"  method="newopenLateAlarmList">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	          <result name="error" type="json">
+                <param name="contentType">text/json</param>
+                <param name="excludeNullProperties">false</param>
+                <param name="noCache">true</param>
+                <param name="root">map</param>
+             </result>
+       </action>
+        <!-- 2.0通勤车告警（非时发车）转换map -->
+        <action name="newnofulltalarmlist" class="alarmManageAction"  method="newopenNofullAlarmList">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	          <result name="error" type="json">
+                <param name="contentType">text/json</param>
+                <param name="excludeNullProperties">false</param>
+                <param name="noCache">true</param>
+                <param name="root">map</param>
+             </result>
+       </action>
+        <!-- 2.0通勤车告警（未满发车）转换map -->
+        <action name="newnofulltalarmlist1" class="alarmManageAction"  method="newopenNofullAlarmList1">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	          <result name="error" type="json">
+                <param name="contentType">text/json</param>
+                <param name="excludeNullProperties">false</param>
+                <param name="noCache">true</param>
+                <param name="root">map</param>
+             </result>
+       </action>       
+        <!-- 2.0通勤车告警（非站开门）转换map -->
+        <action name="newnotsitetalarmlist" class="alarmManageAction"  method="newopenNotSiteAlarmList">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	          <result name="error" type="json">
+                <param name="contentType">text/json</param>
+                <param name="excludeNullProperties">false</param>
+                <param name="noCache">true</param>
+                <param name="root">map</param>
+             </result>
+       </action>            
+       <!-- TABsos告警转换map -->
+        <action name="gettabsosalarm" class="alarmManageAction"  method="getTabSosAlarms">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <!-- TAB其他车辆告警转换map -->
+       <action name="gettabvehalarm" class="alarmManageAction"  method="getTabVehAlarms">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+        </action>
+        <!-- TAB通勤车专用告警转换map(非时发车) -->
+       <action name="gettabtqcnofullalarm" class="alarmManageAction"  method="getTabTqcNoFullAlarm">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+        <!-- TAB通勤车专用告警转换map(未满发车) -->
+       <action name="gettabtqcnofullalarm1" class="alarmManageAction"  method="getTabTqcNoFullAlarm1">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>       
+        <!-- TAB通勤车专用告警转换map(非站开门) -->
+       <action name="gettabtqcnotsitealarm" class="alarmManageAction"  method="getTabTqcNotSiteAlarm">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+        <!-- TAB通勤车专用告警转换map(迟到) -->
+       <action name="gettabtqclatealarm" class="alarmManageAction"  method="getTabTqcLateAlarm">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>         
+	</package>
+</struts>

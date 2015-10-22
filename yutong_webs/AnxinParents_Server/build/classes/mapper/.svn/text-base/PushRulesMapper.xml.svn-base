@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PushRules">
+
+	<!-- 获取学生类别的未设置规则模板 -->
+	<select id="getChildTemplateRule" parameterType="string" resultType="pushRuleInfo">
+		  SELECT ON_OFF onOff, FLAG flag, PM_RULE_ID ruleId
+		  FROM CLW_JZ_PUSHRULE_TEMPLATE_T
+		 WHERE DEL = '0' and    pm_rule_id like '01_%' and PM_RULE_ID not in (select a.pm_rule_id
+			                            from clw_jz_pushrule_t a
+			                           where a.user_id = #{uid} and a.stu_id=#{sid} 
+			                           and a.pm_rule_id like '01%')
+		 
+	</select>
+	<!-- 获取系统类别的未设置规则模板 -->
+	<select id="getSystemTemplateRule" parameterType="string" resultType="pushRuleInfo">
+		  SELECT ON_OFF onOff, FLAG flag, PM_RULE_ID ruleId
+		  FROM CLW_JZ_PUSHRULE_TEMPLATE_T
+		 WHERE DEL = '0' and    pm_rule_id like '02_%' and PM_RULE_ID not in (select a.pm_rule_id
+			                            from clw_jz_pushrule_t a
+			                           where a.user_id = #{uid}
+			                           and a.pm_rule_id like '02%')
+		 
+	</select>
+	
+		<!-- 根据用户ID查询用户所有有效的推送规则 -->
+	<select id="getPushRules" parameterType="string" resultType="pushRuleInfo">
+	select t1.rule_id id,
+	       t1.user_id usrId,
+	       t1.stu_id childId,
+	       t1.on_off onOff,
+	       t1.flag  flag,
+	       t2.pm_rule_id ruleId,
+	       t2.parent_rule_id  rulePId,
+	       t2.pm_rule_title ruleTitle,
+           t2.pm_rule_desc ruleDesc
+	  from clw_jz_pushrule_t t1, clw_jz_pushdesc_t t2
+	 where t1.pm_rule_id = t2.pm_rule_id  
+	   and t1.user_id = #{usrId}
+	</select>
+	
+	<update id="updatePersonalRule" parameterType="map">
+		UPDATE clw_jz_pushrule_t
+		SET ON_OFF = #{on_off},
+		<if test="flag != null">
+			FLAG = #{flag},
+		</if>
+		
+		UPDATE_TIME =sysdate
+		WHERE rule_id=#{id}
+	</update>
+	
+	<insert id="insertPersonalRule" parameterType="pushRuleInfo">
+		insert into clw_jz_pushrule_t
+		  (rule_id,
+		   user_id,
+		   stu_id,
+		   pm_rule_id,
+		   on_off,
+		   flag,
+		   create_time)
+		values(
+			seq_clw_jz_pushrule_t.nextval,
+			#{usrId},
+			#{childId,jdbcType=VARCHAR},
+			#{ruleId},
+			#{onOff},
+			#{flag},
+			sysdate
+		)
+	</insert>
+	<delete id="delRule" parameterType="pushRuleInfo">
+		delete from  clw_jz_pushrule_t
+		where user_id =#{uid}  and  stu_id=#{sid} 
+	</delete>
+
+</mapper>

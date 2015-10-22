@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Vehicle">
+
+
+
+	<select id="getVehicleTripInfo"  parameterType="map"  resultType="vehicle">
+		select t.route_id as line_id,
+		       t.send_time as plan_start_time,
+		       t.vehicle_vin,
+		       max(c.vehicle_code) as vehicle_code,
+		       t.send_order
+		from clw_tqc.tqc_trip_execute t,clw_tqc.clw_cl_base_info_t c
+		where t.route_id in (${line_ids})
+		      and t.vehicle_vin = c.vehicle_vin
+		      and t.exe_date = to_date('${search_date}','yyyymmdd')
+		group by t.route_id,t.send_time,t.vehicle_vin,t.send_order
+		order by t.send_order
+	</select>
+	
+	<select id="getVehicleRealInfo" parameterType="list" resultType="vehicle" >
+	select t2.vehicle_vin as vehicleVin,
+	       t1.longitude gpsLon ,
+	       t1.latitude gpsLat,
+	       t1.speeding speed,
+	       t1.direction direction,
+	       t1.stat_info status,
+	       to_char(t1.modify_time,'yyyyMMddHHmmss') updateTime
+	  from clw_jc_terminal_t t1, clw_cl_base_info_t t2
+	 where t1.vehicle_vin = t2.vehicle_vin
+	   and t2.vehicle_vin in
+	   <foreach collection="list" item="item" separator="," open="(" close=")" >
+	   		#{item}
+	   </foreach>
+	</select>
+	
+	 
+</mapper>

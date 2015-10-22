@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Repare">
+
+<select id="getRepareCount" parameterClass="map" resultClass="Integer">
+	select count(1)
+	from tqc_repare_record_t a,CLW_JC_CLEN_VI b
+	where a.valid_flag='0' and a.vehicle_vin = b.vehicle_vin(+)
+	<isNotEmpty prepend="AND" property="begintime">
+		a.update_time <![CDATA[ >= ]]> to_date(#begintime#,'yyyy-mm-dd')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="endtime">
+		a.update_time <![CDATA[ <= ]]> to_date(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="fix_type">
+		a.fix_type = #fix_type#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="vehicle_vin">
+		a.vehicle_vin in ($vehicle_vin$) 
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="user_org_id">
+		a.vehicle_vin in (SELECT vehicle_vin
+		  FROM CLW_CL_BASE_INFO_T
+		 WHERE ORGANIZATION_ID IN
+		       (SELECT ENTERPRISE_ID
+		          FROM CLW_JC_ENTERPRISE_T
+		         WHERE VALID_FLAG = '0'
+		         START WITH ENTERPRISE_ID = #user_org_id#
+		        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID))
+	</isNotEmpty>
+</select>
+
+
+<select id="getRepare" parameterClass="map" resultClass="HashMap">
+	select a.repare_id, a.vehicle_vin, b.vehicle_code, b.vehicle_ln, a.fault_type, a.fault_desc, decode(a.fix_type,'0','维修','1','保养','') fix_type,
+	decode(a.fix_flag,'0','是','1','否','','2','--') fix_flag, a.cost_time, a.cost_component, 
+	a.owner, to_char(a.update_time,'yyyy-mm-dd') update_time, a.update_by, a.valid_flag, a.bak
+	from tqc_repare_record_t a,CLW_JC_CLEN_VI b
+	where a.valid_flag='0' and a.vehicle_vin = b.vehicle_vin(+)
+	<isNotEmpty prepend="AND" property="begintime">
+		a.update_time <![CDATA[ >= ]]> to_date(#begintime#,'yyyy-mm-dd')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="endtime">
+		a.update_time <![CDATA[ <= ]]> to_date(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="fix_type">
+		a.fix_type = #fix_type#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="vehicle_vin">
+		a.vehicle_vin in ($vehicle_vin$) 
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="user_org_id">
+		a.vehicle_vin in (SELECT vehicle_vin
+		  FROM CLW_CL_BASE_INFO_T
+		 WHERE ORGANIZATION_ID IN
+		       (SELECT ENTERPRISE_ID
+		          FROM CLW_JC_ENTERPRISE_T
+		         WHERE VALID_FLAG = '0'
+		         START WITH ENTERPRISE_ID = #user_org_id#
+		        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID))
+	</isNotEmpty>
+	order by a.update_time desc
+</select>
+
+
+
+
+
+
+
+<insert id="addRepare" parameterClass="map">
+	
+INSERT INTO TQC_REPARE_RECORD_T
+  (REPARE_ID,
+   VEHICLE_VIN,
+   FAULT_TYPE,
+   FAULT_DESC,
+   FIX_TYPE,
+   FIX_FLAG,
+   COST_TIME,
+   COST_COMPONENT,
+   OWNER,
+   UPDATE_BY,
+   UPDATE_TIME,
+   VALID_FLAG,
+   BAK)
+VALUES
+  (seq_organize_set.nextval,
+   #vehicle_vin#,
+   #fault_type#,
+   #fault_desc#,
+   #fix_type#,
+   #fix_flag#,
+   #cost_time#,
+   #cost_component#,
+   #owner#,
+   #update_by#,
+   to_date(#update_time#,'yyyy-mm-dd'),
+   '0',
+   #bak#)
+</insert>
+
+<select id="getRepareById" parameterClass="map" resultClass="HashMap">
+	select a.repare_id, a.vehicle_vin, b.vehicle_code, b.vehicle_ln, a.fault_type, a.fault_desc, a.fix_type,
+	a.fix_flag, a.cost_time, a.cost_component, c.path organizationname,
+	a.owner, to_char(a.update_time,'yyyy-mm-dd') update_time, a.update_by, a.valid_flag, a.bak
+	from tqc_repare_record_t a,CLW_JC_CLEN_VI b,
+	(
+  SELECT sys_connect_by_path(SHORT_NAME, '/@') AS Path,
+               SHORT_NAME as organizationName,
+               ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_T
+         start WITH PARENT_ID = '111'
+        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+  ) c
+	where a.vehicle_vin = b.vehicle_vin(+)
+	and b.organization_id=c.enterprise_id
+	<isNotEmpty prepend="AND" property="repare_id">
+		a.repare_id = #repare_id#
+	</isNotEmpty>
+</select>
+
+<update id="updateRepareById" parameterClass="map">
+    UPDATE tqc_repare_record_t
+	   SET update_time = to_date(#update_time#,'yyyy-mm-dd')
+	   	   <isNotEmpty prepend="," property="vehicle_vin">
+	       vehicle_vin = #vehicle_vin#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="fault_type">
+	       fault_type = #fault_type#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="fault_desc">
+	       	fault_desc = #fault_desc#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="fix_type">
+	       	fix_type = #fix_type#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="fix_flag">
+	       	fix_flag = #fix_flag#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="cost_time">
+	       	cost_time = #cost_time#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="cost_component">
+	       	cost_component = #cost_component#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="owner">
+	       	owner = #owner#
+	       </isNotEmpty>
+	       <isNotEmpty prepend="," property="valid_flag">
+	       	valid_flag = #valid_flag#
+	       </isNotEmpty>
+	 WHERE repare_id = #repare_id#
+</update>
+
+<select id="getRepareExcel" parameterClass="map" resultClass="HashMap">
+	select a.repare_id, a.vehicle_vin, b.vehicle_code, b.vehicle_ln, a.fault_type, a.fault_desc, decode(a.fix_type,'0','维修','1','保养','') fix_type,
+	decode(a.fix_flag,'0','是','1','否','','2','--') fix_flag, a.cost_time, a.cost_component, 
+	a.owner, to_char(a.update_time,'yyyy-mm-dd') update_time, a.update_by, a.valid_flag
+	from tqc_repare_record_t a,CLW_JC_CLEN_VI b
+	where a.valid_flag='0' and a.vehicle_vin = b.vehicle_vin(+)
+	<isNotEmpty prepend="AND" property="begintime">
+		a.update_time <![CDATA[ >= ]]> to_date(#begintime#,'yyyy-mm-dd')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="endtime">
+		a.update_time <![CDATA[ <= ]]> to_date(#endtime#,'yyyy-mm-dd hh24:mi:ss')
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="fix_type">
+		a.fix_type = #fix_type#
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="vehicle_vin">
+		a.vehicle_vin in ($vehicle_vin$)
+	</isNotEmpty>
+	<isNotEmpty prepend="AND" property="user_org_id">
+		a.vehicle_vin in (SELECT vehicle_vin
+		  FROM CLW_CL_BASE_INFO_T
+		 WHERE ORGANIZATION_ID IN
+		       (SELECT ENTERPRISE_ID
+		          FROM CLW_JC_ENTERPRISE_T
+		         WHERE VALID_FLAG = '0'
+		         START WITH ENTERPRISE_ID = #user_org_id#
+		        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID))
+	</isNotEmpty>
+	order by a.update_time desc
+</select>
+
+</sqlMap>

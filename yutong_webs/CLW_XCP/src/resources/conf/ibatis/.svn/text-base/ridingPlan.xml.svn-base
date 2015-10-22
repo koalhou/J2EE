@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RidingPlan">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="RidingPlanInfo" type="com.neusoft.clw.infomanage.ridingplan.domain.RidingPlanInfo" />
+	<typeAlias alias="VehdriverInfo" type="com.neusoft.clw.infomanage.ridingplan.domain.VehdriverInfo" />
+	<typeAlias alias="VehsichenInfo" type="com.neusoft.clw.infomanage.ridingplan.domain.VehsichenInfo" />
+	<typeAlias alias="VssInfo" type="com.neusoft.clw.infomanage.ridingplan.domain.VssInfo" />
+	<typeAlias alias="Vss_SiteInfo" type="com.neusoft.clw.infomanage.ridingplan.domain.Vss_SiteInfo" />
+	<typeAlias alias="RidingReadyInfo" type="com.neusoft.clw.infomanage.ridingplan.domain.RidingReady" />
+	<resultMap id="route_info" class="com.neusoft.clw.infomanage.ridingplan.domain.RouteInfo" >
+		<result property="route_id" column="ROUTE_ID" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="route_incharge_person" column="ROUTE_INCHARGE_PERSON" />
+	</resultMap>
+	<resultMap id="riding-info-result" class="RidingReadyInfo">
+		<result property="trip_id" column="TRIP_ID" />
+		<result property="type" column="TYPE" />
+	    <result property="route_id" column="ROUTE_ID" />
+	    <result property="vehicle_ln" column="VEHICLE_LN" />
+	    <result property="vehicle_vin" column="VEHICLE_VIN" />
+	    <result property="vehicle_vin_old" column="VEHICLE_VIN_OLD" />
+	    <result property="driver_ids" column="DRIVER_IDS" />
+		<result property="driver_names" column="DRIVER_NAMES" />
+		<result property="steward_ids" column="STEWARD_IDS" />
+		<result property="steward_names" column="STEWARD_NAMES" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="route_incharge_person" column="ROUTE_INCHARGE_PERSON" />
+	</resultMap>
+	<resultMap id="site-info" class="com.neusoft.clw.infomanage.ridingplan.domain.SiteInfo">
+	    <result property="site_name" column="SITE_NAME" />
+	    <result property="site_id" column="SITE_ID" />
+	    <result property="sichen_addr" column="SICHEN_ADDR" />
+		<result property="site_longitude" column="SITE_LONGITUDE" />
+		<result property="site_latitude" column="SITE_LATITUDE" />
+		<result property="plan_in_time" column="PLAN_IN_TIME" />
+		<result property="plan_out_time" column="PLAN_OUT_TIME" />
+		<result property="up_stu_ids" column="UP_STU_IDS" />
+		<result property="down_stu_ids" column="DOWN_STU_IDS" />
+		<result property="up_stu_names" column="UP_STU_NAMES" />
+		<result property="down_stu_names" column="DOWN_STU_NAMES" />		
+		<result property="site_updown" column="SITE_UPDOWN" />
+	</resultMap>
+	<resultMap id="student-result" class="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo">
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="stu_id" column="STU_ID" />
+		<result property="stu_card_id" column="STU_CARD_ID" />
+		<result property="stu_code" column="STU_CODE" />
+		<result property="stu_name" column="STU_NAME" />
+	    <result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />		
+	</resultMap>
+	<resultMap id="ridingPlanList-result" class="RidingPlanInfo">
+		<result property="tripID" column="TRIP_ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="routeId" column="ROUTE_ID" />
+		<result property="routeName" column="ROUTE_NAME" />
+		<result property="upDownFlag" column="UP_DOWN_FLAG" />
+		<result property="terTime" column="TER_TIME" />
+		<result property="editTime" column="EDIT_TIME" />
+		<result property="siteNum" column="SITE_NUM" />
+		<result property="tripBegTime" column="TRIP_BEG_TIME" />
+		<result property="tripEndTime" column="TRIP_END_TIME" />
+		<result property="stNum" column="ST_NUM" />
+		<result property="driverNames" column="DRIVER_NAMES" />
+		<result property="sichenNames" column="SICHEN_NAMES" />		
+	</resultMap>
+	<resultMap id="vehcileinfo-result" class="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="enterprise_name" column="SHORT_NAME" />
+		<result property="choiceflag" column="CHOICEFLAG" />
+	</resultMap>
+	<resultMap class="com.neusoft.clw.infomanage.stewardmanage.domain.StewardInfo" id="stewardinfos-result">
+       <result property="steward_id" column="SICHEN_ID"/>
+       <result property="steward_ID_Card" column="SICHEN_LICENSE"/>
+       <result property="steward_card" column="SICHEN_CARD_ID"/>
+       <result property="steward_name" column="SICHEN_NAME"/>
+       <result property="steward_sex" column="SICHEN_SEX"/>
+       <result property="steward_birth" column="SICHEN_BIRTH"/>
+       <result property="steward_address" column="SICHEN_ADDR"/>
+       <result property="cell_number" column="SICHEN_TEL"/>
+       <result property="remarks" column="SICHEN_REMARK"/>
+    </resultMap>  	
+    <resultMap class="com.neusoft.clw.sysmanage.datamanage.drivermanage.domain.DriverInfo" id="driverinfos-result">
+       <result property="driver_id" column="DRIVER_ID"/>
+       <result property="driver_license" column="DRIVER_LICENSE"/>
+       <result property="driver_card" column="DRIVER_CARD_ID"/>
+       <result property="driver_name" column="DRIVER_NAME"/>
+       <result property="driver_sex" column="DRIVER_SEX"/>
+       <result property="driver_birth" column="DRIVER_BIRTH"/>
+       <result property="driver_address" column="DRIVER_ADDRESS"/>
+       <result property="cell_number" column="DRIVER_TEL"/>
+       <result property="remarks" column="DRIVER_REMARK"/>
+    </resultMap>
+      
+    <select id="getStudentList" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo" resultMap="student-result">		
+		select ORGANIZATION_ID,
+               STU_ID,
+               STU_CARD_ID,
+               STU_CODE,
+               STU_NAME,
+               STU_SCHOOL,
+               STU_CLASS		
+		from 
+		(SELECT 
+	        T.ORGANIZATION_ID,
+	        T.STU_ID,
+	        T.STU_CARD_ID,
+	        T.STU_CODE,
+	        T.STU_NAME,
+	        T.STU_SCHOOL,
+	        T.STU_CLASS,
+	        '1' as flag,
+	        T.SITE_DESC
+		FROM clw_xc_student_t T
+		WHERE 
+			T.enterprise_id = #enterprise_id#
+		 	and T.organization_id in					
+       		(select enterprise_id						
+          		from clw_jc_enterprise_vi	
+          		<![CDATA[						
+         		where left_num >= (select left_num						
+                              from clw_jc_enterprise_vi						
+                             where enterprise_id = #organization_id# )
+           		and right_num <= (select right_num
+                               from clw_jc_enterprise_vi
+                              where enterprise_id = #organization_id# ))	
+            	]]>
+         	and T.VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="upnotexist">
+            T.STU_ID not in ($upnotexist$)
+      	 </isNotEmpty>
+      	 <isNotEmpty prepend="AND" property="downnotexist">
+            T.STU_ID not in ($downnotexist$)
+      	 </isNotEmpty>
+      	 <isNotEmpty prepend="AND" property="searchparam">
+            T.STU_ID not in ($searchparam$)
+      	 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="trip_id">
+        	NOT EXISTS (select 1 from clw_xc_vss_t xv where xv.student_id = T.STU_ID 
+		 	and xv.trip_id=#trip_id#
+         	and xv.VSS_STATE=#flag#)	
+         </isNotEmpty>
+         <!--  
+         <isNotEmpty prepend="AND" property="route_id">
+         	NOT EXISTS (select 1 from clw_xc_vss_t xv where xv.student_id = T.STU_ID AND xv.ROUTE_ID!=#route_id#)
+         </isNotEmpty>         
+         -->
+         <isNotEmpty prepend="UNION" property="delupexistdata">
+        	SELECT 
+		        TU.ORGANIZATION_ID,
+		        TU.STU_ID,
+		        TU.STU_CARD_ID,
+		        TU.STU_CODE,
+		        TU.STU_NAME,
+		        TU.STU_SCHOOL,
+		        TU.STU_CLASS,
+		        '1' as flag,
+		        TU.SITE_DESC
+			FROM clw_xc_student_t TU
+			WHERE TU.STU_ID in ($delupexistdata$)
+        </isNotEmpty>
+        <isNotEmpty prepend="UNION" property="deldownexistdata">
+        	SELECT 
+		        TD.ORGANIZATION_ID,
+		        TD.STU_ID,
+		        TD.STU_CARD_ID,
+		        TD.STU_CODE,
+		        TD.STU_NAME,
+		        TD.STU_SCHOOL,
+		        TD.STU_CLASS,
+		        '1' as flag,
+		        TD.SITE_DESC
+			FROM clw_xc_student_t TD
+			WHERE TD.STU_ID in ($deldownexistdata$)
+        </isNotEmpty>
+       )
+       WHERE 1=1
+       	 <isNotEmpty prepend="AND" property="stu_code">
+       	 	STU_CODE like '%' || #stu_code# ||'%' escape '\'
+      	 </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+         	STU_SCHOOL like '%' || #stu_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+         	STU_CLASS like '%' || #stu_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_name">
+         	STU_NAME like '%' || #stu_name# ||'%' escape '\'
+         </isNotEmpty>	
+         <isNotEmpty prepend="AND" property="site_desc">
+         	SITE_DESC like '%' || #site_desc# ||'%' escape '\'
+         </isNotEmpty>
+       order by STU_ID
+	</select>
+	
+	<select id="getCountST" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo" resultClass="Integer">
+	   SELECT COUNT(1)
+	   FROM
+		  (SELECT T.STU_ID
+		  FROM clw_xc_student_t T
+		  WHERE T.enterprise_id  = #enterprise_id#
+		  AND T.organization_id IN
+		    (SELECT enterprise_id
+		    FROM clw_jc_enterprise_vi <![CDATA[
+		    WHERE left_num           >=
+		      (SELECT left_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      )
+		    AND right_num <=
+		      (SELECT right_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      )
+		    ) ]]>
+         <isNotEmpty prepend="AND" property="stu_code">
+       	 	T.STU_CODE like '%' || #stu_code# ||'%' escape '\'
+      	 </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_school">
+         	T.STU_SCHOOL like '%' || #stu_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_class">
+         	T.STU_CLASS like '%' || #stu_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="stu_name">
+         	T.STU_NAME like '%' || #stu_name# ||'%' escape '\'
+         </isNotEmpty>	
+         <isNotEmpty prepend="AND" property="site_desc">
+         	T.SITE_DESC like '%' || #site_desc# ||'%' escape '\'
+         </isNotEmpty>
+		 	and T.VALID_FLAG = '0' 
+		 <isNotEmpty prepend="AND" property="upnotexist">
+               T.STU_ID not in ($upnotexist$)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="downnotexist">
+               T.STU_ID not in ($downnotexist$)
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="trip_id">
+        	NOT EXISTS (select 1 from clw_xc_vss_t xv where xv.student_id = T.STU_ID 
+		 	and xv.trip_id=#trip_id#
+         	and xv.VSS_STATE=#flag#)	
+         </isNotEmpty>
+         AND NOT EXISTS (select 1 from clw_xc_vss_t xv where xv.student_id = T.STU_ID AND xv.ROUTE_ID!=#route_id#)
+       )
+	</select>
+	
+	<select id="getStudentShow" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo" resultMap="student-result">		
+		SELECT T.ORGANIZATION_ID,
+		  T.STU_ID,
+		  T.STU_CARD_ID,
+		  T.STU_CODE,
+		  T.STU_NAME,
+		  T.STU_SCHOOL,
+		  T.STU_CLASS
+		FROM clw_xc_student_t T
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="stu_id">
+               T.STU_ID in ($stu_id$)
+        </isNotEmpty>	
+        <dynamic prepend="ORDER BY">  
+           <isNotEmpty property="sortname">  
+           		$sortname$   $sortorder$  
+           </isNotEmpty>  
+        </dynamic>    
+	</select>
+	
+	<select id="getCountSTShow" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo" resultClass="Integer">
+	   select count(1)
+	   FROM clw_xc_student_t T
+	   where 1=1
+		  <isNotEmpty prepend="AND" property="stu_id">
+               T.STU_ID in ($stu_id$)
+         </isNotEmpty>	
+       <dynamic prepend="ORDER BY">  
+         <isNotEmpty property="sortname">  
+           $sortname$   $sortorder$  
+         </isNotEmpty>  
+       </dynamic>   
+	</select>
+	
+	<select id="getRidingPlanCount" parameterClass="RidingPlanInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM 
+			CLW_XC_TRIP_T T1,
+			CLW_CL_BASE_INFO_T T5,
+			CLW_XC_ROUTE_T T6
+		WHERE T1.VEHICLE_VIN = T5.VEHICLE_VIN
+			AND T1.ROUTE_ID = T6.ROUTE_ID
+			AND T5.DEVICE_TYPE = '0'
+			AND T5.VALID_FLAG = '0'
+			AND T6.VALID_FLAG = '0'
+			AND T1.VALID_FLAG = '0'
+			AND T5.ORGANIZATION_ID IN
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #organizationId#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#organizationId#)        
+			)
+	     ]]>
+	   <isNotEmpty prepend="AND" property="vehicleLn">
+	   		T5.VEHICLE_LN like '%' || #vehicleLn# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicleVin">
+       		T1.VEHICLE_VIN like '%' || #vehicleVin# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="routeName">
+       		T6.ROUTE_NAME like '%' || #routeName# ||'%' escape '\'
+       </isNotEmpty>
+	</select>
+	
+	<select id="getRidingPlanInfos" parameterClass="RidingPlanInfo" resultMap="ridingPlanList-result">
+		SELECT 
+			T1.TRIP_ID, T1.VEHICLE_VIN, T5.VEHICLE_LN,
+			T1.ROUTE_ID, T6.ROUTE_NAME,
+			CASE 
+			WHEN T1.TYPE='0' THEN '上学'
+			WHEN T1.TYPE='1' THEN '放学'
+			ELSE '--' END UP_DOWN_FLAG,
+			TO_CHAR(T1.UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') TER_TIME,
+			TO_CHAR(T1.OPERATE_TIME,'YYYY-MM-DD HH24:MI:SS') EDIT_TIME,
+			T2.SITE_NUM,TO_CHAR(T2.TRIP_BEG_TIME,'HH24:MI') TRIP_BEG_TIME,
+			TO_CHAR(T2.TRIP_END_TIME,'HH24:MI') TRIP_END_TIME,
+			T3.DRIVER_NAMES,T4.SICHEN_NAMES,T7.ST_NUM
+		FROM 
+			CLW_XC_TRIP_T T1,
+			(
+				SELECT T.TRIP_ID,COUNT(T.SITE_ID) SITE_NUM,
+				MIN(TO_DATE(T.PLAN_IN_TIME,'HH24:MI')) TRIP_BEG_TIME,
+				MAX(TO_DATE(T.PLAN_OUT_TIME,'HH24:MI')) TRIP_END_TIME
+				FROM CLW_XC_VSS_SITE_T T, CLW_CL_BASE_INFO_T CBI
+				WHERE CBI.VEHICLE_VIN = T.VEHICLE_VIN
+                AND CBI.ORGANIZATION_ID IN
+				<![CDATA[
+					(select enterprise_id
+					     from clw_jc_enterprise_t
+					     where valid_flag = '0'
+					     and left_num >= (select left_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id = #organizationId#)
+					     and right_num <=(select right_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id =#organizationId#)        
+					)
+			     ]]>			
+				GROUP BY T.TRIP_ID
+			) T2,
+			(
+				SELECT VSS.TRIP_ID,WMSYS.WM_CONCAT(DRIVER.DRIVER_NAME) AS DRIVER_NAMES
+				FROM CLW_XC_VEHDRIVER_T VSS,CLW_YW_DRIVER_T DRIVER
+				WHERE VSS.DRIVER_ID = DRIVER.DRIVER_ID
+                AND DRIVER.ORGANIZATION_ID IN
+				<![CDATA[
+					(select enterprise_id
+					     from clw_jc_enterprise_t
+					     where valid_flag = '0'
+					     and left_num >= (select left_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id = #organizationId#)
+					     and right_num <=(select right_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id =#organizationId#)        
+					)
+			     ]]>				 
+				GROUP BY VSS.TRIP_ID
+			) T3,
+			(
+				SELECT VSS.TRIP_ID,WMSYS.WM_CONCAT(SICHEN.SICHEN_NAME) AS SICHEN_NAMES
+				FROM CLW_XC_VEHSICHEN_T VSS,CLW_XC_SICHEN_T SICHEN
+				WHERE VSS.SICHEN_ID = SICHEN.SICHEN_ID
+                AND SICHEN.ORGANIZATION_ID IN
+				<![CDATA[
+					(select enterprise_id
+					     from clw_jc_enterprise_t
+					     where valid_flag = '0'
+					     and left_num >= (select left_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id = #organizationId#)
+					     and right_num <=(select right_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id =#organizationId#)        
+					)
+			     ]]>				 
+				GROUP BY VSS.TRIP_ID
+			) T4,
+			CLW_CL_BASE_INFO_T T5,
+			CLW_XC_ROUTE_T T6,
+			(
+				SELECT ST.TRIP_ID, COUNT(ST.STUDENT_ID) ST_NUM 
+				FROM CLW_XC_VSS_T ST, CLW_CL_BASE_INFO_T CBI 
+				WHERE CBI.VEHICLE_VIN = ST.VEHICLE_VIN
+				AND ST.VSS_STATE='0'
+                AND CBI.ORGANIZATION_ID IN
+				<![CDATA[
+					(select enterprise_id
+					     from clw_jc_enterprise_t
+					     where valid_flag = '0'
+					     and left_num >= (select left_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id = #organizationId#)
+					     and right_num <=(select right_num
+					                  from clw_jc_enterprise_t
+					                  where enterprise_id =#organizationId#)        
+					)
+			     ]]>				
+				GROUP BY ST.TRIP_ID
+			) T7
+		WHERE T1.VEHICLE_VIN = T5.VEHICLE_VIN
+			AND T1.ROUTE_ID = T6.ROUTE_ID
+			AND T1.TRIP_ID = T2.TRIP_ID(+)
+			AND T1.TRIP_ID = T3.TRIP_ID(+)
+			AND T1.TRIP_ID = T4.TRIP_ID(+)
+			AND T1.TRIP_ID = T7.TRIP_ID(+)
+			AND T5.DEVICE_TYPE = '0'
+			AND T5.VALID_FLAG = '0'
+			AND T6.VALID_FLAG = '0'
+			AND T1.VALID_FLAG = '0'
+			AND T5.ORGANIZATION_ID IN
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_t
+			     where valid_flag = '0'
+			     and left_num >= (select left_num
+			                  from clw_jc_enterprise_t
+			                  where enterprise_id = #organizationId#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_t
+			                  where enterprise_id =#organizationId#)        
+			)
+	     ]]>
+	   <isNotEmpty prepend="AND" property="vehicleLn">
+	   		T5.VEHICLE_LN like '%' || #vehicleLn# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicleVin">
+       		T1.VEHICLE_VIN like '%' || #vehicleVin# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="routeName">
+       		T6.ROUTE_NAME like '%' || #routeName# ||'%' escape '\'
+       </isNotEmpty>
+  	   <dynamic prepend="ORDER BY">  
+         <isNotEmpty property="sortname">  
+           $sortname$   $sortorder$  
+         </isNotEmpty>  
+       </dynamic>    
+	</select>
+	
+	<select id="getRouteCount" parameterClass="com.neusoft.clw.infomanage.ridingplan.domain.RouteInfo" resultClass="Integer">
+		SELECT 2*COUNT(1) FROM CLW_XC_ROUTE_T  XS 
+		WHERE XS.ROUTE_ENTERPRISE_ID=#route_enterprise_id#
+		 <isNotEmpty prepend="AND" property="route_name">
+               XS.ROUTE_NAME like '%' || #route_name# ||'%' escape '\'
+         </isNotEmpty>         
+         AND XS.VALID_FLAG = '0'
+         AND XS.ROUTE_ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #route_organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#route_organization_id#)        
+			)
+	     ]]>
+	</select>
+	
+	<select id="getRouteInfos" parameterClass="com.neusoft.clw.infomanage.ridingplan.domain.RouteInfo" resultMap="route_info">
+		SELECT XS.ROUTE_ID,XS.ROUTE_NAME,'0' AS ROUTE_INCHARGE_PERSON FROM CLW_XC_ROUTE_T XS  
+		WHERE XS.ROUTE_ENTERPRISE_ID=#route_enterprise_id#
+		 <isNotEmpty prepend="AND" property="route_name">
+         	XS.ROUTE_NAME like '%' || #route_name# ||'%' escape '\'
+         </isNotEmpty>         
+         AND XS.VALID_FLAG = '0'
+         AND XS.ROUTE_ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #route_organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#route_organization_id#)        
+			)
+	     ]]>
+	    UNION
+	    SELECT XS.ROUTE_ID,XS.ROUTE_NAME,'1' AS ROUTE_INCHARGE_PERSON FROM CLW_XC_ROUTE_T XS  
+		WHERE XS.ROUTE_ENTERPRISE_ID=#route_enterprise_id#
+		 <isNotEmpty prepend="AND" property="route_name">
+               XS.ROUTE_NAME like '%' || #route_name# ||'%' escape '\'
+         </isNotEmpty>         
+         AND XS.VALID_FLAG = '0'
+         AND XS.ROUTE_ORGANIZATION_ID in
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #route_organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#route_organization_id#)        
+			)
+	     ]]>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<!-- 获取车辆列表 -->
+	<select id="getInfosVeh" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       '1' as CHOICEFLAG
+	    FROM CLW_JC_CLEN_VI CJCV
+	    WHERE CJCV.ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+		<!-- AND NOT EXISTS (SELECT 1 FROM CLW_XC_VSS_T CXVT
+	    	WHERE CXVT.VEHICLE_VIN=CJCV.VEHICLE_VIN
+	    	GROUP BY VEHICLE_VIN
+    	) -->
+    	<isNotEmpty prepend="AND" property="vehicle_ln">
+	   		VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicle_vin">
+       		VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+       </isNotEmpty>
+		<dynamic prepend="ORDER BY">  
+		<isNotEmpty property="sortname">  
+			$sortname$   $sortorder$  
+		</isNotEmpty>  
+		</dynamic>    
+	</select>
+	
+	<!-- 获取车辆列表个数 -->
+	<select id="getCountVeh" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT count(*)
+	    FROM CLW_JC_CLEN_VI CJCV
+	    WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+		<!--AND NOT EXISTS (SELECT 1 FROM CLW_XC_VSS_T CXVT
+	    	WHERE CXVT.VEHICLE_VIN=CJCV.VEHICLE_VIN
+	    	GROUP BY VEHICLE_VIN
+    	)-->
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	   		VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicle_vin">
+       		VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+       </isNotEmpty>
+	      ORDER BY MODIFY_TIME  DESC    
+	</select>	   
+	
+	<select id="getSiteCount" parameterClass="com.neusoft.clw.infomanage.ridingplan.domain.SiteInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM clw_xc_routesite_t xr,
+		  clw_xc_site_t xs
+		WHERE xr.site_id   = xs.site_id
+		AND xr.site_updown = #updownflag#
+		AND xs.valid_flag  = '0'
+		AND xr.route_id    = #routeid#
+	</select>
+	
+	<select id="getSiteInfo"  parameterClass="com.neusoft.clw.infomanage.ridingplan.domain.SiteInfo" resultMap="site-info">
+		select xs.site_name,xs.site_id,xs.sichen_addr,xs.site_longitude,xs.site_latitude,up.stu_ids as up_stu_ids,
+	     up.stu_names as up_stu_names,down.stu_ids as down_stu_ids,down.stu_names as down_stu_names,xr.site_updown,
+	     xst.plan_in_time,xst.plan_out_time
+		from clw_xc_routesite_t xr, 
+	       clw_xc_site_t xs,
+         (   select  t.site_id,wmsys.wm_concat(t.student_id) as stu_ids,wmsys.wm_concat(st.stu_name) as stu_names
+             from  clw_xc_vss_t t,clw_xc_student_t st
+             where t.student_id = st.stu_id and 
+                    t.vss_state= '0' and t.VEHICLE_VIN = #vehicle_vin#
+                    and t.route_id = #routeid#
+                   <isNotEmpty prepend="AND" property="vehicle_vin">
+		               t.trip_id=#trip_id#
+		           </isNotEmpty>
+             group by site_id
+         )up,
+         ( select  t.site_id,wmsys.wm_concat(t.student_id) as stu_ids,wmsys.wm_concat(st.stu_name) as stu_names
+             from  clw_xc_vss_t t,clw_xc_student_t st
+             where t.student_id = st.stu_id and 
+                    t.vss_state= '1' and t.VEHICLE_VIN = #vehicle_vin#
+                    and t.route_id = #routeid#
+                   <isNotEmpty prepend="AND" property="vehicle_vin">
+		               t.trip_id=#trip_id#
+		           </isNotEmpty>
+             group by site_id           
+         )down,
+         (select trip_id,site_id,route_id,vehicle_vin,plan_out_time,plan_in_time from clw_xc_vss_site_t
+          where route_id = #routeid# and vehicle_vin = #vehicle_vin#) xst					
+         where xr.site_id = xs.site_id						
+           and xr.site_updown = #updownflag#					
+           and xs.valid_flag = '0' 
+           and xr.route_id = #routeid#	
+           <isNotEmpty prepend="AND" property="vehicle_vin">
+               xst.trip_id=#trip_id#
+           </isNotEmpty>
+           and xr.site_id = up.site_id(+)
+           and xr.site_id = down.site_id(+)
+           and xr.site_id = xst.site_id(+)					       
+		 order by xr.site_updown,xr.rs_order
+	</select>
+	
+	<select id="getStewardCount" parameterClass="com.neusoft.clw.infomanage.stewardmanage.domain.StewardInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM
+		  (SELECT t.SICHEN_ID,
+		    t.SICHEN_NAME
+		  FROM CLW_XC_SICHEN_T t
+		  WHERE t.ENTERPRISE_ID  =#enterprise_id#
+		  AND t.VALID_FLAG       = '0'
+		  AND t.ORGANIZATION_ID IN
+		    (SELECT enterprise_id
+		    FROM clw_jc_enterprise_vi
+		    WHERE left_num >=
+		      (SELECT left_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      )
+		    AND <![CDATA[right_num <=
+		      (SELECT right_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      ) ]]>
+		    )
+		  )
+		WHERE 1=1
+		 <isNotEmpty prepend="AND" property="steward_name">
+		 		SICHEN_NAME like '%' || #steward_name# ||'%' escape '\'
+         </isNotEmpty>       
+	</select>
+	
+	<select id="getStewardInfos" parameterClass="com.neusoft.clw.infomanage.stewardmanage.domain.StewardInfo" resultMap="stewardinfos-result">
+		select SICHEN_ID,
+		       SICHEN_LICENSE,
+		       SICHEN_CARD_ID,
+		       SICHEN_NAME,
+		       SICHEN_SEX,
+		       SICHEN_BIRTH,
+		       SICHEN_ADDR,
+		       SICHEN_TEL,
+		       SICHEN_REMARK
+		from 
+			(SELECT t.SICHEN_ID,
+			       t.SICHEN_LICENSE,
+			       t.SICHEN_CARD_ID,
+			       t.SICHEN_NAME,
+			       t.SICHEN_SEX,
+			       TO_CHAR(t.SICHEN_BIRTH, 'YYYY-MM-DD') AS SICHEN_BIRTH,
+			       t.SICHEN_ADDR,
+			       t.SICHEN_TEL,
+			       t.SICHEN_REMARK
+		      FROM CLW_XC_SICHEN_T t  
+			 WHERE t.ENTERPRISE_ID=#enterprise_id# 
+			   AND t.VALID_FLAG = '0'
+			   and t.ORGANIZATION_ID in 
+			(select enterprise_id
+	         from clw_jc_enterprise_vi
+	         where left_num >= (select left_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	         and <![CDATA[right_num <=(select right_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	             ]]>
+			)
+          ) where 1=1
+		 <isNotEmpty prepend="AND" property="steward_name">
+		 		SICHEN_NAME like '%' || #steward_name# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<!-- 获取驾驶员数量 -->
+    <select id="getDriverCount" parameterClass="com.neusoft.clw.sysmanage.datamanage.drivermanage.domain.DriverInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM
+		  (SELECT t.DRIVER_ID,
+		    t.DRIVER_NAME
+		  FROM CLW_YW_DRIVER_T t
+		  WHERE t.ENTERPRISE_ID  =#enterprise_id#
+		  AND t.VALID_FLAG       = '0'
+		  AND t.ORGANIZATION_ID IN
+		    (SELECT enterprise_id
+		    FROM clw_jc_enterprise_vi
+		    WHERE left_num >=
+		      (SELECT left_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      )
+		    AND <![CDATA[right_num <=
+		      (SELECT right_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      ) ]]>
+		    )
+		  )
+		WHERE 1=1   
+		<isNotEmpty prepend="AND" property="driver_name">
+		 		DRIVER_NAME like '%' || #driver_name# ||'%' escape '\'
+         </isNotEmpty>
+	</select>	
+	
+	<!-- 获取驾驶员列表 -->
+	<select id="getDriverInfos" parameterClass="com.neusoft.clw.sysmanage.datamanage.drivermanage.domain.DriverInfo" resultMap="driverinfos-result">
+		select 
+		       DRIVER_ID,
+		       DRIVER_LICENSE,
+		       DRIVER_CARD_ID,
+		       DRIVER_NAME,
+		       DRIVER_SEX,
+		       DRIVER_BIRTH,
+		       DRIVER_ADDRESS,
+		       DRIVER_TEL,
+		       DRIVER_REMARK
+		from
+		(SELECT t.DRIVER_ID,
+		       t.DRIVER_LICENSE,
+		       t.DRIVER_CARD_ID,
+		       t.DRIVER_NAME,
+		       t.DRIVER_SEX,
+		       TO_CHAR(t.DRIVER_BIRTH, 'YYYY-MM-DD') AS DRIVER_BIRTH,
+		       t.DRIVER_ADDRESS,
+		       t.DRIVER_TEL,
+		       t.DRIVER_REMARK
+	      FROM CLW_YW_DRIVER_T t 
+		 WHERE t.ENTERPRISE_ID=#enterprise_id# 
+		   AND t.VALID_FLAG = '0'
+		   and t.ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+		)
+       )  where 1=1      
+	   <isNotEmpty prepend="AND" property="driver_name">
+            DRIVER_NAME like '%' || #driver_name# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="driver_license">
+            DRIVER_LICENSE like '%' || #driver_license# ||'%' escape '\'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="driver_card">
+            DRIVER_CARD_ID like '%' || #driver_card# ||'%' escape '\'
+       </isNotEmpty>
+	   <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    	$sortname$   $sortorder$  
+		   </isNotEmpty>  
+	   </dynamic>
+	</select>
+	
+	<select id ="searchRidingPlan" parameterClass="Map" resultMap="riding-info-result">
+		SELECT
+			cxtt.TRIP_ID,
+			cxtt.TYPE,
+		    cxtt.route_id ,
+		    cxtt.vehicle_vin ,
+		    cxtt.vehicle_vin AS vehicle_vin_old ,
+		    info.vehicle_ln ,
+		    route.route_name ,
+		    route.route_incharge_person ,
+		    dr.driver_ids ,
+		    dr.driver_names ,
+		    sichen_names AS steward_names ,
+		    sichen_ids AS steward_ids
+		FROM
+		    CLW_XC_TRIP_T cxtt ,
+		    clw_cl_base_info_t info ,
+		    (
+		        SELECT
+		            info.VEHICLE_VIN ,
+		            wmsys.wm_concat(driver.driver_id) AS driver_ids ,
+		            wmsys.wm_concat(driver.driver_name) AS driver_names
+		        FROM
+		            clw_cl_base_info_t info ,
+		            CLW_XC_VEHDRIVER_T re ,
+		            CLW_YW_DRIVER_T driver
+		        WHERE
+		            info.vehicle_vin = re.vehicle_vin
+		            AND info.device_type = '0'
+		            AND info.valid_flag = '0'
+		            AND re.driver_id = driver.driver_id
+		            AND info.VEHICLE_VIN = re.vehicle_vin
+		            AND re.TRIP_ID=#trip_id#
+		        GROUP BY
+		            info.VEHICLE_VIN
+		    ) dr ,
+		    (
+		        SELECT
+		            info.VEHICLE_VIN ,
+		            wmsys.wm_concat(sichen.sichen_id) AS sichen_ids ,
+		            wmsys.wm_concat(sichen.sichen_name) AS sichen_names
+		        FROM
+		            clw_cl_base_info_t info ,
+		            CLW_XC_VEHsichen_T re ,
+		            CLW_XC_sichen_T sichen
+		        WHERE
+		            info.vehicle_vin = re.vehicle_vin
+		            AND info.device_type = '0'
+		            AND info.valid_flag = '0'
+		            AND re.sichen_id = sichen.sichen_id
+		            AND info.VEHICLE_VIN = re.vehicle_vin
+		            AND re.TRIP_ID=#trip_id#
+		        GROUP BY
+		            info.VEHICLE_VIN
+		    ) si ,
+		    clw_xc_route_t route
+		WHERE
+		    cxtt.VEHICLE_VIN = info.VEHICLE_VIN
+		    AND info.device_type = '0'
+		    AND info.valid_flag = '0'
+		    AND cxtt.valid_flag = '0'
+		    AND cxtt.TRIP_ID=#trip_id#
+		    AND cxtt.route_id = route.route_id(+)
+		    AND cxtt.vehicle_vin = dr.vehicle_vin(+)
+		    AND cxtt.vehicle_vin = si.vehicle_vin(+)	
+	</select>
+	
+	<!-- ie6下部分中文不支持，所以只能重查站点名 -->
+	<select id="getsitename" parameterClass="String" resultClass="String">
+	    SELECT SITE_NAME FROM CLW_XC_SITE_T 
+	    WHERE SITE_ID=#ID#
+	</select>
+	
+	<update id="updateRoute" parameterClass="Map">
+	    update clw_cl_base_info_t t
+        set t.route_id = #route_id#
+       where t.vehicle_vin = #vehicle_vin#
+	</update>
+	
+	<update id="deleteRoute" parameterClass="Map">
+	    update clw_cl_base_info_t t
+        set t.route_id = null
+       where t.vehicle_vin = #vehicle_vin# 
+	</update>
+	
+	<select id="getTripIDFromSEQ" resultClass="String">
+		SELECT SEQ_XC_TRIP_T.NEXTVAL AS TRIP_ID FROM DUAL
+	</select>
+	
+	<insert id="insert_vehdriver" parameterClass="VehdriverInfo" >
+		insert into clw_xc_vehdriver_t t 
+        values (#vehicle_vin#, #driver_id#, #trip_id#)
+	</insert>
+	
+	<insert id="insert_vehsichen" parameterClass="VehsichenInfo" >
+		insert into clw_xc_vehsichen_t t 
+        values (#vehicle_vin#, #steward_id#, #trip_id#)
+	</insert>
+	
+	<insert id="insert_xc_vss" parameterClass="VssInfo">
+		insert into clw_xc_vss_t
+       (vehicle_vin,student_id,route_id,site_id,vss_state,trip_id,modify_time)
+         VALUES
+       (#vehicle_vin#,#student_id#,#route_id#,#site_id#,#vss_state#, #trip_id#,sysdate)
+	</insert>
+	
+	<insert id="insert_xc_vss_site" parameterClass="Vss_SiteInfo">
+		insert into clw_xc_vss_site_t
+       (vehicle_vin,route_id,site_id,plan_in_time,plan_out_time,trip_id)
+         VALUES
+       (#vehicle_vin#,#route_id#,#site_id#,#plan_in_time#,#plan_out_time#, #trip_id#)
+	</insert>
+	
+	<update id="insert_xc_trip_t" parameterClass="Map">
+		MERGE INTO CLW_XC_TRIP_T XT
+		USING DUAL
+		ON (XT.TRIP_ID = #trip_id# AND XT.ROUTE_ID = #route_id# AND XT.TYPE=#type#)
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET VEHICLE_VIN  = #vehicle_vin#,
+		     	 OPERATE_TIME = SYSDATE
+		WHEN NOT MATCHED THEN
+		  INSERT
+		    (TRIP_ID,ROUTE_ID,TYPE,VEHICLE_VIN,OPERATE_TIME,OPERATEOR,VALID_FLAG)
+		  VALUES
+		    (#trip_id#,#route_id#,#type#,#vehicle_vin#,SYSDATE,#operateor#,'0')
+	</update>
+
+	<delete id="delete_vehdriver" parameterClass="Map" >
+		delete from clw_xc_vehdriver_t t 
+        where t.trip_id=#trip_id#
+	</delete>
+	
+	<delete id="delete_vehsichen" parameterClass="Map" >
+		delete from clw_xc_vehsichen_t t 
+        where t.trip_id=#trip_id#
+	</delete>
+	
+	<delete id="delete_xc_vss" parameterClass="Map">
+		delete from clw_xc_vss_t t
+       where t.trip_id=#trip_id#
+	</delete>
+	
+	<delete id="delete_xc_vss_site" parameterClass="Map">
+		delete from clw_xc_vss_site_t t
+       where t.trip_id=#trip_id#
+	</delete>
+	
+	<update id="delete_xc_trip" parameterClass="Map">
+		update clw_xc_trip_t t
+        set t.VALID_FLAG = '1',
+        	t.VASET_USER_ID=#operateor#,
+        	t.VASET_TIME=SYSDATE,
+        	t.OPERATE_TIME=SYSDATE
+        where t.trip_id = #trip_id#
+	</update>
+	
+	<!-- 更新行程CRC -->
+	<update id="update_xc_trip_crc" parameterClass="Map">
+		update clw_xc_trip_t t
+        set t.CRC = #crc#
+        where t.trip_id = #trip_id#
+	</update>
+	
+	<!-- 查询某一规划数量 -->
+    <select id="getSomeVSSCount" parameterClass="Map" resultClass="Integer">
+		select count(1)
+		from clw_cl_base_info_t t
+        where t.route_id = #route_id#
+        and t.vehicle_vin = #vehicle_vin#
+        and t.device_type = '0'
+        and t.valid_flag = '0'
+	</select>	
+	
+	<select id="getupstudentname" parameterClass="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.StudentInfo" resultClass="String">		
+		SELECT WMSYS.WM_CONCAT(STU_NAME) STU_NAME FROM CLW_XC_STUDENT_T
+		WHERE STU_ID IN ($upstudentids$)
+	</select>			
+</sqlMap>

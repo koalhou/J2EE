@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="driverecord" namespace="/driverecord" extends="clw-default">
+		<action name="init" class="driveCardRecord"  method="init">
+			<result name="error">/WEB-INF/jsp/infomanage/driverecord/driverecord.jsp</result>
+			<result name="success">/WEB-INF/jsp/infomanage/driverecord/driverecord.jsp</result>
+		</action>
+		<!-- 导出按车辆统计列表 -->
+		<action name="exportRanking" class="driveCardRecord" method="exportRanking">
+			<result name="error" type="redirect-action">
+				<param name="actionName">init</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+				
+			</result>
+		</action>
+	</package>
+	
+	<package name="driverecordList" namespace="/driverecordList" extends="json-default">
+	<action name="driveRecordList" class="driveCardRecord" method="driveRecordList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	
+	<action name="historyList" class="driveCardRecord" method="getRunHistoryList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action> 
+		<action name="getTreeNodesWithoutOnline" class="driveCardRecord" method="getTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	</package>
+</struts>

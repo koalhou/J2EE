@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="LoginActivity">
+
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="LoginStaticsDataInfo" type="com.neusoft.clw.yw.ub.login.ds.LoginStaticsDataInfo" />
+	  <typeAlias alias="LoginDetailDataInfo" type="com.neusoft.clw.yw.ub.login.ds.LoginDetailDataInfo" />
+	 
+	 <!-- 导出登录统计List对象映射 -->
+	 <resultMap id="loginStatics-result" class="LoginStaticsDataInfo">
+		<result property="systemname" column="systemname" />
+		<result property="epCount" column="epCount" />
+		<result property="activeCount" column="activeCount" />
+		<result property="activePercent" column="activePercent" />
+	</resultMap>
+	
+	<!-- 导出登录统计详细List对象映射 -->
+	 <resultMap id="loginDetail-result" class="LoginDetailDataInfo">
+		<result property="province" column="province" />
+		<result property="city" column="city" />
+		<result property="enterprise_code" column="enterprise_code" />
+		<result property="enterprise_name" column="enterprise_name" />
+		<result property="customer_type" column="customer_type" />
+		<result property="customer_manage" column="customer_manage" />
+		<result property="login_total" column="login_total" />
+		<result property="is_active" column="is_active" />
+		<result property="vehicle_total" column="vehicle_total" />
+	</resultMap>
+ 
+ 	<!-- 客户类别月度All客户活跃报表 -->
+ 	<select id="getAllLoginStatics" parameterClass="Map" resultMap="loginStatics-result">
+	    select decode(u.systemname, '1', 'A','2','B','3', 'C', u.systemname) as systemname,
+       			decode(u1.epCount, null, 0, u1.epCount) as epCount,
+       			decode(u1.activeCount, null, 0, u1.activeCount) as activeCount,
+       			decode(u1.activePercent, null, 0, u1.activePercent) as activePercent
+
+		  from (select '1' as systemname
+		          from dual
+		        union
+		        select '2' as systemname
+		          from dual
+		        union
+		        select '3' as systemname from dual) u,
+		       (select u.systemname as systemname,
+		               decode(u.epCount, null, 0, u.epCount) as epCount,
+		               decode(u.activeCount, null, 0, u.activeCount) as activeCount,
+		               decode(u.activeCount / u.epCount,
+		                      null,
+		                      0,
+		                      u.activeCount / u.epCount) as activePercent
+		        
+		          from (select t.customer_type as systemname,
+		                       count(distinct t.enterprise_id) as epCount,
+		                       
+		                       (select count(distinct t1.enterprise_id)
+		                          from clw_ub_login_statistics_t t1
+		                         where t1.total_active > 0
+		                           and t1.customer_type = t.customer_type
+		                           and to_char(t1.statis_month, 'yyyy-MM') = #statis_month#
+		                           ) as activeCount
+		                  from clw_ub_login_statistics_t t
+		                 where to_char(t.statis_month, 'yyyy-MM') =  #statis_month#
+		                 group by t.customer_type
+		                 order by t.Customer_Type) u) u1
+		 where u.systemname = u1.systemname(+)
+		  order by u.systemname
+			</select>
+	
+	<!-- 客户类别月度Web客户活跃报表 -->
+	<select id="getWebLoginStatics" parameterClass="Map" resultMap="loginStatics-result">
+	    
+		select decode(u.systemname, '1', 'A','2','B','3', 'C', u.systemname) as systemname,
+       decode(u1.epCount,null,0,u1.epCount) as epCount,
+       decode(u1.activeCount,null,0,u1.activeCount) as activeCount,
+       decode(u1.activePercent,null,0,u1.activePercent) as activePercent
+      from (select '1' as systemname
+              from dual
+            union
+            select '2' as systemname
+              from dual
+            union
+            select '3' as systemname from dual) u,
+            
+           (select u.systemname as systemname,
+                   decode(u.epCount, null, 0, u.epCount) as epCount,
+                   decode(u.activeCount, null, 0, u.activeCount) as activeCount,
+                   decode(u.activeCount / u.epCount,
+                          null,
+                          0,
+                          u.activeCount / u.epCount) as activePercent
+            
+              from (select t.customer_type as systemname,
+                           count(distinct t.enterprise_id) as epCount,
+                           
+                           (select count(distinct t1.enterprise_id)
+                              from clw_ub_login_statistics_t t1
+                             where t1.web_active_total > 0
+                               and t1.customer_type = t.customer_type
+                               and to_char(t1.statis_month, 'yyyy-MM') = #statis_month#
+                            ) as activeCount
+                      from clw_ub_login_statistics_t t
+                     where to_char(t.statis_month, 'yyyy-MM') = #statis_month#
+                     group by  t.customer_type
+                     order by t.Customer_Type) u) u1
+     		where u.systemname = u1.systemname(+)
+     		 order by u.systemname
+
+	</select>
+	
+	<!-- 客户类别月度App客户活跃报表 -->
+	<select id="getAppLoginStatics" parameterClass="Map" resultMap="loginStatics-result">
+		select decode(u.systemname, '1', 'A','2','B','3', 'C', u.systemname) as systemname,
+       			decode(u1.epCount, null, 0, u1.epCount) as epCount,
+       			decode(u1.activeCount, null, 0, u1.activeCount) as activeCount,
+       			decode(u1.activePercent, null, 0, u1.activePercent) as activePercent
+
+		  from (select '1' as systemname
+		          from dual
+		        union
+		        select '2' as systemname
+		          from dual
+		        union
+		        select '3' as systemname from dual) u,
+		       (select u.systemname as systemname,
+		               decode(u.epCount, null, 0, u.epCount) as epCount,
+		               decode(u.activeCount, null, 0, u.activeCount) as activeCount,
+		               decode(u.activeCount / u.epCount,
+		                      null,
+		                      0,
+		                      u.activeCount / u.epCount) as activePercent
+		        
+		          from (select t.customer_type as systemname,
+		                       count(distinct t.enterprise_id) as epCount,
+		                       
+		                       (select count(distinct t1.enterprise_id)
+		                          from clw_ub_login_statistics_t t1
+		                         where t1.app_active_total > 0
+		                           and t1.customer_type = t.customer_type
+		                           and to_char(t1.statis_month, 'yyyy-MM') = #statis_month#
+		                           ) as activeCount
+		                  from clw_ub_login_statistics_t t
+		                 where to_char(t.statis_month, 'yyyy-MM') = #statis_month#
+		                 group by to_char(t.statis_month, 'yyyy-MM'), t.customer_type
+		                 order by t.Customer_Type) u) u1
+		 where u.systemname = u1.systemname(+)
+		  order by u.systemname
+
+	</select>
+	
+	
+	<!-- 通用区域月度客户活跃报表 -->
+	<select id="getAreaLoginStatics" parameterClass="Map" resultMap="loginStatics-result">
+			select  a.region_name as systemname, 
+		         decode(u.epCount, null, 0,u.epCount) as epCount, 
+		         decode(u.activeCount, null, 0,u.activeCount) as activeCount, 
+		         decode(u.activeCount/u.epCount,null, 0,u.activeCount/u.epCount) as activePercent
+		    from clw_m_area_info_t a,
+		      (select t.region_id as region_id,
+		             count(distinct t.enterprise_id) as epCount,
+		             
+		             (select count(distinct t1.enterprise_id)
+		              from clw_ub_login_statistics_t t1
+		              where t1.total_active > 0
+		                and t1.customer_type = t.customer_type
+		                and t1.region_id = t.region_id
+		                and to_char(t1.statis_month,'yyyy-MM') = #statis_month#
+		              ) as activeCount
+		
+		      from clw_ub_login_statistics_t t
+		      where to_char(t.statis_month,'yyyy-MM') = #statis_month#
+		      and t.customer_type = #customer_type#
+		      group by t.region_id,
+		            t.customer_type) u
+		    where a.region_id = u.region_id(+)
+		    order by a.region_id
+	</select>
+	
+	<!-- 导出All详细报表 -->
+	<select id="getAllLoginDetails" parameterClass="Map" resultMap="loginDetail-result">
+	    select (select z.zone_name from clw_jc_zone_t z
+	        where z.zone_id = us.province) as province,
+	       
+	       (select z.zone_name from clw_jc_zone_t z
+	        where z.zone_id = us.city) as city,
+	        
+	        us.enterprise_code,
+	        us.enterprise_name,
+	        us.customer_type,
+	        (select wm_concat(cait.manager_name)
+            from clw_jc_enterprise_t cjet,clw_m_area_province_t cmpt,clw_m_area_personnel_info_t cait
+            where cjet.enterprise_province=cmpt.province_id
+            and cmpt.region_id=cait.region_id
+            and cait.manager_type = '1'
+            and cjet.enterprise_id = us.enterprise_id) as customer_manage,
+	        (us.web_login_total + us.app_login_total) as login_total,
+	        
+	        us.total_active as is_active,
+	        
+	        us.vehicle_total     
+		from clw_ub_login_statistics_t us
+		where to_char(us.statis_month, 'yyyy-MM') = #statis_month#
+	</select>
+
+	<!-- 导出Web详细报表 -->
+	<select id="getWebLoginDetails" parameterClass="Map" resultMap="loginDetail-result">
+		select (select z.zone_name from clw_jc_zone_t z
+		        where z.zone_id = us.province) as province,
+		       
+		       (select z.zone_name from clw_jc_zone_t z
+		        where z.zone_id = us.city) as city,
+		        
+		        us.enterprise_code,
+		        us.enterprise_name,
+		        us.customer_type,
+		        (select wm_concat(cait.manager_name)
+	            from clw_jc_enterprise_t cjet,clw_m_area_province_t cmpt,clw_m_area_personnel_info_t cait
+	            where cjet.enterprise_province=cmpt.province_id
+	            and cmpt.region_id=cait.region_id
+	            and cait.manager_type = '1'
+	            and cjet.enterprise_id = us.enterprise_id) as customer_manage,
+		        us.web_login_total as login_total,
+		        
+		        us.web_active_total as is_active,
+		        
+		        us.vehicle_total
+
+		from clw_ub_login_statistics_t us
+		where to_char(us.statis_month, 'yyyy-MM') = #statis_month#
+	</select>
+	
+	<!-- 导出App详细报表 -->
+	<select id="getAppLoginDetails" parameterClass="Map" resultMap="loginDetail-result">
+		select (select z.zone_name from clw_jc_zone_t z
+		        where z.zone_id = us.province) as province,
+		       
+		       (select z.zone_name from clw_jc_zone_t z
+		        where z.zone_id = us.city) as city,
+		        
+		        us.enterprise_code,
+		        us.enterprise_name,
+		        us.customer_type,
+		        (select wm_concat(cait.manager_name)
+	            from clw_jc_enterprise_t cjet,clw_m_area_province_t cmpt,clw_m_area_personnel_info_t cait
+	            where cjet.enterprise_province=cmpt.province_id
+	            and cmpt.region_id=cait.region_id
+	            and cait.manager_type = '1'
+	            and cjet.enterprise_id = us.enterprise_id) as customer_manage,
+		        us.app_login_total as login_total,
+		        
+		        us.app_active_total as is_active,
+		        
+		        us.vehicle_total        
+		from clw_ub_login_statistics_t us
+		where to_char(us.statis_month, 'yyyy-MM') = #statis_month#
+	</select>
+</sqlMap>

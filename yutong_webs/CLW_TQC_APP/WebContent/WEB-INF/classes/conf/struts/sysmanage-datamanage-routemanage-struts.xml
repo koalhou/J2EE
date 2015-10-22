@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="routemanage" namespace="/route" extends="clw-default">
+		
+		<action name="drawroutem" class="routeAction" method="readyPageDraw">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/drawroutem/routebitlook.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/drawroutem/routebitlook.jsp</result>	
+		</action>
+		<action name="routemanage" class="routeAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/routemanage/routemanage.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/routemanage/routemanage.jsp</result>	
+		</action>
+		<action name="routemanagetree" class="routeAction" method="getTreeInit">
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/routemanage/routetreeModalWindow.jsp</result>
+		</action>
+		<action name="addrouteb" class="routeAction" method="addBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/routemanage/addroute.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>	
+		</action>
+		<action name="route_add2" class="routeAction" method="add2">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/addroute.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/addroute.jsp
+			</result>			
+		</action>
+		<action name="route_add" class="routeAction" method="add">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/addroute.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/addroute.jsp
+			</result>			
+		</action>
+		<action name="route_edit_form" class="routeAction" method="editBefore">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/sysmanage/datamanage/routemanage/alteroute.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<action name="route_siteset_form" class="routeAction" method="editsiteBefore">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/altesiteset.jsp
+			</result>
+		</action>
+		
+		<action name="site_reportset_form" class="routeAction" method="editsiteReprotBefore">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/sitereportset.jsp
+			</result>
+		</action>
+		
+		<action name="route_edit" class="routeAction" method="updateRoute">
+			<result name="input">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/alteroute.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/alteroute.jsp
+			</result>			
+		</action>
+		<action name="route_edit2" class="routeAction" method="updateRoute2">
+		</action>
+		<action name="routesiteset" class="routeAction" method="routesiteset">
+		</action>
+		<action name="route_delete" class="routeAction" method="deleteRoute">
+			<result name="success" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="forbid" type="redirect-action">
+				<param name="actionName">routemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/routemanage/alteroute.jsp
+			</result>			
+		</action>
+		<action name="route_delete2" class="routeAction" method="deleteRoute2">
+		</action>
+	</package>
+	<package name="routeGrid" namespace="/routeGrid" extends="json-default">
+	
+	<!-- 修改线路坐标点 -->
+		<action name="updateSiteReport" class="routeAction" method="updateRoutePoint"/>
+		<action name="routeList" class="routeAction" method="routeBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="sitegridList" class="routeAction" method="sitegridBrowse">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <action name="stationUpList" class="routeAction"  method="getUpStation">
+           <result type="json">
+              <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">stationList</param>
+           </result>
+       </action>
+       
+       <action name="stationDownList" class="routeAction"  method="getDownStation">
+           <result type="json">
+              <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">stationList</param>
+           </result>
+       </action>
+       
+       <action name="organizationTreeData" class="routeAction" method="getOrganizationTree">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">enterpriseInfo</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">enterpriseInfo</param>
+           </result>
+       </action>
+       
+	</package>
+</struts>

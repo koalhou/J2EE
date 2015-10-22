@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao
+END
+ReportDAO.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/ReportDAO.java
+END
+AbstractDaoManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/AbstractDaoManager.java
+END
+AppDAO.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/AppDAO.java
+END
+TerminalBizDAO.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/TerminalBizDAO.java
+END
+TerminalInfoDAO.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/TerminalInfoDAO.java
+END
+SendCommandDAO.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/SendCommandDAO.java
+END
+VehicInfoDAO.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/info/dao/VehicInfoDAO.java
+END

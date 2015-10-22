@@ -1,0 +1,147 @@
+10
+
+dir
+46
+http://192.168.175.105/svn/datas/other/work_spaces/workspace_xc/CLW_TQC_APP/src/java/com/neusoft/clw/common/service
+http://192.168.175.105/svn/datas
+
+
+
+2014-10-07T09:34:56.813495Z
+25
+test
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+f81c60f4-19e2-fb44-8912-2fbc0516ba03
+
+oilsetservice
+dir
+
+studentManageService
+dir
+
+Service.java
+file
+
+
+
+
+2015-01-14T01:43:41.957445Z
+cd9da28462d327405832112f5f898425
+2014-10-07T09:34:56.813495Z
+25
+test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2938
+
+handmobileservice
+dir
+
+driverManageService
+dir
+
+alarmmanageservice
+dir
+
+routemanageservice
+dir
+
+rolemanageservice
+dir
+
+smsmanageservice
+dir
+
+impl
+dir
+
+stationservice
+dir
+
+stewardManageService
+dir
+
+AppContextHelper.java
+file
+
+
+
+
+2015-01-14T01:43:41.941845Z
+8c84b8f51f75bc4f4096f6e546a9d721
+2014-10-07T09:34:56.813495Z
+25
+test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+632
+
+ridingplanservice
+dir
+
+usermanageservice
+dir
+
+smsreminderservice
+dir
+
+employeeManageService
+dir
+
+vehiclemanageservice
+dir
+
+writegzpackservice
+dir
+

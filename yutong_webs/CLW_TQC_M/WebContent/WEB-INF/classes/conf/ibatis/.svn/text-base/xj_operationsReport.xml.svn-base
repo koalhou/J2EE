@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OperationsReport">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="operationsInfo" type="com.neusoft.clw.yw.xj.report.ds.OperationsInfo" />
+	<typeAlias alias="oprationsReportSecond" type="com.neusoft.clw.yw.xj.report.ds.OprationsReportSecond" />
+	
+	<resultMap id="operationsInfo-result" class="operationsInfo">
+		<result property="enterprise_code" column="ENTERPRISE_CODE" />
+		<result property="full_name" column="FULL_NAME" />
+		<result property="account_num" column="ACCOUNT_NUM" />
+		<result property="zhuce_num" column="ZHUCE_NUM" />
+		<result property="curr_active_num" column="CURR_ACTIVE_NUM" />
+		<result property="his_active_num" column="HIS_ACTIVE_NUM" />
+		<result property="delivery_flag" column="DELIVERY_FLAG" />
+	</resultMap>
+	
+	<resultMap id="operationsSumInfo-result" class="operationsInfo">
+		<result property="account_num" column="ACCOUNT_NUM" />
+		<result property="zhuce_num" column="ZHUCE_NUM" />
+		<result property="curr_active_num" column="CURR_ACTIVE_NUM" />
+		<result property="his_active_num" column="HIS_ACTIVE_NUM" />
+		<result property="delivery_flag" column="DELIVERY_FLAG" />
+	</resultMap>
+	
+	<resultMap id="oprationsReportSecond-result" class="oprationsReportSecond">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="terminal_id" column="TERMINAL_ID" />
+		<result property="sim_card_number" column="SIM_CARD_NUMBER" />
+		<result property="curr_datasum" column="CURR_DATASUM" />
+		<result property="curr_start" column="CURR_START" />
+		<result property="curr_end" column="CURR_END" />
+		<result property="his_datasum" column="HIS_DATASUM" />
+		<result property="his_start" column="HIS_START" />
+		<result property="delivery_flag" column="DELIVERY_FLAG" />
+	</resultMap>
+	
+	<resultMap id="oprationsReportSecondSum-result" class="oprationsReportSecond">
+		<result property="curr_datasum" column="CURR_DATASUM" />
+		<result property="his_datasum" column="HIS_DATASUM" />
+	</resultMap>
+	
+	<resultMap id="getDayReportChart-result" class="oprationsReportSecond">
+		<result property="his_datasum" column="HIS_DATASUM" />
+		<result property="terminal_time" column="TERMINAL_TIME" />		
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map"  resultClass="Integer">
+		SELECT COUNT(1)
+		   FROM CLW_JC_ENTERPRISE_T A,
+       	   (SELECT ENTERPRISE_ID,
+               COUNT(ZHUCE_VIN) ZHUCE_NUM,
+               COUNT(CURR_ACTIVE_VIN) CURR_ACTIVE_NUM,
+               COUNT(HIS_ACTIVE_VIN) HIS_ACTIVE_NUM,
+               sum(case when DELIVERY_FLAG=1 then 1 else 0 end) DELIVERY_FLAG
+            FROM (SELECT B.ENTERPRISE_ID,
+                       B.VEHICLE_VIN ZHUCE_VIN,																	
+                       D.CURR_ACTIVE_VIN,																	
+                       E.HIS_ACTIVE_VIN,
+                       b.DELIVERY_FLAG
+                  	   FROM CLW_CL_BASE_INFO_T B,																	
+                       CLW_JC_TERMINAL_T C,																	
+                       (SELECT DISTINCT T.VEHICLE_VIN CURR_ACTIVE_VIN																	
+                          FROM CLW_YW_TERMINAL_RECORD_T T																	
+                         WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD') =																	
+                               TO_CHAR(SYSDATE,'YYYYMMDD')) D,																	
+                       (SELECT DISTINCT T.VEHICLE_VIN HIS_ACTIVE_VIN																	
+                          FROM CLW_YW_TERMINAL_RECORD_T T																	
+                         WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD')<![CDATA[ >= ]]> '20110601'																	
+                         AND TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD HH24MISS')<![CDATA[<]]>TO_CHAR(SYSDATE,'YYYYMMDD HH24MISS')
+						) E
+                 WHERE B.VEHICLE_VIN = C.VEHICLE_VIN(+)																	
+                 AND C.VEHICLE_VIN = D.CURR_ACTIVE_VIN(+)																	
+                 AND C.VEHICLE_VIN = E.HIS_ACTIVE_VIN(+))
+	         GROUP BY ENTERPRISE_ID) G,
+	       (SELECT ENTERPRISE_ID, COUNT(1) ACCOUNT_NUM
+	          FROM CLW_JC_USER_T
+	         WHERE VALID_FLAG = '0'
+	         GROUP BY ENTERPRISE_ID) F
+		   WHERE A.ENTERPRISE_ID = G.ENTERPRISE_ID(+)
+		   AND A.ENTERPRISE_ID = F.ENTERPRISE_ID(+)
+		   AND A.VALID_FLAG='0'
+		   AND A.ENTERPRISE_CODE IS NOT NULL
+		 <isNotEmpty prepend="AND" property="enterprise_code">
+       		A.ENTERPRISE_CODE LIKE '%$enterprise_code$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="full_name">
+            A.FULL_NAME LIKE '%$full_name$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getOperationsInfos"  parameterClass="Map" resultMap="operationsInfo-result">
+			SELECT A.ENTERPRISE_CODE,
+	       A.FULL_NAME,
+	       NVL(F.ACCOUNT_NUM,0) ACCOUNT_NUM,
+	       NVL(G.ZHUCE_NUM,0) ZHUCE_NUM,
+	       NVL(G.CURR_ACTIVE_NUM,0) CURR_ACTIVE_NUM,
+	       NVL(G.HIS_ACTIVE_NUM,0) HIS_ACTIVE_NUM,
+           NVL(G.DELIVERY_FLAG,0) DELIVERY_FLAG
+		   FROM CLW_JC_ENTERPRISE_T A,
+       	   (SELECT ENTERPRISE_ID,
+               COUNT(ZHUCE_VIN) ZHUCE_NUM,
+               COUNT(CURR_ACTIVE_VIN) CURR_ACTIVE_NUM,
+               COUNT(HIS_ACTIVE_VIN) HIS_ACTIVE_NUM,
+               sum(case when DELIVERY_FLAG=1 then 1 else 0 end) DELIVERY_FLAG
+            FROM (SELECT B.ENTERPRISE_ID,
+                       B.VEHICLE_VIN ZHUCE_VIN,																	
+                       D.CURR_ACTIVE_VIN,																	
+                       E.HIS_ACTIVE_VIN,
+                       b.DELIVERY_FLAG
+                  	   FROM CLW_CL_BASE_INFO_T B,																	
+                       CLW_JC_TERMINAL_T C,																	
+                       (SELECT DISTINCT T.VEHICLE_VIN CURR_ACTIVE_VIN																	
+                          FROM CLW_YW_TERMINAL_RECORD_T T																	
+                         WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD') =																	
+                               TO_CHAR(SYSDATE,'YYYYMMDD')) D,																	
+                       (SELECT DISTINCT T.VEHICLE_VIN HIS_ACTIVE_VIN																	
+                          FROM CLW_YW_TERMINAL_RECORD_T T																	
+                         WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD')<![CDATA[ >= ]]> '20110601'																	
+                         AND TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD HH24MISS')<![CDATA[<]]>TO_CHAR(SYSDATE,'YYYYMMDD HH24MISS')
+						) E
+                 WHERE B.VEHICLE_VIN = C.VEHICLE_VIN(+)																	
+                 AND C.VEHICLE_VIN = D.CURR_ACTIVE_VIN(+)																	
+                 AND C.VEHICLE_VIN = E.HIS_ACTIVE_VIN(+))
+	         GROUP BY ENTERPRISE_ID) G,
+	       (SELECT ENTERPRISE_ID, COUNT(1) ACCOUNT_NUM
+	          FROM CLW_JC_USER_T
+	         WHERE VALID_FLAG = '0'
+	         GROUP BY ENTERPRISE_ID) F
+		   WHERE A.ENTERPRISE_ID = G.ENTERPRISE_ID(+)
+		   AND A.ENTERPRISE_ID = F.ENTERPRISE_ID(+)
+		   AND A.VALID_FLAG='0'
+		   AND A.ENTERPRISE_CODE IS NOT NULL		
+         <isNotEmpty prepend="AND" property="enterprise_code">
+       		A.ENTERPRISE_CODE LIKE '%$enterprise_code$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="full_name">
+            A.FULL_NAME LIKE '%$full_name$%'
+         </isNotEmpty>
+         ORDER BY G.ZHUCE_NUM	
+	</select>
+	
+	<select id="getOperationSumInfos"  parameterClass="Map" resultMap="operationsSumInfo-result">
+		SELECT sum(ACCOUNT_NUM) ACCOUNT_NUM,
+			sum(ZHUCE_NUM) ZHUCE_NUM,
+			sum(CURR_ACTIVE_NUM) CURR_ACTIVE_NUM,
+			sum(HIS_ACTIVE_NUM) HIS_ACTIVE_NUM,
+			sum(DELIVERY_FLAG) DELIVERY_FLAG
+			from (SELECT 
+	       NVL(F.ACCOUNT_NUM,0) ACCOUNT_NUM,
+	       NVL(G.ZHUCE_NUM,0) ZHUCE_NUM,
+	       NVL(G.CURR_ACTIVE_NUM,0) CURR_ACTIVE_NUM,
+	       NVL(G.HIS_ACTIVE_NUM,0) HIS_ACTIVE_NUM,
+           NVL(G.DELIVERY_FLAG,0) DELIVERY_FLAG
+		   FROM CLW_JC_ENTERPRISE_T A,
+       	   (SELECT ENTERPRISE_ID,
+               COUNT(ZHUCE_VIN) ZHUCE_NUM,
+               COUNT(CURR_ACTIVE_VIN) CURR_ACTIVE_NUM,
+               COUNT(HIS_ACTIVE_VIN) HIS_ACTIVE_NUM,
+               sum(case when DELIVERY_FLAG=1 then 1 else 0 end) DELIVERY_FLAG
+            FROM (SELECT B.ENTERPRISE_ID,
+                       B.VEHICLE_VIN ZHUCE_VIN,																	
+                       D.CURR_ACTIVE_VIN,																	
+                       E.HIS_ACTIVE_VIN,
+                       b.DELIVERY_FLAG
+                  	   FROM CLW_CL_BASE_INFO_T B,																	
+                       CLW_JC_TERMINAL_T C,																	
+                       (SELECT DISTINCT T.VEHICLE_VIN CURR_ACTIVE_VIN																	
+                          FROM CLW_YW_TERMINAL_RECORD_T T																	
+                         WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD') =																	
+                               TO_CHAR(SYSDATE,'YYYYMMDD')) D,																	
+                       (SELECT DISTINCT T.VEHICLE_VIN HIS_ACTIVE_VIN																	
+                          FROM CLW_YW_TERMINAL_RECORD_T T																	
+                         WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD')<![CDATA[ >= ]]> '20110601'																	
+                         AND TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD HH24MISS')<![CDATA[<]]>TO_CHAR(SYSDATE,'YYYYMMDD HH24MISS')
+						) E
+                 WHERE B.VEHICLE_VIN = C.VEHICLE_VIN(+)																	
+                 AND C.VEHICLE_VIN = D.CURR_ACTIVE_VIN(+)																	
+                 AND C.VEHICLE_VIN = E.HIS_ACTIVE_VIN(+))
+	         GROUP BY ENTERPRISE_ID) G,
+	       (SELECT ENTERPRISE_ID, COUNT(1) ACCOUNT_NUM
+	          FROM CLW_JC_USER_T
+	         WHERE VALID_FLAG = '0'
+	         GROUP BY ENTERPRISE_ID) F
+		   WHERE A.ENTERPRISE_ID = G.ENTERPRISE_ID(+)
+		   AND A.ENTERPRISE_ID = F.ENTERPRISE_ID(+)
+		   AND A.VALID_FLAG='0'
+		   AND A.ENTERPRISE_CODE IS NOT NULL	
+         <isNotEmpty prepend="AND" property="enterprise_code">
+       		A.ENTERPRISE_CODE LIKE '%$enterprise_code$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="full_name">
+            A.FULL_NAME LIKE '%$full_name$%'
+         </isNotEmpty>)
+	</select>
+	<select id="getCountByEnterCode" parameterClass="Map"  resultClass="Integer">
+			SELECT COUNT(1) FROM (SELECT  T.VEHICLE_VIN,	
+			T.TERMINAL_ID,
+	        T.SIM_CARD_NUMBER,
+	        NVL(D.CURR_DATASUM,0) CURR_DATASUM,
+	        D.CURR_START,
+	        D.CURR_END,			
+	        NVL(E.HIS_DATASUM,0) HIS_DATASUM,
+	        E.HIS_START,
+	        NVL(B.DELIVERY_FLAG,0) DELIVERY_FLAG
+	 		FROM CLW_JC_TERMINAL_T T,			
+	      	CLW_CL_BASE_INFO_T B,			
+	      	CLW_JC_ENTERPRISE_T C,			
+		    (SELECT T.VEHICLE_VIN CURR_VIN,COUNT(1) CURR_DATASUM,MIN(T.TERMINAL_TIME) CURR_START,MAX(T.TERMINAL_TIME) CURR_END FROM CLW_YW_TERMINAL_RECORD_T T			
+		    WHERE TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD')=TO_CHAR(SYSDATE,'YYYYMMDD')			
+		    GROUP BY T.VEHICLE_VIN) D,			
+		    (SELECT T.VEHICLE_VIN HIS_VIN,COUNT(1) HIS_DATASUM,MIN(T.TERMINAL_TIME) HIS_START FROM CLW_YW_TERMINAL_RECORD_T T			
+		    WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD')<![CDATA[ >= ]]> '20110601'																	
+		    AND TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD HH24MISS')<![CDATA[<]]>TO_CHAR(SYSDATE,'YYYYMMDD HH24MISS')
+		    GROUP BY T.VEHICLE_VIN) E			
+			 	WHERE T.VEHICLE_VIN=B.VEHICLE_VIN 																															
+			    AND B.ENTERPRISE_ID=C.ENTERPRISE_ID																															
+			    AND T.VEHICLE_VIN=D.CURR_VIN(+)																															
+			    AND T.VEHICLE_VIN=E.HIS_VIN(+)																															
+			    AND T.SIM_CARD_NUMBER IS NOT NULL 
+			    AND T.TERMINAL_ID IS NOT NULL																															
+			    and c.ENTERPRISE_CODE=#enterprise_code# 
+		 <isNotEmpty prepend="AND" property="vehicle_vin">
+       		T.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="terminal_id">
+            T.TERMINAL_ID LIKE '%$terminal_id$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="sim_card_number">
+            T.SIM_CARD_NUMBER LIKE '%$sim_card_number$%'
+         </isNotEmpty>)
+	</select>
+	
+	<select id="getReportInfoByEnterCode" parameterClass="Map" resultMap="oprationsReportSecond-result">
+		SELECT  T.VEHICLE_VIN,	
+			T.TERMINAL_ID,
+	        T.SIM_CARD_NUMBER,
+	        NVL(D.CURR_DATASUM,0) CURR_DATASUM,
+	        TO_CHAR(D.CURR_START,'YYYY-MM-DD HH24:MI:SS') CURR_START,
+	        TO_CHAR(D.CURR_END,'YYYY-MM-DD HH24:MI:SS') CURR_END,			
+	        NVL(E.HIS_DATASUM,0) HIS_DATASUM,
+	        TO_CHAR(E.HIS_START,'YYYY-MM-DD HH24:MI:SS') HIS_START,
+	        NVL(B.DELIVERY_FLAG,0) DELIVERY_FLAG
+	 		FROM CLW_JC_TERMINAL_T T,			
+	      	CLW_CL_BASE_INFO_T B,			
+	      	CLW_JC_ENTERPRISE_T C,			
+		    (SELECT T.VEHICLE_VIN CURR_VIN,COUNT(1) CURR_DATASUM,MIN(T.TERMINAL_TIME) CURR_START,MAX(T.TERMINAL_TIME) CURR_END FROM CLW_YW_TERMINAL_RECORD_T T			
+		    WHERE TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD')=TO_CHAR(SYSDATE,'YYYYMMDD')			
+		    GROUP BY T.VEHICLE_VIN) D,			
+		    (SELECT T.VEHICLE_VIN HIS_VIN,COUNT(1) HIS_DATASUM,MIN(T.TERMINAL_TIME) HIS_START FROM CLW_YW_TERMINAL_RECORD_T T			
+		    WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD')<![CDATA[ >= ]]> '20110601'																	
+		    AND TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD HH24MISS')<![CDATA[<]]>TO_CHAR(SYSDATE,'YYYYMMDD HH24MISS')
+		    GROUP BY T.VEHICLE_VIN) E			
+			 	WHERE T.VEHICLE_VIN=B.VEHICLE_VIN 																															
+			    AND B.ENTERPRISE_ID=C.ENTERPRISE_ID																															
+			    AND T.VEHICLE_VIN=D.CURR_VIN(+)																															
+			    AND T.VEHICLE_VIN=E.HIS_VIN(+)																															
+			    AND T.SIM_CARD_NUMBER IS NOT NULL 
+			    AND T.TERMINAL_ID IS NOT NULL																															
+			    and c.ENTERPRISE_CODE=#enterprise_code# 
+		 <isNotEmpty prepend="AND" property="vehicle_vin">
+       		T.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="terminal_id">
+            T.TERMINAL_ID LIKE '%$terminal_id$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="sim_card_number">
+            T.SIM_CARD_NUMBER LIKE '%$sim_card_number$%'
+         </isNotEmpty>
+		order by d.curr_datasum																		
+	</select>
+	
+	<select id="getReportInfoSumByEnterCode" parameterClass="Map" resultMap="oprationsReportSecondSum-result">
+		SELECT  
+	        sum(NVL(D.CURR_DATASUM,0)) CURR_DATASUM,
+	        sum(NVL(E.HIS_DATASUM,0)) HIS_DATASUM
+	 		FROM CLW_JC_TERMINAL_T T,			
+	      	CLW_CL_BASE_INFO_T B,			
+	      	CLW_JC_ENTERPRISE_T C,			
+		    (SELECT T.VEHICLE_VIN CURR_VIN,COUNT(1) CURR_DATASUM,MIN(T.TERMINAL_TIME) CURR_START,MAX(T.TERMINAL_TIME) CURR_END FROM CLW_YW_TERMINAL_RECORD_T T			
+		    WHERE TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD')=TO_CHAR(SYSDATE,'YYYYMMDD')			
+		    GROUP BY T.VEHICLE_VIN) D,			
+		    (SELECT T.VEHICLE_VIN HIS_VIN,COUNT(1) HIS_DATASUM,MIN(T.TERMINAL_TIME) HIS_START FROM CLW_YW_TERMINAL_RECORD_T T			
+		    WHERE TO_CHAR(T.TERMINAL_TIME, 'YYYYMMDD')<![CDATA[ >= ]]> '20110601'																	
+		    AND TO_CHAR(T.TERMINAL_TIME,'YYYYMMDD HH24MISS')<![CDATA[<]]>TO_CHAR(SYSDATE,'YYYYMMDD HH24MISS')
+		    GROUP BY T.VEHICLE_VIN) E			
+			 	WHERE T.VEHICLE_VIN=B.VEHICLE_VIN 																															
+			    AND B.ENTERPRISE_ID=C.ENTERPRISE_ID																															
+			    AND T.VEHICLE_VIN=D.CURR_VIN(+)																															
+			    AND T.VEHICLE_VIN=E.HIS_VIN(+)																															
+			    AND T.SIM_CARD_NUMBER IS NOT NULL 
+			    AND T.TERMINAL_ID IS NOT NULL																															
+			    and c.ENTERPRISE_CODE=#enterprise_code# 
+		 <isNotEmpty prepend="AND" property="vehicle_vin">
+       		T.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="terminal_id">
+            T.TERMINAL_ID LIKE '%$terminal_id$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="sim_card_number">
+            T.SIM_CARD_NUMBER LIKE '%$sim_card_number$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getDayReportChart" parameterClass="Map" resultMap="getDayReportChart-result">
+		SELECT
+		    NVL (
+		        E.HIS_DATASUM ,
+		        0
+		    ) HIS_DATASUM ,
+		    E.TERMINAL_TIME
+		FROM
+		    CLW_JC_TERMINAL_T T ,
+		    CLW_CL_BASE_INFO_T B ,
+		    CLW_JC_ENTERPRISE_T C ,
+		    (
+		        SELECT
+		            T.VEHICLE_VIN HIS_VIN ,
+		            COUNT (1) HIS_DATASUM ,
+		            TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'YYYY-MM-DD'
+		            ) TERMINAL_TIME
+		        FROM
+		            CLW_YW_TERMINAL_RECORD_T T
+		        WHERE
+		            TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'YYYY-MM-DD'
+		            ) <![CDATA[ >= ]]> #time_begin#
+		            AND TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'YYYY-MM-DD'
+		            ) <![CDATA[ <= ]]> #time_end#
+		        GROUP BY
+		            T.VEHICLE_VIN ,
+		            TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'YYYY-MM-DD'
+		            )
+		    ) E
+		WHERE
+		    T.VEHICLE_VIN = B.VEHICLE_VIN
+		    AND B.ENTERPRISE_ID = C.ENTERPRISE_ID
+		    AND T.VEHICLE_VIN = E.HIS_VIN (+)
+		    AND T.SIM_CARD_NUMBER IS NOT NULL
+		    AND T.TERMINAL_ID IS NOT NULL
+		    AND c.ENTERPRISE_CODE = #enterprise_code#
+		    AND T.VEHICLE_VIN = #vehicle_vin#
+		ORDER BY
+		    E.TERMINAL_TIME
+	</select>
+	
+	<select id="getHourReportChart" parameterClass="Map" resultMap="getDayReportChart-result">
+		SELECT
+		    NVL (
+		        E.HIS_DATASUM ,
+		        0
+		    ) HIS_DATASUM ,
+		    E.TERMINAL_TIME
+		FROM
+		    CLW_JC_TERMINAL_T T ,
+		    CLW_CL_BASE_INFO_T B ,
+		    CLW_JC_ENTERPRISE_T C ,
+		    (
+		        SELECT
+		            T.VEHICLE_VIN HIS_VIN ,
+		            COUNT (1) HIS_DATASUM ,
+		            TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'hh24'
+		            ) TERMINAL_TIME
+		        FROM
+		            CLW_YW_TERMINAL_RECORD_T T
+		        WHERE
+		            TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'YYYY-MM-DD'
+		            ) =  #reportDate#
+		           
+		        GROUP BY
+		            T.VEHICLE_VIN ,
+		            TO_CHAR (
+		                T.TERMINAL_TIME ,
+		                'hh24'
+		            )
+		    ) E
+		WHERE
+		    T.VEHICLE_VIN = B.VEHICLE_VIN
+		    AND B.ENTERPRISE_ID = C.ENTERPRISE_ID
+		    AND T.VEHICLE_VIN = E.HIS_VIN (+)
+		    AND T.SIM_CARD_NUMBER IS NOT NULL
+		    AND T.TERMINAL_ID IS NOT NULL
+		    AND c.ENTERPRISE_CODE = #enterprise_code#
+		    AND T.VEHICLE_VIN = #vehicle_vin#
+		ORDER BY
+		    E.TERMINAL_TIME
+	</select>
+</sqlMap>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="logoset" namespace="/logoset"
+		extends="clw-default">
+
+		<action name="logoset" class="logoAction"
+			method="logoSetBefore">
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/sysset/logoset/logoset.jsp
+			</result>
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/sysset/logoset/logoset.jsp
+			</result>
+		</action>
+
+		<action name="logosetAction" class="logoAction"
+			method="logoSet">
+			<param name="imageHeight">98</param>
+			<param name="imageWidth">335</param>
+			<param name="imageSize">128000</param>
+			<param name="imageTypes">jpg,JPG</param>
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/sysset/logoset/logoset.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/sysset/logoset/logoset.jsp
+			</result>
+		</action>
+		<action name="setLogoDefaultAction" class="logoAction"
+			method="setLogoDefault">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/sysset/logoset/logoset.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/sysset/logoset/logoset.jsp
+			</result>
+		</action>
+	</package>
+</struts>

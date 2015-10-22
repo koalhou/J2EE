@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    <!-- 数据挖掘新__能源故障表 -->
+<sqlMap namespace="energyAlarm">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="newEnergyAlarm"
+		type="com.neusoft.clw.newenergy.newenergyalarm.domain.EnergyAlarm" />
+
+	<resultMap id="alarm-result" class="newEnergyAlarm">
+		<result property="alarmId" column="id" />
+		<result property="vehicleVin" column="vehicle_vin" />
+		<result property="vehicleln" column="vehicle_ln" />
+		<result property="terminalTime" column="terminal_time" />
+		<result property="routeName" column="route_name" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="speed" column="speed" />
+		<result property="alarmAddress" column="ALARM_ADDRESS" />
+		<result property="alarmLevel" column="ALARM_LEVEL" />
+		<result property="alarmCode" column="ALARM_CODE" />
+		<result property="record" column="process_result" />
+		<result property="alarmMsg" column="alarmMsg"/>
+	</resultMap>
+	<!-- 新能源故障查询 -->
+	<select id="energyAlarmList" parameterClass="Map" resultMap="alarm-result">
+<!-- 		with cc as ( -->
+<!-- 		      select ino.route_Id, -->
+<!-- 		                route.route_name, -->
+<!-- 		                ino.vehicle_vin, -->
+<!-- 		                ino.trip_id, -->
+<!-- 		                max(ino.terminal_time) maxTime, -->
+<!-- 		                min(ino.terminal_time) minTime -->
+<!-- 		           from clw_xc_inoutsite_t ino,clw_xc_route_t route -->
+<!-- 		          where 1=1 and route.route_id = ino.route_id -->
+<!-- 		          group by ino.route_Id,ino.vehicle_vin,route.route_name,ino.trip_id -->
+<!-- 		 ) -->
+		 <isNotEmpty prepend="" property="organization_id">
+		 	with vehicleEnt as (
+		      select * from clw_cl_base_info_t info where info.device_type = '0'
+		      and info.valid_flag = '0'
+		      AND EXISTS  (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+		 )
+		</isNotEmpty>
+		select * from (
+		select ents.vehicle_ln,ents.vehicle_vin,to_char(terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time,
+		  alarm.longitude,alarm.latitude,alarm.alarm_level,alarm.alarm_code,alarm.id,
+		  alarm.speed,alarm.alarm_address,alarm.process_result,
+		  alarm.alarm_address || ',' || alarm.alarm_level || ',' || alarm.alarm_code alarmMsg,
+		  (select route_name from clw_xc_route_t a where a.route_id=alarm.route_id) route_name from 
+        	clw_newenergy_alarm_t alarm ,vehicleEnt ents
+        where 1=1 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             ents.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="" property="organization_id">
+        	and alarm.vehicle_vin=ents.vehicle_vin
+	    </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             alarm.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             alarm.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ alarm.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="alarmId">
+        	alarm.id = #alarmId#
+        </isNotEmpty>        
+        <isNotEmpty prepend="AND" property="alarmKey">
+        	alarm.id = #alarmKey#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="isused">
+        	alarm.process_result is null
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="alarmMsg">
+        	alarm.ALARM_ADDRESS = #alarmMsg#
+        </isNotEmpty>
+        
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = alarm.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>) ya where 1=1 
+        <isNotEmpty prepend="AND" property="routeName">
+	        ya.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	
+	<select id="energyAlarmListCount" parameterClass="Map" resultClass="Integer">
+<!-- 		with cc as ( -->
+<!-- 		      select ino.route_Id, -->
+<!-- 		                route.route_name, -->
+<!-- 		                ino.vehicle_vin, -->
+<!-- 		                ino.trip_id, -->
+<!-- 		                max(ino.terminal_time) maxTime, -->
+<!-- 		                min(ino.terminal_time) minTime -->
+<!-- 		           from clw_xc_inoutsite_t ino,clw_xc_route_t route -->
+<!-- 		          where 1=1 and route.route_id = ino.route_id -->
+<!-- 		          group by ino.route_Id,ino.vehicle_vin,route.route_name,ino.trip_id -->
+<!-- 		 ) -->
+		 <isNotEmpty prepend="" property="organization_id">
+		  with vehicleEnt as (
+		      select * from clw_cl_base_info_t info where info.device_type = '0'
+		      and info.valid_flag = '0'
+		      AND EXISTS  (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+		 )
+		</isNotEmpty>
+		select count(1) from (
+		select ents.vehicle_ln,ents.vehicle_vin,alarm.terminal_time,
+		  alarm.longitude,alarm.latitude,alarm.alarm_level,alarm.alarm_code,alarm.id,
+		  alarm.speed,alarm.alarm_address,alarm.process_result,
+		  alarm.alarm_address || ',' || alarm.alarm_level || ',' || alarm.alarm_code alarmMsg,
+		  (select route_name from clw_xc_route_t a where a.route_id=alarm.route_id) route_name from 
+        	clw_newenergy_alarm_t alarm ,vehicleEnt ents
+        where 1=1 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             ents.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="" property="organization_id">
+        	and alarm.vehicle_vin=ents.vehicle_vin
+	    </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             alarm.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             alarm.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ alarm.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="alarmId">
+        	alarm.id = #alarmId#
+        </isNotEmpty>        
+        <isNotEmpty prepend="AND" property="alarmKey">
+        	alarm.id = #alarmKey#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="isused">
+        	alarm.process_result is null
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="alarmMsg">
+        	alarm.ALARM_ADDRESS = #alarmMsg#
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = alarm.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        ) ya where 1=1 
+        <isNotEmpty prepend="AND" property="routeName">
+	        ya.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+	</select>
+	
+	<select id="tabCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from clw_newenergy_alarm_t t,clw_cl_base_info_t info where 1=1
+		and t.vehicle_vin = info.vehicle_vin(+)
+		<isNotEmpty prepend="AND" property="startTime">
+             t.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ t.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="isused">
+        	t.process_result is null
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+	</select>
+	
+	<update id="processAlarm" parameterClass="Map">
+		update clw_newenergy_alarm_t set process_result=#record# where id=#alarmId#
+	</update>
+	
+	
+</sqlMap>

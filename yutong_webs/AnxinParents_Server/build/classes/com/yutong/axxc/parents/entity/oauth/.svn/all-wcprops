@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth
+END
+CheckLoginReq.class
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/CheckLoginReq.class
+END
+MobileBindingInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/MobileBindingInfo.class
+END
+CheckLoginResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/CheckLoginResp.class
+END
+LoginReq.class
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/LoginReq.class
+END
+SoftwareVersion.class
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/SoftwareVersion.class
+END
+LoginResp.class
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/LoginResp.class
+END
+UsrInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/UsrInfo.class
+END
+MobileUsrAllInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/entity/oauth/MobileUsrAllInfo.class
+END

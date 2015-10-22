@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="gpsmanage" namespace="/gps" extends="clw-default">
+		<action name="gpsAction" class="gpsAction" method="gpsPostion">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newgpspostion.jsp</result>
+			<result name="success2">/WEB-INF/jsp/businessmanage/gpsmanage/childgpspostion.jsp</result>
+		</action>
+		
+		<action name="iFramechooseAction" class="gpsAction" method="getiFramechooseObj">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/iframeChoose.jsp</result>
+		</action>
+		
+		
+		<action name="bitlookAction" class="gpsAction" method="getbitlook">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newbitlooktest.jsp</result>
+		</action>
+		
+		<action name="realtimelookAction" class="gpsAction" method="getrealtimelook">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newrealtimelook.jsp</result>
+		</action>
+		
+		
+		<action name="XingCheNoteAction" class="gpsAction" method="xingcheNote">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/xingchejilu.jsp</result>
+		</action>
+		
+		<action name="SendMsgAction" class="gpsAction" method="getSendMsg">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newsendMsg.jsp</result>
+		</action>
+		<action name="SendPhtotAction" class="gpsAction" method="getSendPhoto">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newsendPhoto.jsp</result>
+		</action>
+		<action name="SendPhtotListAction" class="gpsAction" method="getSendPhotoList">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newsendPhotoList.jsp</result>
+		</action>
+		
+		<action name="VideomonitorAction" class="gpsAction" method="Video_monitor">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newvideo_monitor.jsp</result>
+		</action>
+		<action name="RePlayVideomonitorAction" class="gpsAction" method="Replay_Video_monitor">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newreplayVideo.jsp</result>
+		</action>
+		<action name="SendMsgSAction" class="gpsAction" method="SendMsgS">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/newSendMsgList.jsp</result>
+		</action>
+		
+		<action name="downLoadHIReplayVideo" class="gpsAction" method="getFrameObj">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/replayvideo/downHIReplayVideo.jsp</result>
+		</action>
+		<action name="downLoadDAReplayVideo" class="gpsAction" method="getFrameObj">
+			<result name="error">../login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/replayvideo/downDAReplayVideo.jsp</result>
+		</action>
+		
+		<action name="gpsbrowse" class="gpsAction" method="gpsBrowse">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/businessmanage/gpsmanage/showposition.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">gpsAction</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>	
+		
+		 <action name="ready" class="gpsAction" method="readyPage">
+				<result name="error">/WEB-INF/jsp/businessmanage/gpsmanage/xingchejilu.jsp</result>
+				<result name="success">/WEB-INF/jsp/businessmanage/gpsmanage/xingchejilu.jsp</result>	
+		 </action>
+		<action name="exportStRide" class="gpsAction" method="exportStRide">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ready</param>
+				<param name="message">${ridemessage}</param>
+			</result>
+		</action>
+	</package>
+	<package name="AlermGrid" namespace="/AlermGrid" extends="json-default">  <!--继承于json-default-->
+	  	  <action name="alermgrid" class="gpsAction"  method="GpsAlarmInfo">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">GpsAlermMap</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">GpsAlermMap</param>
+           </result>
+	           
+	       </action>
+	       <action name="getRoutePointById" class="gpsAction" method="getRoutePointById">
+			</action>
+       		
+       		<action name="getChildCheckInfo" class="gpsAction"  method="getTabStudentAlarm">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">GpsAlermMap</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">GpsAlermMap</param>
+           </result>
+	           
+	       </action>
+	       
+	       <!-- 根绝noteid获得真实经纬度 -->
+	       <action name="getRealPoint" class="gpsAction" method="getRealPoint"/>
+	       <!-- 修改线路坐标点 -->
+		   <action name="updateRoutePoint" class="gpsAction" method="updateRoutePoint"/>
+       	   <!-- 计算偏移坐标 -->
+       	   <action name="getShiftPoint" class="gpsAction" method="getShiftPoint"/>
+	 </package>
+	 <package name="SendInfo" namespace="/SendInfo" extends="json-default">
+		<action name="DownMessageListFlexigrid" class="gpsAction"  method="downManageList">
+	           <result name="success" type="json">
+	           	  <param name="contentType">text/json</param>
+				  <param name="excludeNullProperties">false</param>
+	           	  <param name="noCache">true</param>
+	              <param name="root">MsgMap</param>
+	           </result>
+	          <result name="error" type="json">
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">MsgMap</param>
+	          </result>
+       	</action>
+       	
+       	<action name="getRideInfo" class="gpsAction" method="getRideInfo">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">ridemap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">ridemap</param>
+           </result>
+       </action>
+       <action name="getVinInfoList" class="gpsAction" method="getVinInfoList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">vinmap</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">vinmap</param>
+           </result>
+       </action>
+       <action name="tabNodeSelectDwrList" class="gpsAction" method="tabNodeSelectDwr">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">rorlist</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">rorlist</param>
+           </result>
+       </action>
+       <action name="videoFileloadList" class="gpsAction" method="videoFileload">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">videoFilelist</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">videoFilelist</param>
+           </result>
+       </action>
+	 </package>
+</struts>

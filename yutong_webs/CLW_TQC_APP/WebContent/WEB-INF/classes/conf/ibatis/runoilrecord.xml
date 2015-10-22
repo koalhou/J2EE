@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RunOilRecord">
+	<typeAlias alias="runOilInfo"
+		type="com.neusoft.clw.itsmanage.oilmanage.carrun.domain.RunOilRecord" />
+		
+	<resultMap class="runOilInfo" id="infos">
+	    <result property="ID" column="ID" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="on_date" column="ON_DATE" />
+		<result property="off_date" column="OFF_DATE" />
+		<result property="oil" column="OIL" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="spd_oil" column="SPD_OIL" />
+		<result property="organization_name" column="SHORT_NAME" />
+	</resultMap>
+				
+	
+	<select id="getCountRunOils" parameterClass="runOilInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_XC_RUN_RECORD_T T1,
+		     CLW_CL_BASE_INFO_T  T2			 
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+        AND   T2.VALID_FLAG = '0'
+		AND   T2.DEVICE_TYPE = '0'
+		AND   (T2.OIL_CONFIG = '0' OR T2.OIL_CONFIG IS NULL)
+		<isNotEmpty prepend="AND" property="organization_id">
+			  T2.ORGANIZATION_ID IN
+					<![CDATA[
+						(SELECT ENTERPRISE_ID
+						     FROM CLW_JC_ENTERPRISE_VI
+						     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID = #organization_id#)
+						     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID =#organization_id#)        
+						)
+				     ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="str_vins">
+			  T1.VEHICLE_VIN IN ($str_vins$)
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="queryTime">
+		      T1.ON_DATE &gt;= TO_DATE(#queryTime#,'yyyy-mm-dd') 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="queryTime"> 
+		      T1.ON_DATE &lt; TO_DATE(#queryTime#,'yyyy-mm-dd')+1
+		</isNotEmpty>
+	</select>
+
+	<select id="getRunOils" parameterClass="runOilInfo" resultMap="infos">		
+		SELECT T1.ID, T1.VEHICLE_VIN, T2.VEHICLE_LN,
+           	   TO_CHAR(T1.ON_DATE,'yyyy-mm-dd HH24:mi:ss') ON_DATE,
+               TO_CHAR(T1.OFF_DATE,'yyyy-mm-dd HH24:mi:ss') OFF_DATE,
+               NVL(DECODE(T1.SPD_OIL,'FFFF','--',T1.SPD_OIL),'--') SPD_OIL, 
+               NVL(DECODE(T1.OIL,'FFFF','--',T1.OIL),'--') OIL, 
+               NVL(DECODE(T1.MILEAGE,'FFFF','--',T1.MILEAGE),'--') MILEAGE, T3.SHORT_NAME
+		FROM CLW_XC_RUN_RECORD_T T1,
+		     CLW_CL_BASE_INFO_T  T2,
+		     CLW_JC_ENTERPRISE_T T3
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		AND   T2.ORGANIZATION_ID =T3.ENTERPRISE_ID(+)
+        AND   T2.VALID_FLAG = '0'
+		AND   T2.DEVICE_TYPE = '0'
+		AND   (T2.OIL_CONFIG = '0' OR T2.OIL_CONFIG IS NULL)
+		<isNotEmpty prepend="AND" property="organization_id">
+			  T2.ORGANIZATION_ID IN
+					<![CDATA[
+						(SELECT ENTERPRISE_ID
+						     FROM CLW_JC_ENTERPRISE_VI
+						     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID = #organization_id#)
+						     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID =#organization_id#)        
+						)
+				     ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="str_vins">
+			  T1.VEHICLE_VIN IN ($str_vins$)
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="queryTime">
+		      T1.ON_DATE &gt;= TO_DATE(#queryTime#,'yyyy-mm-dd') 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="queryTime"> 
+		      T1.ON_DATE &lt; TO_DATE(#queryTime#,'yyyy-mm-dd')+1
+		</isNotEmpty>
+        <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		</dynamic>
+	</select>
+	
+</sqlMap>

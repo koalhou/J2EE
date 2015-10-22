@@ -1,0 +1,37 @@
+@charset "utf-8";
+html, body{ margin:0; padding:0; border:none; font:12px/18px  'Microsoft Yahei','微软雅黑',Arial,Verdana;}
+body,td,th {
+	font-size: 12px;
+	color: #555;	
+}
+ul, li{ list-style: none;}
+img{ border: 0;}
+a { color: #0078c8; text-decoration: none;cursor: pointer;}
+a:hover{ text-decoration: underline;}
+.login_body{background:url(../../newimages/taian/login_bg.jpg) repeat-x; }
+.login_c{width:950px; height:480px; background:url(../../newimages/taian/login_c_bg.png) no-repeat left top; margin:0% 21% 0; position:relative;}
+.login_logo{width:450px; height:80px; background:url(../../newimages/taian/logo.png) no-repeat left top;position:absolute;left:200px; top:40px;}
+.login_table{ width:300px; position:absolute; left:450px; top:100px;}
+.login_table td input{ text-indent:5px;}
+.login_table td{ height:50px; text-align: left;}
+.login_txt{ padding-top:3px; width:60px;}
+.login_checkbox_t, .login_checkbox{ float:left; color:#777;}
+.login_checkbox_t{margin-top: 2px;}
+.login_checkbox{ padding-top:0px; padding-right:7px; width: 20px; }
+.login_btn{ width:115px; height:38px; display:block; margin-top:0px; float: right; margin-right:160px;}
+
+.tabtnLink_sure{ 
+	border:0;
+	background: url(../../newimages/taian/login_btn.png) no-repeat center top;
+	width:235px;
+	height:30px;
+	line-height:38px;
+	float:left;
+	font-size:12px;
+	font-family:"微软雅黑";
+	color:#333;
+	text-align:center;
+	cursor: pointer;
+}
+.login_footer{ width:600px; left:50%; margin-left:-300px; text-align:center; color:#000000;  position:relative; bottom:0;}
+.miaoshu{color:red; border:1px solid #d00; background:#ffe5e5;line-height:18px;padding:4px 4px 4px 0px; margin:0px 32px 2px 2px;}

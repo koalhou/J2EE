@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi
+END
+msgApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/msgApi.xml
+END
+emailApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/emailApi.xml
+END
+resourceApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/resourceApi.xml
+END
+accountApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/accountApi.xml
+END
+logApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/logApi.xml
+END
+stationApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/stationApi.xml
+END
+systemApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/systemApi.xml
+END
+versionApi.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/restApi/versionApi.xml
+END

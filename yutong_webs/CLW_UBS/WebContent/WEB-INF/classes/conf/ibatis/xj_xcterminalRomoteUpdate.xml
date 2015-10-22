@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="terminalRomoteUpdate">
+	<typeAlias alias="Map" type="java.util.Map" />		
+	<resultMap id="terminalUpdateInfo-result" class="com.neusoft.clw.yw.xj.terminalRomoteUpdate.ds.TerminalInfo">
+		<result property="terminalId" column="ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="enterpriseName" column="FULL_NAME" />
+		<result property="host_hard_ver" column="HOST_HARD_VER" />
+		<result property="host_firm_ver" column="HOST_FIRM_VER" />
+		<result property="xianshi_hard_ver" column="XIANSHI_HARD_VER" />
+		<result property="xianshi_firm_ver" column="XIANSHI_FIRM_VER" />
+		<result property="DVR_hard_ver" column="DVR_HARD_VER" />
+		<result property="DVR_firm_ver" column="DVR_FIRM_VER" />
+		<result property="SHEPIN_hard_ver" column="SHEPIN_HARD_VER" />
+		<result property="SHEPIN_firm_ver" column="SHEPIN_FIRM_VER" />
+		<result property="SIM_SCCID" column="SIM_SCCID" />
+	</resultMap>
+	
+		<resultMap id="terminalInfo-result" class="com.neusoft.clw.yw.xj.terminalRomoteUpdate.ds.TerminalInfo">
+		<result property="terminalId" column="ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="enterpriseName" column="FULL_NAME" />
+	</resultMap>
+	
+	<select id="getTerminalUpdateCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'     
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN in ($vehicleVin$)
+         </isNotEmpty>      
+	</select>
+	
+	<select id="getTerminalUpdateInfos" parameterClass="Map" resultMap="terminalUpdateInfo-result">
+		SELECT ID,
+		       VEHICLE_LN,
+               VEHICLE_VIN,
+               TERMINAL_ID,
+               SIM_CARD_NUMBER,
+               CELLPHONE,
+               ENTERPRISE_ID,
+               ENTERPRISE_CODE,
+               FULL_NAME,
+               host_hard_ver,
+               host_firm_ver,
+               xianshi_hard_ver,
+               xianshi_firm_ver,
+               DVR_hard_ver,
+               DVR_firm_ver,
+               SHEPIN_hard_ver,
+               SHEPIN_firm_ver,
+               SIM_SCCID
+        from
+		(SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+               JT.VEHICLE_VIN,
+               JT.TERMINAL_ID,
+               JT.SIM_CARD_NUMBER,
+               CS.CELLPHONE,
+               CBI.ENTERPRISE_ID,
+               JE.ENTERPRISE_CODE,
+               JE.FULL_NAME,
+               JT.host_hard_ver,
+               JT.host_firm_ver,
+               JT.xianshi_hard_ver,
+               JT.xianshi_firm_ver,
+               JT.DVR_hard_ver,
+               JT.DVR_firm_ver,
+               JT.SHEPIN_hard_ver,
+               JT.SHEPIN_firm_ver,
+               JT.SIM_SCCID
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+          <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN in ($vehicleVin$)
+         </isNotEmpty>
+         )
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'     
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicleLN">
+               CBI.VEHICLE_LN LIKE '%$vehicleLN$%'
+         </isNotEmpty> 
+         <isNotEmpty prepend="AND" property="enterprise_name">
+               JE.FULL_NAME LIKE '%$enterprise_name$%'
+         </isNotEmpty>
+           <isNotEmpty prepend="AND" property="enterprise_code">
+                JE.ENTERPRISE_CODE LIKE '%$enterprise_code$%'
+         </isNotEmpty>       
+	</select>
+	
+	<select id="getTerminalRealTimeInfos" parameterClass="Map" resultMap="terminalInfo-result">
+		 SELECT ID,
+		       VEHICLE_LN,
+               VEHICLE_VIN,
+               TERMINAL_ID,
+               SIM_CARD_NUMBER,
+               CELLPHONE,
+               ENTERPRISE_ID,
+               ENTERPRISE_CODE,
+               FULL_NAME		 
+		 from
+		 (SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+               JT.VEHICLE_VIN,
+               JT.TERMINAL_ID,
+               JT.SIM_CARD_NUMBER,
+               CS.CELLPHONE,
+               CBI.ENTERPRISE_ID,
+               JE.ENTERPRISE_CODE,
+               JE.FULL_NAME
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%$vehicleVin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleLN">
+               CBI.VEHICLE_LN LIKE '%$vehicleLN$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="enterprise_name">
+               JE.FULL_NAME LIKE '%$enterprise_name$%'
+         </isNotEmpty>
+           <isNotEmpty prepend="AND" property="enterprise_code">
+               JE.ENTERPRISE_CODE LIKE '%$enterprise_code$%'
+         </isNotEmpty>
+         )
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+</sqlMap>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 登陆次数统计-->
+<struts>
+	<package name="loginstatistic" namespace="/loginstatistic" extends="clw-default">
+		<!-- 进入登录次数jsp页面  -->
+		<action name="loginListAction" class="loginStatisticAction" method="init">
+			<result name="error">/WEB-INF/jsp/statistic/loginList.jsp</result>
+			<result name="success">/WEB-INF/jsp/statistic/loginList.jsp</result>	
+		</action>
+		
+		<!-- 进入登录次数详情jsp页面 -->
+		<action name="loginDetailAction" class="loginStatisticAction" method="loginDetailPage">
+			<result name="error">/WEB-INF/jsp/statistic/loginDetailList.jsp</result>
+			<result name="success">/WEB-INF/jsp/statistic/loginDetailList.jsp</result>	
+		</action>
+		
+		<!-- 登陆次数导出 -->
+		<action name="exportLoginList" class="loginStatisticAction" method="exportLoginList">
+			<result name="error" type="redirect-action">
+				<param name="actionName">loginListAction</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+	</package>	
+	
+	<package name="loginstatisticJson" namespace="/loginstatistic" extends="json-default">
+		<!-- 查询登录次数列表信息 -->
+		<action name="loginList" class="loginStatisticAction" method="loginList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+		<!-- 查询登录次数详细列表信息 -->
+		<action name="loginDetailList" class="loginStatisticAction" method="loginDetailList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+		<!-- 查询登陆次数柱状图显示 -->
+		<action name="getLoginCharts" class="loginStatisticAction" method="getLoginCharts">
+            <result name="success" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">behavior</param>
+            </result>
+            <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">behavior</param>
+           </result>
+       </action>
+       <!-- 查询登陆次数详情，柱状图显示 -->
+		<action name="getLoginDetailCharts" class="loginStatisticAction" method="getLoginDetailCharts">
+            <result name="success" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">behavior</param>
+            </result>
+            <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">behavior</param>
+           </result>
+       </action>
+	</package>
+</struts>

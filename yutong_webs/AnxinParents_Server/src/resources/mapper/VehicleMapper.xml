@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Vehicle">
+
+
+
+	<select id="getVehicleInfo"  parameterType="string"  resultType="vehicle">
+	select t1.vehicle_id  as vehicleId,
+	       t1.vehicle_vin as vehicleVin,
+         t1.vehicle_code as vehicleCode,
+         t1.vehicle_ln as vehiclePlate,
+         t2.driver_name as vehicleDriver,
+          t1.vehicle_color as vehicleColor
+    from clw_cl_base_info_t t1,clw_yw_driver_t t2
+    where t2.driver_id(+) = t1.driver_id and t1.vehicle_vin=#{vehicle_id}
+	</select>
+	
+	<select id="getVehicleRealInfo" parameterType="list" resultType="vehicle" >
+	select t2.vehicle_vin as vehicleVin,
+	       t1.longitude gpsLon ,
+	       t1.latitude gpsLat,
+	       t1.speeding speed,
+	       t1.direction direction,
+	       t1.stat_info status,
+	       to_char(t1.modify_time,'yyyyMMddHHmmss') updateTime
+	  from clw_jc_terminal_t t1, clw_cl_base_info_t t2
+	 where t1.vehicle_vin = t2.vehicle_vin
+	   and t2.vehicle_vin in
+	   <foreach collection="list" item="item" separator="," open="(" close=")" >
+	   		#{item}
+	   </foreach>
+	</select>
+	
+	 
+</mapper>

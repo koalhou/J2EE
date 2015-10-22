@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:conf/jdbc/jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 试运行WAS配置 -->
+<!--  
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+   		<property name="jndiName">
+  			<value>clwm</value>
+   		</property>
+	</bean>
+-->
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${database.driver}" />
+		<property name="jdbcUrl" value="${database.url}" />
+		<property name="user" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+		<!-- 最小连接数 -->
+		<property name="minPoolSize" value="32" />
+		<!-- 最大连接数 -->
+	    <property name="maxPoolSize" value="64"/>
+	    <!-- 初始连接数 -->  
+	    <property name="initialPoolSize" value="32"/>
+	    <!-- 最大空闲时间 -->
+	    <property name="maxIdleTime" value="60"/>
+	    <!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数-->
+	    <property name="acquireIncrement" value="8"/>
+	   	<!-- 定义在从数据库获取新连接失败后重复尝试的次数 -->
+	    <property name="acquireRetryAttempts" value="30"/>
+	    <!--两次连接中间隔时间，单位毫秒-->
+	    <property name="acquireRetryDelay" value="1000"/>
+	    <!--如果设为true那么在取得连接的同时将校验连接的有效性 -->
+	    <property name="testConnectionOnCheckin" value="true"/>
+	    <!--c3p0将建一张名为Test的空表-->	    
+	    <property name="automaticTestTable" value="yttestxc"/>
+	    <!--每*秒检查所有连接池中的空闲连接 -->
+	    <property name="idleConnectionTestPeriod" value="60"/>
+	    <!--当连接池用完时客户端调用getConnection()后等待获取新连接的时间，超时后将抛出SQLException-->
+	    <property name="checkoutTimeout" value="10000"/>
+	    <!-- APPARENT DEADLOCK问题  -->
+	    <property name="maxStatements" value="0"/>
+	    <property name="maxStatementsPerConnection" value="0"/>	
+	</bean>
+
+	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler"/>
+
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation">
+			<value>classpath:conf/ibatis/sql-map-config.xml</value>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="lobHandler" ref="lobHandler"/>
+	</bean>
+
+	<!-- Spring 对事务的处理 -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 添加声明式事物管理 -->
+	<bean id="baseTransactionProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true">
+		<property name="transactionManager" ref="txManager" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="insert*">
+					PROPAGATION_REQUIRED,-BusinessException
+				</prop>
+				<prop key="update*">
+					PROPAGATION_REQUIRED,-BusinessException
+				</prop>
+				<prop key="delete*">
+					PROPAGATION_REQUIRED,-BusinessException
+				</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 当国际化文件发生改变时，会自动加载新的文件内容 -->
+	<!--  
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>
+				package
+				</value>
+			</list>
+		</property>
+	</bean>
+	-->
+</beans>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OemManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="OemInfo" type="com.neusoft.clw.yw.zd.oem.ds.OemInfo" />
+	
+	<resultMap id="oemInfo-result" class="OemInfo">
+		<result property="rowNumber" column="ROWNUM" />
+		<result property="oemId" column="TERMINAL_OEM_ID" />
+		<result property="fullName" column="FULL_NAME" />
+		<result property="shortName" column="SHORT_NAME" />
+		<result property="oemDesc" column="OEM_DESC" />
+		<result property="oemType" column="OEM_TYPE" />
+		<result property="countryId" column="ENTERPRISE_COUNTRY" />
+		<result property="provinceId" column="ENTERPRISE_PROVINCE" />
+		<result property="cityId" column="ENTERPRISE_CITY" />
+		<result property="concatAddress" column="CONCATE_ADDRESS" />
+		<result property="webAddress" column="WEB_ADDRESS" />
+		<result property="concatPerson" column="CONCATE_PERSON" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="tel" column="TEL" />
+		<result property="email" column="EMAIL" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+		<result property="oemCode" column="OEM_CODE" />
+		<result property="fax" column="FAX" />
+		<result property="postCode" column="POSTCODE" />
+		<result property="serviceTel" column="SERVICE_TEL" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+          FROM CLW_CL_TMOEM_T T
+         WHERE T.VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="oemName">
+               T.FULL_NAME LIKE '%$oemName$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getOemInfos" parameterClass="Map" resultMap="oemInfo-result">
+		SELECT ROWNUM,
+		       T.TERMINAL_OEM_ID,
+               T.FULL_NAME,
+               T.SHORT_NAME,
+               T.OEM_DESC,
+               T.OEM_TYPE,
+               T.ENTERPRISE_COUNTRY,
+               T.ENTERPRISE_PROVINCE,
+               T.ENTERPRISE_CITY,
+               T.CONCATE_ADDRESS,
+               T.WEB_ADDRESS,
+               T.CONCATE_PERSON,
+               T.CELLPHONE,
+               T.TEL,
+               T.EMAIL,
+               T.CREATER,
+               TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME,
+               T.MODIFIER,
+               TO_CHAR(T.MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') AS MODIFY_TIME,
+               T.OEM_CODE,
+               T.FAX,
+               T.POSTCODE,
+               T.SERVICE_TEL
+          FROM CLW_CL_TMOEM_T T
+         WHERE T.VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="oemName">
+               T.FULL_NAME LIKE '%$oemName$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getOemInfoById" parameterClass="String" resultMap="oemInfo-result">
+		SELECT ROWNUM,
+		       T.TERMINAL_OEM_ID,
+               T.FULL_NAME,
+               T.SHORT_NAME,
+               T.OEM_DESC,
+               T.OEM_TYPE,
+               T.ENTERPRISE_COUNTRY,
+               T.ENTERPRISE_PROVINCE,
+               T.ENTERPRISE_CITY,
+               T.CONCATE_ADDRESS,
+               T.WEB_ADDRESS,
+               T.CONCATE_PERSON,
+               T.CELLPHONE,
+               T.TEL,
+               T.EMAIL,
+               T.CREATER,
+               TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME,
+               T.MODIFIER,
+               TO_CHAR(T.MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') AS MODIFY_TIME,
+               T.OEM_CODE,
+               T.FAX,
+               T.POSTCODE,
+               T.SERVICE_TEL
+          FROM CLW_CL_TMOEM_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.TERMINAL_OEM_ID = #oemId#
+	</select>
+	
+	<insert id="insertOem" parameterClass="OemInfo">
+		INSERT INTO CLW_CL_TMOEM_T T
+          (T.TERMINAL_OEM_ID,
+           T.FULL_NAME,
+           T.SHORT_NAME,
+           T.OEM_DESC,
+           T.OEM_TYPE,
+           T.ENTERPRISE_COUNTRY,
+           T.ENTERPRISE_PROVINCE,
+           T.ENTERPRISE_CITY,
+           T.CONCATE_ADDRESS,
+           T.WEB_ADDRESS,
+           T.CONCATE_PERSON,
+           T.CELLPHONE,
+           T.TEL,
+           T.EMAIL,
+           T.CREATER,
+           T.CREATE_TIME,
+           T.MODIFIER,
+           T.MODIFY_TIME,
+           T.VALID_FLAG,
+           T.OEM_CODE,
+           T.FAX,
+           T.POSTCODE,
+           T.SERVICE_TEL)
+        VALUES
+          (#oemId#,
+           #fullName#,
+           #shortName#,
+           #oemDesc#,
+           #oemType#,
+           #countryId#,
+           #provinceId#,
+           #cityId#,
+           #concatAddress#,
+           #webAddress#,
+           #concatPerson#,
+           #cellPhone#,
+           #tel#,
+           #email#,
+           #creater#,
+           SYSDATE,
+           #creater#,
+           SYSDATE,
+           '0',
+           #oemCode#,
+           #fax#,
+           #postCode#,
+           #serviceTel#)
+	</insert>
+	
+	<update id="updateOemInfo" parameterClass="OemInfo">
+		UPDATE CLW_CL_TMOEM_T T
+           SET T.FULL_NAME = #fullName#,
+               T.SHORT_NAME = #shortName#,
+               T.OEM_DESC = #oemDesc#,
+               T.OEM_TYPE = #oemType#,
+               T.ENTERPRISE_COUNTRY = #countryId#,
+               T.ENTERPRISE_PROVINCE = #provinceId#,
+               T.ENTERPRISE_CITY = #cityId#,
+               T.CONCATE_ADDRESS = #concatAddress#,
+               T.WEB_ADDRESS = #webAddress#,
+               T.CONCATE_PERSON = #concatPerson#,
+               T.CELLPHONE = #cellPhone#,
+               T.TEL = #tel#,
+               T.EMAIL = #email#,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE,
+               T.OEM_CODE = #oemCode#,
+               T.FAX = #fax#,
+               T.POSTCODE = #postCode#,
+               T.SERVICE_TEL = #serviceTel#
+         WHERE T.TERMINAL_OEM_ID = #oemId#
+	</update>
+	
+	<update id="updateOemValid" parameterClass="String">
+	    UPDATE CLW_CL_TMOEM_T T
+           SET T.VALID_FLAG = '1'
+         WHERE T.TERMINAL_OEM_ID = #oemId#
+	</update>
+	
+	<select id="getOemCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1) 
+          FROM CLW_CL_TMOEM_T T
+         WHERE T.OEM_CODE = #oemCode#
+           AND T.VALID_FLAG = '0'
+	</select>
+	
+	<select id="getOemTypeCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*) FROM CLW_CL_TMTYPE_T T
+         WHERE T.TERMINAL_OEM_ID = #oemId#
+           AND T.VALID_FLAG = '0'
+	</select>
+	
+</sqlMap>

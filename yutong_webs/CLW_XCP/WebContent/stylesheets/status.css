@@ -1,0 +1,240 @@
+html, body{ margin:0; padding:0; border:none; font:12px/18px  'Microsoft Yahei','微软雅黑',Arial,Verdana;}
+ul{margin:0;padding:0;}
+img{border:0;margin:0;padding:0;}
+.car-info{
+	background:#f5f5f5;
+	border-bottom:1px solid #cccccc;
+	height:38px;
+	line-height:38px;
+}
+.car-info font{
+	font-weight:bold;
+	margin:0 10px;
+}
+.car-info2{
+	background:#f5f5f5;
+	border-bottom:1px solid #cccccc;
+	height:80px;
+	line-height:35px;
+}
+a.btn-blue{
+	border:0;
+	background: url(../newimages/btn_blue.gif) no-repeat;
+	width:76px;
+	height:28px;
+	line-height:28px;
+	display:block;
+	float:left;
+	text-align:center;
+	font-size:12px;
+	font-weight:bold;
+	font-family:"微软雅黑";
+	color:#ffffff;
+	margin:0 0 0 10px;
+}
+
+.btn-blue4{
+	border:0;
+	background: url(../newimages/btn_blue.gif) no-repeat;
+	width:76px;
+	height:28px;
+	line-height:24px;
+	float:right;
+	font-size:14px;
+	font-weight:bold;
+	font-family:"微软雅黑";
+	color:#FFF;
+	text-align:center;
+	text-decoration:none;
+	margin:2px 10px 0 0;
+}
+.new_btn_p304{float:left; margin-left:20px;   margin-top:5px; line-height:28px; font-size:12px; font-weight:normal;display: block;}
+.div_float{ float:left;}
+
+.car-info h1{
+	font-size:14px;
+	margin:0 10px;
+	float:left;
+	width:105px;
+	text-align:center;
+}
+.car-info .times{
+	font-size:12px;
+	font-weight:normal;
+	border-left:1px solid #000;
+	padding-left:10px;
+}
+.car-status{
+	margin:10px 2%;
+	height:80px;
+}
+
+.car-status ul{
+	padding: 0; 
+	margin: 0; 
+	min-width:755px;
+}
+
+.car-status li{
+	list-style:none;
+	min-width:90px;
+	width:14%;
+	height:70px;
+	float:left;
+	/*
+	padding-left:55px;
+	*/
+	padding-left:45px;
+}
+
+.car-status li strong{
+	margin:0;
+	padding-left:10px;
+}
+.car-status li span{
+	margin-left:10px;
+	padding-left:20px;
+	line-height:20px;
+	background:url(../newimages/line_status_normal.png) no-repeat;
+	min-width:73px;
+	display:block;
+}
+
+.car-status li .green{
+	background: url(../newimages/line_status_g.png) no-repeat;
+}
+.car-status li .red{
+	background: url(../newimages/line_status_r.png) no-repeat;
+}
+
+.car-status li.water{
+	background: url(../newimages/status_water.png) no-repeat;
+}
+.car-status li.ico1{
+	background: url(../newimages/ico_1.png) no-repeat;
+}
+.car-status li.electricity{
+	background: url(../newimages/status_electricity.png) no-repeat;
+}
+.car-status li.ico2{
+	background: url(../newimages/ico_2.png) no-repeat;
+}
+.car-status li.err{
+	background: url(../newimages/status_err.png) no-repeat;
+}
+.car-status li.ico3{
+	background: url(../newimages/ico_3.png) no-repeat;
+}
+.car-status li.block{
+	background: url(../newimages/status_block.png) no-repeat;
+}
+.car-status li.ico4{
+	background: url(../newimages/ico_4.png) no-repeat;
+}
+.car-status li.temperature{
+	background: url(../newimages/status_temperature.png) no-repeat;
+}
+.car-status li.ico5{
+	background: url(../newimages/ico_5.png) no-repeat;
+}
+.statusspan1{line-height:16px;}
+.list-area{
+	border-top:1px solid #cccccc;
+	background:#f5f5f5;
+}
+.list-sech{
+	height:35px;
+	line-height:35px;
+	margin:5px 20px;
+}
+.list-sech font{
+	font-weight:bold;
+	margin:0 20px;
+}
+.unusual{ 
+	margin:0 auto;
+	width:80px;
+	line-height:16px;
+	height:16px;
+	display:block;
+	color:#ffffff;
+	text-align:center;
+	background: url(../newimages/list_unusual_bg.png) no-repeat center center; 
+}
+.text-bg-140{
+	width:140px;
+	line-height:23px;
+	height:23px;
+	padding:0 5px;
+	text-align:center;
+	background: url(../newimages/text_bg_140.png) no-repeat center center;
+}
+.text-bg-140-2{
+	width:120px;
+	line-height:23px;
+	height:23px;
+	padding:0;
+	margin:0;
+	text-align:center;
+	background: url(../images/pop_read_bg_2.gif) no-repeat center center;
+}
+.text-bg-120{
+	width:120px;
+	line-height:22px;
+	height:22px;
+	padding:0 5px;
+	text-align:center;
+	background: url(../newimages/alarm_txt_bg_122.gif) no-repeat center center;
+}
+.text-bg-132{
+	width:132px;
+	line-height:22px;
+	height:22px;
+	padding:0 5px;
+	text-align:center;
+}
+.week-list{
+	margin:10px;
+	height:50px;
+}
+.week-list li{
+	width:102px;
+	height:49px;
+	background: url(../newimages/week_bg.png) no-repeat;
+	float:left;
+	margin:0 10px;
+}
+.week-list .today{
+	background: url(../newimages/week_bg_g.png) no-repeat;	
+}
+.week_bold{ font-weight:bold;}
+.week-list li span{
+	text-align:center;
+	display:block;
+	line-height:24px;
+}
+
+/*去掉超链接周围的虚线框*/
+a {blr:expression_r(this.onFocus=this.blur())}      /*如果是文本区域*/
+area {blr:expression_r(this.onFocus=this.blur())}    /*如果是图片区域*/
+a:focus { -moz-outline-style: none; }
+
+.status_bar{ float:right; width:180px; margin-right:5px; }
+/** add by jinp begin 20120817 **/
+.car-status2{
+	margin:10px 2%;
+	height:175px;
+	/**min-width:920px;**/
+}
+.pic_box{ background:#ccc; border:1px solid #999; width:238px; height:170px;}
+/** add by jinp end 20120817 **/
+.pic_box{ background:#ccc; border:1px solid #999; width:238px; height:170px;}
+.pic_box img{ width:206px; height:158px;}
+.search-bg{
+	background:#eeeeee;
+	border-bottom:1px solid #999999;
+	height:38px;
+	line-height:38px;
+	width:auto;
+}
+.search_condition{ background:#F5F5F5; border-top:1px solid #ccc; padding-top:8px;}

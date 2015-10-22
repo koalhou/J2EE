@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers
+END
+QuartzTripManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/QuartzTripManager.class
+END
+NotificationManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/NotificationManager.class
+END
+VehicleRealCacheManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/VehicleRealCacheManager.class
+END
+SiteNoteManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/SiteNoteManager.class
+END
+TqcOilWearManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/TqcOilWearManager.class
+END
+RuleCacheManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/RuleCacheManager.class
+END
+NewsManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/NewsManager.class
+END
+SyncManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/SyncManager.class
+END
+SmsOrderManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/SmsOrderManager.class
+END
+TqcStatisticManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/TqcStatisticManager.class
+END
+VinTripCacheManager.class
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/quartz/managers/VinTripCacheManager.class
+END

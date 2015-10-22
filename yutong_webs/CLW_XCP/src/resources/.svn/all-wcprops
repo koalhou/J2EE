@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources
+END
+ie-config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/ie-config.xml
+END
+system.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/system.properties
+END
+config.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/config.properties
+END
+struts.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/struts.xml
+END
+log4j-hudson.properties
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/log4j-hudson.properties
+END
+ApplicationResources_zh_CN.properties
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/ApplicationResources_zh_CN.properties
+END
+ie-config.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/ie-config.dtd
+END
+log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/datas/!svn/ver/27/other/work_spaces/workspace_xc/CLW_XCP/src/resources/log4j.properties
+END

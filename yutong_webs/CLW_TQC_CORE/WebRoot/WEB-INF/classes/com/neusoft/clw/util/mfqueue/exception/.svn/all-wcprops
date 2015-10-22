@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception
+END
+NotImplementIQueueObjectInterfaceException.java
+K 25
+svn:wc:ra_dav:version-url
+V 167
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/NotImplementIQueueObjectInterfaceException.java
+END
+ConfigurationManagerException.java
+K 25
+svn:wc:ra_dav:version-url
+V 154
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/ConfigurationManagerException.java
+END
+OutOfBlockSizeException.java
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/OutOfBlockSizeException.java
+END
+QueueNotExistException.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/QueueNotExistException.java
+END
+InitException.java
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/InitException.java
+END
+QueueEmptyException.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/QueueEmptyException.java
+END
+QueueFullException.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/util/mfqueue/exception/QueueFullException.java
+END

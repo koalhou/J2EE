@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="HolidayMaintain">
+	<typeAlias alias="Map" type="java.util.Map" />
+	
+	<typeAlias alias="StaticsDataInfo" type="com.neusoft.clw.yw.ub.holiday.ds.StaticsDataInfo" />
+	<typeAlias alias="HolidayWorkdayDataInfo" type="com.neusoft.clw.yw.ub.holiday.ds.HolidayWorkdayDataInfo" />
+	
+	<resultMap id="staticsInfo-result" class="StaticsDataInfo">
+		<result property="groupname" column="groupname" />
+		<result property="day_name" column="day_name" />
+		<result property="year_select" column="year_select" />
+		<result property="date_section" column="date_section" />
+		<result property="statics_count" column="statics_count" />
+		<result property="startDate" column="startDate" />
+		<result property="endDate" column="endDate" />
+		<result property="dayflag" column="dayflag" />
+		
+	</resultMap>
+
+	<resultMap id="info-result" class="StaticsDataInfo">
+		<result property="groupname" column="groupname" />
+		<result property="day_name" column="day_name" />
+		<result property="startDate" column="startDate" />
+		<result property="endDate" column="endDate" />
+		<result property="dayflag" column="dayflag" />
+		
+	</resultMap>
+
+	<resultMap id="holidayWorkdayInfo-result" class="HolidayWorkdayDataInfo">
+		<result property="groupname" column="groupname" />
+		<result property="day_id" column="day_id" />
+		<result property="day_name" column="day_name" />
+		<result property="holiworkday" column="holiworkday" />
+		<result property="dayflag" column="dayflag" />
+		<result property="year_select" column="year_select" />
+		<result property="deleteflag" column="deleteflag" />
+		<result property="operator" column="operator" />
+		<result property="operate_time" column="operate_time" />
+	</resultMap>
+
+	<!-- 查询节假日的查询年列表 -->
+	<select id="getYearList" parameterClass="Map" resultClass="java.util.HashMap">
+	    SELECT TO_CHAR(T.YEAR_SELECT,'yyyy') as year_select
+	    FROM CLW_UB_HOLI_WORKDAY_T T
+	    WHERE T.DELETE_FLAG = '0'
+	    AND T.DAY_FLAG = #day_flag#
+   	   GROUP BY TO_CHAR(T.YEAR_SELECT,'yyyy')
+   	   ORDER BY year_select
+	</select>
+	
+	<!-- 查询分组统计后的节假日信息总条数 -->
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*) 
+		FROM (SELECT *
+			FROM CLW_UB_HOLI_WORKDAY_T T
+			WHERE T.DAY_FLAG = #day_flag#
+      			AND TO_CHAR(T.YEAR_SELECT,'yyyy') = #year_select#
+      			AND T.DELETE_FLAG = 0
+			GROUP BY T.Day_Flag, T.DAY_NAME, TO_CHAR(T.YEAR_SELECT,'yyyy'),t.GROUPNAME
+		)
+	</select>
+	
+	<!-- 查询分组统计后的节假日信息 -->
+	<select id="getStaticsInfos" parameterClass="Map" resultMap="staticsInfo-result" >
+	    SELECT U1.dayflag,
+		       U1.groupname,
+		       U1.day_name,
+		       U1.year_select,
+		       U2.DATE_SECTION AS date_section,
+		       U1.statics_count,
+		       U1.startDate,
+		       U1.endDate
+
+		  FROM (SELECT T.Day_Flag AS dayflag,
+		               T.GROUPNAME AS groupname,
+		               T.DAY_NAME AS day_name,
+		               TO_CHAR(T.YEAR_SELECT, 'yyyy') AS year_select,       
+		               COUNT(*) AS statics_count,
+		               TO_CHAR(MIN(T.HOLIWORKDAY), 'yyyy-MM-dd') AS startDate,
+		               TO_CHAR(MAX(T.HOLIWORKDAY), 'yyyy-MM-dd') AS endDate
+		          FROM (SELECT *
+		                  FROM CLW_UB_HOLI_WORKDAY_T T
+		                 WHERE T.DAY_FLAG = #day_flag#
+		                   AND TO_CHAR(T.YEAR_SELECT, 'yyyy') =  #year_select#
+		                   AND T.DELETE_FLAG = 0) T
+		         GROUP BY T.Day_Flag,
+		                  T.DAY_NAME,
+		                  TO_CHAR(T.YEAR_SELECT, 'yyyy'),
+		                  T.GROUPNAME
+		         ORDER BY endDate DESC) U1,
+		       
+		       (select U3.GROUPNAME,
+		               REPLACE(max(U3.DATE_SECTION), ',', ', ') as DATE_SECTION
+		          from (select T.GROUPNAME,
+		                       wm_concat(TO_CHAR(T.HOLIWORKDAY, 'MM-dd')) over(partition by T.GROUPNAME order by T.HOLIWORKDAY) AS DATE_SECTION
+		                  from CLW_UB_HOLI_WORKDAY_T T
+		                 WHERE T.DAY_FLAG = #day_flag#
+		                   AND TO_CHAR(T.YEAR_SELECT, 'yyyy') = #year_select#
+		                   AND T.DELETE_FLAG = 0) U3
+		         GROUP BY U3.GROUPNAME) U2
+		 where U1.GROUPNAME = U2.GROUPNAME
+		 ORDER BY startDate
+
+	</select>
+
+	<!-- 查询单个分组统计后的节假日信息 -->
+	<select id="getStaticsInfo" parameterClass="Map" resultMap="info-result" >
+		SELECT  T.Day_Flag AS dayflag, 
+				T.GROUPNAME AS groupname, 
+				T.DAY_NAME AS day_name,
+		 	   TO_CHAR(MIN(T.HOLIWORKDAY),'yyyy-MM-dd') AS startDate,
+         	   TO_CHAR(MAX(T.HOLIWORKDAY),'yyyy-MM-dd') AS endDate
+		  FROM CLW_UB_HOLI_WORKDAY_T T
+		 WHERE T.groupname = #groupname#
+	  GROUP BY  T.Day_Flag, T.DAY_NAME, T.GROUPNAME
+		
+	</select>
+	
+	<!-- 更新信息删除状态 -->
+	<update id="updateDelStatus" parameterClass="Map">
+	    UPDATE CLW_UB_HOLI_WORKDAY_T T
+   		   SET T.DELETE_FLAG = 1
+ 		<!--  WHERE T.DAY_NAME=#day_flag#
+   	       AND TO_CHAR(T.YEAR_SELECT, 'yyyy')=#year_select# --> 
+   	    WHERE T.GROUPNAME=#groupname#
+	</update>
+	
+	<!-- 通过 日期集合 查询是否其中有存在有效记录【不修改名称则需要另传修改的参数】 -->
+	<select id="verifyDateIsExist" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+	  	  FROM CLW_UB_HOLI_WORKDAY_T T  
+    	 WHERE T.DELETE_FLAG = 0
+    	  <isNotEmpty prepend="AND" property="groupname">
+               T.GROUPNAME != #groupname#
+         </isNotEmpty>
+           AND TO_CHAR(T.HOLIWORKDAY, 'yyyy-MM-dd') IN(
+        <dynamic>  
+            <iterate property="holiworkdays" conjunction=",">  
+                #holiworkdays[]#  
+            </iterate>  
+        </dynamic>
+        
+        )
+	</select>
+
+	<!-- 验证名称和选择年是否已存在 废弃，不验证名称是否重名-->
+	<select id="verifyNameAndYear" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+	  	  FROM CLW_UB_HOLI_WORKDAY_T T  
+    	 WHERE T.DELETE_FLAG = 0
+           AND T.DAY_NAME = #day_name#
+           AND TO_CHAR(T.YEAR_SELECT, 'yyyy-MM-dd')=#year_select#
+        )
+	</select>
+	
+	<insert id="insertDayInfo" parameterClass="Map">
+		insert all
+		<iterate conjunction=" " property="holiworkdays"> 
+  		INTO CLW_UB_HOLI_WORKDAY_T(
+  		DAY_ID,
+  		GROUPNAME,
+  		DAY_NAME,
+  		HOLIWORKDAY,
+  		DAY_FLAG,
+  		YEAR_SELECT,
+  		DELETE_FLAG,
+  		OPERATOR,
+  		OPERATE_TIME)
+		VALUES(
+            #holiworkdays[].day_id#,
+            #holiworkdays[].groupname#,
+            #holiworkdays[].day_name#,
+            TO_DATE(#holiworkdays[].holiworkday#,'yyyy-mm-dd'),
+            #holiworkdays[].dayflag#, 
+            TO_DATE(#holiworkdays[].year_select#,'yyyy-mm-dd'),
+            #holiworkdays[].deleteflag#,
+            #holiworkdays[].operator#,
+            TO_DATE(#holiworkdays[].operate_time#,'yyyy-mm-dd hh24:mi:ss')
+            )    
+		</iterate> 
+		select * from dual
+	</insert>
+
+</sqlMap>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="false"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<!-- 注意：该配置文件用于配置所有依赖于spring事务来管理和完成数据库操作的业务场景 -->
+	<bean id="transDataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${database.driver}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+		
+		<!-- <property name="connectionProperties" value="oracle.jdbc.ReadTimeout=6000" /> -->
+		<property name="initialSize" value="${database.trans.initialSize}" />
+		<property name="maxActive" value="${database.trans.MaximumActiveConnections}" />
+		<property name="maxIdle" value="${database.trans.MaximumIdleConnections}" />
+		<property name="minIdle" value="${database.trans.MinimumIdleConnections}" />
+		<property name="maxWait" value="${database.trans.MaxWait}" />
+		<property name="validationQuery" value="select 1 from dual" />
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="${database.RemoveAbandonedTimeout}" />
+		<property name="logAbandoned" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="${database.TimeBetweenEvictionRunsMillis}" />
+		<property name="numTestsPerEvictionRun" value="${database.NumTestsPerEvictionRun}" />
+		<property name="minEvictableIdleTimeMillis" value="${database.MinEvictableIdleTimeMillis}" />
+
+		<!-- 自动提交关闭。注意：在该种情况下，一定要配置spring事务 -->
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="transDataSource" />
+		</property>
+	</bean>
+	<bean id="baseServiceProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="select*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- DAO配置-->
+	<bean id="transJdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="transDataSource" />
+		</property>
+	</bean>
+	<bean id="transAbstractDaoManager"
+		class="com.neusoft.tag.dao.support.AbstractDaoManager"
+		abstract="true">
+		<property name="jdbcTemplate">
+			<ref bean="transJdbcTemplate" />
+		</property>
+	</bean>
+
+	<!-- 服务类配置 -->
+	<bean id="transactionDaoServersProxy" parent="baseServiceProxy">
+		<property name="target">
+			<ref local="transactionDaoServers" />
+		</property>
+	</bean>
+
+	<bean id="transactionDaoServers"
+		class="com.neusoft.clw.vncs.dao.impl.TransactionDaoServers">
+		<property name="transactionDao" ref="transactionDao" />
+		<property name="terminalDAO" ref="terminalDAO"></property>
+	</bean>
+
+	<bean id="transactionDao"
+		class="com.neusoft.clw.vncs.dao.impl.TransactionDao" scope="singleton"
+		parent="transAbstractDaoManager">
+	</bean>
+
+</beans>

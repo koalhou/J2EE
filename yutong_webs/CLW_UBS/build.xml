@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CLW_UBS" basedir="." default="dist">
+	<!-- 编译并生成war包 -->
+	<property name="build.dir" value="./build" />
+	<property name="src.dir" value="src/java" />
+	<property name="resource.dir" value="src/resources" />
+	<property name="webRoot.dir" value="WebContent" />
+	<property name="web-inf.dir" value="./WEB-INF" />
+	<property name="classes.dir" value="./WEB-INF/classes" />
+	<property name="lib.runtime" location="${webRoot.dir}/WEB-INF/lib" />
+
+	<path id="classpath">
+		<fileset dir="${lib.runtime}">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement path="${classes.dir}" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/${web-inf.dir}" />
+		<mkdir dir="${build.dir}/${classes.dir}" />
+	</target>
+
+	<target name="compile">
+		<javac encoding="utf-8" debug="on" srcdir="${src.dir}"
+			destdir="${build.dir}/${classes.dir}" classpathref="classpath" />
+		<copy todir="${build.dir}/${classes.dir}">
+			<fileset dir="${resource.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<copy file="${resource.dir}/log4j-hudson.properties" tofile="${build.dir}/${classes.dir}/log4j.properties" overwrite="true" />
+		<copy file="${resource.dir}/conf/jdbc/jdbc-hudson.properties" tofile="${build.dir}/${classes.dir}/conf/jdbc/jdbc.properties" overwrite="true" />
+		<copy todir="${build.dir}">
+			<fileset dir="${webRoot.dir}">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="main" depends="clean,init,compile" />
+	<target name="dist" depends="main" description="">
+		<war destfile="${build.dir}/${ant.project.name}.war"
+			basedir="${build.dir}" webxml="${build.dir}/${web-inf.dir}/web.xml" />
+	</target>
+	
+	<!-- 发布war到远程服务器上 -->
+	<property name="tomcat.url" value="http://10.10.125.94:28080/manager/html" />
+	<property name="tomcat.username" value="tomcat" />
+	<property name="tomcat.password" value="tomcat" />
+	<property name="tomcat.ant.jar" value="/export/home/lwlk/ant/apache-ant-1.8.4/lib/catalina-ant.jar" />
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask">
+        <classpath>
+            <path location="${tomcat.ant.jar}" />
+        </classpath>
+	</taskdef>
+
+    <taskdef name="list" classname="org.apache.catalina.ant.ListTask">
+	    <classpath>
+	        <path location="${tomcat.ant.jar}" />
+	    </classpath>
+    </taskdef>
+
+    <target name="deploy-web" description="Install application in Local Tomcat">
+        <echo message="deploying to web ..." />
+        <deploy url="${tomcat.url}" username="${tomcat.username}" password="${tomcat.password}" path="/${ant.project.name}" 
+        	war="${build.dir}/${ant.project.name}.war" update="true" />
+    </target>
+
+    <target name="list-web">
+        <echo message="list web tomcat ..." />
+        <list url="${tomcat.url}" username="${tomcat.username}" password="${tomcat.password}" />
+    </target>
+	
+	<!-- sonar检查代码规范 -->	
+	<target name="sonar" description="Sonar code Analysis"> 	       
+	     <!-- list of mandatories Sonar properties -->
+	     <property name="sonar.host.url" value="http://10.10.124.74:9000/"/> 
+	     <property name="sonar.sources" value="${src.dir}"/> 
+		 <property name="sonar.sourceEncoding" value="UTF-8"/>
+	     <property name="sonar.jdbc.url" value="jdbc:oracle:thin:@10.10.124.120/orcl"/> 
+	     <property name="sonar.jdbc.driver" value="oracle.jdbc.OracleDriver"/> 
+	     <property name="sonar.jdbc.username" value="sonar1"/> 
+	     <property name="sonar.jdbc.password" value="sonar1"/> 
+	     <sonar:sonar key="automation workshop xcm" xmlns:sonar="antlib:org.sonar.ant" version="1.3"/>
+	</target>
+</project>

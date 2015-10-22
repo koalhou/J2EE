@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="VehicleCheckManage">
+<typeAlias alias="searchVO" type="com.neusoft.clw.check.domain.VehicleCheckSearch"/>
+<typeAlias alias="AlarmEntity" type="com.neusoft.clw.check.domain.AlarmEntity"/>
+<!-- 公车私用巡检查询列表 -->
+ <select id="getVehicleCheckList" parameterClass="searchVO" resultClass="AlarmEntity">
+    select * from (
+ 	select a.alarm_id,
+ 		   a.vehicle_vin,
+ 		   b.vehicle_code,
+	       b.vehicle_ln,
+	       c.driver_name,
+	       c.driver_tel,
+	       a.effect_time,
+	       to_char(a.alarm_time,'yyyy-mm-dd hh24:mi:ss') alarm_time,
+	       to_char(a.alarm_end_time,'yyyy-mm-dd hh24:mi:ss') alarm_end_time,
+	       case when a.alarm_end_time is null or a.alarm_time is null then 0
+	            else round((a.alarm_end_time - a.alarm_time)*24*60)
+		   end use_time,
+	       a.mileage,
+	       a.deal_flag,
+	       a.operate_type,
+	       a.opeerate_desc,
+	       d.user_name,
+	       to_char(a.confirm_time,'yyyy-mm-dd') confirm_time
+	  from clw_yw_alerm_record_t a,
+	       (
+         select t1.vehicle_vin,
+                t1.vehicle_code,
+                t1.vehicle_ln,
+                t1.organization_id
+           from clw_cl_base_info_t t1
+          where t1.vehicle_code !='外租'
+           )  b,
+	       clw_yw_driver_t c,
+	       clw_jc_user_t d
+	 where a.vehicle_vin=b.vehicle_vin
+	   and a.driver_id=c.driver_id(+)
+	   and a.user_id=d.user_id(+)
+	   and a.alarm_type_id='199'
+   <dynamic>
+   <![CDATA[
+   		and a.mileage >= 1
+   ]]>
+   <isNotEmpty property="organization_id">
+   <![CDATA[
+   		
+   	   and b.organization_id in 
+   	   (SELECT ENTERPRISE_ID  
+   	      FROM CLW_JC_ENTERPRISE_T 
+   	     WHERE VALID_FLAG = '0'
+           AND LEFT_NUM  >= (SELECT LEFT_NUM FROM CLW_JC_ENTERPRISE_T  WHERE ENTERPRISE_ID = #organization_id#)
+           AND RIGHT_NUM <= (SELECT RIGHT_NUM FROM CLW_JC_ENTERPRISE_T WHERE ENTERPRISE_ID = #organization_id#))
+    ]]>
+   	</isNotEmpty>
+   	<isNotEmpty property="vehicle_code">
+   	   and b.vehicle_code like '%$vehicle_code$%'
+   	</isNotEmpty>
+   	<isNotEmpty property="beginTime">
+   	<![CDATA[
+   	   and trunc(a.alarm_time) >= to_date(#beginTime#,'yyyy-mm-dd')
+   	]]>
+   	</isNotEmpty>
+   	<isNotEmpty property="endTime">
+   	<![CDATA[
+	   and trunc(a.alarm_end_time) <= to_date(#endTime#,'yyyy-mm-dd')
+	]]>
+   	</isNotEmpty>
+   	<isNotEmpty property="operate_state">
+	   and a.deal_flag=#operate_state#
+   	</isNotEmpty>
+   	<isNotEmpty property="operate_type">
+	   and a.operate_type=#operate_type#
+   	</isNotEmpty>
+   	<isNotEmpty property="vins">
+	   and a.vehicle_vin in ($vins$)
+   	</isNotEmpty>
+   	   ) 
+   	 <isNotEmpty property="sortName">
+	   order by $sortName$ $sortOrder$
+   	</isNotEmpty>
+   	<isEmpty property="sortName">
+	   order by alarm_time desc
+   	</isEmpty>
+   </dynamic>
+ </select>
+ <select id="getVehicleCheckCount" parameterClass="searchVO" resultClass="int">
+ 	select count(a.alarm_id)
+	  from clw_yw_alerm_record_t a,
+	       clw_cl_base_info_t  b,
+	       clw_yw_driver_t c,
+	       clw_jc_user_t d
+	 where a.vehicle_vin=b.vehicle_vin
+	   and a.driver_id=c.driver_id(+)
+	   and a.user_id=d.user_id(+)
+	   and b.vehicle_code != '外租'
+	   and a.alarm_type_id='199'
+   <dynamic>
+   	  <![CDATA[
+   		and a.mileage >= 1
+   	  ]]>
+   <isNotEmpty property="organization_id">
+   <![CDATA[
+   	   and b.organization_id in 
+   	   (SELECT ENTERPRISE_ID  
+   	      FROM CLW_JC_ENTERPRISE_T 
+   	     WHERE VALID_FLAG = '0'
+           AND LEFT_NUM  >= (SELECT LEFT_NUM FROM CLW_JC_ENTERPRISE_T  WHERE ENTERPRISE_ID = #organization_id#)
+           AND RIGHT_NUM <= (SELECT RIGHT_NUM FROM CLW_JC_ENTERPRISE_T WHERE ENTERPRISE_ID = #organization_id#))
+    ]]>
+   	</isNotEmpty>
+   	<isNotEmpty property="vehicle_code">
+   	   and b.vehicle_code like '%$vehicle_code$%'
+   	</isNotEmpty>
+   	<isNotEmpty property="beginTime">
+   	<![CDATA[
+   	   and trunc(a.alarm_time) >= to_date(#beginTime#,'yyyy-mm-dd')
+   	]]>
+   	</isNotEmpty>
+   	<isNotEmpty property="endTime">
+   	<![CDATA[
+	   and trunc(a.alarm_end_time) <= to_date(#endTime#,'yyyy-mm-dd')
+	]]>
+   	</isNotEmpty>
+   	<isNotEmpty property="operate_state">
+	   and a.deal_flag=#operate_state#
+   	</isNotEmpty>
+   	<isNotEmpty property="operate_type">
+	   and a.operate_type=#operate_type#
+   	</isNotEmpty>
+   	<isNotEmpty property="vins">
+	   and a.vehicle_vin in ($vins$)
+   	</isNotEmpty>
+   </dynamic>
+ </select>
+ <!-- 根据Id查询一条告警信息 -->
+ <select id="getAlarmById" parameterClass="string" resultClass="AlarmEntity">
+ 	select a.alarm_id,
+ 		   a.vehicle_vin,
+	       to_char(a.alarm_time,'yyyy-mm-dd hh24:mi:ss') alarm_time,
+	       to_char(a.alarm_end_time,'yyyy-mm-dd hh24:mi:ss') alarm_end_time,
+	       case when a.alarm_end_time is null or a.alarm_time is null then 0
+	            else round((a.alarm_end_time - a.alarm_time)*24*60)
+		   end use_time,
+	       a.mileage,
+	       a.deal_flag,
+	       a.operate_type,
+	       a.opeerate_desc,
+	       to_char(a.confirm_time,'yyyy-mm-dd') confirm_time
+	  from clw_yw_alerm_record_t a
+	 where a.alarm_id=#id#
+ </select>
+ <!-- 告警处理 -->
+ <update id="updateAlarm" parameterClass="AlarmEntity">
+ 	update clw_yw_alerm_record_t t
+	   set t.opeerate_desc=#opeerate_desc#,
+	       t.operate_type=#operate_type#,
+	       t.deal_flag=#deal_flag#,
+	       t.confirm_time=to_date(#confirm_time#,'yyyy-mm-dd hh24:mi:ss'),
+	       t.user_id=#user_id#
+	 where t.alarm_id in ($ids$)
+ </update>
+</sqlMap>

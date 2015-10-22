@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 终端管理 -->
+	<package name="zd" namespace="/zd" extends="clw-default">
+		<!-- 终端厂家管理 -->
+		<!-- 初始化 -->
+		<action name="oemmanage" class="oemManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/oemManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/oemManage.jsp
+			</result>
+		</action>
+		<!-- 查询厂家信息 -->
+		<action name="queryOem" class="oemManageAction" method="queryOem">
+			<result name="success">
+				/WEB-INF/jsp/zd/oemManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/oemManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端厂家信息初始化 -->
+		<action name="addOemBefore" class="oemManageAction" method="addOemBefore">
+			<result name="success">
+				/WEB-INF/jsp/zd/oemInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/oemManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端厂家信息 -->
+		<action name="addOem" class="oemManageAction" method="addOem">
+			<result name="input">
+				/WEB-INF/jsp/zd/oemInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">oemmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addOemBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询终端厂家信息 -->
+		<action name="queryOemInfo" class="oemManageAction" method="queryOemInfo">
+			<result name="success">
+				/WEB-INF/jsp/zd/oemEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">oemmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端厂家信息更新 -->
+		<action name="updateOem" class="oemManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">oemmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryOemInfo</param>
+				<param name="message">${message}</param>
+				<param name="oemId">${oemId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端厂家信息删除 -->
+		<action name="deleteOem" class="oemManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">oemmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryOemInfo</param>
+				<param name="message">${message}</param>
+				<param name="oemId">${oemId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 终端型号管理 -->
+		<action name="devicemanage" class="deviceManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/deviceManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/deviceManage.jsp
+			</result>
+		</action>
+		<!-- 查询终端型号信息 -->
+		<action name="queryDevice" class="deviceManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/deviceManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/deviceManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端型号信息初始化 -->
+		<action name="addDeviceBefore" class="deviceManageAction" method="addDeviceBefore">
+			<result name="success">
+				/WEB-INF/jsp/zd/deviceInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/deviceManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端型号信息 -->
+		<action name="addDevice" class="deviceManageAction" method="addDevice">
+			<result name="input">
+				/WEB-INF/jsp/zd/deviceInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">devicemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addDeviceBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询终端型号信息 -->
+		<action name="queryDeviceInfo" class="deviceManageAction" method="queryDeviceInfo">
+			<result name="success">
+				/WEB-INF/jsp/zd/deviceEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">devicemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端型号信息更新 -->
+		<action name="updateDevice" class="deviceManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">devicemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryDeviceInfo</param>
+				<param name="message">${message}</param>
+				<param name="typeId">${typeId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端型号信息删除 -->
+		<action name="deleteDevice" class="deviceManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">devicemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryDeviceInfo</param>
+				<param name="message">${message}</param>
+				<param name="typeId">${typeId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 终端协议管理 -->
+		<!-- 初始化 -->
+		<action name="protocalmanage" class="protocalManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/protocalManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/protocalManage.jsp
+			</result>
+		</action>
+		<!-- 查询终端协议信息 -->
+		<action name="queryprotocal" class="protocalManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/protocalManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/protocalManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端协议信息初始化 -->
+		<action name="addProtocalBefore" class="protocalManageAction" method="addProtocalBefore">
+			<result name="success">
+				/WEB-INF/jsp/zd/protocalInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/protocalManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端协议信息 -->
+		<action name="addProtocal" class="protocalManageAction" method="addProtocal">
+			<result name="input">
+				/WEB-INF/jsp/zd/protocalInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">protocalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addProtocalBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询终端协议信息 -->
+		<action name="queryProtocalInfo" class="protocalManageAction" method="queryProtocalInfo">
+			<result name="success">
+				/WEB-INF/jsp/zd/protocalEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">protocalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端协议信息更新 -->
+		<action name="updateProtocal" class="protocalManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">protocalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryProtocalInfo</param>
+				<param name="message">${message}</param>
+				<param name="protocalId">${protocalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端协议信息删除 -->
+		<action name="deleteProtocal" class="protocalManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">protocalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryProtocalInfo</param>
+				<param name="message">${message}</param>
+				<param name="protocalId">${protocalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 终端管理 -->
+		<!-- 初始化 -->
+		<action name="terminalmanage" class="terminalManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalManage.jsp
+			</result>
+		</action>
+		<!-- 查询终端信息 -->
+		<action name="queryterminal" class="terminalManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalManage.jsp
+			</result>
+		</action>
+		<!-- 新建终端信息初始化 -->
+		<action name="addTerminalBefore" class="terminalManageAction" method="addTerminalBefore">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+		</action>
+		<!-- 新建通道 -->
+		<action name="addChannel" class="terminalManageAction" method="addChannel">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+		</action>
+		<!-- 删除通道 -->
+		<action name="deleteChannel" class="terminalManageAction" method="deleteChannel">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+		</action>
+		<!-- 新建终端信息 -->
+		<action name="addTerminal" class="terminalManageAction" method="addTerminal">
+			<result name="input">
+				/WEB-INF/jsp/zd/terminalInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">terminalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addTerminalBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询终端信息 -->
+		<action name="queryTerminalInfo" class="terminalManageAction" method="queryTerminalInfo">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">terminalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 新建通道 -->
+		<action name="addEditChannel" class="terminalManageAction" method="addChannel">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalEdit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalEdit.jsp
+			</result>
+		</action>
+		<!-- 删除通道 -->
+		<action name="deleteEditChannel" class="terminalManageAction" method="deleteChannel">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalEdit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalEdit.jsp
+			</result>
+		</action>
+		
+		<!-- 终端信息更新 -->
+		<action name="updateTerminal" class="terminalManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">terminalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryTerminalInfo</param>
+				<param name="message">${message}</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 终端信息删除 -->
+		<action name="deleteTerminal" class="terminalManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">terminalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryTerminalInfo</param>
+				<param name="message">${message}</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="terminalOldCode">${terminalOldCode}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导入终端信息初始化 -->
+		<action name="importTerminalBefore" class="terminalManageAction" method="importTerminalBefore">
+			<result name="success">
+				/WEB-INF/jsp/zd/terminalImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalManage.jsp
+			</result>
+		</action>
+		<!-- 导入终端信息 -->
+		<action name="importTerminal" class="terminalManageAction" method="importTerminal">
+			<result name="input">
+				/WEB-INF/jsp/zd/terminalImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">terminalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zd/terminalImport.jsp
+			</result>
+		</action>
+		<!-- 导出终端信息 -->
+		<action name="exportTerminal" class="terminalManageAction" method="exportTerminal">
+			<result name="error" type="redirect-action">
+				<param name="actionName">terminalmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

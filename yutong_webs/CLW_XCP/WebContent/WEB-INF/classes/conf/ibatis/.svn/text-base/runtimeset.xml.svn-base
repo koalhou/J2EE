@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    <!-- 数据挖掘新__运行时段设置 -->
+<sqlMap namespace="runtimeset">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="runTimeSet"
+		type="com.neusoft.clw.sysmanage.datamanage.runtimeset.domain.RunTimeSet" />
+
+	<resultMap id="timeset-result" class="runTimeSet">
+		<result property="runId" column="id" />
+		<result property="enterpriseId" column="enterprise_id" />
+		<result property="goTimeRange" column="goTimeRange" />
+		<result property="backTimeRange" column="backTimeRange" />
+		<result property="goStartTime" column="go_start_date" />
+		<result property="goEndTime" column="go_end_date" />
+		<result property="backStartTime" column="back_start_date" />
+		<result property="backEndTime" column="back_end_date" />
+	</resultMap>
+	<!-- 运行时段设置查询 -->
+	<select id="findRunTimeSetList" parameterClass="Map" resultMap="timeset-result">
+		 select t.id,t.enterprise_id,t.go_start_date||'--'||t.go_end_date goTimeRange,
+		 t.back_start_date||'--'||t.back_end_date backTimeRange,
+        t.go_start_date,t.go_end_date,t.back_start_date,t.back_end_date
+  			from clw_yw_runtime_t t
+        	where 1=1 and t.enterprise_id=#enterpriseId#
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	
+	<select id="findRunTimeSetListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		 select t.id,t.enterprise_id,t.go_start_date||'--'||t.go_end_date goTimeRange,t.back_start_date||'--'||t.back_end_date backTimeRange,
+        t.go_start_date,t.go_end_date,t.back_start_date,t.back_end_date,t.enterprise_id
+  		from clw_yw_runtime_t t
+  		where 1=1 and t.enterprise_id=#enterpriseId#
+  		)
+	</select>
+	
+	<resultMap id="singSet-result" class="runTimeSet">
+		<result property="runId" column="id" />
+		<result property="enterpriseId" column="enterprise_id" />
+		<result property="goStartTime" column="go_start_date" />
+		<result property="goEndTime" column="go_end_date" />
+		<result property="backStartTime" column="back_start_date" />
+		<result property="backEndTime" column="back_end_date" />
+	</resultMap>
+	<select id="findSetSign" parameterClass="String" resultMap="singSet-result">
+		select t.id,t.enterprise_id,t.go_start_date,t.go_end_date,t.back_start_date,t.back_end_date from CLW_YW_RUNTIME_T t 
+ 		where 1=1 and t.id=#runId#
+	</select>	 
+	
+	<insert id="addRunTimeSet" parameterClass="runTimeSet">
+		insert into CLW_YW_RUNTIME_T 
+		(id,enterprise_id,go_start_date,go_end_date,back_start_date,back_end_date,create_by,create_time,valid_flag)
+		values 
+		(#runId#,#enterpriseId#,#goStartTime#,#goEndTime#,#backStartTime#,#backEndTime#,#createBy#,sysdate,'0')
+	</insert>
+	
+	<delete id="deleteID" parameterClass="String">
+		delete CLW_YW_RUNTIME_T where id=#runId#
+	</delete>
+	
+	
+	
+	<select id="findRangeCount" parameterClass="runTimeSet" resultClass="Integer">
+        select sum(a.cnt) from (
+         
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and 
+			   to_date(go_start_date,'hh24:mi:ss')<=to_date(#goStartTime#,'hh24:mi:ss') and to_date(go_end_date,'hh24:mi:ss')>=to_date(#goStartTime#,'hh24:mi:ss')
+			    ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			union 
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and
+			   to_date(back_start_date,'hh24:mi:ss')<=to_date(#goStartTime#,'hh24:mi:ss') and to_date(back_end_date,'hh24:mi:ss')>=to_date(#goStartTime#,'hh24:mi:ss')
+			   ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			 union
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and
+			   to_date(go_start_date,'hh24:mi:ss')<=to_date(#goEndTime#,'hh24:mi:ss') and to_date(go_end_date,'hh24:mi:ss')>=to_date(#goEndTime#,'hh24:mi:ss')
+			   ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			union 
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and
+			   to_date(back_start_date,'hh24:mi:ss')<=to_date(#goEndTime#,'hh24:mi:ss') and to_date(back_end_date,'hh24:mi:ss')>=to_date(#goEndTime#,'hh24:mi:ss')
+			   ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			union 
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and    
+			   to_date(go_start_date,'hh24:mi:ss')<=to_date(#backStartTime#,'hh24:mi:ss') and to_date(go_end_date,'hh24:mi:ss')>=to_date(#backStartTime#,'hh24:mi:ss')
+			   ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			union 
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and 
+			to_date(back_start_date,'hh24:mi:ss')<=to_date(#backStartTime#,'hh24:mi:ss') and to_date(back_end_date,'hh24:mi:ss')>=to_date(#backStartTime#,'hh24:mi:ss')
+			]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			 union 
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and 
+			   to_date(go_start_date,'hh24:mi:ss')<=to_date(#backEndTime#,'hh24:mi:ss') and to_date(go_end_date,'hh24:mi:ss')>=to_date(#backEndTime#,'hh24:mi:ss')
+			   ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			 union 
+			select count(1) cnt
+			  from clw_yw_runtime_t
+			 where 1 = 1
+			   <![CDATA[ and    
+			  to_date(back_start_date,'hh24:mi:ss')<=to_date(#backEndTime#,'hh24:mi:ss') and to_date(back_end_date,'hh24:mi:ss')>=to_date(#backEndTime#,'hh24:mi:ss')
+			  ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			   
+			   
+			   
+			   
+			   
+			   union 
+			   select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[and to_date(#goStartTime#, 'hh24:mi:ss') <=
+                 to_date(go_start_date, 'hh24:mi:ss')
+             and to_date(#goEndTime#, 'hh24:mi:ss') >=
+                 to_date(go_start_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+            union
+           select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#goStartTime#, 'hh24:mi:ss') <=
+                 to_date(go_end_date, 'hh24:mi:ss')
+             and to_date(#goEndTime#, 'hh24:mi:ss') >=
+                 to_date(go_end_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+            union 
+            select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#goStartTime#, 'hh24:mi:ss') <=
+                 to_date(back_start_date, 'hh24:mi:ss')
+             and to_date(#goEndTime#, 'hh24:mi:ss') >=
+                 to_date(back_start_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+            union 
+            select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#goStartTime#, 'hh24:mi:ss') <=
+                 to_date(back_end_date, 'hh24:mi:ss')
+             and to_date(#goEndTime#, 'hh24:mi:ss') >=
+                 to_date(back_end_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+             union 
+             select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#backStartTime#, 'hh24:mi:ss') <=
+                 to_date(go_end_date, 'hh24:mi:ss')
+             and to_date(#backEndTime#, 'hh24:mi:ss') >=
+                 to_date(go_end_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+            union
+           select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#backStartTime#, 'hh24:mi:ss') <=
+                 to_date(go_end_date, 'hh24:mi:ss')
+             and to_date(#backEndTime#, 'hh24:mi:ss') >=
+                 to_date(go_end_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+            union 
+            select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#backStartTime#, 'hh24:mi:ss') <=
+                 to_date(back_start_date, 'hh24:mi:ss')
+             and to_date(#backEndTime#, 'hh24:mi:ss') >=
+                 to_date(back_start_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+            union 
+            select count(1) cnt
+            from clw_yw_runtime_t
+           where 1 = 1
+             <![CDATA[ and to_date(#backStartTime#, 'hh24:mi:ss') <=
+                 to_date(back_end_date, 'hh24:mi:ss')
+             and to_date(#backEndTime#, 'hh24:mi:ss') >=
+                 to_date(back_end_date, 'hh24:mi:ss')
+                 ]]>
+			   and enterprise_id=#enterpriseId#
+			   <isNotEmpty property="runId">
+	           	   and id!=#runId#
+			   </isNotEmpty>
+			  ) a
+			 
+	</select>
+		
+</sqlMap>

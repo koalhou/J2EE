@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service
+END
+RemindService.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/RemindService.java
+END
+EtagService.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/EtagService.java
+END
+LogService.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/LogService.java
+END
+SessionService.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/SessionService.java
+END
+ResourceService.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/ResourceService.java
+END
+RuleService.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/RuleService.java
+END
+BaseService.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/BaseService.java
+END
+DistanceService.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/DistanceService.java
+END
+AccountService.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/service/AccountService.java
+END

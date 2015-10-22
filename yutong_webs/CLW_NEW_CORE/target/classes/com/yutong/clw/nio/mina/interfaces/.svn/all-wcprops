@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces
+END
+ActiveTest.class
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/ActiveTest.class
+END
+AbstractNioHandler$1.class
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/AbstractNioHandler$1.class
+END
+AbstractNioHandler$Adapter.class
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/AbstractNioHandler$Adapter.class
+END
+INioHandler.class
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/INioHandler.class
+END
+ActiveTest$ActiveTestTimerTask.class
+K 25
+svn:wc:ra_dav:version-url
+V 153
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/ActiveTest$ActiveTestTimerTask.class
+END
+AbstractNioHandler$Adapter$1.class
+K 25
+svn:wc:ra_dav:version-url
+V 151
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/AbstractNioHandler$Adapter$1.class
+END
+CommunicateService.class
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/CommunicateService.class
+END
+AbstractNioHandler.class
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/AbstractNioHandler.class
+END
+CommunicateServiceAbstract.class
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/nio/mina/interfaces/CommunicateServiceAbstract.class
+END

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+ 
+	
+	<!-- 系统环境action start-->
+ 	<package name="ubsystem" namespace="/ub/system" extends="clw-default">
+
+		<action name="ubsolution" class="ubSolutionAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/system/solution.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/system/solution.jsp 
+				</result>
+		</action>
+		
+		<action name="ubos" class="ubOSAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/system/os.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/system/os.jsp 
+				</result>
+		</action>
+		<action name="ubbrowser" class="ubBrowserAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/system/browser.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/system/browser.jsp 
+				</result>
+		</action>
+		<action name="ubflash" class="ubFlashAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/system/flash.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/system/flash.jsp 
+				</result>
+		</action>
+		<action name="ubzone" class="ubZoneAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/system/zone.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/system/zone.jsp 
+				</result>
+		</action>
+	</package>
+
+	<package name="ubsystemJson" namespace="/ubs" extends="json-default">
+		<!-- 分辨率统计 start -->
+		<action name="solutionPageList" class="ubSolutionAction"  method="getPageList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataPageMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataPageMap</param>
+           	</result>
+       </action>
+       
+       <action name="solutionList" class="ubSolutionAction"  method="getCharsList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataMap</param>
+           	</result>
+       </action>    
+       <!-- 分辨率统计 end -->
+       
+    	<!-- 操作系统统计 start -->
+		<action name="osPageList" class="ubOSAction"  method="getPageList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataPageMap</param>
+           </result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataPageMap</param>
+           	</result>
+       </action>
+       
+        <action name="osList" class="ubOSAction"  method="getCharsList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataMap</param>
+           </result>
+          <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataMap</param>
+           	</result>
+       </action>    
+   	   <!-- 操作系统统计 end --> 
+    
+     	<!-- 浏览器器版本统计 start -->
+		<action name="browserPageList" class="ubBrowserAction"  method="getPageList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataPageMap</param>
+           </result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataPageMap</param>
+           	</result>
+       </action>
+       
+        <action name="browserList" class="ubBrowserAction"  method="getCharsList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataMap</param>
+           </result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataMap</param>
+           	</result>
+       </action>    
+    	<!-- 浏览器器版本统计 end --> 
+    
+     	<!-- Flash统计 start -->
+		<action name="flashPageList" class="ubFlashAction"  method="getPageList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataPageMap</param>
+           </result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataPageMap</param>
+           	</result>
+       </action>
+       
+        <action name="flashList" class="ubFlashAction"  method="getCharsList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataMap</param>
+           </result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataMap</param>
+           	</result>
+       </action>   
+    	<!-- Flash统计 end --> 
+    
+     	<!-- Zone统计 start -->
+		<action name="zoneAreaList" class="ubZoneAction"  method="getAreaList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataAreaMap</param>
+           </result>
+          <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataAreaMap</param>
+           	</result>
+        </action>
+        
+        <action name="zoneProvinceList" class="ubZoneAction"  method="getProvinceList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">dataProvinceMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">dataProvinceMap</param>
+           	</result>
+       </action>
+   	   <!-- Zone统计 end --> 
+   		
+    </package> 
+ 
+
+	<!-- 系统环境action end-->
+	
+	 
+	
+</struts>

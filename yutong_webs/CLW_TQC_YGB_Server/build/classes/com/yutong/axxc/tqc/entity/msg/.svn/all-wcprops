@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg
+END
+TerminalViBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/TerminalViBean.java
+END
+DiaoduInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/DiaoduInfo.java
+END
+ResultSendPhoto.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/ResultSendPhoto.java
+END
+SendTtMsgResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/SendTtMsgResp.java
+END
+PicCommandInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/PicCommandInfo.java
+END
+ResultSendTtMsg.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/ResultSendTtMsg.java
+END
+PushMsgReceivedInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/PushMsgReceivedInfo.java
+END
+MsgMoldReq.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/MsgMoldReq.java
+END
+CoreMsgInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/CoreMsgInfo.java
+END
+MsgMoldResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/MsgMoldResp.java
+END
+FindMsgMoldResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/FindMsgMoldResp.java
+END
+SendPhotoResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/SendPhotoResp.java
+END
+MsgMoldInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/java/com/yutong/axxc/tqc/entity/msg/MsgMoldInfo.java
+END

@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 权限管理 -->
+	<package name="qx" namespace="/qx" extends="clw-default">
+		<!-- 企业管理 -->
+		<action name="entimanage" class="entiManageAction" method="loadDate">
+			<result name="success">
+				/WEB-INF/jsp/qx/entiManageTable.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/entiManageTable.jsp
+			</result>
+		</action>
+		<action name="entimanage_goto_add" class="entiManageAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/qx/entiManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/entiManageTable.jsp
+			</result>
+		</action>
+		<action name="entimanage_do_add" class="entiManageAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">entimanage_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="entimanage_goto_edit" class="entiManageAction" method="gotoedit">
+			<result name="success">
+				/WEB-INF/jsp/qx/entiManage_edit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/entiManage_edit.jsp
+			</result>
+		</action>
+		<action name="entimanage_do_edit" class="entiManageAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">entimanage_goto_edit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="entimanage_do_del" class="entiManageAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">entimanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="ajax_entiinfo" class="entiManageAction" method="ajax_entiinfo">
+			<result name="success">
+				/WEB-INF/jsp/qx/entiManageTable.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/entiManageTable.jsp
+			</result>
+		</action>
+		<!-- 角色管理 -->
+		<action name="rolemanage" class="roleManageAction" method="blankRoleManageAction">
+			<result name="success">
+				/WEB-INF/jsp/qx/roleManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/roleManage.jsp
+			</result>
+		</action>
+		<action name="rolemanage_goto_add" class="roleManageAction" method="gotoadd">
+			<result name="success">
+				/WEB-INF/jsp/qx/roleManage_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/roleManage_add.jsp
+			</result>
+		</action>
+		<action name="rolemanage_do_add" class="roleManageAction" method="doadd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">rolemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">rolemanage_goto_add</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="rolemanage_goto_info" class="roleManageAction" method="gotoinfo">
+			<result name="success">
+				/WEB-INF/jsp/qx/roleManage_info.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/roleManage_info.jsp
+			</result>
+		</action>
+		<action name="rolemanage_do_edit" class="roleManageAction" method="doedit">
+			<result name="success" type="redirect-action">
+				<param name="actionName">rolemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">rolemanage_goto_info</param>
+				<param name="message">${message}</param>
+				<param name="role_id">${role_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="rolemanage_do_del" class="roleManageAction" method="dodel">
+			<result name="success" type="redirect-action">
+				<param name="actionName">rolemanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">rolemanage_goto_info</param>
+				<param name="message">${message}</param>
+				<param name="role_id">${role_id}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 用户管理 -->
+		<action name="usermanage" class="userManageAction" method="blankUserManageAction">
+			<result name="success">
+				/WEB-INF/jsp/qx/userManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/userManage.jsp
+			</result>
+		</action>
+
+		<!-- 导出用户信息 -->
+		<action name="exportUserInfo" class="userManageAction" method="exportUserInfo">
+			<result name="error" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户查询 -->
+		<action name="queryuser" class="userManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/qx/userManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/userManage.jsp
+			</result>
+		</action>
+		<!-- 用户新建 -->
+		<action name="adduser" class="userManageAction" method="addUser">
+			<result name="success">
+				/WEB-INF/jsp/qx/userInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/userManage.jsp
+			</result>
+		</action>
+		<!-- 用户填加 -->
+		<action name="addexecute" class="userManageAction" method="add">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">adduser</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 用户详细 -->
+		<action name="userDetailQuery" class="userManageAction" method="queryByUserId">
+			<result name="success">
+				/WEB-INF/jsp/qx/userEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户更新 -->
+		<action name="userUpdate" class="userManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">userDetailQuery</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户删除 -->
+		<action name="userDelete" class="userManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">userDetailQuery</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 密码重置初始化 -->
+		<action name="resetPwdBefore" class="userManageAction" method="resetPwdBefore">
+			<result name="success">
+				/WEB-INF/jsp/qx/userPwdReset.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户启用 -->
+		<action name="userStartUse" class="userManageAction" method="userStartUse">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">userDetailQuery</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户禁用 -->
+		<action name="userForbid" class="userManageAction" method="userForbid">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">userDetailQuery</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 密码重置 -->
+		<action name="resetPwd" class="userManageAction" method="reset">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">resetPwdBefore</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户授权初始化 -->
+		<action name="authorizationBefore" class="userManageAction" method="authorizationBefore">
+			<result name="success">
+				/WEB-INF/jsp/qx/userAuthorization.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 用户授权 -->
+		<action name="doAuthorization" class="userManageAction" method="doAuthorization">
+			<result name="success" type="redirect-action">
+				<param name="actionName">usermanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">authorizationBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 修改密码 -->
+		<!-- 页面初始化 -->
+		<action name="modifypassword" class="modifyPasswordAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/qx/modifyPassword.jsp
+			</result>
+			<result name="input">
+				/WEB-INF/jsp/qx/modifyPassword.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/modifyPassword.jsp
+			</result>
+		</action>
+		<!-- 修改密码 -->
+		<action name="updateUserPassword" class="modifyPasswordAction" method="updateUserPassword">
+			<result name="success">
+				/WEB-INF/jsp/qx/modifyPassword.jsp
+			</result>
+			<result name="input">
+				/WEB-INF/jsp/qx/modifyPassword.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/qx/modifyPassword.jsp
+			</result>
+		</action>
+		
+	</package>
+	<package name="qxJson" namespace="/qxf" extends="json-default">
+		<action name="userManageList" class="userManageAction"  method="init">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">userMap</param>
+           </result>
+           <result name="error">
+				/WEB-INF/jsp/qx/userManage.jsp
+			</result>
+       </action>
+       <action name="roleMangeList" class="roleManageAction"  method="init">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">roleMap</param>
+           </result>
+           <result name="error">
+				/WEB-INF/jsp/qx/roleManage.jsp
+			</result>
+       </action>
+	</package>
+</struts>

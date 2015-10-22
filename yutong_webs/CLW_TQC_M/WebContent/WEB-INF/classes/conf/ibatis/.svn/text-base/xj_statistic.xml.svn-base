@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StatisticIbatis">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="StatisticInfo" type="com.neusoft.clw.yw.xj.statistic.ds.StatisticInfo" />
+	 
+	 <select id="getCount" parameterClass="Map" resultClass="Integer">
+SELECT COUNT(*)
+  FROM (SELECT t.apply_id,
+               t.module_id,
+               t.operate_type,
+               COUNT(t.module_id) AS count_num
+          FROM clw_jc_log_t t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="apply_id">
+			 	t.apply_id=#apply_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="time_begin">
+				t.operate_time<![CDATA[>=]]>TO_DATE(#time_begin#,'yyyy-mm-dd hh24:mi:ss')
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="time_end">
+				t.operate_time<![CDATA[<=]]>TO_DATE(#time_end#,'yyyy-mm-dd hh24:mi:ss')
+			</isNotEmpty>
+		</dynamic>
+         GROUP BY t.apply_id, t.module_id, t.operate_type) tt
+ 	</select>
+	
+	<resultMap id="data-result" class="StatisticInfo">
+		<result property="apply_id" column="APPLY_ID" />
+		<result property="module_id" column="MODULE_ID" />
+		<result property="module_name" column="MODULE_NAME" />
+		<result property="operate_type" column="OPERATE_TYPE" />
+		<result property="count_num" column="COUNT_NUM" />
+	</resultMap>
+	<select id="selectStatisticInfo"  parameterClass="Map" resultMap="data-result">
+	SELECT tt.apply_id,
+       tt.module_id,
+       show_module_names_fun(tt.module_id) AS module_name,
+       tt.operate_type,
+       tt.count_num
+	  FROM (SELECT t.apply_id,
+	               t.module_id,
+	               t.operate_type,
+	               COUNT(t.module_id) AS count_num
+	          FROM clw_jc_log_t t
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="apply_id">
+				t.apply_id=#apply_id#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="time_begin">
+				t.operate_time<![CDATA[>=]]>TO_DATE(#time_begin#,'yyyy-mm-dd hh24:mi:ss')
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="time_end">
+				t.operate_time<![CDATA[<=]]>TO_DATE(#time_end#,'yyyy-mm-dd hh24:mi:ss')
+			</isNotEmpty>
+		</dynamic>
+	         GROUP BY t.apply_id, t.module_id, t.operate_type) tt
+	 ORDER BY tt.apply_id, tt.module_id
+ 	</select>
+ 	
+ 	
+ 	
+ 	<select id="getCountLog" parameterClass="Map" resultClass="Integer">
+	 SELECT COUNT(1) FROM clw_jc_log_t t
+	 <dynamic prepend="WHERE">
+		 <isNotEmpty prepend="AND" property="apply_id">
+		 	t.apply_id=#apply_id#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="time_begin">
+		 	t.operate_time<![CDATA[>=]]>TO_DATE(#time_begin#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="time_end">
+		 	t.operate_time<![CDATA[<=]]>TO_DATE(#time_end#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+	 </dynamic>
+ 	</select>
+	
+	<resultMap id="data-result" class="StatisticInfo">
+		<result property="apply_id" column="APPLY_ID" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="operate_ip" column="OPERATE_IP" />
+		<result property="enterprise_name" column="ENTERPRISE_NAME" />
+		<result property="operate_time" column="OPERATE_TIME" />
+		<result property="operate_desc" column="OPERATE_DESC" />
+	</resultMap>
+	<select id="selectStatisticInfoLog"  parameterClass="Map" resultMap="data-result" fetchSize="50">
+		SELECT t.apply_id,
+		       t.user_name,
+		       t.operate_ip,
+		       t.enterprise_name,
+		       to_char(t.operate_time, 'yyyy-mm-dd hh24:mi:ss') AS operate_time,
+		       t.operate_desc
+		  FROM clw_jc_log_t t
+	  	<dynamic prepend="WHERE">
+		 <isNotEmpty prepend="AND" property="apply_id">
+		 	t.apply_id=#apply_id#
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="time_begin">
+		 	t.operate_time<![CDATA[>=]]>TO_DATE(#time_begin#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="time_end">
+		 	t.operate_time<![CDATA[<=]]>TO_DATE(#time_end#,'yyyy-mm-dd hh24:mi:ss')
+		 </isNotEmpty>
+	 	</dynamic>
+	 ORDER BY t.operate_time desc
+ 	</select>
+ 	
+ 	
+ </sqlMap>

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/exception/common
+END
+JacksonSerializeException.class
+K 25
+svn:wc:ra_dav:version-url
+V 160
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/exception/common/JacksonSerializeException.class
+END
+ApplicationException.class
+K 25
+svn:wc:ra_dav:version-url
+V 155
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/exception/common/ApplicationException.class
+END
+JacksonDeserializeException.class
+K 25
+svn:wc:ra_dav:version-url
+V 162
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/AnxinParents_Server/build/classes/com/yutong/axxc/parents/exception/common/JacksonDeserializeException.class
+END

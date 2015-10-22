@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 系统监控 -->
+	<package name="xj" namespace="/xj" extends="clw-default">
+		<!-- 访问统计 -->
+		<action name="statistic" class="statisticAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/statistic.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/statistic.jsp
+			</result>
+		</action>
+		<!-- 系统日志 -->
+		<action name="statistic_log" class="statisticAction" method="init_log">
+			<result name="success">
+				/WEB-INF/jsp/xj/statistic_log.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/statistic_log.jsp
+			</result>
+		</action>
+		
+		<!-- 导出SIM卡信息 -->
+		<action name="exportLog" class="statisticAction" method="exportLog">
+			<result name="error" type="redirect-action">
+				<param name="actionName">statistic_log</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 终端监控 -->
+		<!-- 实时监控初始化 -->
+		<action name="terminalmonitor" class="terminalMonitorAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalMonitor.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalMonitor.jsp
+			</result>
+		</action>
+		<!-- 查询终端信息 -->
+		<action name="queryTerminalMonitor" class="terminalMonitorAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalMonitor.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalMonitor.jsp
+			</result>
+		</action>
+		<!-- 查询终端参数详细 -->
+		<action name="queryTerminalParamsById" class="terminalMonitorAction" method="queryTerminalParamsById">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalMonitorInfo.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">terminalmonitor</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询终端参数(下发指令) -->
+		<action name="getTerminalParamsByCode" class="terminalMonitorAction" method="getTerminalParamsByCode">
+			<result name="success" type="redirect-action">
+				<param name="actionName">queryTerminalParamsById</param>
+				<param name="terminalCode">${terminalCode}</param>
+				<param name="vehicleVin">${vehicleVin}</param>
+				<param name="simCardNumber">${simCardNumber}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryTerminalParamsById</param>
+				<param name="terminalCode">${terminalCode}</param>
+				<param name="vehicleVin">${vehicleVin}</param>
+				<param name="simCardNumber">${simCardNumber}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+       <!--终端远程升级  -->
+		<action name="terminalRomoteUpdate" class="terminalRomoteUpdateAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalRomoteUpdate.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalRomoteUpdate.jsp
+			</result>
+		</action>
+		
+	    <!--终端远程升级  -->
+		<action name="terminalRomoteAdd" class="terminalRomoteUpdateAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalRomoteAdd.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalRomoteAdd.jsp
+			</result>
+		</action>
+		
+		<!--终端远程升级  -->
+		<action name="terminalRomoteInsert" class="terminalRomoteUpdateAction" method="insert">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalRomoteUpdate.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalRomoteUpdate.jsp
+			</result>
+		</action>
+		
+		<!-- 显示终端参数 -->
+		<action name="showTerminalParamsByCode" class="terminalMonitorAction" method="showTerminalParamsByCode">
+			<result name="success" type="redirect-action">
+				<param name="actionName">queryTerminalParamsById</param>
+				<param name="terminalCode">${terminalCode}</param>
+				<param name="vehicleVin">${vehicleVin}</param>
+				<param name="simCardNumber">${simCardNumber}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryTerminalParamsById</param>
+				<param name="terminalCode">${terminalCode}</param>
+				<param name="vehicleVin">${vehicleVin}</param>
+				<param name="simCardNumber">${simCardNumber}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 设置特征系数(下发指令) -->
+		<action name="setIndexPropertyByCode" class="terminalMonitorAction" method="setIndexPropertyByCode">
+			<result name="success" type="redirect-action">
+				<param name="actionName">queryTerminalParamsById</param>
+				<param name="terminalCode">${terminalCode}</param>
+				<param name="vehicleVin">${vehicleVin}</param>
+				<param name="simCardNumber">${simCardNumber}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryTerminalParamsById</param>
+				<param name="terminalCode">${terminalCode}</param>
+				<param name="vehicleVin">${vehicleVin}</param>
+				<param name="simCardNumber">${simCardNumber}</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 单终端监控初始化 -->
+		<action name="singleterminalmonitor" class="singleTerminalMonitorAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalMonitorSingle.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalMonitorSingle.jsp
+			</result>
+		</action>
+		<!-- 查询终端历史状态 -->
+		<action name="queryterminalstatus" class="singleTerminalMonitorAction" method="query">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalMonitorSingle.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalMonitorSingle.jsp
+			</result>
+		</action>
+		
+		<!-- 终端未鉴权信息 -->
+		<!-- 未鉴权信息初始化 -->
+		<action name="terminalauthentication" class="terminalAuthenticationAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalAuthentication.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalAuthentication.jsp
+			</result>
+		</action>
+		<!-- 查询终端未鉴权信息 -->
+		<action name="queryTerminalAuthentication" class="terminalAuthenticationAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalAuthentication.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalAuthentication.jsp
+			</result>
+		</action>
+		<!-- 查询终端未鉴权详细 -->
+		<action name="queryAuthenticationById" class="terminalAuthenticationAction" method="queryAuthenticationById">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalAuthenticationInfo.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">terminalauthentication</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 删除终端未鉴权信息 -->
+		<action name="deleteAuthentication" class="terminalAuthenticationAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">terminalauthentication</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryAuthenticationById</param>
+				<param name="message">${message}</param>
+				<param name="terminalAnthenticationId">${terminalAnthenticationId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 运营报表分析(new) start -->
+		<!-- 统计 -->
+		<action name="operatingTotal" class="operatingReportAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/operatingTotal.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/operatingTotal.jsp
+			</result>
+		</action>
+		<!-- 不正常车辆查询 -->
+		<action name="queryUnnormalVehicle" class="operatingReportAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/operatingUnnormalCars.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">operatingTotal</param>
+			</result>
+		</action>
+		<!-- 运营报表分析(new) end -->
+		
+		<!-- 浏览运营报表分析 -->
+		<action name="operationsReport" class="operationsAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/operationsReport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/operationsReport.jsp
+			</result>
+		</action>
+		<action name="operationsReportSearch" class="operationsAction" method="init_search">
+			<result name="success">
+				/WEB-INF/jsp/xj/operationsReport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/operationsReport.jsp
+			</result>
+		</action>
+		<!-- 点击企业编码进入二级报表 -->
+		<action name="enterReportInfo" class="operationsAction" method="queryReportInfo">
+			<result name="success">
+				/WEB-INF/jsp/xj/oprationsReportSecond.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">operationsReport</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<action name="openChartReport" class="operationsAction" method="openBankChartReport">
+			<result name="success">
+				/WEB-INF/jsp/xj/oprationsChartReport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/oprationsChartReport.jsp
+			</result>
+		</action>
+		<!-- 导出运营报表分析 -->
+		<action name="exportFirstReport" class="operationsAction" method="exportFirstReport">
+			<result name="error" type="redirect-action">
+				<param name="actionName">operationsReport</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导出运营报表分析子报表 -->
+		<action name="exportSecondReport" class="operationsAction" method="exportSecondReport">
+			<result name="error" type="redirect-action">
+				<param name="actionName">operationsReport</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 行车记录查询 -->
+		<!-- 行车记录查询(页面初始化) -->
+		<action name="drivingrecords" class="drivingRecordsAction" method="execute">
+			<result name="error">/WEB-INF/jsp/xj/listdrivingrecords.jsp</result>
+			<result name="success">/WEB-INF/jsp/xj/listdrivingrecords.jsp</result>
+		</action>
+		
+		<action name="gpsbrowse" class="drivingRecordsAction" method="gpsBrowse">
+			<result name="success">
+				<param name="location">
+					/WEB-INF/jsp/xj/showposition.jsp
+				</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">gpsAction</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<!-- 行车记录查询(查询注册车辆列表) -->
+		<action name="vehListSearch" class="drivingRecordsAction" method="vehListSearch">
+			<result name="success">/WEB-INF/jsp/xj/listcar.jsp</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">drivingrecords</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>			
+		</action>
+		<!-- 行车记录查询(导出行车记录) -->
+		<action name="drivingRecords_export" class="drivingRecordsExport" method="exportRecords">
+			<result name="error" type="redirect-action">
+				<param name="actionName">drivingrecords</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 终端参数 -->
+		<!-- 注册终端查询初始化 -->
+		<action name="queryCurrentTerminal" class="terminalParamsAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalList.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/xj/terminalList.jsp
+			</result>
+		</action>
+		<!-- 终端参数信息显示/设置初始化 -->
+		<action name="queryCurrentTerminalParamsById" class="terminalParamsAction" method="queryTerminalParamsById">
+			<result name="success">
+				/WEB-INF/jsp/xj/terminalParams.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryCurrentTerminal</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 获取终端参数(下发指令) -->
+		<action name="getCurrentTerminalParams" class="terminalParamsAction" method="getCurrentTerminalParams">
+			<result name="success" type="redirect-action">
+				<param name="actionName">queryCurrentTerminalParamsById</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryCurrentTerminalParamsById</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+		<!-- 设置终端参数(下发指令) -->
+		<action name="setCurrentTerminalParams" class="terminalParamsAction" method="setCurrentTerminalParams">
+			<result name="success" type="redirect-action">
+				<param name="actionName">queryCurrentTerminalParamsById</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="currentPage">${currentPage}</param>
+				<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryCurrentTerminalParamsById</param>
+				<param name="terminalId">${terminalId}</param>
+				<param name="currentPage">${currentPage}</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="xjJson" namespace="/xjf" extends="json-default">
+		<!-- 查询统计信息 -->
+		<action name="getOperatingTotal" class="operatingReportAction" method="getOperatingTotal">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">operatingMap</param>
+           </result>
+           <result name="error" type="redirect-action">
+				<param name="actionName">operatingTotal</param>
+		   </result>
+       </action>
+       <!-- 查询不正常车辆 -->
+       <action name="queryUnnormalCars" class="operatingReportAction" method="queryUnnormalCars">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">unnormalCarsMap</param>
+           </result>
+           <result name="error" type="redirect-action">
+				<param name="actionName">operatingTotal</param>
+		   </result>
+       </action>
+       <!-- 查询行车记录信息 -->
+       <action name="gpsInfoList" class="drivingRecordsAction" method="gpsInfoList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <!-- 查询注册车辆信息 -->
+       <action name="vehList" class="drivingRecordsAction" method="vehList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">mapVeh</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">mapVeh</param>
+           </result>
+       </action>
+       <!-- 查询注册终端信息 -->
+       <action name="terminalList" class="terminalParamsAction" method="browseTerminals">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>     
+        <!-- 终端升级车辆信息 -->
+       <action name="vList" class="terminalRomoteUpdateAction" method="browseTerminals">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       <!-- 终端升级车辆信息2 -->
+        <action name="vList2" class="terminalRomoteUpdateAction" method="browseTerminals2">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       
+       <action name="romoteupdate" class="terminalRomoteUpdateAction" method="romoteupdate">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+	</package>
+</struts>

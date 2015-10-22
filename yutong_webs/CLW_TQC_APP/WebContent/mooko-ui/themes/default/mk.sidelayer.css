@@ -1,0 +1,110 @@
+/**
+ * start
+ * zhaoyong.neu
+ * 修复弹出框随滚动条移动问题，见bug：1061
+ */
+.mk-sidelayer {
+  display:block;
+  border:1px solid #999999;
+  position:absolute;
+  top:38px;
+  right:0px;
+  background:#eeeeee;
+  z-index: 1500;
+}
+/**
+ * 	end
+ */
+.mk-sidelayer .mk-sidelayer-toolbar{
+  height: 56px;
+  display:block;
+  background:url(./images/sidelayer_title.png) repeat-x;
+}
+
+.mk-sidelayer .mk-sidelayer-bar-btn{
+  height: 54px;
+  width: 21px;
+  display:block;
+  float:left;
+}
+.mk-sidelayer .show{
+  background: url(./images/sidelayer_right.png) no-repeat;
+}
+.mk-sidelayer h1.mk-sidelayer-bar-title{
+  font-size:18px;
+  color:#333333;
+  font-weight:normal;
+  float:left;
+  line-height:30px;
+  margin:12px 0px;
+  /* font-weight:bold; */
+}
+.mk-sidelayer ul{
+  float:right;
+  line-height:50px;
+  margin-top:5px;
+  /* margin-right:5px; */
+  list-style:none;
+}
+.mk-sidelayer ul li{
+  width:46px;
+  height:45px;
+  display:block;
+  float:left;
+  margin:0 0px;
+}
+.mk-sidelayer li.selected{
+  background: url(./images/sidelayer_btn_bg.png) no-repeat;
+}
+.mk-sidelayer li img{
+  margin:8px 0 0 8px;
+}
+/**
+ * start
+ * zhaoyong.neu
+ * 修复弹出框随滚动条移动问题，见bug：1061
+ */
+.mk-sidelayer-small {
+  display:block;
+  border:1px solid #999999;
+  position:absolute;
+  background:#eeeeee;
+  height: 56px;
+  display:block;
+  
+  
+}
+/*
+ * end
+ */
+.mk-sidelayer-small .show{
+  background: url(./images/sidelayer_left.png) no-repeat;
+}
+.mk-sidelayer-small h1{
+  font-size:18px;
+  color:#333333;
+  font-weight:normal;
+  float:left;
+  line-height:30px;
+  margin:12px 10px;
+}
+.mk-sidelayer-small .mk-sidelayer-bar-btn{
+  height: 54px;
+  width: 21px;
+  display:block;
+  float:left;
+}
+.mk-sidelayer-small .mk-sidelayer-bar-close{
+  float:right;
+  margin:20px 10px 0 0;
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: url(./images/sidelayer_close.png) no-repeat;
+  cursor: pointer;
+}
+
+.mk-sidelayer-loading {
+  padding:11px 0px 10px 30px;
+  background:url('images/sidelayer_loading.gif') no-repeat 10px 10px;
+}

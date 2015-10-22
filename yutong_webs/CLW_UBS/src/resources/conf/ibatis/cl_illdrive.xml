@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="IllDrive">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="HarmdefDataInfo" type="com.neusoft.clw.yw.cl.illdrive.ds.HarmdefDataInfo" />
+
+	<select id="getNumCont" parameterClass="String" resultClass="Integer">
+	SELECT COUNT(*) FROM clw_cl_base_info_t t WHERE t.cr_config_id = #def_id#
+	AND t.valid_flag='0'
+	</select>
+
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+		  FROM clw_yw_harmdef_t t, clw_jc_enterprise_t et
+		 WHERE t.enterprise_id = et.enterprise_id
+		 AND t.valid_flag = '0'
+		<isNotEmpty prepend="AND" property="def_name">
+       	t.def_name LIKE '%$def_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="full_name">
+       	et.full_name LIKE '%$full_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="apply_id">
+       	t.apply_id=#apply_id#
+       </isNotEmpty>
+	</select>
+	
+	<resultMap id="data-result" class="HarmdefDataInfo">
+		<result property="def_id" column="DEF_ID" />
+		<result property="def_name" column="DEF_NAME" />
+		<result property="apply_id" column="APPLY_ID" />
+		<result property="full_name" column="FULL_NAME" />
+	</resultMap>
+	<select id="selectHarmdefDataInfo"  parameterClass="Map" resultMap="data-result">
+		SELECT t.def_id, t.def_name, et.full_name AS full_name, t.apply_id
+		  FROM clw_yw_harmdef_t t, clw_jc_enterprise_t et
+		 WHERE t.enterprise_id = et.enterprise_id
+		 AND t.valid_flag = '0'
+	   <isNotEmpty prepend="AND" property="def_name">
+       	t.def_name LIKE '%$def_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="full_name">
+       	et.full_name LIKE '%$full_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="apply_id">
+       	t.apply_id=#apply_id#
+       </isNotEmpty>
+	 ORDER BY t.apply_id
+ 	</select>
+	<insert id="insertHarmdef" parameterClass="HarmdefDataInfo">
+	INSERT INTO clw_yw_harmdef_t
+	  (def_id,
+	   def_name,
+	   enterprise_id,
+	   organization_id,
+	   apply_id,
+	   overspd_val,
+	   overspd_time,
+	   gear2_spd,
+	   eoil_spd,
+	   eoil_rpm,
+	   lidl_spd,
+	   lidl_rpm,
+	   lidl_time,
+	   idlair_spd,
+	   idlair_rpm,
+	   idlair_time,
+	   qgear_rpm,
+	   qgear_ratio,
+	   tired_time,
+	   egear_spd,
+	   egear_ratio,
+	   gear0_spd_l,
+	   gear0_spd_u,
+	   gear0_rpm_l,
+	   gear0_rpm_u,
+	   gear1_spd_l,
+	   gear1_spd_u,
+	   gear1_rpm_l,
+	   gear1_rpm_u,
+	   gear2_spd_l,
+	   gear2_spd_u,
+	   gear2_rpm_l,
+	   gear2_rpm_u,
+	   gear3_spd_l,
+	   gear3_spd_u,
+	   gear3_rpm_l,
+	   gear3_rpm_u,
+	   gear4_spd_l,
+	   gear4_spd_u,
+	   gear4_rpm_l,
+	   gear4_rpm_u,
+	   gear5_spd_l,
+	   gear5_spd_u,
+	   gear5_rpm_l,
+	   gear5_rpm_u,
+	   gear6_spd_l,
+	   gear6_spd_u,
+	   gear6_rpm_l,
+	   gear6_rpm_u,
+	   gear7_spd_l,
+	   gear7_spd_u,
+	   gear7_rpm_l,
+	   gear7_rpm_u,
+	   gear8_spd_l,
+	   gear8_spd_u,
+	   gear8_rpm_l,
+	   gear8_rpm_u,
+	   creater,
+	   create_time,
+	   modifier,
+	   modify_time,
+	   valid_flag,
+	   vaset_user_id,
+	   vaset_time,
+	   GREENAREA_RPM_L,
+	   GREENAREA_RPM_U)
+	VALUES
+	  (#def_id#,
+	   #def_name#,
+	   '111',
+	   '',
+	   '0',
+	   #overspd_val#,
+	   #overspd_time#,
+	   #gear2_spd#,
+	   #eoil_spd#,
+	   #eoil_rpm#,
+	   #lidl_spd#,
+	   #lidl_rpm#,
+	   #lidl_time#,
+	   #idlair_spd#,
+	   #idlair_rpm#,
+	   #idlair_time#,
+	   #qgear_rpm#,
+	   #qgear_ratio#,
+	   #tired_time#,
+	   #egear_spd#,
+	   #egear_ratio#,
+	   #gear0_spd_l#,
+	   #gear0_spd_u#,
+	   #gear0_rpm_l#,
+	   #gear0_rpm_u#,
+	   #gear1_spd_l#,
+	   #gear1_spd_u#,
+	   #gear1_rpm_l#,
+	   #gear1_rpm_u#,
+	   #gear2_spd_l#,
+	   #gear2_spd_u#,
+	   #gear2_rpm_l#,
+	   #gear2_rpm_u#,
+	   #gear3_spd_l#,
+	   #gear3_spd_u#,
+	   #gear3_rpm_l#,
+	   #gear3_rpm_u#,
+	   #gear4_spd_l#,
+	   #gear4_spd_u#,
+	   #gear4_rpm_l#,
+	   #gear4_rpm_u#,
+	   #gear5_spd_l#,
+	   #gear5_spd_u#,
+	   #gear5_rpm_l#,
+	   #gear5_rpm_u#,
+	   #gear6_spd_l#,
+	   #gear6_spd_u#,
+	   #gear6_rpm_l#,
+	   #gear6_rpm_u#,
+	   #gear7_spd_l#,
+	   #gear7_spd_u#,
+	   #gear7_rpm_l#,
+	   #gear7_rpm_u#,
+	   #gear8_spd_l#,
+	   #gear8_spd_u#,
+	   #gear8_rpm_l#,
+	   #gear8_rpm_u#,
+	   #creater#,
+	   SYSDATE,
+	   '',
+	   '',
+	   '0',
+	   '',
+	   '',
+	   #greenarea_rpm_l#,
+	   #greenarea_rpm_u#)
+ 	</insert>
+
+
+	<select id="getHarmdefInfoByDefId"  parameterClass="Map" resultClass="HarmdefDataInfo">
+		SELECT t.def_id,
+	       t.def_name,
+	       t.enterprise_id,
+	       t.organization_id,
+	       t.apply_id,
+	       t.overspd_val,
+	       t.overspd_time,
+	       t.gear2_spd,
+	       t.eoil_spd,
+	       t.eoil_rpm,
+	       t.lidl_spd,
+	       t.lidl_rpm,
+	       t.lidl_time,
+	       t.idlair_spd,
+	       t.idlair_rpm,
+	       t.idlair_time,
+	       t.qgear_rpm,
+	       t.qgear_ratio,
+	       t.tired_time,
+	       t.egear_spd,
+	       t.egear_ratio,
+	       t.gear0_spd_l,
+	       t.gear0_spd_u,
+	       t.gear0_rpm_l,
+	       t.gear0_rpm_u,
+	       t.gear1_spd_l,
+	       t.gear1_spd_u,
+	       t.gear1_rpm_l,
+	       t.gear1_rpm_u,
+	       t.gear2_spd_l,
+	       t.gear2_spd_u,
+	       t.gear2_rpm_l,
+	       t.gear2_rpm_u,
+	       t.gear3_spd_l,
+	       t.gear3_spd_u,
+	       t.gear3_rpm_l,
+	       t.gear3_rpm_u,
+	       t.gear4_spd_l,
+	       t.gear4_spd_u,
+	       t.gear4_rpm_l,
+	       t.gear4_rpm_u,
+	       t.gear5_spd_l,
+	       t.gear5_spd_u,
+	       t.gear5_rpm_l,
+	       t.gear5_rpm_u,
+	       t.gear6_spd_l,
+	       t.gear6_spd_u,
+	       t.gear6_rpm_l,
+	       t.gear6_rpm_u,
+	       t.gear7_spd_l,
+	       t.gear7_spd_u,
+	       t.gear7_rpm_l,
+	       t.gear7_rpm_u,
+	       t.gear8_spd_l,
+	       t.gear8_spd_u,
+	       t.gear8_rpm_l,
+	       t.gear8_rpm_u,
+	       t.GREENAREA_RPM_L,
+	       t.GREENAREA_RPM_U
+	  FROM clw_yw_harmdef_t t
+	 WHERE t.valid_flag = '0'
+	   AND t.def_id = #def_id#
+ 	</select>
+	<update id="updateHarmdefInfo" parameterClass="HarmdefDataInfo">
+		UPDATE clw_yw_harmdef_t t
+		   SET 	t.def_name=#def_name#,
+				t.overspd_val=#overspd_val#,
+				t.overspd_time=#overspd_time#,
+				t.gear2_spd=#gear2_spd#,
+				t.eoil_spd=#eoil_spd#,
+				t.eoil_rpm=#eoil_rpm#,
+				t.lidl_spd=#lidl_spd#,
+				t.lidl_rpm=#lidl_rpm#,
+				t.lidl_time=#lidl_time#,
+				t.idlair_spd=#idlair_spd#,
+				t.idlair_rpm=#idlair_rpm#,
+				t.idlair_time=#idlair_time#,
+				t.qgear_rpm=#qgear_rpm#,
+				t.qgear_ratio=#qgear_ratio#,
+				t.tired_time=#tired_time#,
+				t.egear_spd=#egear_spd#,
+				t.egear_ratio=#egear_ratio#,
+				t.gear0_spd_l=#gear0_spd_l#,
+				t.gear0_spd_u=#gear0_spd_u#,
+				t.gear0_rpm_l=#gear0_rpm_l#,
+				t.gear0_rpm_u=#gear0_rpm_u#,
+				t.gear1_spd_l=#gear1_spd_l#,
+				t.gear1_spd_u=#gear1_spd_u#,
+				t.gear1_rpm_l=#gear1_rpm_l#,
+				t.gear1_rpm_u=#gear1_rpm_u#,
+				t.gear2_spd_l=#gear2_spd_l#,
+				t.gear2_spd_u=#gear2_spd_u#,
+				t.gear2_rpm_l=#gear2_rpm_l#,
+				t.gear2_rpm_u=#gear2_rpm_u#,
+				t.gear3_spd_l=#gear3_spd_l#,
+				t.gear3_spd_u=#gear3_spd_u#,
+				t.gear3_rpm_l=#gear3_rpm_l#,
+				t.gear3_rpm_u=#gear3_rpm_u#,
+				t.gear4_spd_l=#gear4_spd_l#,
+				t.gear4_spd_u=#gear4_spd_u#,
+				t.gear4_rpm_l=#gear4_rpm_l#,
+				t.gear4_rpm_u=#gear4_rpm_u#,
+				t.gear5_spd_l=#gear5_spd_l#,
+				t.gear5_spd_u=#gear5_spd_u#,
+				t.gear5_rpm_l=#gear5_rpm_l#,
+				t.gear5_rpm_u=#gear5_rpm_u#,
+				t.gear6_spd_l=#gear6_spd_l#,
+				t.gear6_spd_u=#gear6_spd_u#,
+				t.gear6_rpm_l=#gear6_rpm_l#,
+				t.gear6_rpm_u=#gear6_rpm_u#,
+				t.gear7_spd_l=#gear7_spd_l#,
+				t.gear7_spd_u=#gear7_spd_u#,
+				t.gear7_rpm_l=#gear7_rpm_l#,
+				t.gear7_rpm_u=#gear7_rpm_u#,
+				t.gear8_spd_l=#gear8_spd_l#,
+				t.gear8_spd_u=#gear8_spd_u#,
+				t.gear8_rpm_l=#gear8_rpm_l#,
+				t.gear8_rpm_u=#gear8_rpm_u#,
+				t.modifier=#modifier#,
+				t.modify_time= SYSDATE,
+				t.GREENAREA_RPM_L = #greenarea_rpm_l#,
+				t.GREENAREA_RPM_U = #greenarea_rpm_u#
+		 WHERE t.def_id = #def_id#
+	</update>
+	<update id="updateDelHarmdefInfo" parameterClass="Map">
+		UPDATE clw_yw_harmdef_t t
+		   SET t.valid_flag = '1', t.vaset_user_id = #vaset_user_id#, t.vaset_time = SYSDATE
+		 WHERE t.def_id = #def_id#
+	</update>
+</sqlMap>

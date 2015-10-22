@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="themeSet">
+	<typeAlias alias="Map" type="java.util.Map" />
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="themeSetInfo" type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.Theme" />
+	<resultMap class="themeSetInfo" id="themeSet-result">
+		<result property="id" column="ID"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="headerclass" column="HEADERCLASS"/>
+		<result property="headerclass_p" column="HEADERCLASS_p"/>
+		<result property="headbgclass" column="HEADBGCLASS"/>
+		<result property="headbgclass_p" column="HEADBGCLASS_p"/>
+		<result property="companylogo" column="COMPANYLOGO"/>
+		<result property="companylogo_p" column="COMPANYLOGO_p"/>
+		<result property="footerclass" column="FOOTERCLASS"/>
+		<result property="ismapgroundlogo" column="ISMAPGROUNDLOGO"/>
+		<result property="navphotos" column="navphotos"/>
+		
+		<result property="mi1_p" column="mi1_p"/>
+		<result property="mi2_p" column="mi2_p"/>
+		<result property="mi3_p" column="mi3_p"/>
+		<result property="mi4_p" column="mi4_p"/>
+		<result property="mi5_p" column="mi5_p"/>
+		<result property="nav1focus" column="nav1focus"/>
+		<result property="nav2focus" column="nav2focus"/>
+		<result property="nav3focus" column="nav3focus"/>
+		<result property="nav4focus" column="nav4focus"/>
+		<result property="nav5focus" column="nav5focus"/>
+	</resultMap>
+	<!-- 查询用户界面配置信息 -->
+     <select id="getThemeSetByUser" parameterClass="String" resultMap="themeSet-result">
+		 <![CDATA[
+		    select *
+			  from CLW_JC_THEME_CFG_T t
+			 where t.user_id = #value#
+		]]>
+	</select>
+	
+	<insert id="insertThemeDetails" parameterClass="themeSetInfo">
+		<![CDATA[
+			INSERT INTO CLW_JC_THEME_CFG_T( ID, USER_ID, HEADERCLASS, HEADBGCLASS, COMPANYLOGO, FOOTERCLASS, ISMAPGROUNDLOGO, navphotos,
+			HEADERCLASS_p,HEADBGCLASS_p,companylogo_p,mi1_p,mi2_p,mi3_p,mi4_p,mi5_p,
+			nav1focus,nav2focus,nav3focus,nav4focus,nav5focus) VALUES 
+			( #id:VARCHAR#, #userId:VARCHAR#, #headerclass:VARCHAR#, #headbgclass:VARCHAR#, #companylogo:VARCHAR#, #footerclass:VARCHAR#, #ismapgroundlogo:VARCHAR#, #navphotos:VARCHAR#,
+			#headerclass_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#headbgclass_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#companylogo_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#mi1_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#mi2_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#mi3_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#mi4_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#mi5_p,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#nav1focus,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#nav2focus,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#nav3focus,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#nav4focus,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#,
+			#nav5focus,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#
+			)
+		]]>
+	</insert>
+</sqlMap>

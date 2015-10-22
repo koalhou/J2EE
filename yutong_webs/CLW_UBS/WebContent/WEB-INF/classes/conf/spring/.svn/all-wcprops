@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring
+END
+applicationContext-datasource.xml
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-datasource.xml
+END
+applicationContext-web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-web.xml
+END
+applicationContext-web-userbehaviour.xml
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-web-userbehaviour.xml
+END
+applicationContext-service.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-service.xml
+END
+applicationContext-service-userbehaviour.xml
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-service-userbehaviour.xml
+END
+applicationContext-dao.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-dao.xml
+END
+applicationContext-dao-userbehaviour.xml
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_UBS/src/resources/conf/spring/applicationContext-dao-userbehaviour.xml
+END

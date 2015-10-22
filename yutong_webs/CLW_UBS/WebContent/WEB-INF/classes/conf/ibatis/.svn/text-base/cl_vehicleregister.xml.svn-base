@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="VehicleRegister">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="VehicleRegisterInfo" type="com.neusoft.clw.yw.cl.vehicleRegister.ds.VehicleRegisterInfo" />
+	<typeAlias alias="BizTypeInfo" type="com.neusoft.clw.yw.cl.vehicleRegister.ds.BizTypeInfo" />
+	
+	<resultMap id="vehicleRegisterInfo-result" class="VehicleRegisterInfo">
+		<result property="terminalId" column="ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="entipriseId" column="ENTERPRISE_ID" />
+		<result property="entipriseName" column="FULL_NAME" />
+		<result property="userId" column="USER_ID" />
+		<result property="feeFlag" column="FEE_FLAG" />
+		<result property="registrationTime" column="REGISTRATION_TIME" />
+		<result property="registrant" column="REGISTRANT" />
+		<result property="deliveryFlag" column="DELIVERY_FLAG" />
+		<result property="fixType" column="FIX_TYPE" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="cellPhone" column="CELLPHONE" />
+	</resultMap>
+	
+	<resultMap id="vehicleRegisterDetail-result" class="VehicleRegisterInfo">
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleId" column="VEHICLE_ID" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalId" column="ID" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simId" column="SIM_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="entipriseId" column="ENTERPRISE_ID" />
+		<result property="entipriseName" column="FULL_NAME" />
+		<result property="userId" column="USER_ID" />
+		<result property="userName" column="USER_NAME" />
+		<result property="feeFlag" column="FEE_FLAG" />
+		<result property="deliveryFlag" column="DELIVERY_FLAG" />
+		<result property="fixType" column="FIX_TYPE" />
+	</resultMap>
+	
+	<resultMap id="bizTypeInfo-result" class="BizTypeInfo">
+		<result property="bizId" column="CODE_ID" />
+		<result property="bizName" column="CODE_NAME" />
+	</resultMap>
+	
+	<resultMap id="bizTypeDetailInfos-result" class="BizTypeInfo">
+		<result property="tbizId" column="TBIZ_ID" />
+		<result property="terminalCode" column="TERMINAL_CODE" />
+		<result property="bizId" column="BIZ_ID" />
+	</resultMap>
+	
+	<resultMap id="vehicleSimInfos-result" class="VehicleRegisterInfo">
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="terminalCode" column="TERMINAL_CODE" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_JC_TERMINAL_T        JT,
+		       CLW_CL_BASE_INFO_T       CBI,
+		       CLW_CL_SIM_T             CS,
+		       CLW_JC_USER_T            JU,
+		       CLW_JC_USER_T            JU_R,
+		       CLW_JC_ENTERPRISE_T      JE,
+		       (SELECT T.LATITUDE,
+		               T.LONGITUDE,
+		               T.VEHICLE_VIN
+		          FROM CLW_JC_TERMINAL_T T
+		         WHERE T.LATITUDE != 'FFFF'
+		         <isNotEmpty prepend="AND" property="start_time">
+					   T.TERMINAL_TIME &gt;= TO_DATE(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS')
+		         </isNotEmpty>
+		         <isNotEmpty prepend="AND" property="end_time">
+					   T.TERMINAL_TIME &lt;= TO_DATE(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+		         </isNotEmpty>
+		           AND T.VALID_FLAG = '0')YT
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND JT.REGISTRANT = JU_R.USER_ID(+)
+		   AND JT.MODIFIER = JU.USER_ID(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.VEHICLE_VIN = YT.VEHICLE_VIN(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="terminalCode">
+               JT.TERMINAL_ID LIKE '%' || #terminalCode# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%' || #vehicleVin# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               JT.SIM_CARD_NUMBER LIKE '%' || #simCardNumber# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="cellPhone">
+               CS.CELLPHONE LIKE '%' || #cellPhone# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="enterpriseCode">
+               JE.ENTERPRISE_CODE LIKE '%' || #enterpriseCode# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+			   JT.REGISTRATION_TIME &lt;= TO_DATE(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+			   JT.REGISTRATION_TIME &gt;= TO_DATE(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="deliveryFlag">
+               CBI.DELIVERY_FLAG = #deliveryFlag#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="fixType">
+               CBI.FIX_TYPE = #fixType#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleLn">
+               CBI.VEHICLE_LN LIKE '%' || #vehicleLn# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getVehicleRegisterInfos" parameterClass="Map" resultMap="vehicleRegisterInfo-result">
+		SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+		       JT.VEHICLE_VIN,
+		       JT.TERMINAL_ID,
+		       JT.SIM_CARD_NUMBER,
+		       CBI.ENTERPRISE_ID,
+		       JE.ENTERPRISE_CODE,
+		       JE.FULL_NAME,
+		       CBI.USER_ID,
+		       CBI.FEE_FLAG,
+		       to_char(JT.REGISTRATION_TIME,'yyyy-mm-dd hh24:mi:ss') REGISTRATION_TIME,
+		       JU_R.USER_NAME AS REGISTRANT,
+		       CBI.DELIVERY_FLAG,
+		       CBI.FIX_TYPE,
+		       YT.LATITUDE,
+		       YT.LONGITUDE,
+		       JU.USER_NAME AS MODIFIER,
+		       to_char(JT.MODIFY_TIME,'yyyy-mm-dd hh24:mi:ss') MODIFY_TIME,
+		       CS.CELLPHONE
+		  FROM CLW_JC_TERMINAL_T        JT,
+		       CLW_CL_BASE_INFO_T       CBI,
+		       CLW_CL_SIM_T             CS,
+		       CLW_JC_USER_T            JU,
+		       CLW_JC_USER_T            JU_R,
+		       CLW_JC_ENTERPRISE_T      JE,
+		       (SELECT T.LATITUDE,
+		               T.LONGITUDE,
+		               T.VEHICLE_VIN
+		          FROM CLW_JC_TERMINAL_T T
+		         WHERE T.LATITUDE != 'FFFF'
+		         <isNotEmpty prepend="AND" property="start_time">
+					   T.TERMINAL_TIME &gt;= TO_DATE(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS')
+		         </isNotEmpty>
+		         <isNotEmpty prepend="AND" property="end_time">
+					   T.TERMINAL_TIME &lt;= TO_DATE(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+		         </isNotEmpty>
+		           AND T.VALID_FLAG = '0')YT
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND JT.REGISTRANT = JU_R.USER_ID(+)
+		   AND JT.MODIFIER = JU.USER_ID(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.VEHICLE_VIN = YT.VEHICLE_VIN(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+         <isNotEmpty prepend="AND" property="terminalCode">
+               JT.TERMINAL_ID LIKE '%' || #terminalCode# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleVin">
+               JT.VEHICLE_VIN LIKE '%' || #vehicleVin# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="simCardNumber">
+               JT.SIM_CARD_NUMBER LIKE '%' || #simCardNumber# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="cellPhone">
+               CS.CELLPHONE LIKE '%' || #cellPhone# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="enterpriseCode">
+               JE.ENTERPRISE_CODE LIKE '%' || #enterpriseCode# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="end_time">
+			   JT.REGISTRATION_TIME &lt;= TO_DATE(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+			   JT.REGISTRATION_TIME &gt;= TO_DATE(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="deliveryFlag">
+               CBI.DELIVERY_FLAG = #deliveryFlag#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="fixType">
+               CBI.FIX_TYPE = #fixType#
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicleLn">
+               CBI.VEHICLE_LN LIKE '%' || #vehicleLn# ||'%' escape '\'
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<select id="getBizTypes" resultMap="bizTypeInfo-result">
+		SELECT T.CODE_ID,
+               T.CODE_NAME
+          FROM CLW_JC_CODEDEF_T T
+         WHERE T.CODE_TYPE = 'BIZTYPE'
+           AND T.VALID_FLAG = '0'
+	</select>
+	
+	<update id="updateTerminalInfo" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+           SET T.MODIFY_TIME = SYSDATE,
+               T.UPDATE_TIME = SYSDATE,
+               <isNotEmpty prepend="" property="vehicleVin">
+			      T.VEHICLE_VIN = #vehicleVin#,
+               </isNotEmpty>
+               <isNotEmpty prepend="" property="entipriseId">
+			      T.ENTERPRISE_ID = #entipriseId#,
+               </isNotEmpty>
+               <isEmpty prepend="" property="videoId">
+                  T.VIDEO_ID = #vehicleVin#,
+               </isEmpty>
+               T.SIM_CARD_NUMBER = #simCardNumber#,
+               T.REGISTRATION_TIME = SYSDATE,
+               T.REGISTRANT = #modifier#,
+               T.MODIFIER = #modifier#
+         WHERE T.ID = #terminalId#
+	</update>
+	<update id="updateTerminalInfo2" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+           SET T.MODIFY_TIME = SYSDATE,
+               T.UPDATE_TIME = SYSDATE,
+               <isNotEmpty prepend="" property="vehicleVin">
+			      T.VEHICLE_VIN = #vehicleVin#,
+               </isNotEmpty>
+               <isNotEmpty prepend="" property="entipriseId">
+			      T.ENTERPRISE_ID = #entipriseId#,
+               </isNotEmpty>
+               T.SIM_CARD_NUMBER = #simCardNumber#,
+               T.MODIFIER = #modifier#
+         WHERE T.ID = #terminalId#
+	</update>
+	
+	<update id="reUpdateTerminalInfo" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+           SET T.MODIFY_TIME = SYSDATE + 1/24/60/60,
+               T.UPDATE_TIME = SYSDATE + 1/24/60/60,
+               <isNotEmpty prepend="" property="vehicleVin">
+			      T.VEHICLE_VIN = #vehicleVin#,
+               </isNotEmpty>
+               <isNotEmpty prepend="" property="entipriseId">
+			      T.ENTERPRISE_ID = #entipriseId#,
+               </isNotEmpty>
+               <isEmpty prepend="" property="videoId">
+                  T.VIDEO_ID = #vehicleVin#,
+               </isEmpty>
+               T.SIM_CARD_NUMBER = #simCardNumber#,
+               T.MODIFIER = #modifier#,
+               T.REGISTRATION_TIME = SYSDATE,
+               T.REGISTRANT = #modifier#
+         WHERE T.ID = #terminalId#
+	</update>
+	
+	<update id="importTerminalInfo" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_JC_TERMINAL_T T
+           SET T.VEHICLE_VIN = #vehicleVin#,
+               T.SIM_CARD_NUMBER = #simCardNumber#,
+               T.ENTERPRISE_ID = #entipriseId#,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE,
+               T.REGISTRATION_TIME = SYSDATE,
+               T.REGISTRANT = #modifier#,
+               T.VIDEO_ID = #vehicleVin#
+         WHERE T.TERMINAL_ID = #terminalCode#
+           AND T.VEHICLE_VIN IS NULL
+           AND T.SIM_CARD_NUMBER IS NULL
+	</update>
+	
+	<update id="updateVehicleInfo" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_CL_BASE_INFO_T T
+           SET T.ENTERPRISE_ID = #entipriseId#,
+               T.USER_ID = #userId#,
+               T.ORGANIZATION_ID = NULL,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE,
+               T.FEE_FLAG = #feeFlag#,
+               T.DELIVERY_TIME = decode(#deliveryFlag#,'1',SYSDATE,null),
+               T.DELIVERY_FLAG = #deliveryFlag#,
+               T.FIX_TYPE = #fixType#
+         WHERE T.VEHICLE_ID = #vehicleId#
+	</update>
+	
+	<update id="updateEnterpriseInfo" parameterClass="String">
+		UPDATE CLW_JC_ENTERPRISE_T
+           SET CONCATE_CR_FLAG = '1'
+         WHERE ENTERPRISE_ID = #value#
+	</update>
+	
+	<update id="clearEnterpriseFlag" parameterClass="String">
+		UPDATE CLW_JC_ENTERPRISE_T
+           SET CONCATE_CR_FLAG = '0'
+         WHERE ENTERPRISE_ID IN
+               (select enterprise_id
+                  from clw_jc_enterprise_vi
+                 where left_num &gt;= (select left_num
+                                         from clw_jc_enterprise_vi
+                                        where enterprise_id = #value#)
+                   and right_num &lt;= (select right_num
+                                          from clw_jc_enterprise_vi
+                                         where enterprise_id = #value#))
+	</update>
+	
+	<select id="getCarCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*) 
+		  FROM CLW_CL_BASE_INFO_T 
+		 WHERE ENTERPRISE_ID = #value#
+	</select>
+	
+	<update id="importVehicleInfo" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_CL_BASE_INFO_T T
+           SET T.ENTERPRISE_ID = #entipriseId#,
+               T.USER_ID = #userId#,
+               T.ORGANIZATION_ID = NULL,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE,
+               T.FEE_FLAG = #feeFlag#,
+               T.DELIVERY_TIME = decode(#deliveryFlag#,'1',SYSDATE,null),
+               T.DELIVERY_FLAG = #deliveryFlag#,
+               T.FIX_TYPE = #fixType#
+         WHERE T.VEHICLE_VIN = #vehicleVin#
+           AND NOT EXISTS (SELECT 1
+                           FROM CLW_JC_TERMINAL_T JT
+                           WHERE JT.VEHICLE_VIN = T.VEHICLE_VIN
+                             AND JT.VALID_FLAG = '0'
+                             AND JT.DEVICE_TYPE = '0')
+	</update>
+	
+	<insert id="insertBizTypeInfos" parameterClass="BizTypeInfo">
+		INSERT INTO CLW_YW_TERMINAL_BIZ_T T
+          (T.TBIZ_ID,
+           T.TERMINAL_CODE,
+           T.BIZ_ID,
+           T.CREATER,
+           T.CREATE_TIME,
+           T.MODIFIER,
+           T.MODIFY_TIME,
+           T.VEHICLE_VIN)
+        VALUES
+          (#tbizId#,
+           #terminalCode#,
+           #bizId#,
+           #creater#,
+           SYSDATE,
+           #creater#,
+           SYSDATE,
+           #vehicleVin#)
+	</insert>
+	
+	<select id="getVehicleRegisterInfoById" parameterClass="String" resultMap="vehicleRegisterDetail-result">
+		SELECT CBI.VEHICLE_LN, 
+               CBI.VEHICLE_ID,
+               JT.VEHICLE_VIN,
+               JT.ID,
+               JT.TERMINAL_ID,
+               CS.SIM_ID,
+               JT.SIM_CARD_NUMBER,
+               JE.ENTERPRISE_ID,
+               JE.FULL_NAME,
+               JU.USER_ID,
+               JU.USER_NAME,
+               CBI.FEE_FLAG,
+               CBI.DELIVERY_FLAG,
+               CBI.FIX_TYPE
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_USER_T JU,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.USER_ID = JU.USER_ID(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.ID = #terminalId#
+           AND ROWNUM = 1
+	</select>
+	
+	<select id="getBizTypeInfoById" parameterClass="String" resultMap="bizTypeDetailInfos-result">
+		SELECT YTB.TBIZ_ID, 
+		       YTB.TERMINAL_CODE, 
+		       YTB.BIZ_ID
+          FROM CLW_YW_TERMINAL_BIZ_T YTB
+         WHERE YTB.TERMINAL_CODE =
+               (SELECT JT.TERMINAL_ID 
+                  FROM CLW_JC_TERMINAL_T JT 
+                  WHERE JT.ID = #terminalId#)
+	</select>
+	
+	<update id="updateVehicleAttribute" parameterClass="VehicleRegisterInfo">
+		UPDATE CLW_CL_BASE_INFO_T T
+           SET T.ENTERPRISE_ID = #entipriseId#,
+               T.ORGANIZATION_ID = NULL,
+               T.USER_ID = #userId#,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE,
+               T.FEE_FLAG = #feeFlag#,
+               T.DELIVERY_TIME = decode(#deliveryFlag#,'1',SYSDATE,null),
+               T.DELIVERY_FLAG = #deliveryFlag#,
+               T.FIX_TYPE = #fixType#
+         WHERE T.VEHICLE_ID = #vehicleId#
+	</update>
+	
+	<delete id="deleteBizTypeInfos" parameterClass="String">
+		DELETE FROM CLW_YW_TERMINAL_BIZ_T YTB
+         WHERE YTB.TERMINAL_CODE = 
+               (SELECT JT.TERMINAL_ID
+                  FROM CLW_JC_TERMINAL_T JT
+                 WHERE JT.ID = #terminalId#)
+	</delete>
+	
+	<delete id="importBizTypeInfos" parameterClass="String">
+		DELETE FROM CLW_YW_TERMINAL_BIZ_T YTB
+         WHERE YTB.TERMINAL_CODE = #terminalCode#
+	</delete>
+	
+	<update id="updateTerminalRegister" parameterClass="String">
+		UPDATE CLW_JC_TERMINAL_T T
+           SET T.VEHICLE_VIN = NULL,
+               T.SIM_CARD_NUMBER = NULL,
+               T.MODIFY_TIME = SYSDATE,
+               T.ENTERPRISE_ID = NULL,
+               T.UPDATE_TIME = SYSDATE,
+               T.REGISTRATION_TIME = NULL,
+               T.REGISTRANT = NULL,
+               T.VIDEO_ID = NULL
+         WHERE T.ID = #terminalId#
+	</update>
+	
+	<update id="updateVehicleRegister" parameterClass="String">
+		UPDATE CLW_CL_BASE_INFO_T T
+           SET T.ENTERPRISE_ID = NULL,
+               T.ORGANIZATION_ID = NULL,
+               T.MODIFY_TIME = SYSDATE,
+               T.FEE_FLAG = NULL,
+               T.USER_ID = NULL,
+               T.DELIVERY_FLAG = NULL,
+               T.DELIVERY_TIME = NULL,
+               T.FIX_TYPE = NULL
+         WHERE T.VEHICLE_ID = #vehicleId#
+	</update>
+	
+	<select id="getVehicleSimInfos" resultMap="vehicleSimInfos-result">
+		SELECT CBI.VEHICLE_VIN AS VEHICLE_VIN,
+		       '' AS SIM_CARD_NUMBER,
+		       '' AS TERMINAL_CODE
+          FROM CLW_CL_BASE_INFO_T CBI
+         WHERE CBI.VALID_FLAG = '0'
+           AND CBI.DEVICE_TYPE = '0'
+         UNION ALL
+        SELECT '' AS VEHICLE_VIN, 
+               CS.SIM_CARD_NUMBER AS SIM_CARD_NUMBER,
+               '' AS TERMINAL_CODE
+          FROM CLW_CL_SIM_T CS
+         WHERE CS.VALID_FLAG = '0'
+           AND CS.DEVICE_TYPE = '0'
+         UNION ALL
+        SELECT '' AS VEHICLE_VIN, 
+               '' AS SIM_CARD_NUMBER,
+               JT.TERMINAL_ID AS TERMINAL_CODE
+          FROM CLW_JC_TERMINAL_T JT
+         WHERE JT.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+	</select>
+	
+</sqlMap>

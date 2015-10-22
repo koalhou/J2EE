@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserOperateLog">
+	<typeAlias alias="userOperateLog"
+		type="com.neusoft.clw.common.util.log.ds.UserOperateLog" />		
+		<resultMap class="userOperateLog" id="defaultResult">
+		<result property="logId" column="LOG_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="userName" column="USER_NAME" />
+		<result property="operateIp" column="OPERATE_IP" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseName" column="ENTERPRISE_NAME" />
+		<result property="applyId" column="APPLY_ID" />
+		<result property="moduleId" column="MODULE_ID" />
+		<result property="operateTime" column="OPERATE_TIME" />
+		<result property="operateType" column="OPERATE_TYPE" />
+		<result property="operateDesc" column="OPERATE_DESC" />
+		<result property="resolution" column="LOG_RESOLUTION" />
+		<result property="operatesys" column="LOG_OPERATESYS" />
+		<result property="browser" column="LOG_BROWSER" />
+		<result property="flashver" column="LOG_FLASH" />
+	</resultMap>
+
+    <!-- 插入日志信息 -->
+	<insert id="insert" parameterClass="userOperateLog" >		
+		INSERT INTO CLW_JC_LOG_T
+		(LOG_ID,USER_ID,USER_NAME,OPERATE_IP,ENTERPRISE_ID,ENTERPRISE_NAME,APPLY_ID,MODULE_ID,OPERATE_TIME,OPERATE_TYPE,OPERATE_DESC,LOG_RESOLUTION,LOG_OPERATESYS,LOG_BROWSER,LOG_FLASH)	
+		VALUES(#logId#,#userId#,#userName#,#operateIp#,#enterpriseId#,#enterpriseName#,#applyId#,#moduleId#,TO_DATE(#operateTime#,'YYYY-MM-DD HH24:MI:SS'),#operateType#,#operateDesc#,
+		#resolution#,#operatesys#,#browser#,#flashver#)	
+	</insert>	
+	 
+</sqlMap>

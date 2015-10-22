@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>CLW_XCP</display-name>
+
+    <listener>
+		<listener-class>
+			com.neusoft.clw.common.listener.BootListener
+		</listener-class>
+	</listener>
+	
+	<!-- 指定Spring配置文件 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath*:conf/spring/applicationContext*.xml
+		</param-value>
+	</context-param>
+
+	<!-- 启动Web容器时，自动装配ApplicationContext的配置信息 ，整合Spring-->
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	
+	<!-- 操作日志过滤器 -->
+	<filter>
+		<filter-name>operationLog</filter-name>
+		<filter-class>
+			com.neusoft.clw.common.filter.OperationLogFilter
+		</filter-class>
+	</filter>
+
+	<filter>   
+      <filter-name>ServletFilter</filter-name>   
+      <filter-class>com.neusoft.clw.common.filter.ServletFilter</filter-class>   
+      <init-param>   
+        <param-name>includeServlets</param-name>   
+        <param-value>UploadServlet</param-value>   
+      </init-param>   
+    </filter>   
+    <filter-mapping>   
+      <filter-name>ServletFilter</filter-name>   
+      <url-pattern>/*</url-pattern>   
+    </filter-mapping>
+	
+	<filter>
+		<filter-name>struts-cleanup</filter-name>
+		<filter-class>
+			org.apache.struts2.dispatcher.ActionContextCleanUp
+		</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>
+			org.apache.struts2.dispatcher.FilterDispatcher
+		</filter-class>
+	</filter>
+
+
+	<filter-mapping>
+		<filter-name>operationLog</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>struts-cleanup</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>login.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>
+			com.neusoft.clw.common.action.InitInfoServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<!-- 扫描二维码 -->
+	<servlet>
+		<servlet-name>apkAction</servlet-name>
+		<!-- <servlet-class>com.neusoft.clw.android.action.DownloadAPK</servlet-class> -->
+		<servlet-class>com.neusoft.clw.common.util.ServletProxy</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>apkAction</servlet-name>
+		<url-pattern>/getapk</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 点击下载apk-->
+	<servlet>
+		<servlet-name>androidApkAction</servlet-name>
+		<!-- <servlet-class>com.neusoft.clw.android.action.DownloadAPK</servlet-class> -->
+		<servlet-class>com.neusoft.clw.common.util.ServletProxy</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>androidApkAction</servlet-name>
+		<url-pattern>/getAndroidAPK</url-pattern>
+	</servlet-mapping>
+	<!-- 对DWR的支持 -->
+	<servlet>
+		<servlet-name>dwr-invoker</servlet-name>
+		<!--  DWRServlet 里的init()方法，初始化一个Continer,然后加载dwr.xml ,以及对下面配置的相关参数的读取-->
+		<servlet-class>
+			org.directwebremoting.servlet.DwrServlet
+		</servlet-class>
+		<!--   下面的属性设置为true时，可以通过http://localhost:port/app/dwr访问相应dwr  -
+			- 在log4j.properties下加，log4j.logger.uk.ltd.getahead.dwr = debug。这样可以看DWR的调试日志 -->
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>            
+		 	<param-name>scriptSessionTimeout</param-name>            
+		 	<param-value>259200000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>activeReverseAjaxEnabled</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>
+				initApplicationScopeCreatorsAtStartup
+			</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>maxWaitAfterWrite</param-name>
+			<param-value>100</param-value>
+		</init-param>
+		<init-param> 
+			<param-name>classes</param-name> 
+			<param-value>java.lang.Object</param-value> 
+		</init-param> 
+		
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	 <servlet>
+        <servlet-name>DisplayChart</servlet-name>
+        <servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+     </servlet>
+     <servlet-mapping>
+         <servlet-name>DisplayChart</servlet-name>
+         <url-pattern>/DisplayChart</url-pattern>
+     </servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>dwr-invoker</servlet-name>
+		<url-pattern>/dwr/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+    	<servlet-name>UploadServlet</servlet-name>
+    	<servlet-class>com.neusoft.clw.common.servlet.UploadServlet</servlet-class>
+  	</servlet>
+  	<servlet-mapping>
+    	<servlet-name>UploadServlet</servlet-name>
+    	<url-pattern>/UploadServlet</url-pattern>
+  	</servlet-mapping>
+
+	<servlet>
+    	<servlet-name>ServletFilter</servlet-name>
+    	<servlet-class>com.neusoft.clw.common.filter.ServletFilter</servlet-class>
+  	</servlet>
+  	<servlet-mapping>
+    	<servlet-name>ServletFilter</servlet-name>
+    	<url-pattern>/ServletFilter</url-pattern>
+  	</servlet-mapping>
+
+	<!--error-page Configuration--> 
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/jsp/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/jsp/error/500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>503</error-code>
+		<location>/WEB-INF/jsp/error/503.jsp</location>
+	</error-page>
+</web-app>

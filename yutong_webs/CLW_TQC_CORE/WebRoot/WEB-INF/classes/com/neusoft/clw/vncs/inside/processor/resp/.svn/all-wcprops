@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/inside/processor/resp
+END
+BindRespProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/inside/processor/resp/BindRespProcessor.java
+END
+UploadDataRespProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 152
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/inside/processor/resp/UploadDataRespProcessor.java
+END
+SendDataRespProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/clw/vncs/inside/processor/resp/SendDataRespProcessor.java
+END

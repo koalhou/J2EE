@@ -1,0 +1,46 @@
+#qas jdbc info
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.8.2.203)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =m2mqasdb)(SERVER=DEDICATED)))
+#database.username=clwxc
+#database.password=clwxc
+
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.47.84)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =orclutf8)(SERVER=DEDICATED)))
+#database.username=CLW
+#database.password=CLW
+
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.47.84)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =orclutf8)(SERVER=DEDICATED)))
+#database.username=CLW_TEST
+#database.password=CLW_TEST
+
+# jdbc info
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.124.123)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =orclutf8)(SERVER=DEDICATED)))
+#database.username=CLW_DEV
+#database.password=CLW_DEV
+
+# jdbc info
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.124.115)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =orcl)(SERVER=DEDICATED)))
+#database.username=clwxc
+#database.password=clwxc
+
+#120
+database.driver=oracle.jdbc.driver.OracleDriver
+database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.124.120)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =orcl)(SERVER=DEDICATED)))
+database.username=xc
+database.password=xc
+
+#IDCXC
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=172.16.10.83)(PORT = 1521)))(CONNECT_DATA=(SERVICE_NAME =m2m)(INSTANCE_NAME = m2m)))
+#database.username=clwxc
+#database.password=clwxc_748
+
+#120
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.10.124.120)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =orcl)(SERVER=DEDICATED)))
+#database.username=xc
+#database.password=xc
+

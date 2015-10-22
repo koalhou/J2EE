@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ZoneManage">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="ZoneXsInfo" type="com.neusoft.clw.yw.xs.zonemanage.ds.ZoneXsInfo" />
+
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*)
+		  FROM clw_jc_zone_t t
+		 WHERE t.valid_flag = '0'
+	   <isNotEmpty prepend="AND" property="zone_name">
+       	 t.zone_name LIKE '%$zone_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="zone_parent_id">
+       	 t.zone_parent_id=#zone_parent_id#
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="zone_level">
+       	 t.zone_level=#zone_level#
+       </isNotEmpty>
+	</select>
+	<select id="getSonCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*)
+		  FROM clw_jc_zone_t t
+		 WHERE t.valid_flag = '0'
+		   AND t.zone_parent_id = #zone_parent_id#
+	</select>
+	<resultMap id="data-result" class="ZoneXsInfo">
+		<result property="zone_id" column="ZONE_ID" />
+		<result property="zone_name" column="ZONE_NAME" />
+		<result property="zone_code" column="ZONE_CODE" />
+		<result property="zone_level" column="ZONE_LEVEL" />
+		<result property="zone_parent_name" column="ZONE_PARENT_NAME" />
+		<result property="zone_parent_id" column="ZONE_PARENT_ID" />
+	</resultMap>
+	<select id="selectZoneXsInfo"  parameterClass="Map" resultMap="data-result">
+		SELECT t.zone_id, t.zone_name, t.zone_code, t.zone_level, t2.zone_name AS zone_parent_name ,t.zone_parent_id
+		  FROM clw_jc_zone_t t, clw_jc_zone_t t2
+		 WHERE t.valid_flag = '0'
+		   AND t.zone_parent_id = t2.zone_id(+)
+	   <isNotEmpty prepend="AND" property="zone_name">
+       	 t.zone_name LIKE '%$zone_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="zone_parent_id">
+       	 t.zone_parent_id=#zone_parent_id#
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="zone_level">
+       	 t.zone_level=#zone_level#
+       </isNotEmpty>
+	 ORDER BY t.create_time
+ 	</select>
+ 	<select id="getZoneName"  parameterClass="String" resultClass="String">
+		SELECT t.zone_name FROM clw_jc_zone_t t WHERE t.zone_id = #zone_id#
+ 	</select>
+ 	<insert id="insertZoneXsInfo" parameterClass="ZoneXsInfo">
+ 	INSERT INTO clw_jc_zone_t
+	  (zone_id,
+	   zone_parent_id,
+	   zone_name,
+	   zone_level,
+	   zone_lon,
+	   zone_lat,
+	   creater,
+	   create_time,
+	   modifier,
+	   modify_time,
+	   valid_flag,
+	   vaset_user_id,
+	   vaset_time,
+	   zone_code)
+	VALUES
+	  (#zone_id#,
+	   #zone_parent_id#,
+	   #zone_name#,
+	   #zone_level#,
+	   '',
+	   '',
+	   #creater#,
+	   SYSDATE,
+	   '',
+	   '',
+	   '0',
+	   '',
+	   '',
+	   #zone_code#)
+ 	</insert>
+ 	<select id="getZoneXsInfo" parameterClass="String" resultClass="ZoneXsInfo">
+ SELECT t.zone_id,
+       t.zone_parent_id,
+       t.zone_name,
+       t.zone_level,
+       ut.user_name AS creater,
+       to_char(t.create_time, 'yyyy-mm-dd hh24:mi:ss') AS create_time,
+       ut2.user_name AS modifier,
+       to_char(t.modify_time, 'yyyy-mm-dd hh24:mi:ss') AS modify_time,
+       t2.zone_name AS zone_parent_name,
+       t.zone_code
+  FROM clw_jc_zone_t t,
+       clw_jc_user_t ut,
+       clw_jc_user_t ut2,
+       clw_jc_zone_t t2
+ WHERE t.zone_id = #zone_id#
+   AND t.creater = ut.user_id(+)
+   AND t.modifier = ut2.user_id(+)
+   AND t.zone_parent_id = t2.zone_id(+)
+ 	</select>
+ 	<update id="updateZoneXsInfo" parameterClass="ZoneXsInfo">
+	 UPDATE clw_jc_zone_t t
+	   SET t.zone_name = #zone_name#, t.zone_code = #zone_code#, t.modifier = #modifier#, t.modify_time =SYSDATE
+	 WHERE t.zone_id = #zone_id#
+ 	</update>
+ 	<update id="updateDelZoneXsInfo" parameterClass="ZoneXsInfo">
+	 UPDATE clw_jc_zone_t t
+	   SET t.valid_flag = '1', t.vaset_user_id = #vaset_user_id#, t.vaset_time = SYSDATE
+	 WHERE t.zone_id = #zone_id#
+ 	</update>
+ 	<!-- ZoneManageDWR使用 begin -->
+ 	<resultMap id="data-select" class="ZoneXsInfo">
+		<result property="zone_id" column="ZONE_ID" />
+		<result property="zone_name" column="ZONE_NAME" />
+	</resultMap>
+ 	<select id="getSelectList" parameterClass="Map" resultMap="data-select">
+ 	SELECT t.zone_id, t.zone_name
+	  FROM clw_jc_zone_t t
+	 WHERE t.valid_flag = '0'
+	 <isNotEmpty prepend="AND" property="zone_parent_id">
+      t.zone_parent_id = #zone_parent_id#
+     </isNotEmpty>
+	 <isEmpty prepend="AND" property="zone_parent_id">
+	  t.zone_parent_id IS NULL
+	 </isEmpty>
+ 	</select>
+ 	<select id="getZoneNameCount" parameterClass="String" resultClass="Integer">
+	 	SELECT COUNT(*)
+		  FROM clw_jc_zone_t t
+		 WHERE t.valid_flag = '0'
+		 AND t.zone_name = #zone_name#
+ 	</select>
+ 	<select id="getZoneCodeCount" parameterClass="String" resultClass="Integer">
+	 	SELECT COUNT(*)
+		  FROM clw_jc_zone_t t
+		 WHERE t.valid_flag = '0'
+		 AND t.zone_code = #zone_code#
+ 	</select>
+ 	
+ 	<!-- ZoneManageDWR使用end -->
+</sqlMap>

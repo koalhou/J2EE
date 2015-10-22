@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/exceptions
+END
+BusinessException.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/exceptions/BusinessException.java
+END
+DataAccessException.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/exceptions/DataAccessException.java
+END
+DataAccessIntegrityViolationException.java
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_M/src/java/com/neusoft/clw/common/exceptions/DataAccessIntegrityViolationException.java
+END

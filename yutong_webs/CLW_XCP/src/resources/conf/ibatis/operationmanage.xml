@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OperationManage">
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+    <resultMap id="vehcileinfo-result" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="enterprise_name" column="SHORT_NAME" />
+		<result property="route_id" column="ROUTE_ID" />
+	</resultMap>
+	
+	<resultMap id="queryvehinfo-result" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="enterprise_name" column="SHORT_NAME" />
+		<result property="route_id" column="ROUTE_ID" />
+		<result property="vehicle_number" column="VEHICLE_NUMBER" />
+		<result property="engine_number" column="ENGINE_NUMBER" />
+	</resultMap>
+	
+	<!-- 管理员获取车辆VIN列表  -->
+	<select id="getInfosVeh" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       ROUTE_ID
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+	      ORDER BY MODIFY_TIME  DESC    
+	</select>
+	
+	<!-- 车主获取车辆VIN列表 -->
+	<select id="getInfosVehByUserID" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       ROUTE_ID
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE user_id =#userID# 
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+	      ORDER BY MODIFY_TIME  DESC    
+	</select>
+	
+	<!-- 管理员获取车辆数量接口  -->
+	<select id="queryVehinfosCount" parameterClass="vehcileinfo" resultClass="Integer">
+	SELECT COUNT(1) FROM CLW_JC_CLEN_VI
+	 WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_code">
+               VEHICLE_CODE like '%$vehicle_code$%'
+         </isNotEmpty>
+	</select>
+	
+	<!-- 管理员获取车辆VIN列表 接口SQL -->
+	<select id="queryVehinfos" parameterClass="vehcileinfo" resultMap="queryvehinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       ROUTE_ID,
+		       VEHICLE_NUMBER,
+		       ENGINE_NUMBER
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_code">
+               VEHICLE_CODE like '%$vehicle_code$%'
+         </isNotEmpty>
+	      ORDER BY MODIFY_TIME  DESC    
+	</select>
+	
+	
+	<select id="queryVehinfosByUserCount" parameterClass="vehcileinfo" resultClass="Integer">
+	  SELECT COUNT(1) FROM CLW_JC_CLEN_VI
+	  WHERE user_id =#userID# 
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_code">
+               VEHICLE_CODE like '%$vehicle_code$%'
+         </isNotEmpty>
+	</select>
+	
+	<!-- 管理员获取车辆VIN列表 接口SQL -->
+	<select id="queryVehinfosByUserID" parameterClass="vehcileinfo" resultMap="queryvehinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       ROUTE_ID,
+		       VEHICLE_NUMBER,
+		       ENGINE_NUMBER
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE user_id =#userID# 
+		<isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_code">
+               VEHICLE_CODE like '%$vehicle_code$%'
+         </isNotEmpty>
+	      ORDER BY MODIFY_TIME  DESC    
+	</select>
+	
+</sqlMap>

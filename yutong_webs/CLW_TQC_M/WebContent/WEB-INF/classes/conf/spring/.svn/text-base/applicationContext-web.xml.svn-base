@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<bean id="AppContextHelper"
+		class="com.neusoft.clw.common.service.AppContextHelper">
+	</bean>
+	
+	<!-- 日志入库 -->
+	<bean id="operateLogRecorder" class="com.neusoft.clw.common.util.log.service.impl.OperateLogRecorderImpl"
+		scope="singleton">
+		<property name="trackDao">
+			<ref bean="dao" />
+		</property>
+	</bean>
+	
+	<!-- 翻页（拦截器） -->
+	<bean id="turnPageInterceptor" class="com.neusoft.clw.common.interceptor.TurnPageInterceptor"
+		scope="prototype">
+	</bean>
+	
+	<!-- 权限（拦截器） -->
+	<bean id="authenticationInterceptor"
+		class="com.neusoft.clw.common.interceptor.AuthenticationInterceptor"
+		scope="singleton">
+	</bean>
+	
+	<!-- 权限管理（首页） -->
+	<bean id="mainAction"
+		class="com.neusoft.clw.yw.qx.main.action.MainAction"
+		scope="prototype">
+	</bean>
+
+	<!-- 权限管理（登陆） -->
+	<bean id="securityAction"
+		class="com.neusoft.clw.yw.qx.security.action.SecurityAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 权限管理（验证码）  -->
+	<bean id="validateCode" 
+		class="com.neusoft.clw.yw.qx.security.action.ValidateCode" scope="prototype">
+	</bean>
+	
+	<!-- 权限管理（企业管理） -->
+	<bean id="entiManageAction"
+		class="com.neusoft.clw.yw.qx.entimanage.action.EntiManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 权限管理（企业管理DWR） -->
+	<bean id="entiManageDwr"
+		class="com.neusoft.clw.yw.qx.entimanage.action.EntiManageDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 权限管理（角色管理） -->
+	<bean id="roleManageAction"
+		class="com.neusoft.clw.yw.qx.rolemanage.action.RoleManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="roleManageService" ref="roleManageService" />
+	</bean>
+	
+	<!-- 权限管理（用户管理） -->
+	<bean id="userManageAction"
+		class="com.neusoft.clw.yw.qx.usermanage.action.UserManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="userManageService" ref="userManageService" />
+		<property name="doUserManageService" ref="doUserManageService" />
+	</bean>
+	
+	<!-- 权限管理（用户管理DWR） -->
+	<bean id="userManageDwr"
+		class="com.neusoft.clw.yw.qx.usermanage.action.UserManageDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 权限管理（修改密码） -->
+	<bean id="modifyPasswordAction"
+		class="com.neusoft.clw.yw.qx.security.action.ModifyPasswordAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理（终端厂家管理） -->
+	<bean id="oemManageAction"
+		class="com.neusoft.clw.yw.zd.oem.action.OemManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 终端管理（终端厂家管理DWR） -->
+	<bean id="oemManageDWR"
+		class="com.neusoft.clw.yw.zd.oem.action.OemManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理（终端设备管理） -->
+	<bean id="deviceManageAction"
+		class="com.neusoft.clw.yw.zd.device.action.DeviceManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理（终端协议管理） -->
+	<bean id="protocalManageAction"
+		class="com.neusoft.clw.yw.zd.protocal.action.ProtocalManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理（终端协议管理DWR） -->
+	<bean id="tmAttributeDwr"
+		class="com.neusoft.clw.yw.zd.protocal.action.TmAttributeDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理（终端管理） -->
+	<bean id="terminalManageAction"
+		class="com.neusoft.clw.yw.zd.terminal.action.TerminalManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="terminalManageService" ref="terminalManageService" />
+	</bean>
+	
+	<!-- 终端管理（终端管理DWR） -->
+	<bean id="terminalManageDWR"
+		class="com.neusoft.clw.yw.zd.terminal.action.TerminalManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 传输管理（运营商管理） -->
+	<bean id="businessManageAction"
+		class="com.neusoft.clw.yw.cs.business.action.BusinessManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 传输管理（SIM卡管理） -->
+	<bean id="simManageAction"
+		class="com.neusoft.clw.yw.cs.sim.action.SimManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="simManageService" ref="simManageService" />
+	</bean>
+	
+	<!-- 传输管理（SIM卡管理DWR） -->
+	<bean id="simManageDWR"
+		class="com.neusoft.clw.yw.cs.sim.action.SimManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 传输管理（SIM卡流量管理） -->
+	<bean id="simFluxManageAction"
+		class="com.neusoft.clw.yw.cs.simflux.action.SimFluxManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="simFluxManageService" ref="simFluxManageService" />
+	</bean>
+	
+	<!-- 车辆管理（车辆注册） -->
+	<bean id="vehicleRegisterAction"
+		class="com.neusoft.clw.yw.cl.vehicleRegister.action.VehicleRegisterAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="vehicleRegisterService" ref="vehicleRegisterService" />
+	</bean>
+	
+	<!-- 车辆管理（车辆信息管理） -->
+	<bean id="carBaseAction"
+		class="com.neusoft.clw.yw.cl.carbase.action.CarBaseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="carBaseService" ref="carBaseService" />
+	</bean>
+	
+	<!-- 车辆管理（车辆信息管理DWR） -->
+	<bean id="carBaseDWR"
+		class="com.neusoft.clw.yw.cl.carbase.action.CarBaseDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 车辆管理（不良驾驶定义） -->
+	<bean id="illDriveAction"
+		class="com.neusoft.clw.yw.cl.illdrive.action.IllDriveAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 手持设备注册DWR -->
+	<bean id="handheldDeviceDWR"
+		class="com.neusoft.clw.yw.cl.handheldDevice.action.HandheldDeviceDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统监控（终端监控） -->
+	<!-- 单终端监控 -->
+	<bean id="singleTerminalMonitorAction"
+		class="com.neusoft.clw.yw.xj.monitor.action.SingleTerminalMonitorAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 终端实时状态 -->
+	<bean id="terminalMonitorAction"
+		class="com.neusoft.clw.yw.xj.monitor.action.TerminalMonitorAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="terminalMonitorService" ref="terminalMonitorService" />
+	</bean>
+	<!-- 终端未鉴权信息 -->
+	<bean id="terminalAuthenticationAction"
+		class="com.neusoft.clw.yw.xj.monitor.action.TerminalAuthenticationAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+    <!-- 终端远程升级 -->
+	<bean id="terminalRomoteUpdateAction"
+		class="com.neusoft.clw.yw.xj.terminalRomoteUpdate.action.TerminalRomoteUpdateAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统监控（访问统计） -->
+	<bean id="statisticAction"
+		class="com.neusoft.clw.yw.xj.statistic.action.StatisticAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统监控（运营报表分析） -->
+	<bean id="operatingReportAction"
+		class="com.neusoft.clw.yw.xj.operatingreport.action.OperatingReportAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统监控(行车记录查询 ) -->
+	<bean id="drivingRecordsAction"
+		class="com.neusoft.clw.yw.xj.drivingrecords.action.DrivingRecordsAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 系统监控(行车记录导出)-->
+	<bean id="drivingRecordsExport"
+		class="com.neusoft.clw.yw.xj.drivingrecords.action.DrivingRecordsExport"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统设置（省市信息） -->
+	<bean id="zoneManageAction"
+		class="com.neusoft.clw.yw.xs.zonemanage.action.ZoneManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统设置（省市信息DWR） -->
+	<bean id="zoneManageDWR"
+		class="com.neusoft.clw.yw.xs.zonemanage.action.ZoneManageDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统设置（基础信息） -->
+	<bean id="baseInfoManageAction"
+		class="com.neusoft.clw.yw.xs.baseinfo.action.BaseInfoManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="baseInfoManageService" ref="baseInfoManageService" />
+	</bean>
+	
+	<!-- 系统设置（基础信息DWR） -->
+	<bean id="baseInfoManageDwr"
+		class="com.neusoft.clw.yw.xs.baseinfo.action.BaseInfoManageDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统设置（版本维护） -->
+	<bean id="versionManageAction"
+		class="com.neusoft.clw.yw.xs.versionmanage.action.VersionManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统设置（服务点管理） -->
+	<bean id="poiManageAction"
+		class="com.neusoft.clw.yw.xs.poimanage.action.PoiManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="poiManageService" ref="poiManageService" />
+	</bean>
+	
+	<!-- 系统设置（服务点管理DWR） -->
+	<bean id="poiManageDwr"
+		class="com.neusoft.clw.yw.xs.poimanage.action.PoiManageDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 系统设置（信息反馈管理） -->
+	<bean id="informationManageAction"
+		class="com.neusoft.clw.yw.xs.informationmanage.action.InformationManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（企业选择子页面） -->
+	<bean id="enterpriseAction"
+		class="com.neusoft.clw.yw.popup.enterprise.action.EnterpriseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（车主选择子页面） -->
+	<bean id="ownerAction"
+		class="com.neusoft.clw.yw.popup.owner.action.OwnerAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（用户选择子页面） -->
+	<bean id="userBrowseAction"
+		class="com.neusoft.clw.yw.popup.user.action.UserBrowseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（角色选择子页面） -->
+	<bean id="roleBrowseAction"
+		class="com.neusoft.clw.yw.popup.role.action.RoleBrowseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（车辆选择子页面） -->
+	<bean id="vehicleBrowseAction"
+		class="com.neusoft.clw.yw.popup.vehicle.action.VehicleBrowseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（终端选择子页面） -->
+	<bean id="terminalBrowseAction"
+		class="com.neusoft.clw.yw.popup.terminal.action.TerminalBrowseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（SIM卡选择子页面） -->
+	<bean id="simBrowseAction"
+		class="com.neusoft.clw.yw.popup.sim.action.SimBrowseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（已注册车辆选择页面） -->
+	<bean id="registeVehicleBrowseAction"
+		class="com.neusoft.clw.yw.popup.registevehicle.action.RegisteVehicleBrowseAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 子页面（企业选择与新建子页面） -->
+	<bean id="enterpriseViewAndCreateAction"
+		class="com.neusoft.clw.yw.popup.enterprise.action.EnterpriseViewAndCreateAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 运营报表分析 -->
+	<bean id="operationsAction"
+		class="com.neusoft.clw.yw.xj.report.action.OperationsAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 附件信息获取DWR -->
+	<bean id="accessoryDwr"
+		class="com.neusoft.clw.yw.common.action.AccessoryDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 公告管理 -->
+	<bean id="ajtNoticeAction"
+		class="com.neusoft.clw.yw.xs.noticemanage.action.AjtNoticeAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="ajtNoticeService" ref="ajtNoticeService" />
+	</bean>
+	
+	<!-- 实时通知DWR -->
+	<bean id="noticeCoreDwr"
+		class="com.neusoft.clw.yw.common.action.NoticeCoreDwr"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 维保设置 -->
+	<bean id="maintenanceSetAction"
+		class="com.neusoft.clw.yw.sm.maitenance.action.MaintenanceSetAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+	<!-- 高档车设置 -->
+	<bean id="luxuryCarSetAction"
+		class="com.neusoft.clw.yw.sm.maitenance.action.LuxuryCarSetAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+	<!-- 维保查询 -->
+	<bean id="maintenanceQueryAction"
+		class="com.neusoft.clw.yw.sm.maitenance.action.MaintenanceQueryAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+	<!-- 维保查询DWR -->
+	<bean id="maintenanceDWR"
+		class="com.neusoft.clw.yw.sm.maitenance.action.MaintenanceDWR"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>			
+	<!-- 终端参数查询/设置 -->
+	<bean id="terminalParamsAction"
+		class="com.neusoft.clw.yw.xj.terminalparam.action.TerminalParamsAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!-- 手持设备注册 -->
+	<bean id="handheldDeviceAction"
+		class="com.neusoft.clw.yw.cl.handheldDevice.action.HandheldDeviceAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="handheldDeviceService" ref="handheldDeviceService" />
+	</bean>
+	
+	<!-- 终端管理【新】（终端参数设置） -->
+	<bean id="newTerminalParamsAction"
+		class="com.neusoft.clw.yw.zdnew.terminalparams.action.NewTerminalParamsAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- 终端管理【新】（终端远程升级） -->
+	<bean id="newTerminalUpdateAction"
+		class="com.neusoft.clw.yw.zdnew.terminalremoteupdate.action.NewTerminalUpdateAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="newTerminalUpdateService" ref="newTerminalUpdateService" />
+	</bean>
+
+	<!-- 终端管理【新】（终端版本信息） -->
+	<bean id="newTerminalVersionsAction"
+		class="com.neusoft.clw.yw.zdnew.terminalversions.action.NewTerminalVersionsAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理【新】（车速监控） -->
+	<bean id="speedMonitoringAction"
+		class="com.neusoft.clw.yw.zdnew.speedmonitoring.action.SpeedMonitoringAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理【新】（终端设备状态） -->
+	<bean id="newTerminalDeviceStatusAction"
+		class="com.neusoft.clw.yw.zdnew.terminaldevice.action.NewTerminalDeviceStatusAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 终端管理【新】（油量监控参数设置） -->
+	<bean id="ftlyParamAction"
+		class="com.neusoft.clw.yw.zdnew.ftlyparam.action.FtlyParamAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+
+	<!-- 新模块 -->
+	<!-- 问题反馈 -->
+	<bean id="feedBackAction" class="com.neusoft.clw.yw.newmodel.action.FeedBackAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<bean id="uploadUtilAction" class="com.neusoft.clw.yw.newmodel.action.UploadUtilAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>	
+	<!--参数设置管理 -->
+	<bean id="paramSetAction" class="com.neusoft.clw.yw.newmodel.action.ParamSetAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	<!--用户界面参数设置管理 -->
+	<bean id="themeSetAction" class="com.neusoft.clw.yw.newmodel.action.ThemeSetAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	
+	<!-- 登陆此统计 -->
+	<bean id="loginStatisticAction" class="com.neusoft.clw.yw.statistic.action.LoginStatisticAction" scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+</beans>

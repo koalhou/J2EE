@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Station">
+
+	<select id="getRouteByStudent" parameterType="map" resultType="Route"  >
+           select tripId,routeId,routeName,routeType from (
+ select distinct b.trip_id tripId, c.route_id routeId, c.route_name routeName,b.type routeType,a.modify_time
+          from CLW_XC_VSS_T a, CLW_XC_TRIP_T b, CLW_XC_ROUTE_T c
+         where b.route_id = c.route_id
+           and a.trip_id = b.trip_id
+            and b.type = #{line_type}
+           and a.student_id = #{cld_id} ) a
+           order by  modify_time desc nulls last
+	</select>
+	
+	<select id="getGPS4Route" parameterType="Route" resultType="GPS">
+        select  lon,lat from (
+		 select  distinct a.longitude lon, a.latitude lat,a.orbit_time
+		         from CLW_JZ_TRIPORBIT_T a
+	        where  a.trip_id = #{tripId} and a.is_triporbit=1 
+	          and a.type = #{routeType}
+		          order by a.orbit_time )  
+	</select>
+	
+	<!-- 获取线路上的站点 -->
+	<select id="getStuStation" parameterType="String" resultType="Station">
+           select b.site_id siteId,
+              b.plan_in_time planArriveTime,
+              a.site_name siteName,
+              a.site_longitude siteLongitude,
+              a.site_latitude siteLatitude,
+              '0'  siteType
+         from CLW_XC_VSS_SITE_T b, CLW_XC_SITE_T a
+        where a.site_id = b.site_id
+          and a.CONTROL_STATION = #{routeType}
+          and b.trip_id = #{tripId}
+          order by b.plan_in_time
+	</select>
+	<!-- 获取起始点 -->
+	<select id="getSpeStation" parameterType="map" resultType="Station">
+           select  site_id siteId,
+              nvl(vss_state,0)+1 as siteType
+         from CLW_XC_VSS_T
+        where student_id=#{cld_id} and trip_id=#{trip_id} order by vss_state
+	</select>
+	
+	<select id="countStuStationRemind" parameterType="Remind" resultType="int">
+		SELECT count(*)
+	  FROM CLW_JZ_SITE_NOTE_T T1
+	 WHERE T1.STU_ID = #{childId}
+	   AND t1.site_id = #{siteId}
+	</select>
+	
+	<select id="getStuStationRemind" parameterType="map" resultType="Remind">
+	SELECT t1.site_id            siteId,
+	       t1.note_id            remindId,
+	       t1.site_name          remindAlias,
+	       T1.NOTE_CALC_TYPE     remindType,
+	       T1.Ahead_Pre_Site  remindValue,
+	       t1.valid_flag           valid
+	  FROM CLW_JZ_SITE_NOTE_T T1,clw_xc_site_t t2
+	 WHERE t1.site_id=t2.site_id and  T1.STU_ID = #{cld_id}
+	   AND t2.control_station = #{line_type}
+	   and  T1.Note_Calc_Type=2
+	   
+	 union all
+	
+	SELECT t1.site_id            siteId,
+	       t1.note_id            remindId,
+	       t1.site_name          remindAlias,
+	       T1.NOTE_CALC_TYPE     remindType,
+	       T1.Ahead_Note_Mileage  remindValue,
+	       t1.valid_flag           valid
+	  FROM CLW_JZ_SITE_NOTE_T T1,clw_xc_site_t t2
+	 WHERE t1.site_id=t2.site_id and  T1.STU_ID = #{cld_id}
+	   AND t2.control_station = #{line_type}
+	   and  T1.Note_Calc_Type=1
+	   
+	union  all
+	
+	SELECT t1.site_id            siteId,
+	       t1.note_id            remindId,
+	       t1.site_name          remindAlias,
+	       T1.NOTE_CALC_TYPE     remindType,
+	       T1.Ahead_Note_Time  remindValue,
+	       t1.valid_flag           valid
+	  FROM CLW_JZ_SITE_NOTE_T T1,clw_xc_site_t t2
+	 WHERE t1.site_id=t2.site_id and  T1.STU_ID = #{cld_id}
+	   AND t2.control_station = #{line_type}
+	     and T1.Note_Calc_Type=0
+	</select>
+	
+	
+	<insert id="addRemind" parameterType="Remind">
+		<if test="remindType == 0">
+			insert into CLW_JZ_SITE_NOTE_T(note_id,site_id,site_name,STU_ID,NOTE_CALC_TYPE,AHEAD_NOTE_TIME,CREATE_TIME,valid_flag) 
+			values(SEQ_CLW_JZ_SITE_NOTE_T.nextval,#{siteId},#{remindAlias,jdbcType=VARCHAR},#{childId},#{remindType},#{remindValue},sysdate,1)
+		</if>
+		<if test="remindType == 1">
+			insert into CLW_JZ_SITE_NOTE_T(note_id,site_id,site_name,STU_ID,NOTE_CALC_TYPE,AHEAD_NOTE_MILEAGE,CREATE_TIME,valid_flag) 
+			values(SEQ_CLW_JZ_SITE_NOTE_T.nextval,#{siteId},#{remindAlias,jdbcType=VARCHAR},#{childId},#{remindType},#{remindValue},sysdate,1)
+		</if>
+		<if test="remindType == 2">
+			insert into CLW_JZ_SITE_NOTE_T(note_id,site_id,site_name,STU_ID,NOTE_CALC_TYPE,AHEAD_PRE_SITE,CREATE_TIME,valid_flag) 
+			values(SEQ_CLW_JZ_SITE_NOTE_T.nextval,#{siteId},#{remindAlias,jdbcType=VARCHAR},#{childId},#{remindType},#{remindValue},sysdate,1)
+		</if>
+	</insert>
+	
+	<update id="updateRemind"  parameterType="Remind">
+		<choose>
+		<when test="valid == 0">
+			UPDATE CLW_JZ_SITE_NOTE_T
+			SET valid_flag=0,MODIFY_TIME=sysdate
+			where STU_ID =#{childId} and site_id=#{siteId} 
+		</when>
+		<otherwise>
+			UPDATE CLW_JZ_SITE_NOTE_T
+			SET site_name=#{remindAlias,jdbcType=VARCHAR},MODIFY_TIME=sysdate,NOTE_CALC_TYPE=#{remindType},valid_flag=1,
+			<if test="remindType == 0"> AHEAD_NOTE_TIME=#{remindValue}</if>
+			<if test="remindType == 1"> AHEAD_NOTE_MILEAGE=#{remindValue}</if>
+			<if test="remindType == 2"> AHEAD_PRE_SITE=#{remindValue}</if>
+			where 
+			STU_ID =#{childId} and site_id=#{siteId} 
+		</otherwise>
+		</choose>
+	</update>	 
+	
+</mapper>

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="photomonitor">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="EnterpriseResInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseResInfo" />
+	<typeAlias alias="photoMonitorInfo"
+		type="com.neusoft.clw.safemanage.personsafe.photomonitor.domain.PhotoMonitorInfo" />
+
+
+
+	<resultMap class="EnterpriseResInfo" id="enterprise_tree">
+		<result property="enterprise_id" column="enterprise_id" />
+		<result property="short_name" column="short_name" />
+		<result property="left_num" column="left_num" />
+		<result property="right_num" column="right_num" />
+		<result property="treeleve" column="treeleve" />
+		<result property="parent_id" column="parent_id" />
+		<result property="concate_cr_flag" column="concate_cr_flag" />
+	</resultMap>
+
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR"
+			mode="OUT" />
+		<parameter property="out_message" javaType="String"
+			jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR"
+			mode="OUT" resultMap="enterprise_tree" />
+	</parameterMap>
+
+	<procedure id="show_enterprise_tree" parameterMap="pm_in_example">
+		{ call tree_enterprise_pack.show_enterprise_tree(?, ? ,? ,?) }
+	</procedure>
+
+	<!-- 获取拍照列表条数 
+	<select id="getPhotoCount" parameterClass="java.util.Map"
+		resultClass="Integer">
+		SELECT COUNT(1)
+		from CLW_YW_PHOTO_T B, CLW_CL_BASE_INFO_T C
+		where C.VALID_FLAG = '0'
+		AND C.DEVICE_TYPE = '0'
+		AND B.VEHICLE_VIN = C.VEHICLE_VIN
+		AND C.ORGANIZATION_ID IN
+		(SELECT ENTERPRISE_ID
+		FROM CLW_JC_ENTERPRISE_VI
+		WHERE LEFT_NUM >=
+		(SELECT LEFT_NUM
+		FROM CLW_JC_ENTERPRISE_VI
+		WHERE ENTERPRISE_ID = #organization_id#)
+		AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+		)
+		 <isNotEmpty prepend="AND" property="vehicle_vins">
+			b.VEHICLE_VIN in  (#vehicle_vins#)
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="endime">
+            b.PHOTO_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="begintime">
+            b.PHOTO_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="photo_event">
+            b.PHOTO_EVENT=#photo_event#
+         </isNotEmpty>
+	</select>
+	-->
+	<!-- 获取拍照列表条数 -->
+	<select id="getPhotoListNoOrgCount" parameterClass="java.util.Map" resultClass="Integer">
+      SELECT COUNT(1)
+      FROM CLW_YW_PHOTO_T        B,
+           CLW_CL_BASE_INFO_T    C
+      WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+      AND C.VALID_FLAG = '0'
+      AND C.DEVICE_TYPE = '0'
+      AND B.VEHICLE_VIN in ($vehicle_vins$)
+          <isNotEmpty prepend="AND" property="end_time">
+            B.PHOTO_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            B.PHOTO_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty property="photo_event">
+         	<isEqual prepend="AND" property="photo_event" compareValue="99">
+			(B.PHOTO_EVENT not in ('0','1','2','3','4','5','6','7') OR B.PHOTO_EVENT is null)
+			</isEqual>
+         	<isNotEqual prepend="AND" property="photo_event" compareValue="99">
+				   B.PHOTO_EVENT=#photo_event#
+			</isNotEqual>
+         </isNotEmpty>
+	</select>
+	
+	<!-- 获取拍照列表  1:拍照失败,2:等待上传,3:查看照片
+	<select id="getPhotoList" parameterClass="java.util.Map" resultClass="photoMonitorInfo">
+      SELECT B.PHOTO_ID,
+      B.VEHICLE_VIN,
+      C.VEHICLE_LN,
+      B.CHANNEL_NUMBER AS CHANLE_CODE,
+      B.PHOTO_EVENT,
+      TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+      B.PHOTO_FILE,
+      D.USER_NAME
+      FROM CLW_YW_SEND_COMMAND_T A,
+           CLW_YW_PHOTO_T        B,
+           CLW_CL_BASE_INFO_T    C,
+           CLW_JC_USER_T         D
+      WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+       AND C.VALID_FLAG = '0'
+       AND C.DEVICE_TYPE = '0'
+       AND B.PHOTO_ID = A.MSG_ID(+)
+       AND A.OPERATE_USER_ID = D.USER_ID(+)
+       AND C.ORGANIZATION_ID IN
+       (SELECT ENTERPRISE_ID
+          FROM CLW_JC_ENTERPRISE_VI
+         WHERE LEFT_NUM >=
+               (SELECT LEFT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+           AND <![CDATA[RIGHT_NUM <=
+               (SELECT RIGHT_NUM
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE ENTERPRISE_ID = #organization_id#)
+                  ]]>
+                )
+	     <isNotEmpty prepend="AND" property="vehicle_vin">
+			b.VEHICLE_VIN =#vehicle_vin#
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="end_time">
+            b.PHOTO_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            b.PHOTO_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="photo_event">
+            b.PHOTO_EVENT=#photo_event#
+         </isNotEmpty>
+	  <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>  
+	</select>
+	-->
+	<!-- 获取拍照列表  1:拍照失败,2:等待上传,3:查看照片-->
+	<select id="getPhotoListNoOrg" parameterClass="java.util.Map" resultClass="photoMonitorInfo">
+      SELECT B.PHOTO_ID,
+      B.VEHICLE_VIN,
+      C.VEHICLE_LN,
+      B.CHANNEL_NUMBER AS CHANLE_CODE,
+      B.PHOTO_EVENT,
+      TO_CHAR(B.PHOTO_TIME, 'YYYY-MM-DD HH24:MI:SS') PHOTO_TIME,
+      B.PHOTO_FILE
+      FROM CLW_YW_PHOTO_T        B,
+           CLW_CL_BASE_INFO_T    C
+      WHERE B.VEHICLE_VIN = C.VEHICLE_VIN
+      AND C.VALID_FLAG = '0'
+      AND C.DEVICE_TYPE = '0'
+      AND B.VEHICLE_VIN in ($vehicle_vins$)
+         <isNotEmpty prepend="AND" property="end_time">
+            B.PHOTO_TIME <![CDATA[ <= ]]> TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+            B.PHOTO_TIME >= TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+         <isNotEmpty property="photo_event">
+         	<isEqual prepend="AND" property="photo_event" compareValue="99">
+			(B.PHOTO_EVENT not in ('0','1','2','3','4','5','6','7') OR B.PHOTO_EVENT is null)
+			</isEqual>
+         	<isNotEqual prepend="AND" property="photo_event" compareValue="99">
+				   B.PHOTO_EVENT=#photo_event#
+			</isNotEqual>
+         </isNotEmpty>
+	 <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+     </dynamic>  
+	</select>
+	
+	<!-- 获取拍照照片信息
+	<select id="getPhotoView" parameterClass="java.util.Map" resultClass="photoMonitorInfo">
+select b.vehicle_vin,
+       c.vehicle_ln,
+       c.vehicle_code,
+       b.CHANNEL_NUMBER as chanle_code,
+       to_char(b.photo_time, 'yyyy-mm-dd hh24:mi:ss') photo_time,
+       b.photo_event,
+       b.photo_file,
+       b.photo_falg,
+       NVL(b.photo_desc,' ') photo_desc
+  from CLW_YW_PHOTO_T        B,
+       CLW_CL_BASE_INFO_T    C
+ where B.vehicle_vin = c.vehicle_vin
+   AND B.PHOTO_ID=#photo_id#
+	</select>
+	 -->
+	
+	<select id="getPhotoFiveList" parameterClass="java.util.Map" resultClass="photoMonitorInfo">
+select rownum row_num,c.vehicle_vin,
+       c.vehicle_ln,
+       c.vehicle_code,
+       d.user_name user_name,
+       a.chanle_code,
+       to_char(a.operate_time, 'yyyy-mm-dd hh24:mi:ss') operate_time,
+       b.photo_file,
+       (case
+         when a.SEND_TIMES >= 4 and b.photo_file is null and
+              (sysdate - INTERVAL '4' MINUTE) <![CDATA[ <  ]]> a.operate_time then
+          '2'
+         when a.SEND_TIMES >= 4 and b.photo_file is null and
+              (sysdate - INTERVAL '4' MINUTE) >= a.operate_time then
+          '1'
+         when b.photo_file is null then
+          '2'
+         else
+          '3'
+       end) send_result
+  from CLW_YW_SEND_COMMAND_T A,
+       CLW_YW_PHOTO_T        B,
+       CLW_CL_BASE_INFO_T    C,
+       CLW_JC_USER_T         D
+ where a.MSG_ID = b.photo_id(+)
+   and a.vehicle_vin = c.vehicle_vin
+   and a.operate_user_id = d.user_id
+   and a.SEND_TYPE = '2001'
+   and a.vehicle_vin=#VEHICLE_VIN#
+	    
+	  <dynamic prepend="ORDER BY">  
+     <isNotEmpty property="sortname">  
+      $sortname$   $sortorder$  
+     </isNotEmpty>  
+   </dynamic>  
+	</select>
+	
+	<!-- 获取拍照照片信息   根据ID列表 获取一组照片信息列表   -->
+	<select id="getPhotoInfoListByList" parameterClass="java.util.List" resultClass="photoMonitorInfo">
+		<![CDATA[
+select b.vehicle_vin,
+	   b.photo_id,
+       b.photo_file
+  from CLW_YW_PHOTO_T        B,
+       CLW_CL_BASE_INFO_T    C
+ where B.vehicle_vin = c.vehicle_vin
+ 	  AND C.VALID_FLAG = '0'
+      AND C.DEVICE_TYPE = '0'
+		]]>
+		<iterate  prepend="AND" open="(" close=")" conjunction="or">  
+        B.PHOTO_ID=#photoIdList[]#
+        </iterate>
+      ORDER BY b.PHOTO_TIME DESC 
+	</select>
+	
+		<!-- 点击进入相册 获取单张拍照照片信息 -->
+	<select id="getPhotoInfo" parameterClass="String" resultClass="photoMonitorInfo">
+select b.vehicle_vin,
+	   b.photo_id,
+       c.vehicle_ln,
+       c.vehicle_code,
+       b.CHANNEL_NUMBER as chanle_code,
+       to_char(b.photo_time, 'yyyy-mm-dd hh24:mi:ss') photo_time,
+       b.photo_event,
+       b.photo_file,
+       b.photo_falg,
+       b.flag_user,
+       to_char(b.flag_time, 'yyyy-mm-dd hh24:mi:ss') flag_time,
+       b.reli_user,
+       to_char(b.reli_time, 'yyyy-mm-dd hh24:mi:ss') reli_time,
+       b.photo_desc,
+       b.operate_user_id
+  from CLW_YW_PHOTO_T b,
+       CLW_CL_BASE_INFO_T c
+ where b.vehicle_vin = c.vehicle_vin
+      AND c.VALID_FLAG = '0'
+      AND c.DEVICE_TYPE = '0'
+   AND b.PHOTO_ID=#photo_id#
+   <![CDATA[ AND rownum <= 1 ]]>
+	</select>
+	
+	<!-- 标记超载照片信息 -->
+	<update id="updatePhotoInfo" parameterClass="java.util.Map" >
+		update CLW_YW_PHOTO_T set
+		<isNotEmpty property="photo_falg">
+        	photo_falg = #photo_falg#,
+        </isNotEmpty>
+        photo_desc = #photo_desc#,
+		flag_user = #flag_user#,
+		flag_time = sysdate
+		where PHOTO_ID=#photo_id#
+	</update>
+	<!-- 解除超载照片信息 -->
+	<update id="reliPhotoInfo" parameterClass="java.util.Map" >
+		update CLW_YW_PHOTO_T set
+		<isNotEmpty property="photo_falg">
+        	photo_falg = #photo_falg#,
+        </isNotEmpty>
+        photo_desc = #photo_desc#,
+		reli_user = #reli_user#,
+		reli_time = sysdate
+		where PHOTO_ID=#photo_id#
+	</update>
+</sqlMap>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+ 
+	
+	<!-- 系统环境action start-->
+ 	<package name="ubindex" namespace="/ub/index" extends="clw-default">
+
+		<action name="init" >
+			<result> /WEB-INF/jsp/ub/index/index.jsp 
+				</result>
+		</action>
+				<!--刷新缓存  -->
+		<action name="clearCache" class="indexUBAction"  method="clearCache">
+           <result name="success">/WEB-INF/jsp/ub/index/cache.jsp 
+           </result>
+       </action>
+		
+		
+	</package>
+
+	<package name="ubIndexJson" namespace="/ub/index/json" extends="json-default">
+		<!-- 获取车辆数和开通企业 -->
+		<action name="getEntAndBus" class="indexUBAction"  method="getEntAndBus">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">returnMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+       </action>
+		<!-- 企业活跃度排名 -->
+		<action name="getCARankLastMonth" class="indexUBAction"  method="getCARankLastMonth">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">returnMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+       </action>
+		<!-- 上个月企业汇总 -->
+		<action name="getCAInfoLastMonth" class="indexUBAction"  method="getCAInfoLastMonth">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">returnMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+       </action>
+		<!-- 最近6个月企业活跃度 bars-->
+		<action name="getCAInfoLast6Month" class="indexUBAction"  method="getCAInfoLast6Month">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">returnMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+       </action>
+		<!-- 服务活跃度 -->
+		<action name="getSAInfoLastMonth" class="indexUBAction"  method="getSAInfoLastMonth">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">returnMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+       </action>
+		<!--推送活跃度  -->
+		<action name="getPAInfoLastMonth" class="indexUBAction"  method="getPAInfoLastMonth">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">returnMap</param>
+           </result>
+           <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+       </action>
+
+       
+      
+   		
+    </package> 
+	
+</struts>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="FileUpload">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="uploadFileInfo" type="com.neusoft.clw.yw.newmodel.domain.UploadFileInfo" />
+	
+	<resultMap class="uploadFileInfo" id="stewardphoto-result">
+		<result property="photo_name" column="ACCESSORY_NAME"/>
+       <result property="photoContent" column="ACCESSORY_CONTENT" typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler"/>
+    </resultMap>
+
+	<insert id="insertsys_a_tApk" parameterClass="uploadFileInfo">
+		INSERT INTO clw_tqc_ygb.CLW_TQC_SYS_V_T
+		VALUES
+		  (clw_tqc_ygb.SEQ_VERSION.nextval,#apply_id#,#version_name#,clw_tqc_ygb.SEQ_VERSION.nextval,#version_desc#,#creater#,sysdate,
+		  null,null,0,null,null,sysdate,#software_uri#,#force#)
+	</insert>
+	<select id="getsys_v_t" resultClass="uploadFileInfo">
+		select * from (
+	    SELECT t.*,rownum rm
+		  FROM clw_tqc_ygb.CLW_TQC_SYS_V_T t
+		 order by version_id desc
+		 ) t where t.rm = 1
+	</select>
+</sqlMap>

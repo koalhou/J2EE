@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:conf/jdbc/jdbc.properties</value>
+				<value>classpath*:config.properties</value>
+			</list>
+		</property>
+		<property name="fileEncoding"><value>GBK</value></property>
+	</bean>
+	<!-- 试运行环境was配置 -->
+	<!--  <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	   <property name="jndiName">
+	   <value>clwypt</value>
+	   </property>
+  	</bean>-->
+  	
+  	
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${database.driver}" />
+		<property name="url" value="${database.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+		<!-- 连接池启动时的初始值 -->
+        <property name="initialSize" value="10" />
+        <property name="connectionProperties" value="oracle.jdbc.ReadTimeout=180000" /> 
+		<!--最大激活连接数，设为0表示无限制-->
+		<property name="maxActive" value="96" />
+		<!--最大的空闲连接数。设为0表示无限制-->
+		<property name="maxIdle" value="15" />
+		<!--最小空闲值.当空闲的连接数少于阀值时，连接池就会预申请去一些连接-->
+		<property name="minIdle" value="10" />
+		<!-- 最大建立连接等待时间（以毫秒为单位）。如果超过此时间将接到异常。设为－1表示无限制。 -->
+		<property name="maxWait" value="15000" />
+		<!-- 给出一条简单的sql语句进行验证 -->
+		<property name="validationQuery" value="select 1 from dual" />
+		<!-- 指明是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个 -->
+		<property name="testOnBorrow" value="true" />
+		<!-- 指明是否在归还到池中前进行检验 -->
+		<property name="testOnReturn" value="false" />
+		<!-- 指明连接是否被空闲连接回收器(如果有)进行检验.如果检测失败,则连接将被从池中去除 -->
+		<property name="testWhileIdle" value="true" />
+		<!-- 是否自动回收超时连接 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 数据库连接过多长时间不用将被视为被遗弃而收回连接池中(以秒数为单位) 。 -->
+		<property name="removeAbandonedTimeout" value="180" />
+		<!-- 是否在自动回收超时连接的时候打印连接的超时错误 -->
+		<property name="logAbandoned" value="true" />
+		<!-- 运行判断连接超时任务的时间间隔，单位为毫秒，默认为-1，即不执行任务。 -->
+		<property name="timeBetweenEvictionRunsMillis" value="15000" />
+		<!-- 在每次空闲连接回收器线程(如果有)运行时检查的连接数量 -->
+		<property name="numTestsPerEvictionRun" value="10" />
+		<!-- #连接的超时时间，单位为毫秒，默认为半小时 -->
+		<property name="minEvictableIdleTimeMillis" value="1800000" />
+	</bean>
+	
+	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler"/>
+	
+	<bean id="sqlMapClient"
+		class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation">
+			<value>classpath:conf/ibatis/sql-map-config.xml</value>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="lobHandler" ref="lobHandler"/>
+	</bean>
+
+	<!-- Spring 对事务的处理 -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 添加声明式事物管理 -->
+	<bean id="baseTransactionProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true">
+		<property name="transactionManager" ref="txManager" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="insert*">
+					PROPAGATION_REQUIRED,-BusinessException
+				</prop>
+				<prop key="update*">
+					PROPAGATION_REQUIRED,-BusinessException
+				</prop>
+				<prop key="delete*">
+					PROPAGATION_REQUIRED,-BusinessException
+				</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 当国际化文件发生改变时，会自动加载新的文件内容 -->
+	<!--  
+		<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+		<list>
+		<value>
+		</value>
+		</list>
+		</property>
+		</bean>
+	-->
+
+</beans>

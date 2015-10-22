@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Security">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="UserInfo" type="com.neusoft.clw.yw.qx.security.ds.UserInfo" />
+	<typeAlias alias="PermissionInfo" type="com.neusoft.clw.yw.qx.security.ds.PermissionInfo" />
+	
+	<resultMap id="user-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="sex" column="USER_SEX" />
+		<result property="birth" column="USER_BIRTH" />
+		<result property="countyID" column="USER_COUNTRY" />
+		<result property="provinceID" column="USER_PROVINCE" />
+		<result property="cityID" column="USER_CITY" />
+		<result property="moblie" column="USER_MOBILE" />
+		<result property="tel" column="USER_OFFICE_TEL" />
+		<result property="email" column="USER_EMAIL" />
+		<result property="idCard" column="USER_IDT_CARD" />
+		<result property="duty" column="USER_DUTY" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="entiName" column="FULL_NAME" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+		<result property="valideFlg" column="VALID_FLAG" />
+		<result property="vUserID" column="VASET_USER_ID" />
+		<result property="vTime" column="VASET_TIME" />
+	</resultMap>
+	
+	<resultMap id="permission-result" class="PermissionInfo">
+		<result property="moduleId" column="MODULE_ID" />
+	</resultMap>
+	
+	<select id="getUserInfo" parameterClass="Map" resultMap="user-result">
+		SELECT T1.USER_ID,
+		       T1.LOGIN_NAME,
+		       T1.LOGIN_PWD,
+		       T1.USER_TYPE,
+		       T1.USER_NAME,
+		       T1.USER_SEX,
+		       T1.USER_BIRTH,
+		       T1.USER_COUNTRY,
+		       T1.USER_PROVINCE,
+		       T1.USER_CITY,
+		       T1.USER_MOBILE,
+		       T1.USER_OFFICE_TEL,
+		       T1.USER_EMAIL,
+		       T1.USER_IDT_CARD,
+		       T1.ENTERPRISE_ID,
+               T2.FULL_NAME,
+		       T1.ORGANIZATION_ID,
+		       T1.USER_DUTY,
+		       T1.CREATER,
+		       T1.CREATE_TIME,
+		       T1.MODIFIER,
+		       T1.MODIFY_TIME,
+		       T1.VALID_FLAG,
+		       T1.VASET_USER_ID,
+		       T1.VASET_TIME
+  		  FROM CLW_JC_USER_T T1 
+  		  LEFT OUTER JOIN CLW_JC_ENTERPRISE_T T2
+            ON T1.ENTERPRISE_ID = T2.ENTERPRISE_ID
+         WHERE T1.LOGIN_NAME = #loginname#         
+   		   AND T1.LOGIN_PWD = #loginpwd#
+   		   AND T1.USER_TYPE = '0'
+   		   AND T1.VALID_FLAG &lt;&gt; '1'
+	</select>
+	
+	<select id="getAllPermissions" parameterClass="String" resultMap="permission-result">
+		<![CDATA[
+		SELECT T.MODULE_ID
+          FROM CLW_JC_MODULE_T T
+         WHERE T.LEFT_NUM >= (SELECT LEFT_NUM
+                                FROM CLW_JC_MODULE_T
+                               WHERE MODULE_ID = #value#
+                                 AND VALID_FLAG = '0'
+                                 AND LEFT_NUM IS NOT NULL
+                                 AND RIGHT_NUM IS NOT NULL)
+           AND T.RIGHT_NUM <= (SELECT RIGHT_NUM
+                                 FROM CLW_JC_MODULE_T
+                                WHERE MODULE_ID = #value#
+                                  AND VALID_FLAG = '0'
+                                  AND LEFT_NUM IS NOT NULL
+                                  AND RIGHT_NUM IS NOT NULL)
+          ]]>
+	</select>
+	
+	<select id="getUserPermissions" parameterClass="String" resultMap="permission-result">
+		SELECT JRR.MODULE_ID
+          FROM CLW_JC_ROLE_RIGHT_T JRR, CLW_JC_ROLE_T JR, CLW_JC_USER_ROLE_T JUR
+         WHERE JRR.ROLE_ID = JR.ROLE_ID
+           AND JR.ROLE_ID = JUR.ROLE_ID
+           AND JUR.USER_ID = #userID#
+	</select>
+</sqlMap>

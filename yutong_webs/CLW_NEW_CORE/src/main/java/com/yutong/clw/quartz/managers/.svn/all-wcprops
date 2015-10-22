@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers
+END
+QuartzTripManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/QuartzTripManager.java
+END
+NotificationManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/NotificationManager.java
+END
+VehicleRealCacheManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/VehicleRealCacheManager.java
+END
+SiteNoteManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/SiteNoteManager.java
+END
+TqcOilWearManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/TqcOilWearManager.java
+END
+RuleCacheManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/RuleCacheManager.java
+END
+NewsManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/NewsManager.java
+END
+SyncManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/SyncManager.java
+END
+SmsOrderManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/SmsOrderManager.java
+END
+TqcStatisticManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/TqcStatisticManager.java
+END
+VinTripCacheManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/quartz/managers/VinTripCacheManager.java
+END

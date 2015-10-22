@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/service/buffer/sync
+END
+SyncThreadPool.class
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/service/buffer/sync/SyncThreadPool.class
+END
+SyncClass.class
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/service/buffer/sync/SyncClass.class
+END
+SyncBuffer$ExeSqlRunner.class
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/service/buffer/sync/SyncBuffer$ExeSqlRunner.class
+END
+SyncBuffer.class
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/service/buffer/sync/SyncBuffer.class
+END
+SyncPooledThread.class
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/target/classes/com/yutong/clw/service/buffer/sync/SyncPooledThread.class
+END

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="paramSet">
+	<typeAlias alias="Map" type="java.util.Map" />
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="paramSetInfo" type="com.neusoft.clw.yw.newmodel.domain.ClwJcParamCfgT" />
+	 <resultMap class="paramSetInfo" id="paramSet-result">
+		<result property="paramName" column="PARAM_NAME"/>
+		<result property="paramValue" column="PARAM_VALUE"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+      <!-- 查询参数信息列表 -->
+      <select id="getParamSetList" parameterClass="paramSetInfo" resultMap="paramSet-result">
+		 <![CDATA[
+		    select t.PARAM_NAME,
+			       t.PARAM_VALUE,
+			       t.REMARK
+			  from CLW_JC_PARAM_CFG_T t
+			 where t.PARAM_NAME like 'YGB_%'
+		]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="paramName">
+				 t.PARAM_NAME like 'YGB_%'||#paramName#||'%'
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 查询参数信息列表总数 -->
+     <select id="getParamSetListCount" parameterClass="paramSetInfo" resultClass="Integer">
+		 <![CDATA[
+		    select count(1) value
+			  from CLW_JC_PARAM_CFG_T t
+			 where t.PARAM_NAME like 'YGB_%'
+		]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="paramName">
+				 t.PARAM_NAME like 'YGB_%'||#paramName#||'%'
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	 <!-- 插入参数设置信息 -->
+	 <insert id="addParamSet" parameterClass="paramSetInfo">
+	 	<![CDATA[
+			 insert into CLW_JC_PARAM_CFG_T
+			 (
+			 PARAM_NAME,
+	         PARAM_VALUE,
+	         REMARK
+			 )
+			 values
+			 (
+			 #paramName#,
+			 #paramValue#,
+			 #remark#
+			 )
+		]]>
+	 </insert>
+     <!-- 根据name查询一个参数信息 -->
+      <select id="getParamSetByName" parameterClass="String" resultMap="paramSet-result">
+		 <![CDATA[
+		    select t.PARAM_NAME,
+			       t.PARAM_VALUE,
+			       t.REMARK
+			  from CLW_JC_PARAM_CFG_T t
+			 where t.PARAM_NAME = #value#
+		]]>
+	</select>
+	 <!-- 根据name删除一个参数信息 -->
+     <delete id="delParamSetByName" parameterClass="String">
+		 <![CDATA[
+		    delete
+			  from CLW_JC_PARAM_CFG_T t
+			 where t.PARAM_NAME = #value#
+		]]>
+	</delete>
+	<!-- 根据name修改一个参数信息 -->
+      <update id="updateParamSetByName" parameterClass="paramSetInfo">
+		 <![CDATA[
+		    update CLW_JC_PARAM_CFG_T t
+		       set t.PARAM_NAME=#paramName#,
+		       	   t.PARAM_VALUE=#paramValue#,
+		       	   t.REMARK=#remark#
+			 where t.PARAM_NAME = #oldParamName#
+		]]>
+	</update>
+</sqlMap>

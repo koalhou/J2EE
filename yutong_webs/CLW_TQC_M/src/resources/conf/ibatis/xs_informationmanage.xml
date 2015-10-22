@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="InformationManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="IssueInfo" type="com.neusoft.clw.yw.xs.informationmanage.ds.IssueInfo" />
+	
+	<resultMap id="issueInfo-result" class="IssueInfo">
+		<result property="issueId" column="ISSUE_ID" />
+		<result property="issueType" column="ISSUE_TYPE" />
+		<result property="issueTheme" column="ISSUE_THEME" />
+		<result property="creater" column="USER_NAME" />
+		<result property="publishTime" column="PUBLISH_TIME" />
+		<result property="replyOrNot" column="REPLY_OR_NOT" />
+		<result property="issueStatus" column="ISSUE_STATUS" />
+	</resultMap>
+	
+	<resultMap id="issueDetail-result" class="IssueInfo">
+		<result property="issueId" column="ISSUE_ID" />
+		<result property="issueType" column="ISSUE_TYPE" />
+		<result property="issueTheme" column="ISSUE_THEME" />
+		<result property="issueContent" column="ISSUE_CONTENT" typeHandler="org.springframework.orm.ibatis.support.ClobStringTypeHandler"/>
+		<result property="issueStatus" column="ISSUE_STATUS" />
+		<result property="issueFlag" column="ISSUE_FLAG" />
+		<result property="publishUser" column="PUBLISH_USER" />
+		<result property="publishTime" column="PUBLISH_TIME" />
+		<result property="replyOrNot" column="REPLY_OR_NOT" />
+		<result property="replyContent" column="REPLY_CONTENT" typeHandler="org.springframework.orm.ibatis.support.ClobStringTypeHandler"/>
+		<result property="replyFlag" column="REPLY_FLAG" />
+		<result property="replyUser" column="REPLY_USER" />
+		<result property="replyTime" column="REPLY_TIME" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+		  FROM ( SELECT YI.ISSUE_ID,
+		                YI.ISSUE_TYPE,
+                        YI.ISSUE_THEME,
+                        (SELECT JU.USER_NAME
+                           FROM CLW_JC_USER_T JU
+                          WHERE JU.USER_ID = YI.CREATER) AS USER_NAME,
+                        TO_CHAR(YI.PUBLISH_TIME, 'YYYY-MM-DD HH24:MI:SS') AS PUBLISH_TIME,
+                        YI.REPLY_OR_NOT,
+                        YI.ISSUE_STATUS,
+                        YI.CREATE_TIME
+                   FROM CLW_YW_ISSUE_T YI
+                  WHERE YI.VALID_FLAG = '0'
+                    AND YI.ISSUE_STATUS = '1'
+                     OR YI.CREATER = #creater#
+                    AND YI.VALID_FLAG = '0'
+                ) ISSUE_T
+         <dynamic prepend="WHERE">  
+	         <isNotEmpty prepend="AND" property="theme">
+	               ISSUE_T.ISSUE_THEME LIKE '%$theme$%'
+	         </isNotEmpty>
+			 <isNotEmpty prepend="AND" property="createTime">
+			       TO_CHAR(ISSUE_T.CREATE_TIME, 'YYYY-MM-DD') = #createTime#
+			 </isNotEmpty>
+		 </dynamic>
+		 <dynamic prepend="ORDER BY">  
+		     	<isNotEmpty property="sortname">  
+		           $sortname$   $sortorder$  
+		     	</isNotEmpty>  
+		 </dynamic> 
+	</select>
+	
+	<select id="getIssueInfos" parameterClass="Map" resultMap="issueInfo-result">
+		SELECT ISSUE_T.ISSUE_ID,
+		       ISSUE_T.ISSUE_TYPE,
+		       ISSUE_T.ISSUE_THEME,
+		       ISSUE_T.USER_NAME,
+		       ISSUE_T.PUBLISH_TIME,
+		       ISSUE_T.REPLY_OR_NOT,
+		       ISSUE_T.ISSUE_STATUS,
+		       ISSUE_T.CREATE_TIME
+		  FROM ( SELECT YI.ISSUE_ID,
+		                YI.ISSUE_TYPE,
+                        YI.ISSUE_THEME,
+                        (SELECT JU.USER_NAME
+                           FROM CLW_JC_USER_T JU
+                          WHERE JU.USER_ID = YI.CREATER) AS USER_NAME,
+                        TO_CHAR(YI.PUBLISH_TIME, 'YYYY-MM-DD HH24:MI:SS') AS PUBLISH_TIME,
+                        YI.REPLY_OR_NOT,
+                        YI.ISSUE_STATUS,
+                        YI.CREATE_TIME
+                   FROM CLW_YW_ISSUE_T YI
+                  WHERE YI.VALID_FLAG = '0'
+                    AND YI.ISSUE_STATUS = '1'
+                     OR YI.CREATER = #creater#
+                    AND YI.VALID_FLAG = '0' 
+                ) ISSUE_T
+         <dynamic prepend="WHERE">  
+	         <isNotEmpty prepend="AND" property="theme">
+	               ISSUE_T.ISSUE_THEME LIKE '%$theme$%'
+	         </isNotEmpty>
+			 <isNotEmpty prepend="AND" property="createTime">
+			       TO_CHAR(ISSUE_T.CREATE_TIME, 'YYYY-MM-DD') = #createTime#
+			 </isNotEmpty>
+		 </dynamic>
+		 <dynamic prepend="ORDER BY">  
+		     	<isNotEmpty property="sortname">  
+		           $sortname$   $sortorder$  
+		     	</isNotEmpty>  
+		 </dynamic>   
+	</select>
+	
+	<insert id="insertInfo" parameterClass="IssueInfo">
+		  INSERT INTO CLW_YW_ISSUE_T
+            (ISSUE_ID,
+             ISSUE_THEME,
+             ISSUE_CONTENT,
+             ISSUE_STATUS,
+             PUBLISH_USER,
+             PUBLISH_TIME,
+             REPLY_OR_NOT,
+             CREATER,
+             CREATE_TIME,
+             MODIFIER,
+             MODIFY_TIME,
+             VALID_FLAG,
+             CREATE_SYSTEM)
+          VALUES
+            (#issueId#,
+             #issueTheme#,
+             #issueContent,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+             #issueStatus#,
+             #publishUser#,
+             DECODE(#issueStatus#,'1',SYSDATE,null),
+             '0',
+             #creater#,
+             SYSDATE,
+             #creater#,
+             SYSDATE,
+             '0',
+             '0')
+	</insert>
+	
+	<select id="getInfoById" parameterClass="String" resultMap="issueDetail-result">
+		SELECT YI.ISSUE_ID,
+               YI.ISSUE_TYPE,
+               YI.ISSUE_THEME,
+               YI.ISSUE_CONTENT,
+               YI.ISSUE_STATUS,
+               YI.ISSUE_FLAG,
+               YI.PUBLISH_USER,
+               YI.PUBLISH_TIME,
+               YI.REPLY_OR_NOT,
+               YI.REPLY_CONTENT,
+               YI.REPLY_FLAG,
+               YI.REPLY_USER,
+               YI.REPLY_TIME
+          FROM CLW_YW_ISSUE_T YI
+         WHERE YI.ISSUE_ID = #value#
+	</select>
+	
+	<update id="updateInfo" parameterClass="IssueInfo">
+	    UPDATE CLW_YW_ISSUE_T YI
+           SET YI.ISSUE_THEME   = #issueTheme#,
+               YI.ISSUE_CONTENT = #issueContent,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+               YI.ISSUE_STATUS  = #issueStatus#,
+               YI.PUBLISH_USER  = #publishUser#,
+               YI.PUBLISH_TIME  = DECODE(#issueStatus#,'1',SYSDATE,null),
+               YI.MODIFIER      = #modifier#,
+               YI.MODIFY_TIME   = SYSDATE
+         WHERE YI.ISSUE_ID = #issueId#
+	</update>
+	
+	<update id="updateReplyInfo" parameterClass="IssueInfo">
+	    UPDATE CLW_YW_ISSUE_T YI
+           SET YI.REPLY_CONTENT = #replyContent,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+               YI.REPLY_OR_NOT  = #replyOrNot#,
+               YI.REPLY_USER    = #replyUser#,
+               YI.REPLY_TIME    = DECODE(#replyOrNot#,'1',SYSDATE,null),
+               YI.MODIFIER      = #modifier#,
+               YI.MODIFY_TIME   = SYSDATE
+         WHERE YI.ISSUE_ID = #issueId#
+	</update>
+	
+	<update id="abandonInfo" parameterClass="IssueInfo">
+		UPDATE CLW_YW_ISSUE_T YI
+           SET YI.ISSUE_STATUS = '2', 
+               YI.REPLY_OR_NOT = '0',
+               YI.REPLY_CONTENT = NULL,
+               YI.MODIFIER = #modifier#, 
+               YI.MODIFY_TIME = SYSDATE
+         WHERE YI.ISSUE_ID = #issueId#
+	</update>
+	
+	<update id="republishInfo" parameterClass="IssueInfo">
+		UPDATE CLW_YW_ISSUE_T YI
+           SET YI.ISSUE_THEME   = #issueTheme#,
+               YI.ISSUE_CONTENT = #issueContent,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+               YI.ISSUE_STATUS  = '1',
+               YI.PUBLISH_USER  = #modifier#,
+               YI.PUBLISH_TIME  = SYSDATE,
+               YI.REPLY_CONTENT = #replyContent,handler=org.springframework.orm.ibatis.support.ClobStringTypeHandler#,
+               YI.REPLY_USER    = #modifier#,
+               YI.REPLY_TIME    = SYSDATE,
+               YI.MODIFIER = #modifier#, 
+               YI.MODIFY_TIME = SYSDATE
+         WHERE YI.ISSUE_ID = #issueId#
+	</update>
+	
+	<update id="deleteInfo" parameterClass="IssueInfo">
+		UPDATE CLW_YW_ISSUE_T YI
+           SET YI.VASET_USER_ID = #modifier#, 
+               YI.VASET_TIME = SYSDATE, 
+               YI.VALID_FLAG = '1'
+         WHERE YI.ISSUE_ID = #issueId#
+	</update>
+	
+</sqlMap>

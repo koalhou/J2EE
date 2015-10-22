@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.action.extension" value="shtml" />
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.ui.theme" value="simple" />
+	<constant name="struts.multipart.saveDir" value="/tmp" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.multipart.maxSize" value="104857600" />
+	<constant name="struts.custom.i18n.resources" value="ApplicationResources" />
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.url.includeParams" value="none" />
+	<constant name="struts.serve.static.browserCache" value="true" />
+	
+    <constant name="struts.i18n.encoding" value="UTF-8" />
+	<include file="struts-default.xml" />	
+	<include file="conf/struts/clw_default.xml" />
+	<include file="conf/struts/sysmanage-datemanage-usermanage-struts.xml" />
+	<include file="conf/struts/sysmanage-datamanage-rolemanage-struts.xml" />
+	<include file="conf/struts/sysmanage-datamanage-vehiclemanage-struts.xml" />
+	<include file="conf/struts/sysmanage-datamanage-routemanage-struts.xml" />
+	<include file="conf/struts/sysmanage-datamanage-drivermanage-struts.xml" />
+	<include file="conf/struts/businessmanage-gpsmanage-gpsposition-struts.xml" />
+	<include file="conf/struts/sysmanage-datamanage-entimanage-struts.xml" />
+	<include file="conf/struts/sysmanage-systools-messagemanage-struts.xml" />
+	<include file="conf/struts/sysmanage-sysset-ocktimeset-struts.xml" />
+	<include file="conf/struts/sysmanage-sysset-oilset-struts.xml" />
+	<include file="conf/struts/itsmanage-oilmanage-baddriving-struts.xml" />
+	<include file="conf/struts/itsmanage-oilmanage-oilused-struts.xml" />
+	<include file="conf/struts/sysmanage-sysset-pawset-struts.xml" />
+	<include file="conf/struts/sysmanage-sysset-logoset-struts.xml" />
+	<include file="conf/struts/safemanage-personsafe-photomonitor-struts.xml" />
+	<include file="conf/struts/safemanage-humanmanage-baddriving-struts.xml" />
+	<include file="conf/struts/safemanage-vehiclesafe-vehiclestatus-struts.xml" />
+	<include file="conf/struts/operationmanage-operationmanage-vehdiagram-struts.xml" />
+	<include file="conf/struts/sysmanage-about-struts.xml" />
+	<include file="conf/struts/businessmanage-alarmmanage.xml" />
+	<include file="conf/struts/safemanage-humanmanage-drivingrecords-struts.xml" />
+	<include file="conf/struts/operationmanage-maintain-plan-struts.xml" />
+	<include file="conf/struts/operationmanage-maintain-records-struts.xml" />
+	<include file="conf/struts/yunxing-routechart-chart-struts.xml" />
+	<include file="conf/struts/yunxing-carrun-history-struts.xml" />
+	<include file="conf/struts/yunxing-stride-info-struts.xml" />
+	<include file="conf/struts/yunxing-ridealarm-sum-struts.xml" />
+	<include file="conf/struts/infomanage-ridingplan-struts.xml" />
+	<include file="conf/struts/infomanage-studentmanage-struts.xml" />
+	<include file="conf/struts/infomanage-stewardmanage-struts.xml" /> 
+	<include file="conf/struts/infomanage-stationmanage-struts.xml" />
+	<include file="conf/struts/infomanage-holidaymanage-struts.xml" />
+	<include file="conf/struts/businessmanage-sendcommandhis-struts.xml" />
+    <include file="conf/struts/infomanage-handmobliemanage-struts.xml" /> 
+	<include file="conf/struts/infomanage-smsmanage-struts.xml" />
+	<include file="conf/struts/infomanage-fileupload-struts.xml" />
+	<include file="conf/struts/new-terminal_params.xml" />
+	<include file="conf/struts/businessmanage-overload-struts.xml" />
+	<include file="conf/struts/infomanage-smsreminder-struts.xml" />
+	<include file="conf/struts/itsmanage-oilmanage-runoil-struts.xml" />
+	<include file="conf/struts/yunxing-stushuaka-struts.xml" />
+	<include file="conf/struts/treemanage.xml" />
+    <include file="conf/struts/sysmanage-sysset-smssignset-struts.xml" />
+    <include file="conf/struts/zspt-struts.xml" />
+    <include file="conf/struts/photograpth-struts.xml" />
+    <include file="conf/struts/newenergy-alarm-struts.xml"/>
+    <include file="conf/struts/newenergy-motor-struts.xml"/>
+    <include file="conf/struts/newenergy-battery-struts.xml"/>
+    <include file="conf/struts/newenergy-version-struts.xml"/>
+    <include file="conf/struts/newenergy-sms-struts.xml"/>
+    <include file="conf/struts/sysmanage-runtimeset-struts.xml" />
+    <!-- 告警显示设置 -->
+    <include file="conf/struts/alarm-setting-struts.xml" />
+    <include file="conf/struts/sysmanage-detemanage-wxmanage-struts.xml" />
+</struts>

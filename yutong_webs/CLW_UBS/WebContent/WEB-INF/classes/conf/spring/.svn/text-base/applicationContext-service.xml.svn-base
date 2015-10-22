@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<aop:config>
+		<aop:advisor
+			pointcut="execution(* *..service*..*(..))"
+			advice-ref="txAdvice" />
+	</aop:config>
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="*" rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<bean id="service"
+		class="com.neusoft.clw.common.service.impl.ServiceImpl">
+		<property name="dao" ref="dao" />
+	</bean>
+
+	<!-- 用户管理service -->
+	<bean id="userManageService"
+		class="com.neusoft.clw.yw.qx.usermanage.service.impl.UserManageServiceImpl">
+		<property name="dao" ref="dao" />
+	</bean>
+	
+	<!-- 角色管理service -->
+	<bean id="roleManageService"
+		class="com.neusoft.clw.yw.qx.rolemanage.service.impl.RoleManageServiceImpl">
+		<property name="dao" ref="dao" />
+		<property name="roleManageDao" ref="roleManageDao" />
+	</bean>
+	
+	<!-- 终端管理service -->
+	<bean id="terminalManageService"
+		class="com.neusoft.clw.yw.zd.terminal.service.impl.TerminalManageServiceImpl">
+		<property name="dao" ref="terminalManageDao" />
+	</bean>
+	
+	<!-- 车辆注册service -->
+	<bean id="vehicleRegisterService"
+		class="com.neusoft.clw.yw.cl.vehicleRegister.service.impl.VehicleRegisterServiceImpl">
+		<property name="dao" ref="vehicleRegisterDao" />
+	</bean>
+	
+	<!-- 终端监控service -->
+	<bean id="terminalMonitorService"
+		class="com.neusoft.clw.yw.xj.monitor.service.impl.TerminalMonitorServiceImpl">
+		<property name="dao" ref="terminalMonitorDao" />
+	</bean>
+	
+	<!-- SIM卡管理service -->
+	<bean id="simManageService"
+		class="com.neusoft.clw.yw.cs.sim.service.impl.SimManageServiceImpl">
+		<property name="dao" ref="simManageDao" />
+	</bean>
+	
+	<!-- SIM卡流量管理service -->
+	<bean id="simFluxManageService"
+		class="com.neusoft.clw.yw.cs.simflux.service.impl.SimFluxManageServiceImpl">
+		<property name="dao" ref="simFluxManageDao" />
+	</bean>
+	
+	<!-- 车辆管理service -->
+	<bean id="carBaseService"
+		class="com.neusoft.clw.yw.cl.carbase.service.impl.CarBaseServiceImpl">
+		<property name="dao" ref="carBaseDao" />
+	</bean>
+	
+	<!-- 服务点管理service -->
+	<bean id="poiManageService"
+		class="com.neusoft.clw.yw.xs.poimanage.service.impl.PoiManageServiceImpl">
+		<property name="dao" ref="poiManageDao" />
+	</bean>
+	
+	<!-- 基础信息管理service -->
+	<bean id="baseInfoManageService"
+		class="com.neusoft.clw.yw.xs.baseinfo.service.impl.BaseInfoManageServiceImpl">
+		<property name="dao" ref="baseInfoManageDao" />
+	</bean>
+	
+	<!-- 用户授权管理service -->
+	<bean id="doUserManageService"
+		class="com.neusoft.clw.yw.qx.usermanage.service.impl.DoUserManageServiceImpl">
+		<property name="dao" ref="userManageDao" />
+	</bean>
+	
+	<bean id="ajtNoticeService"
+		class="com.neusoft.clw.yw.xs.noticemanage.service.impl.AjtNoticeServiceImpl">
+		<property name="dao" ref="ajtNoticeDao" />
+	</bean>
+	
+	<!-- 手持设备注册service -->
+	<bean id="handheldDeviceService"
+		class="com.neusoft.clw.yw.cl.handheldDevice.service.impl.HandheldDeviceServiceImpl">
+		<property name="dao" ref="handheldDeviceDao" />
+	</bean>
+	
+	<!-- 终端管理【新】（终端远程升级） -->
+	<bean id="newTerminalUpdateService"
+		class="com.neusoft.clw.yw.zdnew.terminalremoteupdate.service.impl.NewTerminalUpdateServiceImpl">
+		<property name="dao" ref="newTerminalUpdateDao" />
+	</bean>
+</beans>

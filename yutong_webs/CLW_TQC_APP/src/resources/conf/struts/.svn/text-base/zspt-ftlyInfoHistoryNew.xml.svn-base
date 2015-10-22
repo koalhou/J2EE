@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="FtlyInfoNew" namespace="/ftlyInfoNew"  extends="json-default clw-default">
+		
+		<!-- 加载防透漏由页面的左侧树 -->
+	  	<action name="FtlyInfoList" class="ftlyInfoNewAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/oilmonitor/oilmonitor.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/oilmonitor/oilmonitor.jsp
+			</result>
+		</action>
+		
+		<!-- 生成油量信息图片 -->
+		<action name="getOilInfo" class="ftlyInfoNewAction" method="generateImg">
+			<result name="success" type="json" >
+				<param name="root">xmlDoc</param>
+			</result>
+		</action>
+		<!-- 获取油量监控信息 -->
+		<action name="getFtlyInfoList" class="ftlyInfoNewAction" method="init">
+			<result type="json" name="success">
+				 <param name="contentType">text/json</param>
+			 	 <param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+				<param name="root">ftlyInfoMap</param>
+			</result>
+		</action>
+		<action name="getAllCarState" class="ftlyInfoNewAction" method="getAllCarState">
+			<result type="json" name="success">
+				 <param name="contentType">text/json</param>
+			 	 <param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+				<param name="root">ftlyInfoMap</param>
+			</result>
+		</action>
+		
+		<action name="getStealOilList" class="ftlyInfoNewAction" method="getStealOilList">
+			<result type="json">
+				<param name="root">mapData</param>
+			</result>
+		</action>
+		<action name="initOilWearList" class="ftlyInfoNewAction" method="initOilWearList">
+			<result name="success">
+				/WEB-INF/jsp/oilrecords/oilWearList.jsp
+			</result>
+		</action>
+		<action name="getOilWearList" class="ftlyInfoNewAction" method="getOilWearList">
+			<result type="json">
+				<param name="root">mapData</param>
+			</result>
+		</action>
+       <action name="showFtlyBigPicAddStore" class="ftlyInfoNewAction" method="showFtlyBigPicAddStore">
+       		<result name="success">
+				/WEB-INF/jsp/oilmonitor/showFtlyPicAddStore.jsp
+			</result>
+       </action>
+       <action name="showFtlyBigPicAddStoreInfo" class="ftlyInfoNewAction" method="showFtlyBigPicAddStoreInfo">
+       </action>
+       <action name="loadPageMap" class="ftlyInfoNewAction" method="loadBigMap">
+			<result type="json">
+				<param name="root">xmlDoc</param>
+			</result>
+		</action>
+		<action name="exportAddExcel" class="ftlyInfoNewAction" method="exportAddExcel">
+			<result name="excel" type="stream">   
+                <param name="contentType">   
+                    application/vnd.ms-excel   
+                </param>   
+                <param name="inputName">excelStream</param>   
+                <param name="contentDisposition">   
+                    filename="${exprotFileName}"
+                </param>   
+                <param name="bufferSize">1024</param>   
+            </result>
+		</action>
+		
+		<action name="exportOilWearExcel" class="ftlyInfoNewAction" method="exportOilWearExcel">
+			<result name="excel" type="stream">   
+                <param name="contentType">   
+                    application/vnd.ms-excel   
+                </param>   
+                <param name="inputName">excelStream</param>   
+                <param name="contentDisposition">   
+                    filename="${exprotFileName}"
+                </param>   
+                <param name="bufferSize">1024</param>   
+            </result>
+		</action>
+
+		
+		<action name="getOilMessage" class="ftlyInfoNewAction" method="getOilMessage">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/oilmonitor/newAlarmControl.jsp</result>
+			<result name="success2">/WEB-INF/jsp/oilmonitor/newOilControl.jsp</result>
+		</action>
+		
+		<!-- 透油告警信息，油量实时监控 -->
+		<action name="getStealAlarmList" class="ftlyInfoNewAction" method="getStealAlarmList">
+			<result type="json">
+				<param name="root">mapData</param>
+			</result>
+		</action>
+		
+		<!-- 透油告警，加油地点告警 -->
+		<action name="getStealAlarmDisposeList" class="ftlyInfoNewAction" method="getStealAlarmDisposeList">
+			<result type="json">
+				<param name="root">mapData</param>
+			</result>
+		</action>
+		
+		
+		<!-- 处理透油、异常加油地点告警 -->
+		<action name="updateAlarmMsg" class="ftlyInfoNewAction" method="updateAlarmMsg">
+			<result type="json">
+				<param name="root">mapData</param>
+			</result>
+		</action>
+		
+		<action name="exportOilalarm" class="ftlyInfoNewAction" method="exportOilalarm">
+<!-- 			<result name="error" type="redirect"> -->
+<!-- 				ftlyInfoNew.shtml?newalarm_type_id=${alarm_type_id} -->
+<!-- 			</result> -->
+		</action>
+		
+		<!-- 防偷油短信 -->
+		<action name="stealOilSms" class="stealOilSmsAction" method="stealOilSms">
+			<result name="success">/WEB-INF/jsp/oilmonitor/stealoilSms.jsp</result>
+			<result name="error">/WEB-INF/jsp/oilmonitor/stealoilSms.jsp</result>
+		</action>
+		
+		<action name="stealOilSmsList" class="stealOilSmsAction" method="stealOilSmsList">
+			<result type="json" name="success">
+				 <param name="contentType">text/json</param>
+			 	 <param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+				<param name="root">map</param>
+			</result>
+		</action>
+		
+		<action name="addStealOilSms" class="stealOilSmsAction" method="addStealOilSms">
+			<result name="success">/WEB-INF/jsp/oilmonitor/stealoilSmsAdd.jsp</result>	
+			<result name="error">/WEB-INF/jsp/oilmonitor/stealoilSmsAdd.jsp</result>
+		</action>
+		
+		<action name="showStudent" class="stealOilSmsAction" method="showStudent">
+			<result name="success">/WEB-INF/jsp/oilmonitor/showStudent.jsp</result>	
+			<result name="error">/WEB-INF/jsp/oilmonitor/showStudent.jsp</result>
+		</action>
+		
+		<action name="showStudentList" class="stealOilSmsAction" method="showStudentList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+		</action>
+		
+		<action name="insertStealOilSms" class="stealOilSmsAction" method="insertStealOilSms">
+			<result name="success" type="redirect-action">
+			<param name="actionName">stealOilSms</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">stealOilSms</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		
+		<action name="deleteStealOilSms" class="stealOilSmsAction" method="deleteStealOilSms">
+			<result name="success" type="redirect-action">
+			<param name="actionName">stealOilSms</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">stealOilSms</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		
+		<action name="checkTelOnly" class="stealOilSmsAction" method="checkTelOnly">
+		</action>
+		
+		<action name="editStealOilSms" class="stealOilSmsAction" method="editStealOilSms">
+			<result name="success">/WEB-INF/jsp/oilmonitor/stealoilSmsAdd.jsp</result>	
+			<result name="error">/WEB-INF/jsp/oilmonitor/stealoilSmsAdd.jsp</result>
+		</action>
+		
+		<action name="updateStealOilSms" class="stealOilSmsAction" method="updateStealOilSms">
+			<result name="success" type="redirect-action">
+			<param name="actionName">stealOilSms</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">stealOilSms</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		
+	</package>
+	
+</struts>

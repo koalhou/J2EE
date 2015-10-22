@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    <!-- 数据挖掘新__能源故障表 -->
+<sqlMap namespace="energyBattery">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="newEnergyBattery"
+		type="com.neusoft.clw.newenergy.newenergybattery.domain.EnergyBattery" />
+
+	<resultMap id="battery-result" class="newEnergyBattery">
+		<result property="dataId" column="id" />
+		<result property="vehicleVin" column="vehicle_vin" />
+		<result property="vehicleln" column="vehicle_ln" />
+		<result property="terminalTime" column="terminal_time" />
+		<result property="routeName" column="route_name" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="speed" column="speed" />
+	</resultMap>
+	<resultMap id="batteryCMS-result" class="newEnergyBattery" extends="battery-result">
+		<result property="scapHighv" column="scap_highv" />
+		<result property="scapLowv" column="scap_lowv" />
+		<result property="scapvDiff" column="scap_v_diff" />
+		<result property="capHighvNum" column="cap_highv_num" />
+		<result property="capLowvNum" column="cap_lowv_num"/>
+		<result property="scapTempHigh" column="scap_temp_high" />
+		<result property="sovervAlarmNum" column="soverv_alarm_num"/>
+		<result property="scapTempHighNum" column="scap_temp_high_num"/>
+		<result property="scapTempLow" column="scap_temp_low"/>
+		<result property="scapTempLowNum" column="scap_temp_low_num"/>
+		<result property="scapAvgV" column="SCAP_AVG_V"/>
+	</resultMap>
+	<!-- 新能源   CMS电容信息查询 -->
+	<select id="energyBatteryCMSList" parameterClass="Map" resultMap="batteryCMS-result">
+		 select battery.id,info.vehicle_ln,info.vehicle_vin,route.route_name,
+		 	case when instr(battery.scap_highv,'F',1,1)>0
+		 	then '-' else battery.scap_highv end scap_highv,
+		 	case when instr(scap_lowv,'F',1,1)>0
+		 	then '-' else scap_lowv end scap_lowv,
+ 			case when instr(battery.scap_v_diff,'F',1,1)>0
+ 			then '-' else battery.scap_v_diff end scap_v_diff,
+ 			case when instr(battery.cap_highv_num,'F',1,1)>0
+ 			then '-' else battery.cap_highv_num end cap_highv_num,
+ 			case when instr(battery.cap_lowv_num,'F',1,1)>0
+ 			then '-' else battery.cap_lowv_num end cap_lowv_num,
+ 			case when instr(battery.scap_temp_high,'F',1,1)>0
+ 			then '-' else battery.scap_temp_high end scap_temp_high,
+ 			case when instr(battery.soverv_alarm_num,'F',1,1)>0
+ 			then '-' else battery.soverv_alarm_num end soverv_alarm_num,
+ 			case when instr(battery.scap_temp_high_num,'F',1,1)>0
+ 			then '-' else battery.scap_temp_high_num end scap_temp_high_num ,
+ 			case when instr(battery.scap_temp_low,'F',1,1)>0
+ 			then '-' else battery.scap_temp_low end scap_temp_low,
+ 			case when instr(battery.scap_temp_low_num,'F',1,1)>0
+ 			then '-' else battery.scap_temp_low_num end scap_temp_low_num,
+ 			to_char(battery.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time,
+         	battery.longitude,battery.latitude,battery.speed,
+         	case when instr(battery.SCAP_AVG_V,'F',1,1)>0
+         	then '-' else battery.SCAP_AVG_V end SCAP_AVG_V
+         from clw_newenergy_battery_t battery,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and battery.vehicle_vin = info.vehicle_vin(+) and battery.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             battery.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             battery.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ battery.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	battery.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = battery.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	<!-- 新能源 CMS电容信息查询 总数-->
+	<select id="energyBatteryCMSListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		select battery.id,info.vehicle_ln,info.vehicle_vin,route.route_name,battery.scap_highv,scap_lowv,
+ 			battery.scap_v_diff,battery.cap_highv_num,battery.cap_lowv_num,
+ 			battery.scap_temp_high ,battery.soverv_alarm_num ,battery.scap_temp_high_num ,
+ 			battery.scap_temp_low ,battery.scap_temp_low_num,
+ 			to_char(battery.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time,
+         	battery.longitude,battery.latitude,battery.speed,battery.SCAP_AVG_V
+         from clw_newenergy_battery_t battery,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1 
+          and battery.vehicle_vin = info.vehicle_vin(+) and battery.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	         route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             battery.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             battery.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ battery.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	battery.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = battery.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+	
+	<resultMap id="batteyBMS-result" class="newEnergyBattery" extends="battery-result">
+		<result property="batSoc" column="bat_soc"/>
+		<result property="batCurrent" column="bat_current"/>
+		<result property="batVolTage" column="bat_voltage"/>
+		<result property="dischargeLimit" column="discharge_limit"/>
+		<result property="chargeLimit" column="charge_limit"/>
+		<result property="sbatvHigh" column="sbat_v_high" />
+		<result property="sbatvLow" column="sbat_v_low" />
+		<result property="sbatvDiff" column="sbat_v_diff" />
+		<result property="batHighvNum" column="bat_highv_num" />
+		<result property="batLowvNum" column="bat_lowv_num"/>
+		<result property="sbatTempHigh" column="sbat_temp_high" />
+		<result property="sovervAlarmNum" column="soverv_alarm_num"/>
+		<result property="sbatTempHighNum" column="sbat_temp_high_num"/>
+		<result property="sbatTempLow" column="sbat_temp_low"/>
+		<result property="sbatTempLowNum" column="sbat_temp_low_num"/>
+	</resultMap>
+	<!-- 新能源  BMS电池信息查询 -->
+	<select id="energyBatteryBMSList" parameterClass="Map" resultMap="batteyBMS-result">
+		 select battery.id,info.vehicle_ln,info.vehicle_vin,route.route_name,
+		 		case when instr(battery.bat_soc,'F',1,1)>0
+		 		then '-' else battery.bat_soc end bat_soc,
+		 		case when instr(battery.bat_current,'F',1,1)>0
+		 		then '-' else battery.bat_current end bat_current,
+		 		case when instr(battery.bat_voltage,'F',1,1)>0
+		 		then '-' else battery.bat_voltage end bat_voltage,
+		 		case when instr(battery.discharge_limit,'F',1,1)>0
+		 		then '-' else battery.discharge_limit end discharge_limit,
+		 		case when instr(battery.charge_limit,'F',1,1)>0
+		 		then '-' else battery.charge_limit end charge_limit,
+		 		case when instr(battery.sbat_v_high,'F',1,1)>0
+		 		then '-' else battery.sbat_v_high end sbat_v_high,
+		 		case when instr(sbat_v_low,'F',1,1)>0
+		 		then '-' else sbat_v_low end sbat_v_low,
+		 		case when instr(battery.sbat_v_diff,'F',1,1)>0
+		 		then '-' else battery.sbat_v_diff end sbat_v_diff,
+		 		case when instr(battery.bat_highv_num,'F',1,1)>0
+		 		then '-' else battery.bat_highv_num end bat_highv_num,
+		 		case when instr(battery.bat_lowv_num,'F',1,1)>0
+		 		then '-' else battery.bat_lowv_num end bat_lowv_num,
+		 		case when instr(battery.sbat_temp_high,'F',1,1)>0
+		 		then '-' else battery.sbat_temp_high end sbat_temp_high,
+		 		case when instr(battery.soverv_alarm_num,'F',1,1)>0
+		 		then '-' else battery.soverv_alarm_num end soverv_alarm_num,
+				case when instr(battery.sbat_temp_high_num,'F',1,1)>0
+				then '-' else battery.sbat_temp_high_num end sbat_temp_high_num,
+				case when instr(battery.sbat_temp_low,'F',1,1)>0
+				then '-' else battery.sbat_temp_low end sbat_temp_low,
+				case when instr(battery.sbat_temp_low_num,'F',1,1)>0
+				then '-' else battery.sbat_temp_low_num end sbat_temp_low_num,
+				battery.longitude,battery.latitude,battery.speed,
+		 		to_char(battery.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_battery_t battery,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and battery.vehicle_vin = info.vehicle_vin(+) and battery.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             battery.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             battery.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ battery.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	battery.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = battery.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	<!-- 新能源  BMS电池信息查询 总数 -->
+	<select id="energyBatteryBMSListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		 select battery.id,info.vehicle_ln,info.vehicle_vin,route.route_name,battery.bat_soc,
+		 		battery.bat_current,battery.bat_voltage,battery.discharge_limit,battery.charge_limit,
+		 		battery.sbat_v_high,sbat_v_low,battery.sbat_v_diff,battery.bat_highv_num,
+		 		battery.bat_lowv_num,battery.sbat_temp_high ,battery.soverv_alarm_num ,
+				 battery.sbat_temp_high_num ,battery.sbat_temp_low ,
+				 battery.sbat_temp_low_num ,battery.longitude,battery.latitude,battery.speed,
+		 		to_char(battery.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_battery_t battery,clw_cl_base_info_t info,clw_xc_route_t route
+         where 1=1  
+          and battery.vehicle_vin = info.vehicle_vin(+) and battery.route_id = route.route_id(+) 
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             battery.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             battery.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ battery.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	battery.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = battery.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+	
+	<resultMap id="batteryOther-result" class="newEnergyBattery" extends="battery-result">
+		<result property="gears" column="gears" />
+		<result property="clutchState" column="clutch_State" />
+		<result property="handbrakeSignal" column="handbrake_Signal" />
+		<result property="footbrakeSignal" column="footbrake_Signal"/>
+		<result property="onState" column="on_state" />
+		<result property="acceleratorpedalVoltage" column="acceleratorpedal_Voltage"/>
+		<result property="brakepedalVoltage" column="brakepedal_voltage"/>
+		<result property="driverCommandTorque" column="DRIVER_COMMAND_TORQUE"/>
+		<result property="eTorque" column="e_torque"/>
+		<result property="outaxleSpeed" column="outaxle_speed"/>
+		<result property="gearCount" column="gear_count"/>
+	</resultMap>
+	
+	<!-- 新能源  其它信息查询 -->
+	<select id="energyBatteryOtherList" parameterClass="Map" resultMap="batteryOther-result">
+		 select battery.id,info.vehicle_ln,info.vehicle_vin,route.route_name,
+		 	case when instr(battery.gears,'F',1,1)>0
+		 	then '-' else battery.gears end gears,
+		 	case when instr(battery.clutch_State,'F',1,1)>0
+		 	then '-' else battery.clutch_State end clutch_State,
+	        case when instr(battery.handbrake_Signal,'F',1,1)>0
+	        then '-' else battery.handbrake_Signal end handbrake_Signal ,
+	        case when instr(battery.footbrake_Signal,'F',1,1)>0
+	        then '-' else battery.footbrake_Signal end footbrake_Signal,
+	        case when instr(battery.on_state,'F',1,1)>0
+	        then '-' else battery.on_state end on_state,
+	        case when instr(battery.acceleratorpedal_Voltage,'F',1,1)>0
+	        then '-' else battery.acceleratorpedal_Voltage end acceleratorpedal_Voltage,
+	        case when instr(battery.brakepedal_voltage,'F',1,1)>0
+	        then '-' else battery.brakepedal_voltage end brakepedal_voltage,
+	        case when instr(battery.DRIVER_COMMAND_TORQUE,'F',1,1)>0
+	        then '-' else battery.DRIVER_COMMAND_TORQUE end DRIVER_COMMAND_TORQUE,
+	        case when instr(battery.e_torque,'F',1,1)>0
+	        then null else to_number(nvl(battery.e_torque,'0'))*100 end e_torque,
+	        battery.longitude,
+	        battery.latitude,
+	        battery.speed,
+	         battery.outaxle_speed ,battery.gear_count,
+		 		to_char(battery.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_battery_t battery,clw_cl_base_info_t info,
+         	  clw_xc_route_t route
+         where 1=1  
+          and battery.vehicle_vin = info.vehicle_vin(+) and battery.route_id = route.route_id(+)
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             battery.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             battery.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ battery.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	battery.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = battery.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>
+        
+        <dynamic prepend="ORDER BY">  
+	       <isNotEmpty property="sortname">  
+	        $sortname$   $sortorder$  
+	       </isNotEmpty>  
+	     </dynamic> 
+	</select>
+	<!-- 新能源BMS和CMS绝缘电阻查询总数 -->
+	<select id="energyBatteryOtherListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		 select battery.id,info.vehicle_ln,info.vehicle_vin,route.route_name,battery.gears,battery.clutch_State,
+	        battery.handbrake_Signal,battery.footbrake_Signal,
+	        battery.on_state,battery.acceleratorpedal_Voltage,
+	        battery.brakepedal_voltage,battery.DRIVER_COMMAND_TORQUE,
+	        nvl(battery.e_torque,0) e_torque,battery.longitude,battery.latitude,battery.speed,
+	        battery.outaxle_speed outaxleSpeed,battery.gear_count gearCount,
+		 		to_char(battery.terminal_time,'yyyy-mm-dd hh24:mi:ss') terminal_time
+         from clw_newenergy_battery_t battery,clw_cl_base_info_t info,
+         	  clw_xc_route_t route
+         where 1=1  
+          and battery.vehicle_vin = info.vehicle_vin(+) and battery.route_id = route.route_id(+)
+        <isNotEmpty prepend="AND" property="vehicleln">
+             info.vehicle_ln like '%' || #vehicleln# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="routeName">
+	        route.route_name like '%' || #routeName# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="vehicleVin">
+             battery.vehicle_vin = #vehicleVin#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="startTime">
+             battery.terminal_time >= to_date(#startTime#,'yyyy-mm-dd HH24:MI:ss')
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="endTime">
+              <![CDATA[ battery.terminal_time <=to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="dataId">
+        	battery.id = #dataId#
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="organization_id">
+        	info.organization_id in (SELECT enterprise_id
+		            FROM CLW_JC_ENTERPRISE_VI
+		           WHERE <![CDATA[LEFT_NUM >=
+		                 (SELECT LEFT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#)
+		             AND RIGHT_NUM <=
+		                 (SELECT RIGHT_NUM
+		                    FROM CLW_JC_ENTERPRISE_VI
+		                   WHERE ENTERPRISE_ID =
+		                         #organization_id#]]>)
+		             AND info.ORGANIZATION_ID = ENTERPRISE_ID)
+        </isNotEmpty>
+        <isEqual prepend="AND" property="car_state" compareValue="1">
+		 		EXISTS (SELECT 1 FROM CLW_XC_TRIP_T XT WHERE XT.VEHICLE_VIN = battery.VEHICLE_VIN AND XT.VALID_FLAG = '0') 
+		 </isEqual>)
+	</select>
+	
+	
+	
+</sqlMap>

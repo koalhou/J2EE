@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="overload" namespace="/overload" extends="clw-default">
+		<action name="exportoverload" class="overloadAction" method="exportOverload">
+		   <result name="error" type="redirect-action">
+				<param name="actionName">newoverloadready</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 2.0新页面入口 -->	
+		<action name="newoverloadready" class="overloadAction" method="newoverloadReady">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/overload/newoverload.jsp</result>
+		</action>
+		<action name="jiechu" class="overloadAction" method="photoJiechu">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/businessmanage/overload/jiechu.jsp</result>
+		</action>
+	</package>
+	<package name="overloadflexgrid" namespace="/overloadflexgrid" extends="json-default"> 
+        <action name="newgetoverloadlist" class="overloadAction"  method="newoverloadManage">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	          <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+        </action>
+        <action name="updatephoto" class="overloadAction"  method="updatePhoto">
+	           <result name="success" type="json">                                       <!--结果集类型为JSON-->
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">map</param>                                        <!--传入参数为MAP类型-->
+	           </result>
+	          <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+        </action>
+  	</package>
+</struts>

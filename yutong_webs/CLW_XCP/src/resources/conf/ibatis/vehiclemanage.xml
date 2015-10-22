@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="VehicleManage">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.sysmanage.datamanage.vehiclemanage.domain.VehcileInfo" />
+	<typeAlias alias="EnterpriseResInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseResInfo" />
+	<typeAlias alias="UserInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" />
+		
+	<resultMap id="vehcileinfo-result" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="limite_number" column="LIMITE_NUMBER" />
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="short_allname" column="SHORT_ALLNAME" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="enterprise_name" column="SHORT_NAME" />
+		<result property="user_name" column="USER_NAME" />
+	</resultMap>
+
+	<resultMap id="vehcileinfo-resultbyid" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="organization_id" column="ORGANIZATION_ID" />
+		<result property="driver_id" column="DRIVER_ID" />
+		<result property="engine_number" column="ENGINE_NUMBER" />
+		<result property="engine_type" column="ENGINE_TYPE" />
+		<result property="entypename" column="ENTYPENAME" />
+		<result property="brand" column="BRAND" />
+		<result property="enbrandname" column="ENBRANDNAME" />
+		<result property="vehicle_color" column="VEHICLE_COLOR" />
+		<result property="vehicle_type_id" column="VEHICLE_TYPE_ID" />
+		<result property="vehtypename" column="VEHTYPENAME" />
+		<result property="vehbrand" column="VEHBRAND" />
+		<result property="limite_number" column="LIMITE_NUMBER" />
+		<result property="standard_oil" column="STANDARD_OIL" />
+		<result property="dead_load" column="DEAD_LOAD" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="driver_id" column="DRIVER_ID" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+		<result property="user_id" column="USER_ID" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="delivery_time" column="DELIVERY_TIME" />
+		<result property="phot_name" column="PHOT_NAME" />
+		<result property="veh_photo" column="VEH_PHOTO"  typeHandler="org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler" />
+		<result property="veh_yunshuid" column="VEH_YUNSHUID" />
+		<result property="veh_fei" column="VEH_FEI" />
+		<result property="veh_pai_color" column="VEH_PAI_COLOR" />
+		<result property="organizationName" column="ORGANIZATIONNAME" />
+		<result property="driver_tel" column="DRIVER_TEL" />
+		<result property="driver_license" column="DRIVER_LICENSE" />
+	</resultMap>
+
+	<resultMap id="vehciledesc-result" class="vehcileinfo">
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_desc" column="VEHICLE_DESC" />
+	</resultMap>
+	
+	<resultMap id="enid-result" class="vehcileinfo">
+		<result property="enterprise_id" column="ENTERPRISE_ID" />
+	</resultMap>
+
+	<resultMap class="EnterpriseResInfo" id="enterprise_tree">
+		<result property="enterprise_id" column="enterprise_id" />
+		<result property="short_name" column="short_name" />
+		<result property="left_num" column="left_num" />
+		<result property="right_num" column="right_num" />
+		<result property="treeleve" column="treeleve" />
+		<result property="parent_id" column="parent_id" />
+		<result property="concate_cr_flag" column="concate_cr_flag" />
+	</resultMap>
+	
+	<resultMap id="user-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="userName" column="USER_NAME" />
+		<result property="sex" column="USER_SEX" />
+		<result property="birthday" column="USER_BIRTH" />
+		<result property="idCard" column="USER_IDT_CARD" />
+	</resultMap>
+	
+	
+
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR"
+			mode="OUT" />
+		<parameter property="out_message" javaType="String"
+			jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR"
+			mode="OUT" resultMap="enterprise_tree" />
+	</parameterMap>
+	
+	<parameterMap id="getAllEnid" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="in_org_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR"
+			mode="OUT" />
+		<parameter property="out_message" javaType="String"
+			jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR"
+			mode="OUT" resultMap="enid-result" />
+	</parameterMap>
+
+	<select id="getCount" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_JC_CLEN_VI
+		WHERE ORGANIZATION_ID in
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and  <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+              ]]>
+       
+		)
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<!-- 企业管理员获取车辆数量-->
+	<select id="getCountbyEnid" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_JC_CLEN_VI
+		    WHERE ENTERPRISE_ID=#enterprise_id#
+	      
+	      <isNotEmpty prepend="AND" property="organization_id">
+               ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+         </isNotEmpty>
+         
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+             VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	
+	<!-- 获取车辆列表 -->
+	<select id="getInfos" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       LIMITE_NUMBER,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       USER_NAME
+	      FROM CLW_JC_CLEN_VI   
+	     WHERE ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+               VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+                VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+         </isNotEmpty>
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+	
+	<!-- 企业管理员获取车辆列表 -->
+	<select id="getInfosbyEnid" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       LIMITE_NUMBER,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       USER_NAME
+	      FROM CLW_JC_CLEN_VI   
+	      WHERE ENTERPRISE_ID=#enterprise_id#
+	      
+	      <isNotEmpty prepend="AND" property="organization_id">
+               ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+         </isNotEmpty>
+         
+	      <isNotEmpty prepend="AND" property="user_name">
+               user_name like '%$user_name$%'
+         </isNotEmpty>
+         
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+              VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+         </isNotEmpty>
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+	
+    <!-- 获取未分配的车辆列表 -->
+	<select id="getVehicledesc" parameterClass="String" resultMap="vehciledesc-result">
+		SELECT VEHICLE_ID,VEHICLE_VIN||'-'||VEHICLE_LN as VEHICLE_DESC
+		FROM CLW_CL_BASE_INFO_T
+        WHERE ENTERPRISE_ID=#id# AND VALID_FLAG='0' and ORGANIZATION_ID is NULL 
+        	AND DEVICE_TYPE='0'
+	</select>
+	
+	 <procedure id="show_enterprise_tree" parameterMap="pm_in_example" >
+       { call tree_enterprise_pack.show_enterprise_tree(?, ? ,? ,?) }
+     </procedure> 
+     
+     <procedure id="show_enterprise_id" parameterMap="getAllEnid" >
+       { call tree_enterprise_pack.get_between_enterprise_id(?, ? ,? ,?,?) }
+     </procedure> 
+     
+     <update id="updateVehOrgid" parameterClass="vehcileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=#organization_id#,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<select id="getVehicleinfo" parameterClass="vehcileinfo" resultMap="vehcileinfo-resultbyid">
+		 SELECT CJCV.VEHICLE_VIN,
+		  CJCV.VEHICLE_ID,
+		  CJCV.VEHICLE_CODE,
+		  CJCV.ENTERPRISE_ID,
+		  CJCV.VEHICLE_LN,
+		  CJCV.ORGANIZATION_ID,
+		  CJCV.DRIVER_ID,
+		  CJCV.ENGINE_NUMBER,
+		  CJCV.ENGINE_TYPE,
+		  CJCV.ENTYPENAME,
+		  CJCV.BRAND,
+		  CJCV.ENBRANDNAME,
+		  CJCV.VEHICLE_COLOR,
+		  CJCV.VEHICLE_TYPE_ID,
+		  CJCV.VEHTYPENAME,
+		  CJCV.VEHBRAND,
+		  CJCV.LIMITE_NUMBER,
+		  CJCV.STANDARD_OIL,
+		  CJCV.DEAD_LOAD,
+		  CXVTRT.ROUTE_NAME,
+		  CJCV.DRIVER_ID,
+		  CYXDVT.DRIVER_NAME,
+		  CJCV.USER_ID,
+		  CJCV.USER_NAME,
+		  to_char (
+		        CJCV.DELIVERY_TIME ,
+		        'yyyy-MM-dd'
+		    ) DELIVERY_TIME ,
+		  CCBI.PHOT_NAME,
+		  CCBI.VEH_PHOTO, 
+		  CJCV.VEH_YUNSHUID,
+		  CJCV.VEH_FEI,
+		  CJCV.VEH_PAI_COLOR,
+		  CJCV.ORGANIZATIONNAME,
+	      CYXDVT.DRIVER_TEL,
+	      CYXDVT.driver_license
+		FROM CLW_JC_CLEN_VI CJCV,
+		  CLW_CL_BASE_INFO_T CCBI,
+		  (SELECT  CXVT.VEHICLE_VIN,WM_CONCAT(DISTINCT CYDT.DRIVER_NAME) DRIVER_NAME,
+               WM_CONCAT(DISTINCT CYDT.DRIVER_TEL) DRIVER_TEL,
+               WM_CONCAT(DISTINCT CYDT.driver_license) driver_license
+		  FROM CLW_YW_DRIVER_T CYDT,
+		    CLW_XC_VEHDRIVER_T CXVT
+		  WHERE CYDT.DRIVER_ID=CXVT.DRIVER_ID
+		  GROUP BY CXVT.VEHICLE_VIN) CYXDVT,
+	    ( SELECT CXVT.VEHICLE_VIN, WM_CONCAT(DISTINCT CXRT.ROUTE_NAME) ROUTE_NAME
+	      FROM CLW_XC_VSS_T CXVT,CLW_XC_ROUTE_T CXRT
+	      WHERE CXVT.ROUTE_ID=CXRT.ROUTE_ID
+	      GROUP BY CXVT.VEHICLE_VIN) CXVTRT
+			WHERE CJCV.VEHICLE_ID=#vehicle_id#
+			AND CJCV.VEHICLE_ID  =CCBI.VEHICLE_ID
+			AND CJCV.VEHICLE_VIN=CYXDVT.VEHICLE_VIN(+)
+	    	AND CJCV.VEHICLE_VIN=CXVTRT.VEHICLE_VIN(+)
+	</select>	
+	
+	<update id="updatebyVehicleid" parameterClass="vehcileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=#organization_id#,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE,
+		    VEHICLE_LN=#vehicle_ln#,
+		    VEHICLE_CODE=#vehicle_code#,
+		    VEH_YUNSHUID=#veh_yunshuid#,
+		    VEH_FEI=#veh_fei#,VEH_PAI_COLOR=#veh_pai_color#,
+		    PHOT_NAME   = #phot_name#,
+		    VEH_PHOTO   = #veh_photo,handler=org.springframework.orm.ibatis.support.BlobByteArrayTypeHandler#
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<update id="updateInfobyVehicleid" parameterClass="vehcileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=#organization_id#,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE,
+		    VEHICLE_LN=#vehicle_ln#,
+		    VEHICLE_CODE=#vehicle_code#,
+		    VEH_YUNSHUID=#veh_yunshuid#,
+		    VEH_FEI=#veh_fei#,VEH_PAI_COLOR=#veh_pai_color#
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<update id="updateInfoDelPhotobyVehicleid" parameterClass="vehcileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=#organization_id#,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE,
+		    VEHICLE_LN=#vehicle_ln#,
+		    VEHICLE_CODE=#vehicle_code#,
+		    VEH_YUNSHUID=#veh_yunshuid#,
+		    VEH_FEI=#veh_fei#,VEH_PAI_COLOR=#veh_pai_color#,
+		    PHOT_NAME   = null,
+		    VEH_PHOTO   = null
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<update id="canclebyVehicleid" parameterClass="vehcileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=null,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE
+		WHERE VEHICLE_ID = #vehicle_id#
+	</update>
+	
+	<!-- 批量去除车辆分配 -->
+	<update id="batchCanclebyVehicleVin" parameterClass="vehcileinfo">
+		UPDATE CLW_CL_BASE_INFO_T 
+		SET ORGANIZATION_ID=null,MODIFIER=#modifier#,MODIFY_TIME=SYSDATE
+		WHERE VEHICLE_VIN = #vehicle_vin#
+	</update>
+	
+	<!-- 更新企业表关联 -->
+	<update id="updateorgidFlag" parameterClass="String">
+		UPDATE CLW_JC_ENTERPRISE_T 
+		SET CONCATE_CR_FLAG='1'
+		WHERE ENTERPRISE_ID = #id#
+	</update>
+	
+	<update id="updateorgidFlagtwo" parameterClass="String">
+		UPDATE CLW_JC_ENTERPRISE_T 
+		SET CONCATE_CR_FLAG='0'
+		WHERE ENTERPRISE_ID = #id#
+	</update>
+	
+	<update id="updateorgidFlagByOrgId" parameterClass="vehcileinfo">
+		UPDATE CLW_JC_ENTERPRISE_T 
+		SET CONCATE_CR_FLAG='0'
+		WHERE ENTERPRISE_ID = #organization_id#
+	</update>
+	
+	<!-- 获取企业关联车的数量 -->
+	<select id="getCountforenCl" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_CL_BASE_INFO_T
+		WHERE VALID_FLAG = '0'
+			  AND ORGANIZATION_ID=#id#
+              AND DEVICE_TYPE='0'
+         
+	</select>
+	
+	<!-- 获取企业关联车的数量 -->
+	<select id="getCountEntiCars" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_CL_BASE_INFO_T
+		WHERE 
+		 VALID_FLAG = '0'
+		 AND DEVICE_TYPE='0'
+		  <isNotEmpty prepend="AND" property="organization_id">
+              ORGANIZATION_ID=#organization_id#
+         </isNotEmpty>
+	</select>
+	
+	<!-- 获取车牌数量 -->
+	<select id="getCountforln" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_CL_BASE_INFO_T
+		WHERE VEHICLE_LN=#id#
+			AND DEVICE_TYPE='0'
+	</select>
+	
+	<!-- 获取车牌数量 -->
+	<select id="getCountforvehcode" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_CL_BASE_INFO_T
+		WHERE VEHICLE_CODE=#vehicle_code#
+		and ENTERPRISE_ID=#enterprise_id#
+		AND DEVICE_TYPE='0'
+	</select>
+	
+	<!-- 获取企业车主数量 -->
+	<select id="getCountforvehuser" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_JC_USER_T
+		WHERE USER_TYPE='3'
+		and ENTERPRISE_ID=#enterprise_id#
+		and VALID_FLAG='0'
+		 <isNotEmpty prepend="AND" property="user_name">
+               USER_NAME like '%$user_name$%'
+         </isNotEmpty>
+	</select>
+	
+	<!--  
+	<select id="getforvehusers" parameterClass="vehcileinfo" resultMap="user-result">
+		SELECT  USER_ID,LOGIN_NAME,USER_NAME,USER_SEX,TO_CHAR(USER_BIRTH,'YYYY-MM-DD') AS USER_BIRTH,USER_IDT_CARD FROM CLW_JC_USER_T
+		WHERE USER_TYPE='3'
+		and ENTERPRISE_ID=#enterprise_id#
+		and VALID_FLAG='0'
+		 <isNotEmpty prepend="AND" property="user_name">
+               USER_NAME like '%$user_name$%'
+         </isNotEmpty>
+	</select>
+	-->
+	
+	<select id="getforvehusers" parameterClass="vehcileinfo" resultMap="user-result">
+		SELECT USER_ID,LOGIN_NAME,USER_NAME,USER_SEX,TO_CHAR(USER_BIRTH,'YYYY-MM-DD') AS USER_BIRTH,USER_IDT_CARD FROM CLW_JC_USER_T
+		WHERE USER_TYPE='3'
+		and ENTERPRISE_ID=#enterprise_id#
+		and VALID_FLAG='0'
+		 <isNotEmpty prepend="AND" property="user_name">
+               USER_NAME like '%$user_name$%'
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">  
+     	  	<isNotEmpty property="sortname">  
+            	$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		  </dynamic> 
+	</select>
+	
+	<!-- add by jinp start -->
+	<select id="getCountByUserId" parameterClass="vehcileinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM CLW_JC_CLEN_VI
+		WHERE USER_ID=#user_id#
+		
+		 <isNotEmpty prepend="AND" property="organization_id">
+               ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+         </isNotEmpty>
+         
+		 <isNotEmpty prepend="AND" property="vehicle_vin">
+			VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+          <isNotEmpty prepend="AND" property="vehicle_ln">
+			VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+	</select>
+	
+	<!-- 车主用户获取车辆列表 -->
+	<select id="getUserVehicleInfos" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		SELECT VEHICLE_VIN,
+		       VEHICLE_ID,
+		       VEHICLE_LN,
+		       LIMITE_NUMBER,
+		       ORGANIZATION_ID,
+		       ENTERPRISE_ID,
+		       SHORT_ALLNAME,
+		       VEHICLE_CODE,
+		       SHORT_NAME,
+		       USER_NAME
+	      FROM CLW_JC_CLEN_VI   
+	      WHERE USER_ID=#user_id#
+	      
+	       <isNotEmpty prepend="AND" property="organization_id">
+               ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+         </isNotEmpty>
+         
+	     <isNotEmpty prepend="AND" property="vehicle_vin">
+               VEHICLE_VIN like '%$vehicle_vin$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+			VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+	<!-- add by jinp stop -->
+	
+	<!-- 获取车辆组织ID 通过车辆VIN -->
+	<select id="getOrgIdByVin" parameterClass="vehcileinfo" resultClass="String">
+	
+	select ORGANIZATION_ID from CLW_CL_BASE_INFO_T where VEHICLE_VIN=#vehicle_vin# and VALID_FLAG = '0'
+		
+	</select>
+	
+	<!-- 选择车辆是否配置乘车规划 -->
+	<select id="getvehicleridingplan" parameterClass="vehcileinfo" resultClass="String">
+		SELECT wm_concat(FIBID_VIN) choiceflag FROM 
+	    (SELECT CASE WHEN instr(#cancleids#,CXVTR.VEHICLE_VIN) <![CDATA[<>]]>0 
+	     	THEN MAX(CXVTR.VEHICLE_LN) END FIBID_VIN
+	     FROM (SELECT CXVT.VEHICLE_VIN,CCBT.ORGANIZATION_ID,CCBT.VEHICLE_LN
+	     FROM CLW_XC_VSS_T CXVT,CLW_CL_BASE_INFO_T CCBT
+	     WHERE CXVT.VEHICLE_VIN=CCBT.VEHICLE_VIN
+	     AND CCBT.ORGANIZATION_ID in
+			(select enterprise_id
+	         from clw_jc_enterprise_vi
+	         where left_num >= (select left_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	         and  <![CDATA[right_num <=(select right_num
+	                      from clw_jc_enterprise_vi
+	                      where enterprise_id = #organization_id#)
+	              ]]>
+			))CXVTR 
+		 GROUP BY CXVTR.VEHICLE_VIN)
+	     WHERE FIBID_VIN IS NOT NULL
+	</select>
+	
+	<select id="getDrivers" parameterClass="vehcileinfo" resultClass="String">
+		select driver_id from CLW_YW_DRIVER_T t where t.enterprise_id = #enterprise_id#
+		and t.driver_license=#driver_license#
+	</select>
+	
+	<insert id="insertDriver" parameterClass="vehcileinfo">
+		INSERT INTO CLW_YW_DRIVER_T(DRIVER_ID,DRIVER_NAME,DRIVER_SEX,DRIVER_LICENSE,DRIVER_TEL,ENTERPRISE_ID,ORGANIZATION_ID,CREATER,CREATE_TIME,VALID_FLAG,DRIVER_CARD_ID) 
+		VALUES(SEQ_YW_DRIVER_T.NEXTVAL,#driver_name#,'0',#driver_license#,#driver_tel#,#enterprise_id#,#organization_id#,#creater#,sysdate,'0','-1')
+	</insert>
+	<update id="deleteDriver" parameterClass="String">
+		DELETE FROM CLW_YW_DRIVER_T 
+		WHERE DRIVER_LICENSE=#OldLicense#
+	</update>
+	
+	<select id="getTripByVin" parameterClass="vehcileinfo" resultClass="Integer">
+		select count(1) from CLW_XC_VEHDRIVER_T t where vehicle_vin = (select max(vehicle_vin) from CLW_CL_BASE_INFO_T where vehicle_id =#vehicle_id#) and trip_id =0
+	</select>
+	<insert id="insertTrip" parameterClass="vehcileinfo">
+		insert into CLW_XC_VEHDRIVER_T(vehicle_vin,driver_id,trip_id) 
+		select max(vehicle_vin),#driver_id#,0  from CLW_CL_BASE_INFO_T where vehicle_id =#vehicle_id#
+	</insert>
+	<update id="updateTrip" parameterClass="vehcileinfo">
+		update CLW_XC_VEHDRIVER_T set driver_id = #driver_id#
+		where vehicle_vin =(select max(vehicle_vin) from CLW_CL_BASE_INFO_T where vehicle_id =#vehicle_id#) and trip_id =0
+	</update>
+	<update id="deleteTrip" parameterClass="vehcileinfo">
+		delete CLW_XC_VEHDRIVER_T 
+		where driver_id = #driver_id# and vehicle_vin =(select max(vehicle_vin) from CLW_CL_BASE_INFO_T where vehicle_id =#vehicle_id#) and trip_id =0
+	</update>
+	
+	<!-- 企业管理员导出车辆列表 -->
+	<select id="exportInfosbyEnid" parameterClass="vehcileinfo" resultClass="vehcileinfo">
+		 SELECT CJCV.VEHICLE_VIN,
+		  CJCV.VEHICLE_LN,
+		  CJCV.LIMITE_NUMBER,
+		  CYXDVT.DRIVER_NAME,
+		  CCBI.PHOT_NAME,
+		  CJCV.ORGANIZATIONNAME organizationName,
+	      CYXDVT.DRIVER_TEL,
+	      CYXDVT.driver_license
+		FROM CLW_JC_CLEN_VI CJCV,
+		  CLW_CL_BASE_INFO_T CCBI,
+		  (SELECT  CXVT.VEHICLE_VIN,WM_CONCAT(DISTINCT CYDT.DRIVER_NAME) DRIVER_NAME,
+               WM_CONCAT(DISTINCT CYDT.DRIVER_TEL) DRIVER_TEL,
+               WM_CONCAT(DISTINCT CYDT.driver_license) driver_license
+		  FROM CLW_YW_DRIVER_T CYDT,
+		    CLW_XC_VEHDRIVER_T CXVT
+		  WHERE CYDT.DRIVER_ID=CXVT.DRIVER_ID
+		  GROUP BY CXVT.VEHICLE_VIN) CYXDVT,
+	    ( SELECT CXVT.VEHICLE_VIN, WM_CONCAT(DISTINCT CXRT.ROUTE_NAME) ROUTE_NAME
+	      FROM CLW_XC_VSS_T CXVT,CLW_XC_ROUTE_T CXRT
+	      WHERE CXVT.ROUTE_ID=CXRT.ROUTE_ID
+	      GROUP BY CXVT.VEHICLE_VIN) CXVTRT
+			WHERE CJCV.VEHICLE_ID  =CCBI.VEHICLE_ID
+			AND CJCV.VEHICLE_VIN=CYXDVT.VEHICLE_VIN(+)
+	    	AND CJCV.VEHICLE_VIN=CXVTRT.VEHICLE_VIN(+) 
+	      AND CCBI.ENTERPRISE_ID=#enterprise_id#
+	      <isNotEmpty prepend="AND" property="organization_id">
+              CCBI. ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #organization_id#)
+             ]]>
+         
+		)
+         </isNotEmpty>
+	      <isNotEmpty prepend="AND" property="user_name">
+               user_name like '%$user_name$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+              CCBI.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="vehicle_vin">
+               CCBI.VEHICLE_VIN like '%' || #vehicle_vin# ||'%' escape '\'
+         </isNotEmpty>
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+</sqlMap>

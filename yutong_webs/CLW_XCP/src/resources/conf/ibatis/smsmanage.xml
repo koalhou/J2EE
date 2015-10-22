@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SmsManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="messageInfo" type="com.neusoft.clw.infomanage.smsmanage.domain.MessageInfo" />
+    <typeAlias alias="messageSelectStudent" type="com.neusoft.clw.infomanage.studentmanage.domain.StudentInfo" />
+    
+    <select id="getCount" parameterClass="messageSelectStudent" resultClass="Integer">
+		SELECT COUNT(1) 
+		  FROM CLW_XC_STUDENT_T XS,
+		       (SELECT STU_ID, MAX(CREATE_TIME) AS CREATE_TIME FROM CLW_XC_STUSMS_T WHERE VALID_FLAG = '0' GROUP BY STU_ID) STU_SMS 
+		 WHERE XS.ENTERPRISE_ID=#enterprise_id# 
+		   AND XS.VALID_FLAG = '0'
+		   AND XS.STU_ID = STU_SMS.STU_ID
+		   AND XS.ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               XS.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               XS.STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               XS.STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               XS.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<resultMap class="studentsInfo" id="studentInfos-result">
+       <result property="student_id" column="STU_ID"/>
+       <result property="student_code" column="STU_CODE"/>
+       <result property="student_name" column="STU_NAME"/>
+       <result property="student_school" column="STU_SCHOOL"/>
+       <result property="student_class" column="STU_CLASS"/>
+       <result property="create_time" column="CREATE_TIME"/>
+       <result property="vehicleLn" column="VEHICLE_LN"/>
+       <result property="routeName" column="ROUTE_NAME"/>
+    </resultMap>
+	
+	<select id="getInfos" parameterClass="messageSelectStudent" resultMap="studentInfos-result">
+		SELECT XS.STU_ID,
+		       XS.STU_CODE,
+		       XS.STU_NAME,
+		       XS.STU_SCHOOL,
+		       XS.STU_CLASS,
+		       STU_SMS.CREATE_TIME,
+		       VEHICLE_T.VEHICLE_LN AS VEHICLE_LN,
+		       ROUTE_T.ROUTE_NAME   AS ROUTE_NAME
+		  FROM CLW_XC_STUDENT_T XS,
+		       (SELECT STU_ID, MAX(CREATE_TIME) AS CREATE_TIME
+		          FROM CLW_XC_STUSMS_T
+		         WHERE VALID_FLAG = '0'
+		         GROUP BY STU_ID) STU_SMS,
+		       (SELECT CXV.STUDENT_ID AS STU_ID,
+		               WM_CONCAT(DISTINCT CBI.VEHICLE_LN) AS VEHICLE_LN
+		          FROM CLW_XC_VSS_T CXV, CLW_CL_BASE_INFO_T CBI
+		         WHERE CXV.VEHICLE_VIN = CBI.VEHICLE_VIN
+		           AND CBI.VALID_FLAG = '0'
+		           AND CBI.ORGANIZATION_ID IN
+		           <![CDATA[
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID = #organization_id#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE VALID_FLAG = '0'
+		                           AND ENTERPRISE_ID = #organization_id#))
+		           ]]>
+		         GROUP BY CXV.STUDENT_ID) VEHICLE_T,
+		       (SELECT CXV.STUDENT_ID AS STU_ID,
+		               WM_CONCAT(DISTINCT XR.ROUTE_NAME) AS ROUTE_NAME
+		          FROM CLW_XC_VSS_T CXV, CLW_XC_ROUTE_T XR
+		         WHERE CXV.ROUTE_ID = XR.ROUTE_ID
+		           AND XR.VALID_FLAG = '0'
+		           AND XR.ROUTE_ORGANIZATION_ID IN
+		           <![CDATA[
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_T
+		                 WHERE VALID_FLAG = '0'
+		                   AND LEFT_NUM >=
+		                       (SELECT LEFT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE ENTERPRISE_ID = #organization_id#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_T
+		                         WHERE VALID_FLAG = '0'
+		                           AND ENTERPRISE_ID = #organization_id#))
+		            ]]>
+		         GROUP BY CXV.STUDENT_ID) ROUTE_T
+		 WHERE XS.ENTERPRISE_ID=#enterprise_id# 
+		   AND XS.VALID_FLAG = '0'
+		   AND XS.STU_ID = STU_SMS.STU_ID
+		   AND XS.STU_ID = VEHICLE_T.STU_ID(+)
+           AND XS.STU_ID = ROUTE_T.STU_ID(+)
+		   AND XS.ORGANIZATION_ID in
+		<![CDATA[
+			(SELECT ENTERPRISE_ID
+			   FROM CLW_JC_ENTERPRISE_VI
+			  WHERE LEFT_NUM >= (SELECT LEFT_NUM
+			                       FROM CLW_JC_ENTERPRISE_VI
+				                  WHERE ENTERPRISE_ID = #organization_id#)
+			    AND RIGHT_NUM <= (SELECT RIGHT_NUM
+				                   FROM CLW_JC_ENTERPRISE_VI
+					              WHERE ENTERPRISE_ID =#organization_id#)        
+			)
+	     ]]>
+		 <isNotEmpty prepend="AND" property="student_code">
+               XS.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               XS.STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               XS.STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               XS.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+		 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$ $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+    
+	<update id="deleteMsgTypeByStuId" parameterClass="String">
+        UPDATE CLW_XC_STUSMS_T XS
+		   SET XS.VALID_FLAG = '1',
+		       XS.CREATE_TIME = SYSDATE
+		 WHERE XS.STU_ID = #value#
+		   AND XS.VALID_FLAG = '0'
+	</update>
+	
+	<insert id="insertMsgConfig" parameterClass="messageInfo">
+	  INSERT INTO CLW_XC_STUSMS_T
+	    (STU_ID,
+	     EVENT_TYPE,
+	     CELL_NUMBER,
+	     RELATIVE_TYPE,
+	     RELATIVE_NAME,
+	     END_TIME,
+	     PARENTS_FLAG,
+	     CREATER,
+	     CREATE_TIME,
+	     PERSON_GROUP_ID,
+	     VALID_FLAG)
+	  VALUES
+	    (#student_id#,
+	     #eventType#,
+	     #cellPhone#,
+	     #relativeType#,
+	     #relativeName#,
+	     TO_DATE(#endTime#, 'YYYY-MM-DD'),
+	     #contactType#,
+	     #creator#,
+	     SYSDATE,
+	     #personGroupId#,
+	     '0')
+	</insert>
+	
+	<select id="getCountStuInfos" parameterClass="messageSelectStudent" resultClass="Integer">
+	  SELECT COUNT(1)
+		FROM CLW_XC_STUDENT_T T1
+		WHERE T1.ENTERPRISE_ID=#enterprise_id# 
+		  AND T1.VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="organization_id">
+			   T1.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+         <!-- 
+         AND EXISTS (SELECT 1 FROM CLW_XC_VSS_T T2 WHERE T2.STUDENT_ID = T1.STU_ID)
+          -->
+         AND NOT EXISTS (SELECT 1 FROM CLW_XC_STUSMS_T WHERE STU_ID = T1.STU_ID AND VALID_FLAG = '0')
+		 <isNotEmpty prepend="AND" property="student_code">
+               T1.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               T1.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               T1.STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               T1.STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+	</select>
+	
+	<resultMap class="messageSelectStudent" id="students-result">
+		<result property="student_id" column="STU_ID" />
+		<result property="student_code" column="STU_CODE" />
+		<result property="student_name" column="STU_NAME" />
+		<result property="student_school" column="STU_SCHOOL" />
+		<result property="student_class" column="STU_CLASS" />
+	</resultMap>
+	
+	<select id="getStudentInfos" parameterClass="messageSelectStudent" resultMap="students-result">
+		SELECT T1.STU_ID, T1.STU_CODE, T1.STU_NAME, T1.STU_SCHOOL, T1.STU_CLASS
+		FROM CLW_XC_STUDENT_T T1
+		WHERE T1.ENTERPRISE_ID=#enterprise_id# 
+		  AND T1.VALID_FLAG = '0'
+		 <isNotEmpty prepend="AND" property="organization_id">
+			   T1.ORGANIZATION_ID IN
+			   <![CDATA[
+					    	(SELECT ENTERPRISE_ID
+								     FROM CLW_JC_ENTERPRISE_VI
+								     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)
+								     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+								                  FROM CLW_JC_ENTERPRISE_VI
+								                  WHERE ENTERPRISE_ID = #organization_id#)        
+								)
+				]]>
+         </isNotEmpty>
+         <!-- 
+         AND EXISTS (SELECT 1 FROM CLW_XC_VSS_T T2 WHERE T2.STUDENT_ID = T1.STU_ID)
+          -->
+         AND NOT EXISTS (SELECT 1 FROM CLW_XC_STUSMS_T WHERE STU_ID = T1.STU_ID AND VALID_FLAG = '0')
+		 <isNotEmpty prepend="AND" property="student_code">
+               T1.STU_CODE like '%' || #student_code# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_name">
+               T1.STU_NAME like '%' || #student_name# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_school">
+               T1.STU_SCHOOL like '%' || #student_school# ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="student_class">
+               T1.STU_CLASS like '%' || #student_class# ||'%' escape '\'
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>         
+	</select>
+	
+	<resultMap class="messageInfo" id="sms-result">
+		<result property="student_id" column="STU_ID" />
+		<result property="cellPhone" column="CELL_NUMBER" />
+		<result property="relativeType" column="RELATIVE_TYPE" />
+		<result property="relativeName" column="RELATIVE_NAME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="contactType" column="PARENTS_FLAG" />
+		<result property="eventType" column="EVENT_TYPE" />
+	</resultMap>
+	
+	<select id="getSmsInfoById" parameterClass="String" resultMap="sms-result">
+		SELECT MAX(XS.STU_ID) AS STU_ID,
+		       MAX(XS.CELL_NUMBER) AS CELL_NUMBER,
+		       MAX(XS.RELATIVE_TYPE) AS RELATIVE_TYPE,
+		       MAX(XS.RELATIVE_NAME) AS RELATIVE_NAME,
+		       MAX(TO_CHAR(XS.END_TIME,'YYYY-MM-DD')) AS END_TIME,
+		       MAX(XS.PARENTS_FLAG) AS PARENTS_FLAG,
+		       WM_CONCAT(XS.EVENT_TYPE) AS EVENT_TYPE
+		 FROM CLW_XC_STUSMS_T XS
+		WHERE XS.STU_ID = #value#
+		  AND XS.VALID_FLAG = '0'
+		GROUP BY XS.PERSON_GROUP_ID
+		ORDER BY XS.PERSON_GROUP_ID ASC        
+	</select>
+	
+	<update id="deleteSmsByStuId" parameterClass="String">
+        UPDATE CLW_XC_STUSMS_T XS
+		   SET XS.VALID_FLAG = '1',
+		       XS.CREATE_TIME = SYSDATE
+		 WHERE XS.STU_ID = #value#
+		   AND XS.VALID_FLAG = '0'
+	</update>
+	
+	<select id="getStudentIdByCode" parameterClass="String" resultClass="String">
+		SELECT MIN(STU_ID)
+		FROM CLW_XC_STUDENT_T 
+		WHERE STU_CARD_ID = #value#
+		AND VALID_FLAG = '0'     
+	</select>
+</sqlMap>

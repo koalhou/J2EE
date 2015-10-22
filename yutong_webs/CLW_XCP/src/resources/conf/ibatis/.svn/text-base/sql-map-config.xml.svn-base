@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" maxRequests="15" maxSessions="10"
+		maxTransactions="5" useStatementNamespaces="true" />
+	<sqlMap resource="conf/ibatis/user.xml" />
+	<sqlMap resource="conf/ibatis/RoleManage.xml" />
+	<sqlMap resource="conf/ibatis/vehiclemanage.xml" />
+	<sqlMap resource="conf/ibatis/userlogin.xml" />
+	<sqlMap resource="conf/ibatis/operatelog.xml" />
+	<sqlMap resource="conf/ibatis/routemanage.xml" />
+	<sqlMap resource="conf/ibatis/drivermanage.xml" />
+	<sqlMap resource="conf/ibatis/gpsmanage.xml" />
+	<sqlMap resource="conf/ibatis/gpsmanagenew.xml" />
+	<sqlMap resource="conf/ibatis/ocktimeset.xml" />
+	<sqlMap resource="conf/ibatis/entimanage.xml" />
+	<sqlMap resource="conf/ibatis/oilset.xml" />
+	<sqlMap resource="conf/ibatis/baddriving.xml" />
+	<sqlMap resource="conf/ibatis/oilused.xml" />
+    <sqlMap resource="conf/ibatis/operationmanage.xml" />
+    <sqlMap resource="conf/ibatis/zonemanage.xml" />
+    <sqlMap resource="conf/ibatis/appcfg.xml" />
+	<sqlMap resource="conf/ibatis/vehiclestatus.xml" />
+	<sqlMap resource="conf/ibatis/photomonitor.xml" />	
+	<sqlMap resource="conf/ibatis/humanbaddrive.xml" />
+	<sqlMap resource="conf/ibatis/alarmmanage.xml" />
+	<sqlMap resource="conf/ibatis/messagesend.xml" />
+	<sqlMap resource="conf/ibatis/sendcommand.xml" />
+	<sqlMap resource="conf/ibatis/routechart.xml" />
+	<sqlMap resource="conf/ibatis/stride.xml" />
+	<sqlMap resource="conf/ibatis/carrunhistory.xml" />
+	<sqlMap resource="conf/ibatis/ridealarm.xml" />
+	<sqlMap resource="conf/ibatis/ridingPlan.xml" />
+	<sqlMap resource="conf/ibatis/exportIniFile.xml" />
+	<sqlMap resource="conf/ibatis/stewardmanage.xml" />
+	<sqlMap resource="conf/ibatis/studentmanage.xml" />
+	<sqlMap resource="conf/ibatis/stationmanage.xml" />
+	<sqlMap resource="conf/ibatis/holidaymanage.xml" />
+	<sqlMap resource="conf/ibatis/sendcommandhis.xml" />
+	<sqlMap resource="conf/ibatis/handmobilemanage.xml" />
+	<sqlMap resource="conf/ibatis/smsmanage.xml" />
+	<sqlMap resource="conf/ibatis/fileupload.xml" />
+	<sqlMap resource="conf/ibatis/newterminalparams.xml" />
+	<sqlMap resource="conf/ibatis/overload.xml" />
+	<sqlMap resource="conf/ibatis/smsreminder.xml" />
+	<sqlMap resource="conf/ibatis/stshuaka.xml" />
+	<sqlMap resource="conf/ibatis/treeData.xml" />
+	<sqlMap resource="conf/ibatis/runoilrecord.xml" />
+    <sqlMap resource="conf/ibatis/androidDownload.xml" />
+    <sqlMap resource="conf/ibatis/smssignset.xml" />
+    <sqlMap resource="conf/ibatis/drivershuaka.xml" />
+    <sqlMap resource="conf/ibatis/photoGrapSet.xml" />
+    <sqlMap resource="conf/ibatis/newenergyalarm.xml"/>
+    <sqlMap resource="conf/ibatis/newenergymotor.xml"/>
+    <sqlMap resource="conf/ibatis/newenergybattery.xml"/>
+    <sqlMap resource="conf/ibatis/newenergyversion.xml"/>
+    <sqlMap resource="conf/ibatis/newenergysms.xml"/>
+    <sqlMap resource="conf/ibatis/runtimeset.xml"/>
+    <sqlMap resource="conf/ibatis/wxmanage.xml"/>
+</sqlMapConfig>

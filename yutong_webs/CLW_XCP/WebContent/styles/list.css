@@ -1,0 +1,177 @@
+@charset "utf-8";
+
+.searchList{ float: left; width: 100%; }
+
+/*#list table{
+	border-top: 1px solid #ccc; 
+	border-bottom: 1px solid #ccc;
+	background: #fff;
+}*/
+#list table a{ color: #008cdc; display: block; height: 20px; line-height:20px; text-decoration: none; width:100%; }
+#list th{ padding: 0 4px; border-right:1px solid #ccc; font-size: 12px; line-height: 22px; text-align: left; font-weight: normal; color: #2a2a2a;}
+#list th.rightLine{ padding: 0 4px; font-size: 12px; line-height: 22px; text-align: left; font-weight: normal; color: #2a2a2a; }
+#list td{ padding: 2px 4px; font-size: 12px; line-height:20px; background: url(../images/dot.gif) repeat-x left bottom;}
+#list td.listRightLine{ border-right: none; }
+#list thead{ background: #ccc url(../images/listTitle_bg.gif) repeat-x left top; line-height: 22px;}
+
+#listRoute th{ padding: 0 4px; border-right:1px solid #ccc; font-size: 12px; line-height: 22px; text-align: left; font-weight: normal; color: #2a2a2a;}
+#listRoute th.rightLine{ padding: 0 4px; font-size: 12px; line-height: 22px; text-align: left; font-weight: normal; color: #2a2a2a; }
+#listRoute td{ padding: 2px 4px; font-size: 12px; line-height:20px; background: url(../images/dot.gif) repeat-x left bottom;}
+#listRoute td.listRightLine{ border-right: none; }
+#listRoute thead{ background: #ccc url(../images/listTitle_bg.gif) repeat-x left top; line-height: 22px;}
+
+.odd{ background: #f8f8f8;}
+/*当CSS3选择器公布后，就可以使用：nth-child选择器创建交错样式，而不需要在标记中添加,目前能较好地支持她的只有Opera9+和Safari3+*/
+#list tr:hover{ background:#e6e6e6; color:#121212;}
+#list tr a:hover{ background:#e6e6e6; color:#121212;}
+.timeStyle{ font-size: 11px;}
+
+/* links Style| 链接样式 */
+
+a { color: #0078c8; text-decoration: none;}
+a:hover {text-decoration: underline;}
+img a.{ border: 0;}
+
+.hline{ background: url(../images/hline.gif) repeat-y top right;}
+
+/*input styles| 表单样式 */
+/*.input_required{ color: #c80000; line-height: 18px; padding: 0 4px; }
+input[type="text"]:visited, input[type="password"]:visited{ line-height:17px; height:17px;}
+input[type="text"]:focus, input[type="password"]:focus{ background: #ffc; line-height:17px; height:17px;}
+textarea:focus{ background: #ffc;}
+
+input[type="text"],input[type="password"]{ color: #555; border: 1px solid #aaaeb4; font: 12px/17px Tahoma,Arial,"宋体","微软雅黑"; line-height:17px; height:17px;}
+textarea{ color: #555; border: 1px solid #aaaeb4; font: 12px/17px Tahoma,Arial,"宋体","微软雅黑"; }
+
+select{ border: 1px solid #aaaeb4; margin: 0; font: 12px/17px Tahoma,Arial,"微软雅黑","宋体"; }
+#remember-me label{ width: 4em;}
+*/
+input.radio, input.select, input.checkBox { width: auto; line-height:17px;}
+input.radio{ margin-right: 5px;}
+.input80{ height: 17px; width: 80px;}
+.input100{ height: 17px; width: 100px;}
+.input120{ height: 17px; width: 118px;}
+.input150{ height: 17px; width: 148px;}
+.input180{ height: 17px; width: 178px;}
+.input320{ height: 17px; width: 318px;}
+.length80{ width: 80px;}
+.length120{ width: 118px;}
+/*Msg styles| 对话框样式 */
+.middle{ margin: 10px auto; width: 700px;}
+.msgBox{
+	float: left;
+	background: #eee url(../images/msg_title_bg.gif) repeat-x top left;
+	border: 1px solid #b8b8b8;
+	padding: 0 8px;
+	width: 100%;
+}
+.msgTitle{
+	color: #000;
+	float: left;
+	font-weight: bold;
+	line-height: 30px;
+	height: 40px;
+	width: 100%;
+}
+.msgCentent{
+	float: left;
+	padding: 0 0 10px;
+	width: 100%;
+}
+
+/*   以下css编写： 刘泽
+     修改时间：20011-3-3*/
+/*page ctrl*/
+#pageCtrl{ 
+	color: #2a2a2a;
+	float: left;
+	height: 32px;
+	line-height: 32px;
+	width: 100%;
+}
+#gotoPage ul {
+	width: 95%;
+	height: 18px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	margin:0 auto;
+}
+#gotoPage li {
+	/*position:relative; del by sunwei */
+	float:left;
+	margin:0 6px;
+}
+#gotoPage a {
+	text-decoration:none;
+	display:block;
+	width:18px;
+	height:18px;
+	margin-top:5px;
+}
+a.btnFirst { background: url(../images/btn_ifirst.gif) no-repeat left top;}
+a.btnFirst:hover { background: url(../images/btn_ifirst_hover.gif) no-repeat right top;}
+a.btnPrev { background: url(../images/btn_iPrev.gif) no-repeat left top;}
+a.btnPrev:hover { background: url(../images/btn_iPrev_hover.gif) no-repeat right top;}
+a.btnNext { background: url(../images/btn_iNext.gif) no-repeat left top;}
+a.btnNext:hover { background: url(../images/btn_iNext_hover.gif) no-repeat right top;}
+a.btnEnd { background: url(../images/btn_iEnd.gif) no-repeat left top;}
+a.btnEnd:hover { background: url(../images/btn_iEnd_hover.gif) no-repeat right top;}
+
+.buhuanhang{ display:inline; text-decoration: none; float:right; margin:2px 3px 0;}
+.buhuanhang2{ display:inline; text-decoration: none; float:right; margin:1px 3px 0;}
+.buhuanhangbut{ display:inline; text-decoration: none; float:right; margin:1px 5px 0;}
+.buhuanhangbut a,.buhuanhangbut a:hover{ color:#000;}
+.buhuanhangbut2{ display:inline; width:50px; text-decoration: none; float:left; margin:0 3px 4px;}
+.clear{ clear:both;}
+
+.input121{ height: 20px; width: 118px; color: #999999;}
+.middleind{ margin: 10px auto; width: 95%;}
+.msgBox2{
+    margin:10px auto;	
+	background: #eee url(../images/msg_title_bg.gif) repeat-x top left;
+	border: 1px solid #b8b8b8;
+	padding: 0 8px;
+	width: 650px;
+}
+.msgBox5{ background: url(../images/msg_title_bg.gif) repeat-x top left;}
+.msgBox4{
+    margin:10px auto 0;	
+	background: #eee url(../images/msg_title_bg.gif) repeat-x top left;
+	border: 1px solid #b8b8b8;
+	padding: 0 8px;
+	width: 650px;
+}
+.msgBox6{
+    margin:10px auto;	
+	background: #eee url(../images/msg_title_bg.gif) repeat-x top left;
+	border: 1px solid #b8b8b8;
+	padding: 0 8px;
+	width: 950px;
+}
+.icoAlarm{ background: #eee url(../images/ico_alarm.gif) no-repeat center left; padding: 0 0 0 20px;}
+.msgBox3{
+    margin:10px auto;	
+	background: #eee url(../images/msg_title_bg.gif) repeat-x top left;
+	border: 1px solid #b8b8b8;
+	padding: 0 8px;
+	width: 100%;
+}
+.msgTitle3{
+	float: left;
+	height: 40px;
+	width: 100%;
+	background: url(../images/msg_title_bg.gif) repeat-x top left;
+}
+.msgTitle3 h4{
+	color: #000;
+	font-size:12px;
+	font-weight: bold;
+	line-height: 30px;
+	padding:0 0 0 10px;
+
+}
+
+.list2 td{ padding: 2px 4px; font-size: 12px; line-height:20px; background: url(../images/dot.gif) repeat-x left bottom;}
+.list2 tr:hover{ background:#e6e6e6; color:#121212;}
+.list2 tr a:hover{ background:#e6e6e6; color:#121212;}

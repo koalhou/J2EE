@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="newmodel" namespace="/newmodel" extends="clw-default">
+		<action name="apkfileUploadInit" class="uploadUtilAction" method="apkinit">
+			<result name="success">
+				/WEB-INF/jsp/info/apkupload/apkfileUpload.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/info/apkupload/apkfileUpload.jsp
+			</result>
+		</action>
+		<action name="apkuploadFile" class="uploadUtilAction" method="apkuploadFile">
+		    <result name="success" type="redirect-action">
+			<param name="actionName">apkfileUploadInit</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">apkfileUploadInit</param>
+			<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+		<action name="apkdownloadFile" class="uploadUtilAction" method="apkdownloadFile">
+			<result name="error">
+				/WEB-INF/jsp/info/apkupload/apkfileUpload.jsp
+			</result>
+		</action>
+	</package>
+	
+	<package name="paramset" namespace="/paramset" extends="json-default clw-default">
+	    <!-- 进入参数设置列表 -->
+		<action name="paramsetManage" class="paramSetAction" method="init">
+			<result name="error">/WEB-INF/jsp/info/paramset/paramsetList.jsp</result>
+			<result name="success">/WEB-INF/jsp/info/paramset/paramsetList.jsp</result>	
+		</action>
+		<!-- 进入参数设置添加页面 -->
+		<action name="preAddParamSet" class="paramSetAction" method="preAddParamSet">
+			<result name="error">/WEB-INF/jsp/info/paramset/addParamSet.jsp</result>
+			<result name="success">/WEB-INF/jsp/info/paramset/addParamSet.jsp</result>	
+		</action>
+		<!-- 参数设置添加 -->
+		<action name="addParamSet" class="paramSetAction" method="addParamSet">
+			<result name="error">/WEB-INF/jsp/info/paramset/addParamSet.jsp</result>
+			<result name="success" type="redirectAction">paramsetManage</result>	
+		</action>
+		<!-- 参数设置修改 -->
+		<action name="updateParamSet" class="paramSetAction" method="updateParamSet">
+			<result name="error">/WEB-INF/jsp/info/paramset/addParamSet.jsp</result>
+			<result name="success" type="redirectAction">paramsetManage</result>	
+		</action>
+		<!-- 根据名称删除参数设置-->
+		<action name="delParamSetByName" class="paramSetAction" method="delParamSetByName">
+		</action>
+		<!-- 进入参数设置列表 -->
+		<action name="paramsetList" class="paramSetAction" method="getParamSetList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">jsonMap</param>
+           </result>	
+		</action>
+		
+		<!-- 进入用户界面 -->
+		<action name="showPhoto" class="themeSetAction" method="showPhoto">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<!-- 进入用户界面 -->
+		<action name="themesetManage" class="themeSetAction" method="init">
+			<result name="error">/WEB-INF/jsp/info/themeset/themeManage.jsp</result>
+			<result name="success">/WEB-INF/jsp/info/themeset/themeManage.jsp</result>	
+		</action>
+		<!-- 进入用户界面设置列表 -->
+		<action name="themesetList" class="themeSetAction" method="getThemeSetList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">userMap</param>
+           </result>	
+		</action>
+		
+		<action name="updatethemeset" class="themeSetAction" method="updatethemeBefore">
+			<result name="error">/WEB-INF/jsp/info/themeset/updateTheme.jsp</result>
+			<result name="success">/WEB-INF/jsp/info/themeset/updateTheme.jsp</result>	
+		</action>
+		<action name="addthemeset" class="themeSetAction" method="addthemeBefore">
+			<result name="error">/WEB-INF/jsp/info/themeset/addTheme.jsp</result>
+			<result name="success">/WEB-INF/jsp/info/themeset/addTheme.jsp</result>	
+		</action>
+		<action name="delthemeset" class="themeSetAction" method="delthemeset">
+			<result name="error">/WEB-INF/jsp/info/themeset/themeManage.jsp</result>
+			<result name="success">/WEB-INF/jsp/info/themeset/themeManage.jsp</result>	
+		</action>
+		<action name="imageuploadFile" class="themeSetAction" method="imageuploadFile">
+		    <result name="success" type="redirect-action">
+			<param name="actionName">updatethemeset</param>
+			<param name="id">${id}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">updatethemeset</param>
+			<param name="id">${id}</param>
+			<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+		
+		<action name="imageuploadFileUsers" class="themeSetAction" method="imageuploadFileUsers">
+		    <result name="success" type="redirect-action">
+			<param name="actionName">themesetManage</param>
+			<param name="message">${message}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">themesetList</param>
+			<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+		
+		<action name="navigationFile" class="themeSetAction" method="navigationFile">
+		    <result name="success" type="redirect-action">
+			<param name="actionName">updatethemeset</param>
+			<param name="id">${id}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">updatethemeset</param>
+			<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+		<action name="mapGroundUpdate" class="themeSetAction" method="mapGroundUpdate">
+			<result name="success" type="redirect-action">
+			<param name="actionName">updatethemeset</param>
+			<param name="id">${id}</param>
+			</result>
+			<result name="error" type="redirect-action">
+			<param name="actionName">updatethemeset</param>
+			<param name="errorMessage">${errorMessage}</param>
+			</result>
+		</action>
+	</package>
+	<package name="feedback" namespace="/feedback" extends="json-default clw-default">
+		
+		<action name="feedbackDetail" class="feedBackAction" method="findFeedBackDetail" >
+			<result name="error">/WEB-INF/jsp/info/feedback/feedbackDetail.jsp</result>	
+			<result name="success">/WEB-INF/jsp/info/feedback/feedbackDetail.jsp</result>	
+		</action>
+		
+		<action name="feedbackOperate" class="feedBackAction" method="feedbackOperateDetail" >
+			<result name="error">/WEB-INF/jsp/info/feedback/feedbackOperate.jsp</result>	
+			<result name="success">/WEB-INF/jsp/info/feedback/feedbackOperate.jsp</result>	
+		</action>
+		
+		<action name="feedbackUpdate" class="feedBackAction" method="feedbackUpdate" >
+			<result name="error">/WEB-INF/jsp/info/feedback/feedbackOperate.jsp</result>	
+			<result name="success" type="redirectAction">readyPage</result>	
+		</action>
+		
+		<action name="feedbackUpdateDetail" class="feedBackAction" method="feedbackOperateDetail" >
+			<result name="error">/WEB-INF/jsp/info/feedback/feedbackOperateDetail.jsp</result>	
+			<result name="success">/WEB-INF/jsp/info/feedback/feedbackOperateDetail.jsp</result>	
+		</action>
+		
+		<action name="readyPage" class="feedBackAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/info/feedback/feedback.jsp</result>	
+			<result name="success">/WEB-INF/jsp/info/feedback/feedback.jsp</result>	
+		</action>
+		
+		<action name="exportFeedList" class="feedBackAction" method="exportSearchList">
+		</action>
+		
+		<action name="feedBackList" class="feedBackAction" method="feedBackMsgBrowse">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">feedbackMap</param>
+           </result>
+			<result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">feedbackMap</param>
+           </result>
+		</action>
+	</package>
+</struts>

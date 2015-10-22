@@ -1,0 +1,1370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="GPSNEW">
+    
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="station" type="com.neusoft.clw.infomanage.sitemanage.domain.Site" />
+	<typeAlias alias="clwTqcEmpPreline" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.ClwTqcEmpPreline"/>
+	
+	<typeAlias alias="terminalViBean"
+		type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TerminalViBean" />
+		<typeAlias alias="XCRouteBean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.XCRouteBean" />
+		<typeAlias alias="MsgBean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.MsgBean" />
+		<typeAlias alias="SiteBean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.SiteBean" />
+		<typeAlias alias="PhotoInfoBean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.PhotoInfoBean" />
+		<typeAlias alias="XS_CHECK_RECORD_Bean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.XS_CHECK_RECORD_Bean" />
+		<typeAlias alias="rideInfo" type="com.neusoft.clw.yunxing.routechart.chart.domain.RouteChart" />
+		<typeAlias alias="Enter_Info_bean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.Enter_Info_bean" />
+		<typeAlias alias="runOilInfo" type="com.neusoft.clw.itsmanage.oilmanage.carrun.domain.RunOilRecord" />
+		
+	<resultMap class="runOilInfo" id="runOilInforesult">
+	    <result property="ID" column="ID" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="on_date" column="ON_DATE" />
+		<result property="off_date" column="OFF_DATE" />
+		<result property="oil" column="OIL" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="spd_oil" column="SPD_OIL" />
+		<result property="route_ids" column="ROUTE_IDS" />
+		<result property="HAVEMILEAGE" column="HAVEMILEAGE" />
+	</resultMap>
+	<resultMap class="SiteBean" id="SiteBeanResult">
+       <result property="SITE_ID" column="SITE_ID"/>
+       <result property="SITE_NAME" column="SITE_NAME"/>
+       <result property="SICHEN_ADDR" column="SICHEN_ADDR"/>
+       <result property="SITE_LONGITUDE" column="SITE_LONGITUDE"/>
+       <result property="SITE_LATITUDE" column="SITE_LATITUDE"/>
+       <result property="SITE_REMARK" column="SITE_REMARK"/>
+       <result property="ENTERPRISE_ID" column="ENTERPRISE_ID"/>
+       <result property="ORGANIZATION_ID" column="ORGANIZATION_ID"/>
+       <result property="CREATER" column="CREATER"/>
+       <result property="CREATE_TIME" column="CREATE_TIME"/>
+       <result property="VALID_FLAG" column="VALID_FLAG"/>
+       <result property="RS_ORDER" column="RS_ORDER"/>
+       <result property="SITE_UPDOWN" column="SITE_UPDOWN"/>
+    </resultMap>
+	<resultMap class="terminalViBean" id="terminalViBeanResult">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+    </resultMap>
+    <resultMap class="terminalViBean" id="terminalViBeanResultNew">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+       <result property="CELLPHONE" column="CELLPHONE"/>
+       <result property="VEH_EXT_INFO" column="VEH_EXT_INFO"/>
+       <result property="STAT_INFO" column="STAT_INFO"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+    </resultMap>
+    <resultMap class="terminalViBean" id="getVehcileByVinSelectAllResult">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+       <result property="VEHICLE_CODE" column="VEHICLE_CODE"/>
+       <result property="LATITUDE" column="LATITUDE"/>
+       <result property="LONGITUDE" column="LONGITUDE"/>
+       <result property="SPEEDING" column="SPEEDING"/>
+       <result property="DIRECTION" column="DIRECTION"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+       <result property="VEHICLE_COLOR" column="VEHICLE_COLOR"/>
+  	   <result property="LIMITE_NUMBER" column="LIMITE_NUMBER"/>
+       <result property="OIL_INSTANT" column="OIL_INSTANT"/>
+       <result property="ENGINE_ROTATE_SPEED" column="ENGINE_ROTATE_SPEED"/>
+       <result property="DRIVER_ID" column="DRIVER_ID"/>
+       <result property="ALARM_BASE_INFO" column="ALARM_BASE_INFO"/>
+       <result property="ALARM_EXT_INFO" column="ALARM_EXT_INFO"/>
+       <result property="INOUT_FLAG" column="INOUT_FLAG"/>
+       <result property="OVERLOAD_FLAG" column="OVERLOAD_FLAG"/>
+       <result property="STAT_INFO" column="STAT_INFO"/>
+       <result property="SITE_ID" column="SITE_ID"/>
+       <result property="STU_NUM" column="STU_NUM"/>
+       <result property="SPEED_SOURCE_SETTING" column="SPEED_SOURCE_SETTING"/>
+       <result property="GPS_SPEEDING" column="GPS_SPEEDING"/>
+       
+       <result property="iconSkin" column="iconSkin"/>
+    </resultMap>
+    
+	<resultMap class="terminalViBean" id="getTipInfoByVinResult">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+       <result property="LATITUDE" column="LATITUDE"/>
+       <result property="LONGITUDE" column="LONGITUDE"/>
+       <result property="SPEEDING" column="SPEEDING"/>
+       <result property="DIRECTION" column="DIRECTION"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+       <result property="OIL_INSTANT" column="OIL_INSTANT"/>
+       <result property="ENGINE_ROTATE_SPEED" column="ENGINE_ROTATE_SPEED"/>
+       <result property="STAT_INFO" column="STAT_INFO"/>
+       <result property="ROUTE_ID" column="ROUTE_ID"/>
+       <result property="VEHICLE_COLOR" column="VEHICLE_COLOR"/>
+       <result property="STU_NUM" column="STU_NUM"/>
+       <result property="LIMITE_NUMBER" column="LIMITE_NUMBER"/>
+       <result property="DRIVER_ID" column="DRIVER_ID"/>
+       <result property="ENTER_SHORT_NAME" column="ENTER_SHORT_NAME"/>
+       <result property="DRIVER_NAME" column="DRIVER_NAME"/>
+       <result property="ROUTE_NAME" column="ROUTE_NAME"/>
+    </resultMap>
+    <resultMap class="terminalViBean" id="getTerminalRecordByVinResult">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="LATITUDE" column="LATITUDE"/>
+       <result property="LONGITUDE" column="LONGITUDE"/>
+       <result property="SPEEDING" column="SPEEDING"/>
+       <result property="DIRECTION" column="DIRECTION"/>
+       <result property="OIL_INSTANT" column="OIL_INSTANT"/>
+       <result property="ENGINE_ROTATE_SPEED" column="ENGINE_ROTATE_SPEED"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+       <result property="ALARM_BASE_INFO" column="ALARM_BASE_INFO"/>
+       <result property="ALARM_EXT_INFO" column="ALARM_EXT_INFO"/> 
+       <result property="STAT_INFO" column="STAT_INFO"/>
+       <result property="OVERLOAD_FLAG" column="OVERLOAD_FLAG"/>
+       <result property="STU_NUM" column="STU_NUM"/>
+       <result property="DRIVER_NAME" column="DRIVER_NAME"/>
+       <result property="LIMITE_NUMBER" column="LIMITE_NUMBER"/>
+       <result property="ALARM_TYPE_ID" column="ALARM_TYPE_ID"/>
+       <result property="ALARM_TYPE_NAME" column="ALARM_TYPE_NAME"/>
+    </resultMap>
+	<resultMap class="XCRouteBean" id="XCRouteBean-Result">
+		<result property="ROUTE_ID" column="ROUTE_ID"/>
+       <result property="ROUTE_NAME" column="ROUTE_NAME"/>
+       
+    </resultMap>
+     
+     <resultMap class="MsgBean" id="DownMessageListResult">
+       
+       <result property="user_name" column="user_name"/>
+       <result property="operate_time" column="operate_time"/>
+       <result property="deal_state" column="deal_state"/>
+       <result property="remark" column="remark"/>
+    </resultMap>
+    
+    <resultMap class="PhotoInfoBean" id="getPhotoInfoByVINResult">
+       <result property="PHOTO_ID" column="PHOTO_ID"/>     
+       <result property="PHOTO_TIME" column="PHOTO_TIME"/>
+       <result property="CHANNEL_NUMBER" column="CHANNEL_NUMBER"/>
+       <result property="PHOTO_FILE" column="PHOTO_FILE"/>
+       <result property="PHOTO_EVENT" column="PHOTO_EVENT"/>
+       <result property="PHOTO_FALG" column="PHOTO_FALG"/>
+       <result property="PHOTO_DESC" column="PHOTO_DESC"/>
+    </resultMap>
+    
+    <!-- 学生监控数据结构 -->
+    <resultMap class="terminalViBean" id="getChildInfoByPidResult">
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="VEHICLE_LN" column="VEHICLE_LN"/>
+       <result property="LATITUDE" column="LATITUDE"/>
+       <result property="LONGITUDE" column="LONGITUDE"/>
+       <result property="SPEEDING" column="SPEEDING"/>
+       <result property="DIRECTION" column="DIRECTION"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+       <result property="VEHICLE_COLOR" column="VEHICLE_COLOR"/>
+  	   <result property="LIMITE_NUMBER" column="LIMITE_NUMBER"/>
+       <result property="OIL_INSTANT" column="OIL_INSTANT"/>
+       <result property="ENGINE_ROTATE_SPEED" column="ENGINE_ROTATE_SPEED"/>
+       <result property="DRIVER_ID" column="DRIVER_ID"/>
+       <result property="ALARM_BASE_INFO" column="ALARM_BASE_INFO"/>
+       <result property="ALARM_EXT_INFO" column="ALARM_EXT_INFO"/>
+       <result property="INOUT_FLAG" column="INOUT_FLAG"/>
+       <result property="OVERLOAD_FLAG" column="OVERLOAD_FLAG"/>
+       <result property="STAT_INFO" column="STAT_INFO"/>
+       <result property="SITE_ID" column="SITE_ID"/>
+       <result property="STU_NUM" column="STU_NUM"/>
+       <result property="STU_ID" column="STU_ID"/>
+       <result property="CHILD_SITE_ID" column="CHILD_SITE_ID"/>
+       <result property="SITE_FLAG" column="SITE_FLAG"/>
+       <result property="VSS_FLAG" column="VSS_FLAG"/>
+       <result property="ALARM_ID" column="ALARM_ID"/>
+       <result property="ST_DOWM_NUM" column="ST_DOWM_NUM"/>
+       <result property="ST_UP_NUM" column="ST_UP_NUM"/>
+       <result property="ST_NUM" column="ST_NUM"/>
+       <result property="ST_LATITUDE" column="ST_LATITUDE"/>
+       <result property="ST_LONGITUDE" column="ST_LONGITUDE"/>
+       <result property="STU_NAME" column="STU_NAME"/>
+    </resultMap>
+    
+     <resultMap class="XS_CHECK_RECORD_Bean" id="getChildCheckErrorByPidResult">
+       <result property="ID" column="ID"/>
+       <result property="STU_ID" column="STU_ID"/>
+       <result property="SITE_ID" column="SITE_ID"/>
+       <result property="ROUTE_ID" column="ROUTE_ID"/>
+       <result property="VEHICLE_VIN" column="VEHICLE_VIN"/>
+       <result property="PICI_ID" column="PICI_ID"/>
+       <result property="LATITUDE" column="LATITUDE"/>
+       <result property="LONGITUDE" column="LONGITUDE"/>
+       <result property="SITE_FLAG" column="SITE_FLAG"/>
+       <result property="VSS_FLAG" column="VSS_FLAG"/>
+       <result property="ALARM_TYPE_ID" column="ALARM_TYPE_ID"/>
+       <result property="ST_DOWM_NUM" column="ST_DOWM_NUM"/>
+       <result property="ST_UP_NUM" column="ST_UP_NUM"/>
+       <result property="ST_NUM" column="ST_NUM"/>
+       <result property="TERMINAL_TIME" column="TERMINAL_TIME"/>
+       <result property="CREATE_TIME" column="CREATE_TIME"/>
+       <result property="OPERATE_FLAG" column="OPERATE_FLAG"/>
+       <result property="OPERATE_TIME" column="OPERATE_TIME"/>
+       <result property="OPERATE_DESC" column="OPERATE_DESC"/>
+       <result property="USER_ID" column="USER_ID"/>
+    </resultMap>
+    
+    <resultMap class="Enter_Info_bean" id="Enter_Info_bean_List">
+       <result property="INFO_ID" column="INFO_ID"/>
+       <result property="ENTERPRIST_ID" column="ENTERPRIST_ID"/>
+       <result property="INFO_TITLE" column="INFO_TITLE"/>
+       <result property="INFO_REMARK" column="INFO_REMARK"/>
+       <result property="CREATE_USER" column="CREATE_USER"/>
+       <result property="CREATE_TIME" column="CREATE_TIME"/>
+    </resultMap>
+    
+	<!-- 根据企业id加载车辆小列表 ORDER BY TT.VEHICLE_LN -->
+	<select id="getInfos" parameterClass="terminalViBean" resultMap="terminalViBeanResultNew">
+	SELECT TT.VEHICLE_VIN,TT.VEHICLE_LN,TT.CELLPHONE,TT.VEH_EXT_INFO,TT.STAT_INFO,TT.TERMINAL_TIME FROM
+	(SELECT DISTINCT T.VEHICLE_VIN,B.VEHICLE_LN,S.CELLPHONE,T.VEH_EXT_INFO,T.STAT_INFO,T.TERMINAL_TIME 
+	FROM CLW_JC_TERMINAL_T T,CLW_CL_BASE_INFO_T B,CLW_CL_SIM_T S
+	WHERE ORGANIZATION_ID IN 
+		(SELECT ENTERPRISE_ID
+         FROM CLW_JC_ENTERPRISE_VI
+         <![CDATA[WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+         ]]>
+		)
+	AND B.VALID_FLAG = '0'
+	AND B.FEE_FLAG = '0'
+	AND S.VALID_FLAG = '0'
+	AND T.VALID_FLAG = '0'
+	AND T.DEVICE_TYPE = '0'
+	AND T.VEHICLE_VIN=B.VEHICLE_VIN(+)
+	AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)) TT
+		<dynamic prepend="WHERE">
+		
+			<isNotEmpty prepend="OR" property="VEHICLE_VIN">
+			 TT.VEHICLE_VIN like '%'||#VEHICLE_VIN#||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty prepend="OR" property="VEHICLE_LN">
+			 upper(TT.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty prepend="OR" property="CELLPHONE">
+			 TT.CELLPHONE like '%'||#CELLPHONE#||'%' escape '\'
+			</isNotEmpty>
+		</dynamic>
+	 
+	 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<!-- 车辆小列表5分钟刷新 -->
+    <select id="getVehcileByVinFiveMinite" parameterClass="Map" resultMap="terminalViBeanResultNew">
+	SELECT TT.VEHICLE_VIN,TT.VEHICLE_LN,TT.CELLPHONE,TT.VEH_EXT_INFO,TT.STAT_INFO,TT.TERMINAL_TIME FROM
+	(SELECT DISTINCT T.VEHICLE_VIN,B.VEHICLE_LN,S.CELLPHONE,T.VEH_EXT_INFO,T.STAT_INFO,T.TERMINAL_TIME FROM CLW_JC_TERMINAL_T T,CLW_CL_BASE_INFO_T B,CLW_CL_SIM_T S
+	WHERE B.VALID_FLAG = '0'
+	AND B.FEE_FLAG = '0'
+	AND S.VALID_FLAG = '0'
+	AND T.VALID_FLAG = '0'
+	AND T.DEVICE_TYPE = '0'
+	AND T.VEHICLE_VIN=B.VEHICLE_VIN(+)
+	AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)) TT 
+	WHERE TT.VEHICLE_VIN in ($VEHICLE_VINS$)
+	<dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	
+	</select>
+	
+	<!-- 根据企业id加载车辆小列表 -->
+	<select id="getSelectDInfos" parameterClass="terminalViBean" resultMap="terminalViBeanResultNew">
+	SELECT TT.VEHICLE_VIN,TT.VEHICLE_LN,TT.CELLPHONE,TT.VEH_EXT_INFO,TT.STAT_INFO,TT.TERMINAL_TIME FROM
+	(SELECT DISTINCT T.VEHICLE_VIN,B.VEHICLE_LN,S.CELLPHONE,T.VEH_EXT_INFO,T.STAT_INFO,T.TERMINAL_TIME FROM CLW_JC_TERMINAL_T T,CLW_CL_BASE_INFO_T B,CLW_CL_SIM_T S
+	WHERE ORGANIZATION_ID IN 
+		(SELECT ENTERPRISE_ID
+         FROM CLW_JC_ENTERPRISE_VI
+         <![CDATA[WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+         ]]>
+		)
+	AND B.VALID_FLAG = '0'
+	AND B.FEE_FLAG = '0'
+	AND S.VALID_FLAG = '0'
+	AND T.VALID_FLAG = '0'
+	AND T.DEVICE_TYPE = '0'
+	AND T.VEHICLE_VIN=B.VEHICLE_VIN(+)
+	AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)) TT
+		<dynamic prepend="WHERE">
+		
+			<isNotEmpty prepend="AND" property="VEHICLE_VIN">
+			 TT.VEHICLE_VIN like '%'||#VEHICLE_VIN#||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="VEHICLE_LN">
+			 upper(TT.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="CELLPHONE">
+			 TT.CELLPHONE like '%'||#CELLPHONE#||'%' escape '\'
+			</isNotEmpty>
+		</dynamic>
+	<dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>   
+	</select>
+	
+	<!-- 根据用户id加载车辆小列表 -->
+	<select id="getInfosByUserId" parameterClass="terminalViBean" resultMap="terminalViBeanResult">
+    	select VEHICLE_VIN,
+			    VEHICLE_LN
+	      FROM CLW_JC_CL_TERMINAL_NEWVI   
+	     WHERE USER_ID=#USER_ID#
+	     ORDER BY VEHICLE_VIN  DESC 
+    </select>
+    <!--  -->
+    
+    <!-- 车辆小列表全选加载 -->
+    <select id="getVehcileByVinSelectAll" parameterClass="Map" resultMap="getVehcileByVinSelectAllResult">
+	select VEHICLE_VIN,
+			    VEHICLE_LN,
+			    VEHICLE_code,
+			    LATITUDE,
+			    LONGITUDE,
+			    SPEEDING,
+			    DIRECTION,
+			    TERMINAL_TIME,
+			    VEHICLE_COLOR,
+                LIMITE_NUMBER,
+				OIL_INSTANT,
+				ENGINE_ROTATE_SPEED,
+				DRIVER_ID,
+                ALARM_BASE_INFO,
+                ALARM_EXT_INFO,
+                INOUT_FLAG,
+                OVERLOAD_FLAG,
+                STAT_INFO,
+                SITE_ID,
+                STU_NUM,
+                SPEED_SOURCE_SETTING,
+				GPS_SPEEDING,
+				CASE
+                 WHEN NVL(SUBSTRB(STAT_INFO, 32, 1), '1') = '0' AND
+                      (SYSDATE - TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+                  '0'
+                 WHEN NVL(SUBSTRB(STAT_INFO, 32, 1), '1') = '1' AND
+                      (SYSDATE - TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+                  '0'
+                  WHEN 
+                      TERMINAL_TIME is null THEN
+                  '0'
+                 ELSE
+                  '1'
+               END iconSkin
+	      FROM CLW_JC_CL_TERMINAL_NEWVI 
+	      WHERE VEHICLE_VIN in ($VEHICLE_VINS$)
+	      and TERMINAL_TIME is not null
+	</select>
+	
+	<!-- 单车信息加载 -->
+	<select id="getOneVehcileByVin" parameterClass="Map" resultMap="getVehcileByVinSelectAllResult">
+	select VEHICLE_VIN,
+			    VEHICLE_LN,
+			    vehicle_code,
+			    LATITUDE,
+			    LONGITUDE,
+			    SPEEDING,
+			    DIRECTION,
+			    TERMINAL_TIME,
+			    VEHICLE_COLOR,
+                LIMITE_NUMBER,
+				OIL_INSTANT,
+				ENGINE_ROTATE_SPEED,
+				DRIVER_ID,
+                ALARM_BASE_INFO,
+                ALARM_EXT_INFO,
+                INOUT_FLAG,
+                OVERLOAD_FLAG,
+                STAT_INFO,
+                SITE_ID,
+                STU_NUM,
+                SPEED_SOURCE_SETTING,
+				GPS_SPEEDING,
+				CASE
+                 WHEN NVL(SUBSTRB(STAT_INFO, 32, 1), '1') = '0' AND
+                      (SYSDATE - TERMINAL_TIME) * 24 * 60 * 60 &gt;= 30 * 60 THEN
+                  '0'
+                 WHEN NVL(SUBSTRB(STAT_INFO, 32, 1), '1') = '1' AND
+                      (SYSDATE - TERMINAL_TIME) * 24 * 60 * 60 &gt;= 5 * 60 THEN
+                  '0'
+                  WHEN 
+                      TERMINAL_TIME is null THEN
+                  '0'
+                 ELSE
+                  '1'
+               END iconSkin
+	      FROM CLW_JC_CL_TERMINAL_NEWVI 
+	      WHERE VEHICLE_VIN = #VEHICLE_VIN#
+	      and TERMINAL_TIME is not null
+	</select>
+	
+	<!-- 单车气球信息加载 -->
+	<select id="getTipInfoByVin" parameterClass="Map" resultClass="terminalViBean">
+	<!-- with  max_site as (
+select r.route_id as route_id,rs.site_id as site_id
+from clw_xc_routesite_t rs,clw_xc_route_t r, zspt_later_param ad,
+     (select max(rs_order) as maxorder,route_id as route_id
+      from CLW_XC_ROUTESITE_T
+      group by route_id) laster
+where rs.route_id = r.route_id and
+      rs.rs_order = laster.maxorder and
+      r.route_enterprise_id = ad.organization_id(+) and
+      rs.route_id = laster.route_id
+), maxer_insite as 
+(
+select io_in.st_num as st_num,io_in.terminal_time as maxer_time,io_in.inout_id as io_id
+      from clw_xc_inoutsite_t io_in,
+           (select max(t.terminal_time) as maxer_time
+            from clw_xc_inoutsite_t t
+            where t.vehicle_vin = #VEHICLE_VIN#
+                  and t.inout_flag = '1'
+                  and t.terminal_time &gt; = TO_DATE(#START_DATE#, 'YYYY-MM-DD')
+                  and t.terminal_time &lt; TO_DATE(#START_DATE#, 'YYYY-MM-DD') + 1) temp
+      where io_in.terminal_time = temp.maxer_time
+            and io_in.inout_flag = '1' 
+), maxer_all as 
+(
+select distinct(io_all.site_id) as site_id
+       from clw_xc_inoutsite_t io_all,
+            (select max(t.terminal_time) as maxer_time
+             from clw_xc_inoutsite_t t
+             where t.vehicle_vin = #VEHICLE_VIN#
+                   and t.terminal_time &gt; = TO_DATE(#START_DATE#, 'YYYY-MM-DD')
+                   and t.terminal_time &lt; TO_DATE(#START_DATE#, 'YYYY-MM-DD') + 1) temp
+       where io_all.terminal_time = temp.maxer_time
+) -->
+		SELECT T.VEHICLE_VIN,
+		   T.VEHICLE_LN,
+		   T.VEHICLE_CODE,
+		   LATITUDE,
+		   LONGITUDE,
+		   SPEEDING,
+		   DIRECTION,
+		   TERMINAL_TIME,
+		   t.OIL_INSTANT,
+		   ftly.oilbox_mass oilbox_mass,
+		   ENGINE_ROTATE_SPEED,
+		   STAT_INFO,
+		   R.ROUTE_ID ROUTE_ID,
+		   T.VEHICLE_COLOR,           
+		  <!-- ( 
+			  select case when maxer_all.site_id in (select site_id from max_site where io.route_id = max_site.route_id) then 0 else maxer_insite.st_num end as st_num            
+       from clw_xc_inoutsite_t io,maxer_insite,maxer_all
+       where io.inout_id = maxer_insite.io_id		   
+			 )  -->
+			 STU_NUM ,
+		   T.LIMITE_NUMBER,
+		   T.DRIVER_ID,
+		   E.SHORT_NAME ENTER_SHORT_NAME,
+		   (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=T.driver_id group by cydt.driver_name) as driver_name,
+		   (select cydt.driver_tel from clw_yw_driver_t cydt where cydt.driver_id=T.driver_id group by cydt.driver_tel) as DRIVER_TEL,
+		   (select cydt.driver_name from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_name) as setdriver_name,
+		   (select cydt.driver_tel from clw_yw_driver_t cydt where cydt.driver_id=S.driver_id group by cydt.driver_tel) as setDRIVER_TEL,
+		   R.ROUTE_NAME ROUTE_NAME,
+		   T.MILEAGE,
+		   T.POWER_STATE,
+		   C.SICHEN_ID,
+		   C.SICHEN_NAME,
+		   C.SICHEN_TEL,
+		   T.VEH_EXT_INFO,
+		   T.GPS_SPEEDING,
+		   T.SPEED_SOURCE_SETTING,
+		   t.ftly_flag
+		  FROM CLW_JC_CL_TERMINAL_NEWVI T,CLW_JC_ENTERPRISE_T E,
+		       clw_xc_vehdriver_t S,
+		       CLW_XC_ROUTE_T R ,CLW_XC_SICHEN_T C,CLW_CL_BASE_INFO_T B,          
+			  ( select t2.vin_code, t2.oilbox_mass,t2.report_time 
+				   from (select t1.vin_code, t1.oilbox_mass,t1.report_time
+				      from ZSPT_FTLY_INFO  t1
+				     where t1.vin_code = #VEHICLE_VIN#
+				       and t1.report_time &gt; = TO_DATE(#START_DATE#,'YYYY-MM-DD')
+				   and t1.report_time &lt; TO_DATE(#START_DATE#,'YYYY-MM-DD')+1
+				   and t1.oilbox_state!='011' and t1.oilbox_state!='101'
+				   and t1.oilbox_state!='100' 
+				    order by t1.report_time desc ) t2
+				  where rownum=1 ) ftly
+		  WHERE 
+			  t.vehicle_vin = s.vehicle_vin(+)
+			  AND t.vehicle_vin = ftly.vin_code(+)
+			  AND T.VEHICLE_VIN=B.VEHICLE_VIN   
+			  and B.valid_flag = '0'     
+			  AND T.ROUTE_ID=R.ROUTE_ID(+)
+			  AND  E.ENTERPRISE_ID=B.ORGANIZATION_ID
+			  AND T.CURRENT_TEACHER=to_char(C.SICHEN_ID(+))
+			  AND T.VEHICLE_VIN =#VEHICLE_VIN#
+	</select>
+      <!-- 重点监控  -->
+     <select id="getRealVehcileByVin" parameterClass="Map" resultClass="terminalViBean">
+	select VEHICLE_VIN,
+			    VEHICLE_LN,
+			    LATITUDE,
+			    LONGITUDE,
+			    SPEEDING,
+			    DIRECTION,
+			    TERMINAL_TIME,
+			    VEHICLE_COLOR,
+                LIMITE_NUMBER,
+				ftly.oilbox_mass OIL_INSTANT,
+				ENGINE_ROTATE_SPEED,
+				DRIVER_ID,
+                ALARM_BASE_INFO,
+                ALARM_EXT_INFO,
+                INOUT_FLAG,
+                OVERLOAD_FLAG,
+                STAT_INFO,
+                SITE_ID,
+                STU_NUM,
+                MILEAGE,
+                SPEED_SOURCE_SETTING,
+				GPS_SPEEDING				
+	      FROM CLW_JC_CL_TERMINAL_NEWVI t,
+          (select vin_code,oilbox_mass from (select vin_code, oilbox_mass
+	          from ZSPT_FTLY_INFO t
+	         where t.vin_code = #VEHICLE_VIN#
+	         and t.report_time > trunc(sysdate,'dd')
+				   and t.oilbox_state!='011' and t.oilbox_state!='101'
+				   and t.oilbox_state!='100' 
+	         order by t.report_time desc) t
+	         where rownum =1) ftly
+	      WHERE VEHICLE_VIN = #VEHICLE_VIN#
+	      and t.vehicle_vin = ftly.vin_code(+)
+	      and TERMINAL_TIME is not null
+	</select>
+     
+     <!-- 轨迹回放 -->
+     <select id="getTerminalRecordByVin" parameterClass="Map" resultMap="getTerminalRecordByVinResult">
+		<![CDATA[
+			with oil_temp as (
+			 select zfi.oilbox_mass as oilbox_mass,zfi.report_time as report_time
+			    from zspt_ftly_info zfi
+			    where zfi.vin_code = #VEHICLE_VIN#   
+			    and zfi.report_time >= to_date(#STARTTIME#, 'yyyy-mm-dd hh24:mi:ss')
+			    and zfi.report_time <= to_date(#ENDTIME#, 'yyyy-mm-dd hh24:mi:ss')
+				   and zfi.oilbox_state!='011' and zfi.oilbox_state!='101'
+				   and zfi.oilbox_state!='100' 
+			),record_temp as (
+			 SELECT DISTINCT t.VEHICLE_VIN, t.latitude,t.longitude,
+			       case when T.SPEED_SOURCE_SETTING = '1' then T.GPS_SPEEDING else T.SPEEDING end speeding,
+			       t.direction,t.oil_instant,t.engine_rotate_speed,t.terminal_time,t.ALARM_BASE_INFO,
+			       t.ALARM_EXT_INFO,t.STAT_INFO,t.OVERLOAD_FLAG,t.STU_NUM,T.DRIVER_ID,T.ID
+			    FROM clw_yw_terminal_record_t t
+			    where t.TERMINAL_TIME >= to_date(#STARTTIME#, 'yyyy-mm-dd hh24:mi:ss')
+			    and t.TERMINAL_TIME <= to_date(#ENDTIME#, 'yyyy-mm-dd hh24:mi:ss')
+			    and t.TERMINAL_TIME is not null
+			    and t.VEHICLE_VIN = #VEHICLE_VIN#
+			),cl as (
+			 select B.LIMITE_NUMBER, B.VEHICLE_VIN from CLW_CL_BASE_INFO_T B where B.VEHICLE_VIN = #VEHICLE_VIN#
+			 and B.valid_flag = '0'
+			),a as (
+			select A.RECORD_ID, A.ALARM_TYPE_ID as alarm_type_id
+			   from CLW_YW_ALERM_RECORD_T A
+			   where A.VEHICLE_VIN = #VEHICLE_VIN#
+			         and A.ALARM_TIME >= to_date(#STARTTIME#, 'yyyy-mm-dd hh24:mi:ss')
+			         and A.ALARM_TIME <= to_date(#ENDTIME#, 'yyyy-mm-dd hh24:mi:ss')
+			)		
+		]]>
+		select record_temp.VEHICLE_VIN,
+                record_temp.latitude,
+                record_temp.longitude,
+                  record_temp.speeding,
+                  record_temp.direction,
+                  nearest_oil.oilbox_mass oil_instant,
+                  record_temp.engine_rotate_speed,
+                  record_temp.terminal_time,
+                  record_temp.ALARM_BASE_INFO,
+                  record_temp.ALARM_EXT_INFO,
+                 record_temp.STAT_INFO,
+                 record_temp.OVERLOAD_FLAG,
+                 record_temp.STU_NUM,
+                S.DRIVER_NAME DRIVER_NAME,
+                cl.LIMITE_NUMBER,
+                case when a.ALARM_TYPE_ID = '75' then ''
+                else a.ALARM_TYPE_ID
+                END ALARM_TYPE_ID,
+                y.ALARM_TYPE_NAME 
+		from record_temp ,CLW_YW_DRIVER_T S,CLW_CL_ALARMTYPE_T y,cl,a,(
+		       select oil_temp.oilbox_mass as oilbox_mass,
+		              oil_temp.report_time as report_time,
+		              nearest_time.terminal_time as terminal_time
+		       from oil_temp,
+		              (select max(oil_temp.report_time) as report_time,
+		                      record_temp.terminal_time as terminal_time
+		               from oil_temp,record_temp
+		               where record_temp.terminal_time >= oil_temp.report_time
+		               group by terminal_time
+		              )nearest_time
+		       where oil_temp.report_time = nearest_time.report_time
+		       )nearest_oil
+		where record_temp.terminal_time = nearest_oil.terminal_time(+)
+		      and a.ALARM_TYPE_ID = y.ALARM_TYPE_ID(+)
+		      and record_temp.ID = a.RECORD_ID(+)
+		      and record_temp.DRIVER_ID = S.DRIVER_ID(+)
+		      and record_temp.VEHICLE_VIN = cl.VEHICLE_VIN(+)
+		 order by record_temp.TERMINAL_TIME		
+     </select>
+     <select id="getTerminalRecordUnionByVin" parameterClass="Map" resultMap="getTerminalRecordByVinResult">
+     
+		select * from
+		(select 
+		VEHICLE_VIN,
+		latitude, 
+		longitude,
+		speeding, 
+		direction, 
+		oil_instant,
+		engine_rotate_speed,
+		terminal_time,
+		ALARM_BASE_INFO,
+		ALARM_EXT_INFO,
+		STAT_INFO,
+		OVERLOAD_FLAG,
+		STU_NUM,
+		S.DRIVER_NAME DRIVER_NAME,
+		b.LIMITE_NUMBER
+		a.ALARM_TYPE_ID,
+		y.ALARM_TYPE_NAME 
+		FROM clw_yw_terminal_record_t partition($ARRATABNAME$) t,CLW_YW_DRIVER_T S,CLW_CL_BASE_INFO_T b, CLW_YW_ALERM_RECORD_T a,CLW_CL_ALARMTYPE_T y
+		<![CDATA[
+		WHERE t.ID = a.RECORD_ID (+)  
+		and a.ALARM_TYPE_ID = y.ALARM_TYPE_ID(+)
+		and t.TERMINAL_TIME > to_date(#STARTTIME#,'yyyy-mm-dd hh24:mi:ss')
+		and t.TERMINAL_TIME < to_date(#ENDTIME#,'yyyy-mm-dd hh24:mi:ss')  ]]>
+		and TERMINAL_TIME is not null
+		and t.DRIVER_ID=to_char(S.DRIVER_ID(+))
+		and t.VEHICLE_VIN = b.VEHICLE_VIN(+)
+		and VEHICLE_VIN=#VEHICLE_VIN#
+		
+		union 
+		
+		select 
+		VEHICLE_VIN,
+		latitude, 
+		longitude,
+		speeding, 
+		direction, 
+		oil_instant,
+		engine_rotate_speed,
+		terminal_time,
+		ALARM_BASE_INFO,
+		ALARM_EXT_INFO,
+		STAT_INFO,
+		OVERLOAD_FLAG,
+		STU_NUM,
+		S.DRIVER_NAME DRIVER_NAME,
+		b.LIMITE_NUMBER 
+		a.ALARM_TYPE_ID ,
+		y.ALARM_TYPE_NAME
+		FROM clw_yw_terminal_record_t partition($ARRATABNAME$) t,CLW_YW_DRIVER_T S,CLW_CL_BASE_INFO_T b, CLW_YW_ALERM_RECORD_T a,CLW_CL_ALARMTYPE_T y
+		<![CDATA[
+		WHERE t.ID = a.RECORD_ID (+) 
+		and a.ALARM_TYPE_ID = y.ALARM_TYPE_ID(+) 
+		and t.TERMINAL_TIME > to_date(#STARTTIME#,'yyyy-mm-dd hh24:mi:ss')
+		and t.TERMINAL_TIME < to_date(#ENDTIME#,'yyyy-mm-dd hh24:mi:ss') ]]>
+		and TERMINAL_TIME is not null
+		and t.DRIVER_ID=to_char(S.DRIVER_ID(+))
+		and t.VEHICLE_VIN = b.VEHICLE_VIN(+)
+		and VEHICLE_VIN=#VEHICLE_VIN#
+		
+		) t
+		order by t.TERMINAL_TIME
+		
+     </select>
+     <!-- 查询线路信息 -->
+     <select id="SelectLinsList" parameterClass="Map" resultMap="XCRouteBean-Result">
+      SELECT ROUTE_ID,
+             ROUTE_NAME
+	  FROM CLW_XC_ROUTE_T  t
+	  WHERE ROUTE_ORGANIZATION_ID in 
+		(select enterprise_id
+         from clw_jc_enterprise_vi
+         where left_num >= (select left_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #route_enterprise_id#)
+         and <![CDATA[right_num <=(select right_num
+                      from clw_jc_enterprise_vi
+                      where enterprise_id = #route_enterprise_id#)
+             ]]>
+          
+         
+		) 
+	  AND VALID_FLAG='0'
+     </select>
+     
+     
+     <select id="SelectVbyLinsList" parameterClass="Map" resultMap="terminalViBeanResultNew">
+     SELECT TT.VEHICLE_VIN,TT.VEHICLE_LN,TT.CELLPHONE,TT.VEH_EXT_INFO,TT.STAT_INFO,TT.TERMINAL_TIME FROM
+	(SELECT DISTINCT T.VEHICLE_VIN,B.VEHICLE_LN,S.CELLPHONE,T.VEH_EXT_INFO,T.STAT_INFO,T.TERMINAL_TIME 
+	FROM CLW_JC_TERMINAL_T T,CLW_CL_BASE_INFO_T B,CLW_CL_SIM_T S
+	WHERE ORGANIZATION_ID IN 
+		(SELECT ENTERPRISE_ID
+         FROM CLW_JC_ENTERPRISE_VI
+         <![CDATA[WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+         AND RIGHT_NUM <=(SELECT RIGHT_NUM
+                      FROM CLW_JC_ENTERPRISE_VI
+                      WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+         ]]>
+		)
+	AND B.VALID_FLAG = '0'
+	AND B.FEE_FLAG = '0'
+	AND S.VALID_FLAG = '0'
+	AND T.VALID_FLAG = '0'
+	AND T.DEVICE_TYPE = '0'
+	AND T.VEHICLE_VIN=B.VEHICLE_VIN(+)
+	AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)
+	) TT
+	WHERE TT.VEHICLE_VIN in (SELECT DISTINCT TS.VEHICLE_VIN FROM CLW_XC_VSS_T TS
+		  				 	WHERE TS.ROUTE_ID IN ($ROUTE_IDS$))
+		<dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic> 
+     </select>
+     
+     
+     <select id="DownMessageList" parameterClass="Map" resultMap="DownMessageListResult">
+     select * from ( select user_name,operate_time,deal_state,remark from 
+      (select 
+             
+             d.user_name  user_name,
+             to_char(a.operate_time, 'yyyy-mm-dd hh24:mi:ss') operate_time,
+      			a.deal_state,
+              a.remark remark 
+     from CLW_YW_SEND_COMMAND_T A,CLW_JC_USER_T D
+     where 
+        a.operate_user_id = d.user_id 
+       and a.send_type = '2002'
+       and A.vehicle_vin=#VEHICLE_VIN#
+       ORDER BY operate_time DESC
+       )
+       )
+		
+     </select>
+     <select id="getSiteByLine" parameterClass="Map" resultMap="SiteBeanResult">
+		select 
+		s.SITE_ID,
+		s.SITE_NAME,
+		s.SICHEN_ADDR,
+		s.SITE_LONGITUDE,
+		s.SITE_LATITUDE,
+		s.SITE_REMARK,
+		s.ENTERPRISE_ID,
+		s.ORGANIZATION_ID,
+		s.CREATER,
+		s.CREATE_TIME,
+		s.VALID_FLAG,
+		r.RS_ORDER,
+		r.SITE_UPDOWN
+		from CLW_XC_ROUTESITE_T r,CLW_XC_SITE_T s
+		where s.SITE_ID = r.SITE_ID
+		and s.VALID_FLAG = '0'
+		and r.ROUTE_ID = #ROUTE_ID#								
+	</select>
+	
+    
+	<select id="getPhotoInfoByVIN" parameterClass="Map" resultMap="getPhotoInfoByVINResult">
+	<![CDATA[
+	select 
+	t.PHOTO_ID,
+	to_char(t.PHOTO_TIME,'yyyy-mm-dd hh24:mi:ss') PHOTO_TIME,
+	t.CHANNEL_NUMBER,
+	t.PHOTO_FILE,
+	t.PHOTO_EVENT,
+	t.PHOTO_FALG,
+	t.PHOTO_DESC 
+	from CLW_YW_PHOTO_T t
+	where VEHICLE_VIN=#VEHICLE_VIN#
+	order by PHOTO_TIME desc
+	
+	]]>
+	</select>
+	
+	<update id="updatePhotoInfo" parameterClass="Map" >
+		update CLW_YW_PHOTO_T 
+    	set PHOTO_FALG = #PHOTO_FALG#,PHOTO_DESC=#PHOTO_DESC#,FLAG_USER=#FLAG_USER#,FLAG_TIME=sysdate
+    	where PHOTO_ID = #PHOTO_ID#
+	
+	</update>
+   
+   <select id="getChildInfoByPid" parameterClass="Map" resultMap="getChildInfoByPidResult">
+	select t.VEHICLE_VIN,
+       t.VEHICLE_LN,
+       t.LATITUDE,
+       t.LONGITUDE,
+       t.SPEEDING,
+       t.DIRECTION,
+       t.TERMINAL_TIME,
+       t.VEHICLE_COLOR,
+       t.LIMITE_NUMBER,
+       t.OIL_INSTANT,
+       t.ENGINE_ROTATE_SPEED,
+       t.DRIVER_ID,
+       t.ALARM_BASE_INFO,
+       t.ALARM_EXT_INFO,
+       t.INOUT_FLAG,
+       t.OVERLOAD_FLAG,
+       t.STAT_INFO,
+       t.SITE_ID,
+       t.STU_NUM,
+		c.STU_ID,
+		c.SITE_ID CHILD_SITE_ID,
+		c.SITE_FLAG,
+		c.VSS_FLAG,
+		c.ALARM_ID,
+		c.ST_DOWM_NUM,
+		c.ST_UP_NUM,
+		c.ST_NUM,
+		c.LATITUDE ST_LATITUDE,
+        c.LONGITUDE ST_LONGITUDE,
+		s.STU_NAME
+		from CLW_XC_ST_CHECK_T c,CLW_JC_CL_TERMINAL_NEWVI t,CLW_XC_STUDENT_T s
+		where c.VEHICLE_VIN=t.VEHICLE_VIN
+		and c.STU_ID=s.STU_ID
+		and c.STU_ID in (select p.STU_ID from CLW_XC_ST_PR_T p
+		where p.PR_USERID=#USER_ID#
+		)
+   </select>
+   <select id="getChildTipByPid" parameterClass="Map" resultClass="terminalViBean">
+	SELECT T.VEHICLE_VIN,
+           T.VEHICLE_LN,
+           T.LATITUDE,
+           T.LONGITUDE,    
+           T.VEHICLE_COLOR,     
+           T.TERMINAL_TIME,
+           T.STAT_INFO,
+           T.STU_NUM,
+           T.LIMITE_NUMBER,
+           T.DRIVER_ID,
+           S.DRIVER_NAME DRIVER_NAME,
+           R.ROUTE_ID ROUTE_ID,
+           R.ROUTE_NAME ROUTE_NAME,
+           C.STU_ID,
+        C.SITE_ID CHILD_SITE_ID,
+        C.SITE_FLAG,
+        C.VSS_FLAG,
+        C.ALARM_ID,
+        C.ST_DOWM_NUM,
+        C.ST_UP_NUM,
+        C.ST_NUM, 
+        C.UP_SITE_ID,
+        C.DOWN_SITE_ID,
+        C.UP_SITE_TIME,
+        C.DOWN_SITE_TIME, 
+        SS.STU_NAME,
+        SS.STU_CARD_ID,
+        SS.STU_SCHOOL,
+        SS.STU_CLASS
+                
+          FROM CLW_JC_CL_TERMINAL_NEWVI T,CLW_XC_ST_CHECK_T C,CLW_XC_STUDENT_T SS,CLW_YW_DRIVER_T S,CLW_XC_ROUTE_T R
+          WHERE T.DRIVER_ID=TO_CHAR(S.DRIVER_ID(+))
+          AND T.ROUTE_ID=R.ROUTE_ID(+)
+          AND C.VEHICLE_VIN=T.VEHICLE_VIN
+          AND C.STU_ID=SS.STU_ID
+          AND T.VEHICLE_VIN =#VEHICLE_VIN#
+          AND C.STU_ID =#STU_ID#
+   </select>
+   
+  
+    
+   <select id="getChildCheckErrorByPid" parameterClass="Map" resultMap="getChildCheckErrorByPidResult">
+	<![CDATA[
+	select * from CLW_XC_ST_CHECK_RECORD_T t
+	where to_char(t.TERMINAL_TIME,'yyyy-mm-dd hh24:mi:ss') > #STARTTIME#
+	and to_char(t.TERMINAL_TIME,'yyyy-mm-dd hh24:mi:ss') < #ENDTIME#
+	and t.VEHICLE_VIN=#VEHICLE_VIN#
+	and t.STU_ID=#STU_ID#
+	]]>
+   </select>
+   
+   <select id="getChildCheckErrorCount" parameterClass="Map" resultClass="String">
+	select count(1)
+	FROM CLW_XC_ST_CHECK_RECORD_T xscr, clw_jc_clen_vi ccbi,clw_xc_student_t stu
+	where xscr.vehicle_vin = ccbi.vehicle_vin
+	and xscr.stu_id=stu.stu_id
+	and stu.valid_flag='0'
+	and xscr.OPERATE_FLAG = '0'
+	and xscr.alarm_type_id in (73,74,79,80)
+	and xscr.STU_ID in (
+	select t.STU_ID from CLW_XC_ST_PR_T t
+	where t.PR_USERID = #PR_USERID#
+	)
+   </select>
+   
+   <resultMap class="rideInfo" id="infos">
+		<result property="id" column="ID" />
+		<result property="stu_id" column="STU_ID" />
+		<result property="stu_code" column="STU_CODE" />
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="stu_name" column="STU_NAME" />
+		<result property="stu_school" column="STU_SCHOOL" />
+		<result property="stu_class" column="STU_CLASS" />
+		<result property="route_name" column="Route_Name" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="sichen_name" column="SICHEN_NAME" />	
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="mesg_flag" column="MESG_FLAG" />
+		<result property="st_ride_flag" column="ST_RIDE_FLAG" />
+		<result property="site_id" column="SITE_ID" />
+		<result property="site_name" column="SITE_NAME" />	
+	</resultMap>				
+	
+	<select id="getCountStuRideInfos" parameterClass="rideInfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_XC_ST_CHECK_RECORD_T T1, CLW_XC_STUDENT_T T2, 
+		(SELECT A.VEHICLE_VIN,A.VEHICLE_LN FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0' AND A.DEVICE_TYPE = '0') T3
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN(+)
+		AND T2.VALID_FLAG = '0'
+		AND T1.VSS_FLAG != '2'
+		AND T1.STU_ID IN (SELECT TT.STU_ID FROM CLW_XC_ST_PR_T TT WHERE TT.PR_USERID=#USERID#)
+		 <isNotEmpty prepend="AND" property="VSS_FLAG">
+			T1.VSS_FLAG = #VSS_FLAG#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SITE_FLAG">
+			T1.SITE_FLAG=#SITE_FLAG#
+		</isNotEmpty>        
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+	</select>
+	
+	<select id="getStuRideInfos" parameterClass="rideInfo" resultMap="infos">
+		SELECT  
+		T1.ID,
+		T1.STU_ID,
+		T2.STU_NAME,
+		T2.STU_CODE,
+		T2.STU_SCHOOL,
+		T2.STU_CLASS,
+		T3.VEHICLE_LN,
+		T4.ROUTE_NAME,
+		T5.SICHEN_NAME,
+		T6.DRIVER_NAME,
+		T1.MESG_FLAG,
+		T1.SITE_FLAG||T1.VSS_FLAG ST_RIDE_FLAG,			
+		TO_CHAR(T1.TERMINAL_TIME,'yyyy-mm-dd HH24:mi:ss') TERMINAL_TIME,
+		T1.SITE_ID,
+		T7.SITE_NAME		
+		FROM CLW_XC_ST_CHECK_RECORD_T T1,CLW_XC_STUDENT_T T2,
+		(SELECT A.VEHICLE_VIN,A.VEHICLE_LN FROM CLW_CL_BASE_INFO_T A WHERE A.VALID_FLAG = '0'AND A.DEVICE_TYPE = '0') T3,
+		(SELECT A.ROUTE_ID,A.ROUTE_NAME FROM CLW_XC_ROUTE_T A WHERE A.VALID_FLAG = '0') T4,
+		(SELECT A.SICHEN_ID,A.SICHEN_NAME FROM CLW_XC_SICHEN_T A WHERE A.VALID_FLAG = '0') T5,
+		(SELECT A.DRIVER_ID,A.DRIVER_NAME FROM CLW_YW_DRIVER_T A WHERE A.VALID_FLAG = '0') T6,
+		CLW_XC_SITE_T T7
+		WHERE T1.STU_ID = T2.STU_ID
+		AND T1.VEHICLE_VIN = T3.VEHICLE_VIN(+)
+		AND T1.ROUTE_ID = T4.ROUTE_ID(+)
+		AND T1.SICHEN_ID = T5.SICHEN_ID(+)
+		AND T1.DRIVER_ID = T6.DRIVER_ID(+)
+		AND T1.SITE_ID = T7.SITE_ID(+)
+		AND T2.VALID_FLAG = '0'
+		AND T1.VSS_FLAG != '2'
+		AND T1.STU_ID IN (SELECT TT.STU_ID FROM CLW_XC_ST_PR_T TT WHERE TT.PR_USERID=#USERID#)
+		
+		<isNotEmpty prepend="AND" property="VSS_FLAG">
+			T1.VSS_FLAG = #VSS_FLAG#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="SITE_FLAG">
+			T1.SITE_FLAG=#SITE_FLAG#
+		</isNotEmpty>     
+		 <isNotEmpty prepend="AND" property="begTime">
+               T1.TERMINAL_TIME &gt;= TO_DATE(#begTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+		 <isNotEmpty prepend="AND" property="endTime">
+               T1.TERMINAL_TIME &lt;= TO_DATE(#endTime#,'yyyy-mm-dd HH24:mi:ss')
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<select id="getVinAndLnInfo" parameterClass="Map" resultMap="terminalViBeanResult">
+	select VEHICLE_VIN,
+			    VEHICLE_LN
+	      FROM CLW_JC_CL_TERMINAL_NEWVI   
+	     WHERE VEHICLE_VIN  in ('$VEHICLE_VINS$')
+	     
+	</select>
+	
+	<select id="getEnter_Info_bean_List" parameterClass="Map" resultMap="Enter_Info_bean_List">
+	select t.INFO_ID,
+	t.INFO_TITLE,
+	t.INFO_REMARK,
+	t.ENTERPRIST_ID,
+	t.CREATE_USER,
+	to_char(t.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss') CREATE_TIME
+	from CLW_XC_ENTERPRIST_INFO_T t
+	where t.ENTERPRIST_ID='default'
+	or t.ENTERPRIST_ID = #ENTERPRIST_ID#
+	order by t.CREATE_TIME desc
+	     
+	</select>
+	
+	<select id="getEnter_Info_bean_One" parameterClass="Map" resultClass="Enter_Info_bean">
+	
+	select t.INFO_ID,
+	t.INFO_TITLE,
+	t.INFO_REMARK,
+	t.ENTERPRIST_ID,
+	t.CREATE_USER,
+	to_char(t.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss') CREATE_TIME
+	from CLW_XC_ENTERPRIST_INFO_T t
+	where t.INFO_ID=#INFO_ID#
+	     
+	</select>
+	
+   	<insert id="insertEnter_Info" parameterClass="Enter_Info_bean">
+		INSERT INTO
+		CLW_XC_ENTERPRIST_INFO_T(INFO_ID,INFO_TITLE,INFO_REMARK,ENTERPRIST_ID,CREATE_USER,CREATE_TIME)
+		VALUES
+		(#INFO_ID#,#INFO_TITLE#,#INFO_REMARK#,#ENTERPRIST_ID#,#CREATE_USER#,sysdate)	
+	</insert>
+	<select id="selectinsertInfo_title" parameterClass="Enter_Info_bean" resultClass="Integer">
+		select count(*) from CLW_XC_ENTERPRIST_INFO_T t
+		where t.INFO_TITLE=#INFO_TITLE#
+		and t.ENTERPRIST_ID =#ENTERPRIST_ID#	
+	</select>
+	<delete id="deleteEnter_Info"  parameterClass="Enter_Info_bean"> 
+	delete CLW_XC_ENTERPRIST_INFO_T where  INFO_ID =#INFO_ID#
+	</delete>
+	
+	<select id="getRunOils" parameterClass="Map" resultMap="runOilInforesult">		
+		SELECT max(T1.ID) id, T1.VEHICLE_VIN, T2.VEHICLE_LN,
+           	   TO_CHAR(T1.ON_DATE,'HH24:mi:ss') ON_DATE,
+               TO_CHAR(T1.OFF_DATE,'HH24:mi:ss') OFF_DATE,
+               NVL(DECODE(T1.SPD_OIL,'FFFF','--',T1.SPD_OIL),'--') SPD_OIL, 
+               NVL(DECODE(T1.OIL,'FFFF','--',T1.OIL),'--') OIL, 
+               NVL(DECODE(T1.MILEAGE,'FFFF','--',T1.MILEAGE),'--') MILEAGE, T3.ROUTE_IDS,
+               case when T1.MILEAGE >0 then 1
+               else 0
+               end HAVEMILEAGE 
+		FROM CLW_XC_RUN_RECORD_T T1,
+		     CLW_CL_BASE_INFO_T  T2,
+		     (
+			     SELECT T.VEHICLE_VIN,WMSYS.WM_CONCAT(T.ROUTE_ID) AS ROUTE_IDS 
+			     FROM CLW_XC_TRIP_T T
+			     WHERE T.VALID_FLAG='0'
+				 GROUP BY T.VEHICLE_VIN
+		     ) T3
+		WHERE T1.VEHICLE_VIN = T2.VEHICLE_VIN
+		AND   T1.VEHICLE_VIN = T3.VEHICLE_VIN(+)
+        AND   T2.VALID_FLAG = '0'
+		AND   T2.DEVICE_TYPE = '0'
+		AND   (T2.OIL_CONFIG = '0' OR T2.OIL_CONFIG IS NULL)
+		<isNotEmpty prepend="AND" property="ENTERPRISE_ID">
+			  T2.ORGANIZATION_ID IN
+					<![CDATA[
+						(SELECT ENTERPRISE_ID
+						     FROM CLW_JC_ENTERPRISE_VI
+						     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+						     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID =#ENTERPRISE_ID#)        
+						)
+				     ]]>
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="VEHICLE_VIN">
+			  T1.VEHICLE_VIN = #VEHICLE_VIN#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="START_TIME">
+		      T1.ON_DATE &gt;= TO_DATE(#START_TIME#,'yyyy-mm-dd hh24:mi:ss') 
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="END_TIME"> 
+		      T1.ON_DATE &lt;= TO_DATE(#END_TIME#,'yyyy-mm-dd hh24:mi:ss')
+		</isNotEmpty>
+		group by T1.VEHICLE_VIN, T2.VEHICLE_LN,T1.ON_DATE,T1.OFF_DATE,T1.SPD_OIL,T1.OIL,T1.MILEAGE,T3.ROUTE_IDS
+        ORDER BY HAVEMILEAGE  DESC, ON_DATE DESC
+	</select>
+	
+	<select id="getInfosByLikeORGANIZATION_ID" parameterClass="terminalViBean" resultMap="terminalViBeanResultNew">
+	SELECT TT.VEHICLE_VIN,TT.VEHICLE_LN,TT.CELLPHONE,TT.VEH_EXT_INFO,TT.STAT_INFO,TT.TERMINAL_TIME FROM
+	(SELECT DISTINCT T.VEHICLE_VIN,B.VEHICLE_LN,S.CELLPHONE,T.VEH_EXT_INFO,T.STAT_INFO,T.TERMINAL_TIME 
+	FROM CLW_JC_TERMINAL_T T,CLW_CL_BASE_INFO_T B,CLW_CL_SIM_T S
+	WHERE ORGANIZATION_ID IN 
+		<![CDATA[(
+		SELECT ENTERPRISE_ID as id
+		FROM CLW_JC_ENTERPRISE_T
+		WHERE VALID_FLAG='0'
+		AND ENTERPRISE_ID IN (
+							SELECT ENTERPRISE_ID
+						     FROM CLW_JC_ENTERPRISE_VI
+						     WHERE LEFT_NUM >= (SELECT LEFT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID = #ENTERPRISE_ID#)
+						     AND RIGHT_NUM <=(SELECT RIGHT_NUM
+						                  FROM CLW_JC_ENTERPRISE_VI
+						                  WHERE ENTERPRISE_ID =#ENTERPRISE_ID#) 
+		)
+		START WITH SHORT_NAME like '%$ENTER_SHORT_NAME$%' escape '\'
+		CONNECT BY  PARENT_ID=PRIOR ENTERPRISE_ID
+		) ]]>
+	AND B.VALID_FLAG = '0'
+	AND B.FEE_FLAG = '0'
+	AND S.VALID_FLAG = '0'
+	AND T.VALID_FLAG = '0'
+	AND T.DEVICE_TYPE = '0'
+	AND T.VEHICLE_VIN=B.VEHICLE_VIN(+)
+	AND T.SIM_CARD_NUMBER = S.SIM_CARD_NUMBER(+)) TT
+	 
+	 <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+	 </dynamic>  
+	</select>
+	
+	<select id="getalarmNmae" parameterClass="Map" resultClass="String">
+		select t.ALARM_TYPE_NAME from CLW_CL_ALARMTYPE_T t
+		where t.ALARM_TYPE_ID = #ALARM_TYPE_ID#
+	</select>
+	
+	<resultMap class="ClwTqcEmpPreline" id="ClwTqcEmpPrelineResult">
+		<result property="noteId" column="NOTE_ID"/>
+		<result property="routeId" column="ROUTE_ID"/>
+		<result property="longitude" column="LONGITUDE"/>
+		<result property="latitude" column="LATITUDE"/>
+		<result property="isOrder" column="IS_ORDER"/>
+	</resultMap>
+	<resultMap class="station" id="stationinfos-result">
+       <result property="site_id" column="SITE_ID"/>
+       <result property="route_id" column="ROUTE_ID"/>
+       <result property="site_longitude" column="SITE_LONGITUDE"/>
+       <result property="site_latitude" column="SITE_LATITUDE"/>
+    </resultMap>
+    <resultMap class="clwTqcEmpPreline" id="clwTqcEmpPreline-result">
+       <result property="noteId" column="note_id"/>
+       <result property="routeId" column="route_id"/>
+       <result property="isSite" column="is_site"/>
+       <result property="longitude" column="longitude"/>
+       <result property="latitude" column="latitude"/>
+    </resultMap>
+	
+	<parameterMap id="pm_route_point_" class="Map">
+		<parameter property="s_date" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="e_date" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="route_id" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="vin" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<!-- <parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" /> -->
+		<parameter property="out_point_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="ClwTqcEmpPrelineResult"/>
+		<parameter property="out_site_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="stationinfos-result"/>
+	</parameterMap>
+	<procedure id="add_route_point_" parameterMap="pm_route_point_">
+		{call tqc_add_routeline_info(?, ?, ? ,?,?,?)}
+    </procedure>
+    
+    <select id="getRoutePointById" parameterClass="Map" resultClass="ClwTqcEmpPreline">
+		select note_id   as noteId,
+	       t.route_id  as routeId,
+	       sit.site_name  as routeName,
+	       is_site   as isSite,
+	       longitude as longitude,
+	       latitude  as latitude,
+	       is_order as isOrder
+		  from clw_tqc_emp_preline_t t,
+		  clw_xc_site_t sit
+		 where t.route_id = #route_id#
+		 and t.is_site = sit.site_id(+)
+		 order by is_order
+	</select>
+	<update id="update_route_point_site" parameterClass="Map" >
+		update clw_tqc_emp_preline_t set is_site = #site_id# ,
+		longitude=#longitude#, latitude =#latitude#
+		where note_id = #note_id#
+	</update>
+	<update id="update_surplus_route_point" parameterClass="Map" >
+		delete clw_tqc_emp_preline_t where note_id in ($points$)
+	</update>
+	
+	<update id="update_route_point" parameterClass="Map" >
+		update clw_tqc_emp_preline_t set longitude=#longitude#, latitude =#latitude#
+		where note_id = #noteId#
+	</update>
+	
+	<select id="get_route_point" parameterClass="string" resultClass="ClwTqcEmpPreline">
+		select note_id noteId,
+			   longitude as longitude,
+	           latitude  as latitude
+		  from clw_tqc_emp_preline_t 
+		 where note_id = #noteId#
+	</select>
+	<!-- 通过vin和时间获得简单的轨迹数据 -->
+	<select id="getRecordByVin" parameterClass="Map" resultClass="com.neusoft.clw.check.domain.SimpleRecord">
+	    select t.vehicle_vin,
+		       t.longitude,
+		       t.latitude,
+		       case when t.speed_source_setting = '1' then t.gps_speeding else t.speeding end speeding,
+		       t.direction,
+		       t.terminal_time,
+		       case when t.stat_info is not null and substr(t.stat_info,31,1) != '0' then '1' else '0' end dingwei_stat
+		  from clw_yw_terminal_record_t t
+		 where t.direction!='FFFF'
+		   and t.latitude is not null
+		   and t.longitude is not null
+		   and t.latitude !='FFFF'
+		   and t.longitude !='FFFF'
+		   and t.vehicle_vin=#vin#
+		   <![CDATA[
+		   and t.terminal_time >= to_date(#startTime#,'yyyy-mm-dd hh24:mi:ss')
+		   and t.terminal_time <= to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')
+		   ]]>
+		   order by t.terminal_time asc
+	</select>
+	
+	<!-- 车辆监控，车辆筛选查询 -->
+	 <select id="getVehcileBySelAll" parameterClass="Map" resultClass="terminalViBean">
+	 <![CDATA[
+        SELECT CBI.VEHICLE_VIN,
+               CBI.VEHICLE_LN,
+               CBI.VEHICLE_CODE vehicle_code,
+               JT.LATITUDE,
+               JT.LONGITUDE,
+               JT.DIRECTION,
+               JT.STAT_INFO,
+               JT.TERMINAL_TIME,
+               CBI.ORGANIZATION_ID,
+               ALARM_BASE_INFO,
+               ALARM_EXT_INFO,
+               OVERLOAD_FLAG,
+               decode(JT.SPEED_SOURCE_SETTING, '0', JT.speeding, JT.gps_speeding) SPEEDING,
+               CASE
+                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' AND
+                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60 THEN
+                  'g'
+                 WHEN NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' AND
+                      (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60 THEN
+                  'g'
+                 WHEN JT.TERMINAL_TIME is null THEN
+                  'g'
+                 ELSE
+                  'b'
+               END COLOR
+          FROM CLW_JC_TERMINAL_T   JT,
+               CLW_CL_BASE_INFO_T  CBI,
+               CLW_CL_SIM_T        CS,
+               CLW_JC_ENTERPRISE_T JE
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+           AND CBI.DEVICE_TYPE = '0'
+           AND CS.DEVICE_TYPE = '0'
+           AND JT.Latitude is not null
+		   AND JT.LONGITUDE is not null
+		   AND JT.LATITUDE !='FFFF'
+		   AND JT.LONGITUDE !='FFFF'
+           AND CBI.ORGANIZATION_ID IS NOT NULL
+          ]]>
+        <dynamic>
+        <isNotEmpty property="organization_id">
+        <![CDATA[
+           AND CBI.ORGANIZATION_ID IN
+               (SELECT ENTERPRISE_ID
+                  FROM CLW_JC_ENTERPRISE_VI
+                 WHERE LEFT_NUM >= (SELECT LEFT_NUM FROM CLW_JC_ENTERPRISE_VI   WHERE ENTERPRISE_ID = #organization_id#)
+                   AND RIGHT_NUM <= (SELECT RIGHT_NUM FROM CLW_JC_ENTERPRISE_VI WHERE ENTERPRISE_ID = #organization_id#))
+        ]]>
+        </isNotEmpty>
+        <isNotEmpty property ="VEHICLE_VINS">
+        <![CDATA[
+           and CBI.VEHICLE_VIN in ($VEHICLE_VINS$)
+        ]]>
+       </isNotEmpty>
+        <isEqual property="stype" compareValue="online">
+        <![CDATA[
+        and 
+          (  (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 < 30 * 60)
+             or 
+             (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 < 5 * 60)
+          )
+        ]]>
+        </isEqual>
+        <isEqual property="stype" compareValue="offline">
+        <![CDATA[
+        and 
+          (  (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 30 * 60)
+             or 
+             (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 >= 5 * 60)
+          )
+        ]]>
+        </isEqual>
+        <isEqual property="stype" compareValue="run">
+        <![CDATA[
+        and 
+          (  (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 < 30 * 60)
+             or 
+             (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 < 5 * 60)
+          )
+         and NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1'
+         AND JT.FIRE_UP_STATE='1'
+        ]]>
+        </isEqual>
+        <isEqual property="stype" compareValue="stop">
+        <![CDATA[
+        and 
+          (  (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 < 30 * 60)
+             or 
+             (NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '1' and (SYSDATE - JT.TERMINAL_TIME) * 24 * 60 * 60 < 5 * 60)
+          )
+         and NVL(SUBSTRB(JT.STAT_INFO, 32, 1), '1') = '0'
+         AND JT.FIRE_UP_STATE='0'
+        ]]>
+        </isEqual>
+        <isEqual property="stype" compareValue="alarm">
+        <!--紧急告警40, 非时发车告警(2,5),未满发车告警1,迟到告警4,油耗告警001 -->
+        <![CDATA[
+         and JT.VEHICLE_VIN IN
+          (
+	        SELECT T1.VEHICLE_VIN
+			  FROM CLW_YW_ALERM_RECORD_T T1
+			 WHERE T1.ALARM_TYPE_ID in('40','32')
+			   AND T1.DEAL_FLAG='0'
+			   AND T1.ALARM_TIME >= trunc(sysdate,'mm')
+			 UNION
+			 SELECT T2.VEHICLE_VIN
+			   FROM TQC_ALARM_RECORDS T2
+			  WHERE T2.ALARM_TYPE IN ('1','2','5','4')
+			    AND T2.OPERATE_FLAG='0'
+			    AND T2.ALARM_DATE >= trunc(sysdate,'mm')
+			 UNION
+			 SELECT T3.VIN_CODE
+			   FROM ZSPT_FTLY_ALARM T3
+			  WHERE T3.OILBOX_STATE='001'
+			    AND T3.IS_VALID=0
+			    AND T3.DEAL_STATE='0'
+			    AND T3.REPORT_TIME >= trunc(sysdate,'mm')
+          )
+        ]]>
+        </isEqual>
+       
+        </dynamic>
+	</select>
+</sqlMap>

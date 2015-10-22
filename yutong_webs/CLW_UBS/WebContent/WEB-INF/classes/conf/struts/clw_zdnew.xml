@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 终端管理【新】 -->
+	<package name="zdnew" namespace="/zdnew" extends="clw-default">
+		<!-- 终端参数管理 -->
+		<!-- 初始化 -->
+		<action name="init" class="newTerminalParamsAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+		</action>
+		
+		<action name="update" class="newTerminalUpdateAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/terminalRomoteUpdate.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/terminalRomoteUpdate.jsp
+			</result>
+		</action>
+		
+		<action name="updateInfo" class="newTerminalUpdateAction" method="insert">
+		</action>
+		
+		<action name="setTerminalParams" class="newTerminalParamsAction" method="setTerminalParams">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+		</action>
+		
+		<action name="queryTerminalParams" class="newTerminalParamsAction" method="queryTerminalParams">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+		</action>
+		
+		<action name="refreshTerminalParams" class="newTerminalParamsAction" method="refreshTerminalParams">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/terminalParams.jsp
+			</result>
+		</action>
+		
+		
+		<!-- 终端版本信息 -->
+		<action name="version_init" class="newTerminalVersionsAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/terminalVersions.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/terminalVersions.jsp
+			</result>
+		</action>
+		
+		<!-- 车速监控 -->
+		<action name="speedmonitoring_init" class="speedMonitoringAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/speedmonitoring.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/speedmonitoring.jsp
+			</result>
+		</action>
+		<!-- 开启vss矫正 -->
+		<action name="startAdjust" class="speedMonitoringAction" method="startAdjust">
+		</action>
+		<!-- 关闭vss矫正 -->
+		<action name="closeAdjust" class="speedMonitoringAction" method="closeAdjust">
+		</action>
+		
+		<!-- 终端设备状态管理 -->	
+		<action name="device_init" class="newTerminalDeviceStatusAction" method="blankAction">
+			<result name="success">
+				/WEB-INF/jsp/zdnew/deviceStatus.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/zdnew/deviceStatus.jsp
+			</result>
+		</action>				
+	</package>
+	<package name="zdNewJson" namespace="/zdnf" extends="json-default">
+		<action name="organizationTreeData" class="newTerminalParamsAction" method="getOrganizationTree">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">enterpriseInfo</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">enterpriseInfo</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeData" class="newTerminalParamsAction" method="searchOrganizationTreeData">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">enterpriseInfo</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">enterpriseInfo</param>
+           	</result>
+       	</action>
+       	
+       	<action name="getVehicleListByEnterpriseId" class="newTerminalParamsAction" method="getVehicleListByEnterpriseId">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">vehicleMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">vehicleMap</param>
+           	</result>
+       	</action>
+       	
+       	<action name="getTerminalUpdate" class="newTerminalUpdateAction" method="updateInit">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">terminalMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">terminalMap</param>
+           	</result>
+       	</action>
+       	
+       	<action name="getUpdateInfo" class="newTerminalUpdateAction" method="getUpdateInfo">
+        	<result name="success" type="json">
+           		<param name="contentType">text/html</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">userlist</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/html</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">userlist</param>
+           	</result>
+       	</action>
+       	
+       	<action name="getVersionListByEnterpriseId" class="newTerminalVersionsAction" method="getVersionListByEnterpriseId">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">versionMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">versionMap</param>
+           	</result>
+       	</action>       	
+       	
+       	<action name="getSpeedMonitoringListByEnterpriseId" class="speedMonitoringAction" method="getSpeedMonitoringListByEnterpriseId">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">map</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">map</param>
+           	</result>
+       	</action>
+       	
+       	<action name="getDeviceStatusByEnterpriseId" class="newTerminalDeviceStatusAction" method="getDeviceStatusByEnterpriseId">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">map</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">map</param>
+           	</result>
+       	</action>       	
+	</package>
+</struts>

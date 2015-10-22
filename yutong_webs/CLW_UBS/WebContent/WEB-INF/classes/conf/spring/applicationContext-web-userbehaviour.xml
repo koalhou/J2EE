@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+ 
+<!-- 企业客户活跃度web start -->
+	<bean id="customerAction"
+		class="com.neusoft.clw.yw.ub.custom.action.CustomerAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+ 
+<!-- 企业客户活跃度web end -->
+	
+<!-- 服务活跃度web start -->
+	<bean id="serviceAction"
+		class="com.neusoft.clw.yw.ub.srv.action.ServiceAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+ 
+<!-- 服务活跃度web end -->
+	
+<!-- 被动活跃度web start-->
+	<bean id="ubPassivityAction"
+		class="com.neusoft.clw.yw.ub.passivity.action.PassivityAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+<!-- 被动活跃度web end-->
+	
+<!-- 系统环境web start-->
+ 
+	<bean id="ubSolutionAction"
+		class="com.neusoft.clw.yw.ub.system.action.SolutionAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	 <bean id="ubOSAction"
+		class="com.neusoft.clw.yw.ub.system.action.OSAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+	 <bean id="ubBrowserAction"
+		class="com.neusoft.clw.yw.ub.system.action.BrowserAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+		 <bean id="ubFlashAction"
+		class="com.neusoft.clw.yw.ub.system.action.FlashAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+			 <bean id="ubZoneAction"
+		class="com.neusoft.clw.yw.ub.system.action.ZoneAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+<!-- 系统环境web end-->
+	
+<!-- 登录次数web start-->
+ <bean id="loginCountAction"
+		class="com.neusoft.clw.yw.ub.login.action.LoginCountStatAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+	</bean>
+<!-- 登录次数web end-->
+	
+<!-- 节假日维护web start-->
+ 	<!-- 节假日管理 -->
+	<bean id="holidayAction"
+		class="com.neusoft.clw.yw.ub.holiday.action.HolidayManageAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="holidayManageService" ref="holidayManageService" />
+	</bean>
+<!-- 节假日维护web end-->
+
+<!-- 行为分析首页web start-->
+	  <bean id="indexCache"
+		class="com.neusoft.clw.yw.ub.index.IndexCache"
+		scope="singleton">
+	 </bean>
+ <bean id="indexUBAction"
+		class="com.neusoft.clw.yw.ub.index.action.IndexAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="cache" ref="indexCache" />
+	</bean>
+<!-- 行为分析首页web end-->
+<!-- 市场看板web start-->
+ <bean id="marketAction"
+		class="com.neusoft.clw.yw.ub.market.action.MarketAction"
+		scope="prototype">
+		<property name="service" ref="service" />
+		<property name="marketService" ref="marketService" />
+	</bean>
+<!-- 市场看板web end-->
+</beans>

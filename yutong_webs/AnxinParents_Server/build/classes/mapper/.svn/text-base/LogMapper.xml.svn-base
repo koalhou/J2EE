@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Log">
+	<!-- 添加终端环境信息 -->
+	<insert id="insertEnvInfo" parameterType="envInfo">
+		INSERT INTO
+					CLW_JZ_HARDWARE_INFO_T (USER_ID,
+					IMEI,
+					MSISDN,
+					BRAND,
+					MODE_NUMB,
+					RESO_RATI,
+					OS_VERS,
+					SOFT_VERS,
+					T_MOBILE,
+					CREATE_TIME)
+		VALUES (#{userId},
+				#{imei},
+				#{msisdn},
+				#{brand},
+				#{modeNumb},
+				#{resoRati},
+				#{osVers},
+				#{softVers},
+				#{typeMobile},
+				TO_DATE (#{time}, 'yyyymmddhh24miss'))
+	</insert>
+	
+	<insert id="insertUsedTime" parameterType="map">
+		INSERT INTO CLW_JZ_USEDTIME_T 
+		VALUES (#{id},
+			   to_date(#{start_time},'yyyyMMddhh24miss'),
+			   to_date(#{end_time},'yyyyMMddhh24miss')
+			)
+	</insert>
+	
+		<!-- 添加用户行为信息记录 -->
+	<insert id="insertUserBehavior" parameterType="map">  
+        INSERT INTO CLW_JZ_USER_BEHAVIOR_T (
+			USER_ID,
+  			MODULE_ID,
+  			OPERATE_TIME)  
+        VALUES   (#{id,jdbcType=VARCHAR},
+                  #{module_id}, 
+			   	 to_date(#{log_date},'yyyyMMddhh24miss'))
+	</insert>
+	
+		<!-- 获取当前最大客户端软件版本号 -->
+	<select id="getMaxVersion" parameterType="string" resultType="softversion">
+	<![CDATA[ 
+		select s.*
+		  from (SELECT VERSION_NAME as targetVersion,
+		               VERSION_DESC as changeDesc,
+		               SOFTWARE_URI as uri
+		          FROM CLW_CL_SYSVERSION_T
+		         WHERE VALID_FLAG = '1'
+		           AND APPLY_ID = 'P'    
+		         ORDER BY VERSION_NAME DESC nulls last) s
+		 where rownum = 1
+    ]]>
+	</select>
+
+</mapper>

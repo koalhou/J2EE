@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SmsSignSet">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="SmsSignInfo" type="com.neusoft.clw.sysmanage.sysset.smssignset.domain.SmsSignInfo" />
+    
+    <resultMap class="SmsSignInfo" id="SmsSignSetResult">
+       <result property="smsFlag" column="SMS_FLAG"/>
+       <result property="shortName" column="SHORT_NAME"/>
+    </resultMap>
+    
+    <select id="getSmsSignSet" parameterClass="String" resultMap="SmsSignSetResult">
+        SELECT T.SMS_FLAG, T.SHORT_NAME
+          FROM CLW_JC_ENTERPRISE_T T
+         WHERE T.ENTERPRISE_ID = #value#
+	</select>
+    
+    <update id="updateSmsSignset" parameterClass="SmsSignInfo">
+        UPDATE CLW_JC_ENTERPRISE_T T
+           SET T.SMS_FLAG = #smsFlag#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.ENTERPRISE_ID = #enterpriseId#
+    </update>
+</sqlMap>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+		"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Page">
+	<sql id="prefix">
+		select * from (select s.*, rownum as rownum_2 from (
+	</sql>
+	
+	<sql id="suffix">
+		<isNotEmpty property="sortname">  
+			order by $sortname$   $sortorder$  
+	    </isNotEmpty>
+		<![CDATA[
+			) s where rownum<= #rowEnd# ) where rownum_2 > #rowStart#
+		]]>
+	</sql>
+</sqlMap>

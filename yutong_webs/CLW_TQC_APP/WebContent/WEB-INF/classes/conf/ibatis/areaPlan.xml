@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="areaPlan">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+    <typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="areabean" type="com.neusoft.clw.infomanage.areamanage.domain.AreaInfo" />
+	
+	<resultMap id="areaInfoList" class="areabean" >
+		<result property="areaId" column="area_id" />
+		<result property="areaName" column="area_name" />
+		<result property="remark" column="remark" />
+		<result property="createTime" column="create_time" />
+		<result property="sitenum" column="sitenum" />
+	</resultMap>
+	<resultMap id="updateareaInfo" class="areabean" >
+		<result property="areaId" column="area_id" />
+		<result property="areaName" column="area_name" />
+		<result property="max_longitude" column="max_longitude" />
+		<result property="max_latitude" column="max_latitude" />
+		<result property="min_latitude" column="min_latitude" />
+		<result property="min_longitude" column="min_longitude" />
+	</resultMap>
+	<resultMap id="areaInfoListtosite" class="areabean" >
+		<result property="areaId" column="area_id" />
+		<result property="areaName" column="area_name" />
+		<result property="areapoint" column="areapoint" />
+	</resultMap>
+	<resultMap id="siteInfoListInArea" class="areabean" >
+		<result property="areaId" column="area_id" />
+		<result property="siteName" column="site_name" />
+		<result property="siteId" column="site_id" />
+		<result property="sitelon" column="site_longitude" />
+		<result property="sitelat" column="site_latitude" />
+	</resultMap>
+	<resultMap id="areaInfo" class="areabean" >
+		<result property="areaId" column="area_id" />
+		<result property="areaName" column="area_name" />
+	</resultMap>
+	<parameterMap id="pm_updatesite_area" class="Map">
+		<parameter property="area_id" javaType="String" jdbcType="VARCHAR" mode="IN" />
+		<parameter property="site_ids" javaType="String" jdbcType="VARCHAR" mode="IN" />
+	</parameterMap>
+	<select id="getAreaNameList" parameterClass="Map" resultMap="areaInfo">		
+		select t.area_id,t.area_name from clw_tqc_area_t t
+		where t.max_longitude is not null
+	</select>
+	<select id="getAreaListCountByParam" parameterClass="Map" resultClass="int">		
+		select count(1) sitenum from clw_tqc_area_t t
+		where t.max_longitude is not null
+	</select>
+	<select id="getAreaListByParam" parameterClass="Map" resultMap="areaInfoList">
+		select t.* from (select s.*, rownum as rownum_2 from (
+			select t.area_id,t.area_name,'' remark,'' create_time,count(t1.site_id) sitenum from clw_tqc_area_t t,clw_tqc_site_area_t t1
+			where t.area_id = t1.area_id(+)
+            and t.max_longitude is not null
+			group by t.area_id,t.area_name
+			<dynamic prepend="ORDER BY">
+				<isNotEmpty property="sortname">  
+				$sortname$   $sortorder$  
+				</isNotEmpty>  
+			</dynamic>
+		) s where rownum&lt;= #rowEnd# ) t where rownum_2 &gt; #rowStart#
+	</select>
+	<procedure id="updatesite_area" parameterMap="pm_updatesite_area">
+		{call TQC_AREA_SITE_UPDATE(? ,?)}
+    </procedure>
+    <insert id="addarea" parameterClass="areabean">
+    	insert into clw_tqc_area_t
+		values
+	  (SEQ_TQC_AREA.NEXTVAL, #areaName#, #max_longitude#, #max_latitude#, #min_latitude#, #min_longitude#, #province#, #city#)
+    </insert>
+    <update id="update_areasitebyid" parameterClass="Map">
+    	delete clw_tqc_site_area_t t where t.area_id = #areaid#
+    </update>
+    <update id="update_areabyid" parameterClass="areabean">
+    	update clw_tqc_area_t t
+		   set t.area_name = #areaName#,
+		   t.max_longitude = #max_longitude#,
+		   t.max_latitude = #max_latitude#,
+		   t.min_longitude = #min_longitude#,
+		   t.min_latitude = #min_latitude#
+		 where t.area_id = #areaId#
+    </update>
+    <delete id="del_area" parameterClass="Map">
+    	delete CLW_TQC_AREA_T t where t.area_id = #areaid#
+    </delete>
+    <select id="select_areabyname" parameterClass="Map" resultClass="int">
+    	select count(1) from CLW_TQC_AREA_T t where t.area_name = #areaname#
+    </select>
+    <select id="updateAreaInfo" parameterClass="String" resultMap="updateareaInfo">
+    	select area_id,area_name,max_longitude,max_latitude,min_latitude,min_longitude from CLW_TQC_AREA_T t where t.area_id = #value#
+    </select>
+    <select id="select_areacountbyname" parameterClass="Map" resultClass="int">
+    	select count(1) from CLW_TQC_AREA_T t 
+    	<dynamic prepend="where">
+			<isNotEmpty property="areaname">  
+			t.area_name LIKE '%' || #areaname# ||'%' ESCAPE '\'
+			</isNotEmpty>  
+		</dynamic>
+    </select>
+    <select id="select_areainfobyname" parameterClass="Map" resultMap="areaInfoListtosite">
+    	select t.area_name,
+	       t.max_longitude || ',' || t.max_latitude || ',' || t.min_longitude || ',' ||
+	       t.min_latitude areapoint,
+	       area_id
+	  from CLW_TQC_AREA_T t
+    	<dynamic prepend="where">
+			<isNotEmpty property="areaname">  
+			t.area_name LIKE '%' || #areaname# ||'%' ESCAPE '\'
+			</isNotEmpty>  
+		</dynamic>
+    </select>
+    <select id="selectsite_byareaid" parameterClass="Map" resultMap="siteInfoListInArea">
+    	select t1.site_name,t1.site_id,t.area_id ,t1.site_longitude,t1.site_latitude
+    	from CLW_TQC_SITE_AREA_T t,
+		clw_xc_site_t t1
+		where t.site_id = t1.site_id
+		<isNotEmpty prepend="AND" property="areaid">  
+			t.area_id = #areaid#
+		</isNotEmpty>  
+    </select>
+</sqlMap>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 参数设置管理 -->
+<struts>
+	<package name="paramset" namespace="/paramset" extends="json-default clw-default">
+	    <!-- 进入参数设置列表 -->
+		<action name="paramsetManage" class="paramSetAction" method="init">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/paramset/paramsetList.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/paramset/paramsetList.jsp</result>	
+		</action>
+		<!-- 进入参数设置添加页面 -->
+		<action name="preAddParamSet" class="paramSetAction" method="preAddParamSet">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/paramset/addParamSet.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/paramset/addParamSet.jsp</result>	
+		</action>
+		<!-- 参数设置添加 -->
+		<action name="addParamSet" class="paramSetAction" method="addParamSet">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/paramset/addParamSet.jsp</result>
+			<result name="success" type="redirectAction">paramsetManage</result>	
+		</action>
+		<!-- 参数设置修改 -->
+		<action name="updateParamSet" class="paramSetAction" method="updateParamSet">
+			<result name="error">/WEB-INF/jsp/sysmanage/datamanage/paramset/addParamSet.jsp</result>
+			<result name="success" type="redirectAction">paramsetManage</result>	
+		</action>
+		<!-- 根据名称删除参数设置-->
+		<action name="delParamSetByName" class="paramSetAction" method="delParamSetByName">
+		</action>
+		<!-- 进入参数设置列表 -->
+		<action name="paramsetList" class="paramSetAction" method="getParamSetList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">jsonMap</param>
+           </result>	
+		</action>
+	</package>
+	
+</struts>

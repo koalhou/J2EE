@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="  
+                       http://www.springframework.org/schema/beans  
+                       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                       http://www.springframework.org/schema/context 
+                       http://www.springframework.org/schema/context/spring-context-3.2.xsd 
+                       http://cxf.apache.org/jaxrs  
+                       http://cxf.apache.org/schemas/jaxrs.xsd  
+                       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+
+	<!-- 针对CXF发布服务的需要的配置的加载的导入 -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" />
+
+	<!-- 设置服务相关的请求的配置 -->
+	<http-conf:conduit name="*.http-conduit">
+		<http-conf:client ReceiveTimeout="1500"
+			ConnectionTimeout="1500" /><!-- 1.5秒 -->
+	</http-conf:conduit>
+	
+	<!--  -->
+	<import resource="classpath:restApi/*.xml"/>
+
+</beans>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="usermanage" namespace="/usm" extends="clw-default">
+		<!--查询用户信息 -->
+		<action name="usermanageAction" class="usermanageAction" method="init">
+			
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/usermanage/usermanage.jsp</result>
+			
+		</action>
+		
+		<action name="usermanagetreeAction" class="usermanageAction" method="getTreeInit">
+			
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/treeModalWindow.jsp</result>
+			
+		</action>
+		<action name="userupdatetreeAction" class="userupdateAction" method="getTreeInit">
+			
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/treeModalWindow.jsp</result>
+			
+		</action>
+		
+		<action name="usermanageconditionselectAction" class="usermanageAction" method="getconditionselect">
+			
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/usermanage/usermanage.jsp</result>
+			
+		</action>
+		
+		<action name="useraddinitAction" class="useraddAction" method="userAddInit">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/usermanage/useradd.jsp</result>
+		</action>
+		
+		<action name="useraddRoleinitAction" class="useraddAction" method="userRoleInit">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/usermanage/roleModalWindow.jsp</result>
+		</action>
+		
+		
+		<action name="useraddAction" class="useraddAction" method="userAdd">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+			<param name="actionName">usermanageAction</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		
+		<action name="liststudent" class="studentAction" method="studentListSearch">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/usermanage/liststudent.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">jasperReportSavebd</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<action name="userinit" class="studentAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/usermanage/userCheckBoxBrowse.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sysmanage/datamanage/usermanage/userCheckBoxBrowse.jsp
+			</result>
+		</action>
+		
+		<!-- 跳转到用户修改页面 -->
+		<action name="userupdateinitAction" class="userupdateAction" method="initUserinfo">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/usermanage/userupdate.jsp</result>
+		</action>
+		
+		<!-- 更改用户角色 单击角色对话框 -->
+		<action name="userupdateRoleinitAction" class="userupdateAction" method="userUpdateRoleInit">
+			<result name="error">login.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/datamanage/usermanage/roleModalWindow.jsp</result>
+		</action>
+		
+		<!-- 修改用户操作 -->
+		<action name="userupdateAction" class="userupdateAction" method="updateuserinfo">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+			<param name="actionName">usermanageAction</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		
+		<action name="modifyPersonalinitAction" class="userupdateAction" method="initModifyPersonalInfo">
+			<result name="error">/WEB-INF/jsp/sysmanage/sysset/pawset/modifyPersonal.jsp</result>
+			<result name="success">/WEB-INF/jsp/sysmanage/sysset/pawset/modifyPersonal.jsp</result>
+		</action>
+		<action name="modifyPersonalAction" class="userupdateAction" method="modifyPersonalInfo">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+			<param name="actionName">modifyPersonalinitAction</param>
+			<param name="message">${message}</param>
+			</result>
+		</action>
+		
+		
+	</package>
+	
+	<package name="userpkg" namespace="/userpkg" extends="json-default">
+		<action name="userbrowse" class="usermanageAction" method="userInit">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+              <param name="contentType">text/json</param>
+              <param name="excludeNullProperties">false</param>
+              <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           
+       </action>
+        <!-- 用户密码重置初始化 -->
+		<action name="resetPwdBeforeP" class="usermanageAction" method="resetPwdBefore">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/usermanage/userPwdResetP.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">../usm/usermanageAction</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action> 
+		<!-- 用户密码重置 -->
+		<action name="resetPwdP" class="usermanageAction" method="resetP">
+			<result name="success" type="redirect-action">
+				<param name="actionName">../usm/usermanageAction</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">resetPwdBeforeP</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+      	<!-- 管理密码重置初始化 -->
+		<action name="resetPwdBefore" class="usermanageAction" method="resetPwdBefore">
+			<result name="success">
+				/WEB-INF/jsp/sysmanage/datamanage/usermanage/userPwdReset.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">../usm/usermanageAction</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action> 
+		<!-- 密码重置 -->
+		<action name="resetPwd" class="usermanageAction" method="reset">
+			<result name="success" type="redirect-action">
+				<param name="actionName">../usm/usermanageAction</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">resetPwdBefore</param>
+				<param name="message">${message}</param>
+				<param name="userId">${userId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+      <action name="lnDivList" class="studentAction"  method="vehList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+           <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action> 
+    </package>
+</struts>

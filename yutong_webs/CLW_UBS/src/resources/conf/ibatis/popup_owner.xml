@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OwnerBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="OwnerInfo" type="com.neusoft.clw.yw.popup.owner.ds.OwnerInfo" />
+	
+	<resultMap id="ownerInfo-result" class="OwnerInfo">
+		<result property="userId" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="userName" column="USER_NAME" />
+	</resultMap>
+	
+	<select id="getOwnerInfos" parameterClass="Map" resultMap="ownerInfo-result">
+		SELECT T.USER_ID,
+               T.LOGIN_NAME,
+               T.USER_NAME
+          FROM CLW_JC_USER_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.USER_TYPE = '3'
+         <isNotEmpty prepend="AND" property="userName">
+               T.USER_NAME LIKE '%$userName$%'
+         </isNotEmpty>
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SimFluxManage">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="SimFluxInfo" type="com.neusoft.clw.yw.cs.simflux.ds.SimFluxInfo" />
+	
+	<resultMap id="simFluxInfo-result" class="SimFluxInfo">
+		<result property="rowNumber" column="ROWNUM" />
+		<result property="simId" column="SIM_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="businessId" column="BUSINESS_ID" />
+		<result property="businessName" column="FULL_NAME" />
+		<result property="fluxValue" column="FLUX_VALUE" />
+		<result property="callTime" column="CALL_TIME" />
+		<result property="closeTime" column="CLOSE_TIME" />
+	</resultMap>
+	
+	<resultMap id="simFluxDetail-result" class="SimFluxInfo">
+		<result property="simId" column="SIM_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="businessId" column="BUSINESS_ID" />
+		<result property="fluxValue" column="FLUX_VALUE" />
+		<result property="callTime" column="CALL_TIME" />
+		<result property="closeTime" column="CLOSE_TIME" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+	</resultMap>
+	
+	<select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_CL_SIMFLUX_T T,
+               CLW_JC_BUSINESS_T T1
+         WHERE T.BUSINESS_ID = T1.BUSINESS_ID
+           AND T.VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="simNumber">
+               T.SIM_CARD_NUMBER LIKE '%$simNumber$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="phoneNumber">
+               T.CELLPHONE LIKE '%$phoneNumber$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getSimFluxInfos" parameterClass="Map" resultMap="simFluxInfo-result">
+		SELECT ROWNUM,
+		       T.SIM_ID,
+               T.SIM_CARD_NUMBER,
+               T.CELLPHONE,
+               T.BUSINESS_ID,
+               T1.FULL_NAME,
+               T.FLUX_VALUE,
+               T.CALL_TIME,
+               T.CLOSE_TIME
+          FROM CLW_CL_SIMFLUX_T T,
+               CLW_JC_BUSINESS_T T1
+         WHERE T.BUSINESS_ID = T1.BUSINESS_ID
+           AND T.VALID_FLAG = '0'
+         <isNotEmpty prepend="AND" property="simNumber">
+               T.SIM_CARD_NUMBER LIKE '%$simNumber$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="phoneNumber">
+               T.CELLPHONE LIKE '%$phoneNumber$%'
+         </isNotEmpty>
+	</select>
+	
+	<select id="getSimFluxCount" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(1)
+          FROM CLW_CL_SIMFLUX_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.SIM_CARD_NUMBER = #simNumber#
+	</select>
+	
+	<insert id="insertSimFlux" parameterClass="SimFluxInfo">
+		INSERT INTO CLW_CL_SIMFLUX_T T
+          (T.SIM_ID,
+           T.SIM_CARD_NUMBER,
+           T.CELLPHONE,
+           T.BUSINESS_ID,
+           T.FLUX_VALUE,
+           T.CALL_TIME,
+           T.CLOSE_TIME,
+           T.CREATER,
+           T.CREATE_TIME,
+           T.MODIFIER,
+           T.MODIFY_TIME,
+           T.VALID_FLAG)
+        VALUES
+          (#simId#,
+           #simCardNumber#,
+           #cellPhone#,
+           #businessId#,
+           #fluxValue#,
+           #callTime#,
+           #closeTime#,
+           #creater#,
+           SYSDATE,
+           #creater#,
+           SYSDATE,
+           '0')
+	</insert>
+	
+	<select id="getSimFluxInfoById" parameterClass="String" resultMap="simFluxDetail-result">
+		SELECT T.SIM_ID,
+               T.SIM_CARD_NUMBER,
+               T.CELLPHONE,
+               T.BUSINESS_ID,
+               T.FLUX_VALUE,
+               T.CALL_TIME,
+               T.CLOSE_TIME,
+               T.CREATER,
+               TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS CREATE_TIME,
+               T.MODIFIER,
+               TO_CHAR(T.MODIFY_TIME,'YYYY-MM-DD HH24:MI:SS') AS MODIFY_TIME
+          FROM CLW_CL_SIMFLUX_T T
+         WHERE T.VALID_FLAG = '0'
+           AND T.SIM_ID = #simId#
+	</select>
+	
+	<update id="updateSimFluxInfo" parameterClass="SimFluxInfo">
+		UPDATE CLW_CL_SIMFLUX_T T
+           SET T.SIM_CARD_NUMBER = #simCardNumber#,
+               T.CELLPHONE = #cellPhone#,
+               T.BUSINESS_ID = #businessId#,
+               T.FLUX_VALUE = #fluxValue#,
+               T.CALL_TIME = #callTime#,
+               T.CLOSE_TIME = #closeTime#,
+               T.MODIFIER = #modifier#,
+               T.MODIFY_TIME = SYSDATE
+         WHERE T.SIM_ID =  #simId#
+	</update>
+	
+	<update id="updateSimFluxValid" parameterClass="SimFluxInfo">
+	    UPDATE CLW_CL_SIMFLUX_T T
+           SET T.VALID_FLAG = '1',
+               T.VASET_USER_ID = #modifier#,
+               T.VASET_TIME = SYSDATE
+         WHERE T.SIM_ID = #simId#
+	</update>
+	
+	<update id="mergeSimFluxInfos" parameterClass="SimFluxInfo">
+		MERGE INTO CLW_CL_SIMFLUX_T CS
+        USING DUAL
+        ON (CS.SIM_CARD_NUMBER = #simCardNumber#
+            AND CS.VALID_FLAG = '0')
+        WHEN MATCHED THEN
+          UPDATE
+             SET CS.CELLPHONE = #cellPhone#,
+                 CS.BUSINESS_ID = #businessId#,
+                 CS.FLUX_VALUE = #fluxValue#,
+                 CS.CALL_TIME = #callTime#,
+                 CS.CLOSE_TIME = #closeTime#,
+                 CS.MODIFIER = #modifier#,
+                 CS.MODIFY_TIME = SYSDATE
+        WHEN NOT MATCHED THEN
+          INSERT
+            (CS.SIM_ID,
+             CS.SIM_CARD_NUMBER,
+             CS.CELLPHONE,
+             CS.BUSINESS_ID,
+             CS.FLUX_VALUE,
+             CS.CALL_TIME,
+             CS.CLOSE_TIME,
+             CS.CREATER,
+             CS.CREATE_TIME,
+             CS.MODIFIER,
+             CS.MODIFY_TIME,
+             CS.VALID_FLAG)
+          VALUES
+            (#simId#,
+             #simCardNumber#,
+             #cellPhone#,
+             #businessId#,
+             #fluxValue#,
+             #callTime#,
+             #closeTime#,
+             #creater#,
+             SYSDATE,
+             #creater#,
+             SYSDATE,
+             '0')
+	</update>
+	
+</sqlMap>

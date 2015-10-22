@@ -1,0 +1,31 @@
+#IDCXC_DANJI_SUCCESS
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.51.6)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME =m2m)(SERVER=DEDICATED)))
+#database.username=clwxc
+#database.password=clwxc
+
+#IDCXC_RAC_RUIDONG
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.50.6)(PORT = 1521))(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.50.7)(PORT = 1521))(LOAD_BALANCE = yes)(FAILOVER = ON)(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = m2m)(FAILOVER_MODE=(TYPE = SELECT)(METHOD = BASIC)(RETIRES = 20)(DELAY = 15))))
+#database.username=clwxc
+#database.password=clwxc
+
+#IDCXC_RAC1
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(description=(address_list=(address=(host=rac1-vip)(protocol=tcp)(port=1521))(address=(host=rac2-vip)(protocol=tcp)(port=1521))(load_balance=yes)(failover=yes))(connect_data=(service_name=m2m)))
+#database.username=clwxc
+#database.password=clwxc
+
+#IDCXC_RAC2
+#database.driver=oracle.jdbc.driver.OracleDriver
+#database.url=jdbc:oracle:thin:@(description=(address_list=(address=(host=192.168.50.6)(protocol=tcp)(port=1521))(address=(host=192.168.50.7)(protocol=tcp)(port=1521))(load_balance=yes)(failover=yes))(connect_data=(service_name=M2M)))
+#database.username=clwxc
+#database.password=clwxc
+
+database.driver=oracle.jdbc.driver.OracleDriver
+database.url=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.8.3.210)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=m2m)))
+database.username=clwxc
+database.password=clwxc
+
+
+

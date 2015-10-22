@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="UserBrowse">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="UserBrowseInfo" type="com.neusoft.clw.yw.popup.user.ds.UserBrowseInfo" />
+	
+	<resultMap id="userInfo-result" class="UserBrowseInfo">
+		<result property="userId" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseName" column="FULL_NAME" />
+		<result property="roleName" column="ROLE_NAME" />
+		<result property="applyId" column="APPLY_ID" />
+		<result property="validFlag" column="VALID_FLAG" />
+	</resultMap>
+	
+	<select id="getUserInfos" parameterClass="Map" resultMap="userInfo-result">
+		SELECT JU.USER_ID,
+               JU.LOGIN_NAME,
+               JU.USER_TYPE,
+               JU.USER_NAME,
+               JU.ENTERPRISE_ID,
+               JE.FULL_NAME,
+               JR.ROLE_NAME,
+               JU.APPLY_ID,
+               JU.VALID_FLAG
+          FROM CLW_JC_USER_T JU,
+               CLW_JC_ENTERPRISE_T JE,
+               CLW_JC_USER_ROLE_T JUR,
+               CLW_JC_ROLE_T JR
+         WHERE JU.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JU.USER_ID = JUR.USER_ID(+)
+           AND JUR.ROLE_ID = JR.ROLE_ID(+)
+           AND JU.VALID_FLAG &lt;&gt; '1'
+           AND JU.APPLY_ID = '0'
+         <isNotEmpty prepend="AND" property="userName">
+               JU.LOGIN_NAME LIKE '%$userName$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="sysId">
+               JU.USER_TYPE = #sysId#
+         </isNotEmpty>
+         order by JU.CREATE_TIME desc
+	</select>
+</sqlMap>

@@ -1,0 +1,16 @@
+@charset "utf-8";
+/* CSS Document */
+.login_body{ background:url(../newimages/login_bg1.png) repeat-x left top; background-color:#bee2fc;}
+.login_c{width:589px; height:412px; background:url(../newimages/hy/hy_bg.png) no-repeat left top; margin:10% auto 0; position:relative;}
+.login_table{ width:258px; position:absolute; left:286px; top:80px;}
+.login_table td input{ text-indent:5px;}
+.login_table td{ height:23px; text-align: left;}
+.login_txt{ padding-top:3px; width:60px;}
+.login_checkbox_t, .login_checkbox{ float:left; color:#777;}
+.login_checkbox_t{margin-top: 2px;}
+.login_checkbox{ padding-top:0px; padding-right:7px; width: 20px; }
+.login_btn{ width:75px; height:30px; display:block; margin-top:3px; float: right; margin-right:48px;}
+
+
+.login_footer{ width:600px; left:50%; margin-left:-300px; text-align:center; color:#656565;  position:relative; bottom:0;}
+.miaoshu{color:red; border:1px solid #d00; background:#ffe5e5;line-height:18px;padding:4px; margin:0px 32px 2px 2px;}

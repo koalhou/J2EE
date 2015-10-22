@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<!-- 运行时间设置 -->
+<struts>
+	<package name="runtimeSet" namespace="/runtimeSet" extends="clw-default">
+		<!-- 进入临时运行时间设置列表页面-->
+		<action name="runtimeManage" class="runtimeSetAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/runtimeset/runtimeList.jsp</result>
+			<result name="success">/WEB-INF/jsp/runtimeset/runtimeList.jsp</result>	
+		</action>
+		<!-- 进入临时运行时间设置新增页面-->
+		<action name="addPage" class="runtimeSetAction" method="addPage">
+			<result name="error">/WEB-INF/jsp/runtimeset/addRuntime.jsp</result>
+			<result name="success">/WEB-INF/jsp/runtimeset/addRuntime.jsp</result>	
+		</action>
+		<!-- 进入临时运行时间设置修改页面-->
+		<action name="updatePage" class="runtimeSetAction" method="updatePage">
+			<result name="error">/WEB-INF/jsp/runtimeset/addRuntime.jsp</result>
+			<result name="success">/WEB-INF/jsp/runtimeset/addRuntime.jsp</result>	
+		</action>
+		<!-- 新增提交-->
+		<action name="addRuntime" class="runtimeSetAction" method="addRuntime">
+			<result name="error">/WEB-INF/jsp/runtimeset/addRuntime.jsp</result>
+			<result name="success" type="redirect">
+				<param name="location">runtimeManage.shtml?message=${message}</param>
+				<param name="encode">true</param>
+			</result>
+		</action>
+		<!-- 修改 -->
+		<action name="updateRuntime" class="runtimeSetAction" method="updateRuntime">
+			<result name="error">/WEB-INF/jsp/runtimeset/addRuntime.jsp</result>
+			<result name="success" type="redirect">
+				<param name="location">runtimeManage.shtml?message=${message}</param>
+				<param name="encode">true</param>
+			</result>
+		</action>
+		<!-- 修改状态 -->
+		<action name="updateStatus" class="runtimeSetAction" method="updateStatus">
+		</action>
+		<!-- 进入组织页面-->
+		<action name="orgTreePage" class="runtimeSetAction" method="orgTreePage">
+			<result name="success">/WEB-INF/jsp/runtimeset/orgTree.jsp</result>	
+		</action>
+		<!--根据组织Id查询一条运行时间信息-->
+		<action name="getRuntimeByOrgId" class="runtimeSetAction" method="getRuntimeByOrgId">
+		</action>
+	</package>
+	<package name="runtimeSetJson" namespace="/runtimeSet" extends="json-default">
+		<!-- 查询运行时间设置列表信息 -->
+		<action name="runtimeList" class="runtimeSetAction" method="runtimeList">
+			<result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>	
+		</action>
+		<!-- 查询组织树 -->
+		<action name="searchTreeNodes" class="runtimeSetAction" method="searchTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeNodesNoSelectes" class="runtimeSetAction" method="searchTreeNodesNoSelectes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+	</package>
+	
+</struts>

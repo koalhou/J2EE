@@ -1,0 +1,46 @@
+html, body{ margin:0; padding:0; border:none; font:12px/18px  'Microsoft Yahei','微软雅黑',Arial,Verdana;}
+ul{margin:0;padding:0;}
+img{border:0;margin:0;padding:0;}
+.photo-sech{
+	background:#f5f5f5;
+	border-bottom:1px solid #cccccc;
+	height:35px;
+	line-height:35px;
+}
+.photo-sech font{
+	font-weight:bold;
+	margin:0 10px;
+}
+.photo-list li{
+	list-style:none;
+	float:left;
+	padding:5px;
+	overflow:hidden;
+}
+.photo-list li a{
+	display:block;
+	padding:2px;
+	border:1px solid #d4d4d4;
+	width:150px;
+	height:100px;
+}
+.photo-list li h4{
+	margin:0;
+	overflow:hidden;
+	width:155px;
+	height:20px;
+}
+.photo-list li span{
+	border-left:1px solid #000;
+	margin-left:3px;
+	padding-left:3px;
+	font-weight:normal;
+}
+.btn-blue{
+	border:0;
+	background: url(../images/btn_blue.gif) no-repeat;
+	width:76px;
+	height:28px;
+	font-size:14px;
+	color:#ffffff;
+}

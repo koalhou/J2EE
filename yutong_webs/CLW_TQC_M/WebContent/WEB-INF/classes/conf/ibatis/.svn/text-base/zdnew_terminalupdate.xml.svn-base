@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NewTerminalUpdate">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="UpdateEnterpriseTreeInfo" type="com.neusoft.clw.yw.zdnew.terminalremoteupdate.ds.EnterpriseTreeInfo" />
+	<typeAlias alias="UpdateCarNumberInfo"      type="com.neusoft.clw.yw.zdnew.terminalremoteupdate.ds.CarNumberInfo" />
+	<typeAlias alias="UpdateUserInfo"  type="com.neusoft.clw.yw.zdnew.terminalremoteupdate.ds.UpdateUserInfo" />
+	
+	
+	<resultMap class="UpdateEnterpriseTreeInfo" id="organization_tree">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="isParent" column="isParent"/>
+       <result property="open" column="open"/>
+    </resultMap>
+    
+    <resultMap class="UpdateEnterpriseTreeInfo" id="searchorganization_tree">
+       <result property="id" column="id"/>
+       <result property="name" column="name"/>
+       <result property="pId" column="pId"/>
+       <result property="open" column="open"/>
+    </resultMap>
+	
+	<select id="getOrganizationTreeData" parameterClass="String" resultMap="organization_tree">
+		SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,
+		case when level=1 then 'true' else 'false' end open,
+		case when level=1 and CONNECT_BY_ISLEAF!=1 then 'true' else 'false' end isParent
+	    FROM CLW_JC_ENTERPRISE_T
+	      START WITH ENTERPRISE_ID = #value#
+	      CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+	    AND VALID_FLAG='0'
+	</select>
+	
+	<select id="searchOrganizationTreeData" parameterClass="UpdateEnterpriseTreeInfo" resultMap="searchorganization_tree">
+		SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,'true' open
+		FROM CLW_JC_ENTERPRISE_T
+		WHERE VALID_FLAG='0'
+		START WITH SHORT_NAME like '%$name$%'
+		CONNECT BY PRIOR PARENT_ID=ENTERPRISE_ID
+		UNION
+		SELECT ENTERPRISE_ID as id,SHORT_NAME as name,PARENT_ID as pId,'true' open
+		FROM CLW_JC_ENTERPRISE_T
+		WHERE VALID_FLAG='0'
+		START WITH SHORT_NAME like '%$name$%'
+		CONNECT BY  PARENT_ID=PRIOR ENTERPRISE_ID
+	</select>
+	
+	<resultMap class="UpdateCarNumberInfo" id="carnumber_list">
+       <result property="carnum" column="CARNUM"/>
+       <result property="enterpriseId" column="ENTERPRISEID"/>
+       <result property="flag" column="FLAG"/>
+    </resultMap>
+	
+	<select id="getCarnumberByEnterprise" resultMap="carnumber_list">
+		SELECT COUNT(1) AS CARNUM,
+		       CBI.ENTERPRISE_ID AS ENTERPRISEID,
+		       'ENTERPRISE' AS FLAG
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		 GROUP BY CBI.ENTERPRISE_ID
+		UNION ALL
+		SELECT COUNT(1) AS CARNUM,
+		       CBI.ORGANIZATION_ID AS ENTERPRISEID,
+		       'ORGANIZATION' AS FLAG
+		  FROM CLW_JC_TERMINAL_T   JT,
+		       CLW_CL_BASE_INFO_T  CBI,
+		       CLW_CL_SIM_T        CS,
+		       CLW_JC_ENTERPRISE_T JE
+		 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		   AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		   AND JT.TERMINAL_ID IS NOT NULL
+		   AND JT.VEHICLE_VIN IS NOT NULL
+		   AND JT.SIM_CARD_NUMBER IS NOT NULL
+		   AND JT.VALID_FLAG = '0'
+		   AND CBI.VALID_FLAG = '0'
+		   AND CS.VALID_FLAG = '0'
+		   AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		   AND CBI.ORGANIZATION_ID IS NOT NULL
+		 GROUP BY CBI.ORGANIZATION_ID
+	</select>
+	
+	<resultMap id="terminalUpdateInfo-result" class="com.neusoft.clw.yw.zdnew.terminalremoteupdate.ds.TerminalInfo">
+		<result property="terminalId" column="ID" />
+		<result property="vehicleLn" column="VEHICLE_LN" />
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="terminalCode" column="TERMINAL_ID" />
+		<result property="simCardNumber" column="SIM_CARD_NUMBER" />
+		<result property="cellPhone" column="CELLPHONE" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseCode" column="ENTERPRISE_CODE" />
+		<result property="enterpriseName" column="FULL_NAME" />
+		<result property="host_hard_ver" column="HOST_HARD_VER" />
+		<result property="host_firm_ver" column="HOST_FIRM_VER" />
+		<result property="xianshi_hard_ver" column="XIANSHI_HARD_VER" />
+		<result property="xianshi_firm_ver" column="XIANSHI_FIRM_VER" />
+		<result property="DVR_hard_ver" column="DVR_HARD_VER" />
+		<result property="DVR_firm_ver" column="DVR_FIRM_VER" />
+		<result property="SHEPIN_hard_ver" column="SHEPIN_HARD_VER" />
+		<result property="SHEPIN_firm_ver" column="SHEPIN_FIRM_VER" />
+		<result property="SIM_SCCID" column="SIM_SCCID" />
+		<result property="UPDATE_VERSION" column="UPDATE_VERSION" />
+		<result property="OPERATE_TIME" column="OPERATE_TIME" />
+		<result property="DEAL_STATE" column="DEAL_STATE" />
+	</resultMap>
+	
+	<select id="getTerminalUpdateCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(1) FROM (SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+               JT.VEHICLE_VIN,
+               JT.TERMINAL_ID,
+               JT.SIM_CARD_NUMBER,
+               CS.CELLPHONE,
+               CBI.ENTERPRISE_ID,
+               JE.ENTERPRISE_CODE,
+               JE.FULL_NAME,
+               JT.host_hard_ver,
+               JT.host_firm_ver,
+               JT.xianshi_hard_ver,
+               JT.xianshi_firm_ver,
+               JT.DVR_hard_ver,
+               JT.DVR_firm_ver,
+               JT.SHEPIN_hard_ver,
+               JT.SHEPIN_firm_ver,
+               JT.SIM_SCCID,
+               JT.UPDATE_VERSION,
+               TO_CHAR(CYCT.OPERATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS OPERATE_TIME,
+               CYCT.DEAL_STATE
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE,
+               CLW_YW_SEND_COMMAND_T CYCT
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		   AND JT.MSG_ID=CYCT.MSG_ID(+)
+           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		   OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		   AND JT.MSG_ID=CYCT.MSG_ID(+)
+           AND CBI.ENTERPRISE_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		  AND CBI.ORGANIZATION_ID IS NULL
+          ) WHERE 1=1
+		  <isNotEmpty prepend="AND" property="vehicle_ln">
+         	VEHICLE_LN LIKE '%$vehicle_ln$%'
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="host_firm_ver">
+			host_firm_ver LIKE '%$host_firm_ver$%'
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="xianshi_firm_ver">
+			xianshi_firm_ver LIKE '%$xianshi_firm_ver$%'
+		  </isNotEmpty>
+		  <isNotEmpty prepend="AND" property="SHEPIN_firm_ver">
+			SHEPIN_firm_ver LIKE '%$SHEPIN_firm_ver$%'
+		  </isNotEmpty>
+	</select>
+	
+	<select id="getTerminalUpdateInfos" parameterClass="Map" resultMap="terminalUpdateInfo-result">
+		SELECT ID,
+		       VEHICLE_LN,
+               VEHICLE_VIN,
+               TERMINAL_ID,
+               SIM_CARD_NUMBER,
+               CELLPHONE,
+               ENTERPRISE_ID,
+               ENTERPRISE_CODE,
+               FULL_NAME,
+               host_hard_ver,
+               host_firm_ver,
+               xianshi_hard_ver,
+               xianshi_firm_ver,
+               DVR_hard_ver,
+               DVR_firm_ver,
+               SHEPIN_hard_ver,
+               SHEPIN_firm_ver,
+               SIM_SCCID,
+               UPDATE_VERSION,
+               OPERATE_TIME,
+               DEAL_STATE
+        from
+		(SELECT JT.ID,
+		       CBI.VEHICLE_LN,
+               JT.VEHICLE_VIN,
+               JT.TERMINAL_ID,
+               JT.SIM_CARD_NUMBER,
+               CS.CELLPHONE,
+               CBI.ENTERPRISE_ID,
+               JE.ENTERPRISE_CODE,
+               JE.FULL_NAME,
+               JT.host_hard_ver,
+               JT.host_firm_ver,
+               JT.xianshi_hard_ver,
+               JT.xianshi_firm_ver,
+               JT.DVR_hard_ver,
+               JT.DVR_firm_ver,
+               JT.SHEPIN_hard_ver,
+               JT.SHEPIN_firm_ver,
+               JT.SIM_SCCID,
+               JT.UPDATE_VERSION,
+               TO_CHAR(CYCT.OPERATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS OPERATE_TIME,
+               CYCT.DEAL_STATE
+          FROM CLW_JC_TERMINAL_T JT,
+               CLW_CL_BASE_INFO_T CBI,
+               CLW_CL_SIM_T CS,
+               CLW_JC_ENTERPRISE_T JE,
+               CLW_YW_SEND_COMMAND_T CYCT
+         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		   AND JT.MSG_ID=CYCT.MSG_ID(+)
+           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+           OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+           AND JT.TERMINAL_ID IS NOT NULL
+           AND JT.VEHICLE_VIN IS NOT NULL
+           AND JT.SIM_CARD_NUMBER IS NOT NULL
+           AND JT.VALID_FLAG = '0'
+           AND CBI.VALID_FLAG = '0'
+           AND CS.VALID_FLAG = '0'
+           AND JT.DEVICE_TYPE = '0'
+		   AND CBI.DEVICE_TYPE = '0'
+		   AND CS.DEVICE_TYPE = '0'
+		   AND JT.MSG_ID=CYCT.MSG_ID(+)
+           AND CBI.ENTERPRISE_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM &lt;=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		  AND CBI.ORGANIZATION_ID IS NULL
+         )WHERE 1=1
+         <isNotEmpty prepend="AND" property="vehicle_ln">
+         	VEHICLE_LN LIKE '%$vehicle_ln$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="host_firm_ver">
+         	host_firm_ver LIKE '%$host_firm_ver$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="xianshi_firm_ver">
+         	xianshi_firm_ver LIKE '%$xianshi_firm_ver$%'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="SHEPIN_firm_ver">
+         	SHEPIN_firm_ver LIKE '%$SHEPIN_firm_ver$%'
+         </isNotEmpty>
+         <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	
+	<update id="mergeUserUpdateInfo" parameterClass="UpdateUserInfo">
+		MERGE INTO CLW_XC_TERMINAL_USER_UPDATE_T
+		USING DUAL
+		ON (USER_ID = #user_id#)
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET 
+		     	UPDATE_TIME     = SYSDATE,
+		     	HOST_HARD_VER   = #host_hard_ver#,
+		        HOST_FIRM_VER   = #host_firm_ver#,
+		        CONNECTION_TIME = #connection_time#,
+		        URL_ADDRESS     = #url_address#,
+		        DIAL_PEER_NAME  = #dial_peer_name#,
+		        DIAL_PEER_ACCOUNT  = #dial_peer_account#,
+		        DIAL_PASSWORD   = #dial_password#,
+		        IP_ADDRESS      = #ip_address#,
+		        TCP_PORT        = #tcp_port#,
+		        UDP_PORT        = #udp_port#
+		WHEN NOT MATCHED THEN
+		  INSERT
+		    (USER_ID,
+		     UPDATE_TIME,
+		     HOST_HARD_VER,
+		     HOST_FIRM_VER,
+		     CONNECTION_TIME,
+		     URL_ADDRESS,
+		     DIAL_PEER_NAME,
+		     DIAL_PEER_ACCOUNT,
+		     DIAL_PASSWORD,
+		     IP_ADDRESS,
+		     TCP_PORT,
+		     UDP_PORT)
+		  VALUES
+		    (#user_id#,
+		     SYSDATE,
+		     #host_hard_ver#,
+		     #host_firm_ver#,
+		     #connection_time#,
+		     #url_address#,
+		     #dial_peer_name#,
+		     #dial_peer_account#,
+		     #dial_password#,
+		     #ip_address#,
+		     #tcp_port#,
+		     #udp_port#
+		     )
+	</update>
+	
+	<update id="updateTerminalInfo" parameterClass="UpdateUserInfo">
+		UPDATE  CLW_JC_TERMINAL_T
+		SET MSG_ID=#msg_id#,UPDATE_VERSION=#host_firm_ver#
+		WHERE ID=#pid#
+	</update>
+	
+	<resultMap class="UpdateUserInfo" id="UpdateUserInfo-result">
+       <result property="host_hard_ver" column="HOST_HARD_VER"/>
+       <result property="host_firm_ver" column="HOST_FIRM_VER"/>
+       <result property="connection_time" column="CONNECTION_TIME"/>
+       <result property="url_address" column="URL_ADDRESS"/>
+       <result property="dial_peer_name" column="DIAL_PEER_NAME"/>
+       <result property="dial_peer_account" column="DIAL_PEER_ACCOUNT"/>
+       <result property="dial_password" column="DIAL_PASSWORD"/>
+       <result property="ip_address" column="IP_ADDRESS"/>
+       <result property="tcp_port" column="TCP_PORT"/>
+       <result property="udp_port" column="UDP_PORT"/>
+    </resultMap>
+	
+	<select id="getUpdateUserInfo" parameterClass="UpdateUserInfo" resultMap="UpdateUserInfo-result">
+		SELECT 
+			HOST_HARD_VER,
+			HOST_FIRM_VER,
+			CONNECTION_TIME,
+			URL_ADDRESS,
+			DIAL_PEER_NAME,
+			DIAL_PEER_ACCOUNT,
+			DIAL_PASSWORD,
+			IP_ADDRESS,
+			TCP_PORT,
+			UDP_PORT 
+		FROM CLW_XC_TERMINAL_USER_UPDATE_T
+		WHERE USER_ID=#user_id#
+	</select>
+</sqlMap>

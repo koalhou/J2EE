@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Log">
+	<!-- 添加终端环境信息 -->
+	<insert id="insertEnvInfo" parameterType="envInfo">
+		INSERT INTO
+					CLW_TQC_HARDWARE_INFO_T (USER_ID,
+					IMEI,
+					MSISDN,
+					BRAND,
+					MODE_NUMB,
+					RESO_RATI,
+					OS_VERS,
+					SOFT_VERS,
+					T_MOBILE,
+					CREATE_TIME)
+		VALUES (#{userId},
+				#{imei},
+				#{msisdn},
+				#{brand},
+				#{modeNumb},
+				#{resoRati},
+				#{osVers},
+				#{softVers},
+				#{typeMobile},
+				TO_DATE (#{time}, 'yyyymmddhh24miss'))
+	</insert>
+	
+	<select id="getEnv" parameterType="envInfo" resultType="envInfo">
+		select user_id as userId
+		from clw_tqc_hardware_info_t t
+		where t.user_id = #{userId}
+	</select>
+	
+	<update id="updateEnvInfo" parameterType="envInfo">
+		update clw_tqc_hardware_info_t t set
+		t.IMEI = #{imei},
+		t.MSISDN = #{msisdn},
+		t.BRAND = #{brand},
+		t.MODE_NUMB = #{modeNumb},
+		t.RESO_RATI = #{resoRati},
+		t.OS_VERS = #{osVers},
+		t.SOFT_VERS = #{softVers},
+		t.T_MOBILE = #{typeMobile}
+		where t.user_id = #{userId}
+	</update>
+	
+	<insert id="insertErrorInfo" parameterType="map">
+		insert into CLW_TQC_HARDWARE_ERRORLOG_T(
+			error_id,user_id,msisdn,os_name,os_version,
+			app_version,error_code,error_desc,error_time,create_time)
+		select SEQ_ERROR_LOG.nextval,'${emp_code}',t.ygb_tel,
+				'${os_name}','${os_version}','${app_version}',
+				'${error_code}','${error_desc}','${error_time}',sysdate
+		from clw_tqc_emp_t t
+		where t.emp_code = '${emp_code}'
+	</insert>
+	
+	<insert id="insertUsedTime" parameterType="map">
+		INSERT INTO CLW_JZ_USEDTIME_T 
+		VALUES (#{id},
+			   to_date(#{start_time},'yyyyMMddhh24miss'),
+			   to_date(#{end_time},'yyyyMMddhh24miss')
+			)
+	</insert>
+	
+	<!-- 添加用户行为信息记录 -->
+	<insert id="insertUserBehavior" parameterType="map">  
+        INSERT INTO CLW_JZ_USER_BEHAVIOR_T (
+			USER_ID,
+  			MODULE_ID,
+  			OPERATE_TIME)  
+        VALUES   (#{id},
+                  #{mode_id}, 
+			   	 to_date(#{log_date},'yyyyMMddhh24miss'))
+	</insert>
+	<!-- 添加用户行为信息记录 -->
+	<insert id="insertDownloadRecord" parameterType="map">  
+        INSERT INTO CLW_TQC_DOWNLOAD_RECORD SELECT SEQ_DOWNLOAD.NEXTVAL,SYSDATE FROM DUAL
+	</insert>	
+		<!-- 获取当前最大客户端软件版本号 -->
+	<select id="getMaxVersion" parameterType="string" resultType="softversion">
+	<![CDATA[ 
+		SELECT
+			force,
+			version_id as version_code,
+			VERSION_NAME as targetVersion,
+			VERSION_DESC as changeDesc,
+			SOFTWARE_URI as uri
+			
+		FROM
+			CLW_TQC_SYS_V_T
+		WHERE
+			VALID_FLAG = '0'
+			AND APPLY_ID = 'P'
+			AND VERSION_CODE > ${value}
+		ORDER BY VERSION_NAME DESC
+    ]]>
+	</select>
+	<insert id="insertUsage" parameterType="map">
+		INSERT INTO CLW_M_USER_BEHAVIOR_T 
+		select '${EMP_CODE}', t.emp_depart, '${MODULE_ID}','${MODULE_SON_ID}',sysdate,SEQ_LOG.NEXTVAL
+		from clw_tqc_emp_t t
+		where t.emp_code = '${EMP_CODE}'
+	</insert>
+</mapper>

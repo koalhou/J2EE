@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RouteManage">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="routeinfo" type="com.neusoft.clw.sysmanage.datamanage.routemanage.domain.RouteInfo" />
+	<typeAlias alias="EnterpriseResInfo" type="com.neusoft.clw.sysmanage.datamanage.entimanage.domain.EnterpriseResInfo" />
+	<typeAlias alias="stations" type="com.neusoft.clw.infomanage.sitemanage.domain.Site" />
+	<typeAlias alias="EnterpriseTreeInfo" type="com.neusoft.clw.sysmanage.datamanage.routemanage.domain.EnterpriseTreeInfo" />
+	
+	<resultMap class="EnterpriseResInfo" id="enterprise_tree">
+       <result property="enterprise_id" column="enterprise_id"/>
+       <result property="short_name" column="short_name"/>
+       <result property="left_num" column="left_num"/>
+       <result property="right_num" column="right_num"/>
+       <result property="treeleve" column="treeleve"/>
+       <result property="parent_id" column="parent_id"/>
+       <result property="concate_cr_flag" column="concate_cr_flag"/>
+    </resultMap>
+		    
+    <resultMap class="routeinfo" id="routeinfo-result">
+       <result property="route_id" column="ROUTE_ID"/>
+       <result property="route_name" column="ROUTE_NAME"/>
+       <result property="route_organization_id" column="ROUTE_ORGANIZATION_ID"/>
+       <result property="upsitenum" column="UPSITENUM"/>
+       <result property="downsitenum" column="DOWNSITENUM"/>
+       <result property="short_allname" column="short_allname"/>
+       <result property="route_incharge_person" column="ROUTE_INCHARGE_PERSON"/>
+       <result property="route_phone" column="ROUTE_PHONE"/>
+       <result property="route_remark" column="ROUTE_REMARK"/>
+       <result property="upstarttime" column="UPSTARTTIME"/>
+       <result property="upendtime" column="UPENDTIME"/>
+       <result property="downstarttime" column="DOWNSTARTTIME"/>
+       <result property="downendtime" column="DOWNENDTIME"/>
+    </resultMap>
+	
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="in_enterprise_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="enterprise_tree"/>
+    </parameterMap>
+	
+    <select id="getCount" parameterClass="routeinfo" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM CLW_XC_ROUTE_T
+		WHERE ROUTE_ORGANIZATION_ID IN <![CDATA[
+		  (SELECT enterprise_id
+		  FROM clw_jc_enterprise_vi
+		  WHERE left_num >=
+		    (SELECT left_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #route_organization_id#
+		    )
+		  AND right_num <=
+		    (SELECT right_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id =#route_organization_id#
+		    )
+		  ) ]]>
+		AND VALID_FLAG='0' 
+		 <isNotEmpty prepend="AND" property="route_name">
+		 	   ROUTE_NAME like '%' || #route_name# ||'%' escape '\'
+         </isNotEmpty> 
+         <isNotEmpty prepend="AND" property="route_incharge_person">
+         	   ROUTE_INCHARGE_PERSON like '%' || #route_incharge_person# ||'%' escape '\'
+         </isNotEmpty>            
+	</select>
+	
+	<!-- 获取线路列表 -->
+	<select id="getInfos" parameterClass="routeinfo" resultMap="routeinfo-result">
+		SELECT CXRT.ROUTE_ID,
+		    CXRT.ROUTE_NAME,
+		    CXRT.ROUTE_REMARK,
+		    CXRT.ROUTE_INCHARGE_PERSON,
+		    CXRT.ROUTE_PHONE,
+		    CXRT.ROUTE_ORGANIZATION_ID,
+		    '' short_allname,
+		    NVL(CXRT_UP.UPSITENUM,0) UPSITENUM,
+		    NVL(CXRT_DOWN.DOWNSITENUM,0) DOWNSITENUM,
+		    TO_CHAR(CXRT.UPSTARTTIME,'HH24:MI:SS') as UPSTARTTIME,
+		    TO_CHAR(CXRT.UPENDTIME,'HH24:MI:SS') as UPENDTIME,
+		    TO_CHAR(CXRT.DOWNSTARTTIME,'HH24:MI:SS') as DOWNSTARTTIME,
+		    TO_CHAR(CXRT.DOWNENDTIME,'HH24:MI:SS') as DOWNENDTIME
+		FROM CLW_XC_ROUTE_T CXRT,
+		(SELECT ROUTE_ID,count(1) UPSITENUM FROM CLW_XC_ROUTESITE_T
+		WHERE SITE_UPDOWN='0'
+		group by ROUTE_ID) CXRT_UP,
+		(SELECT ROUTE_ID,count(1) DOWNSITENUM FROM CLW_XC_ROUTESITE_T
+		WHERE SITE_UPDOWN='1'
+		GROUP BY ROUTE_ID) CXRT_DOWN
+		WHERE CXRT.ROUTE_ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #route_organization_id#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#route_organization_id#)        
+			)
+	     ]]>
+	    AND CXRT.ROUTE_ID=CXRT_UP.ROUTE_ID(+)
+		AND CXRT.ROUTE_ID=CXRT_DOWN.ROUTE_ID(+)
+		AND CXRT.VALID_FLAG='0' 
+		 <isNotEmpty prepend="AND" property="route_name">
+               ROUTE_NAME like '%' || #route_name# ||'%' escape '\'
+         </isNotEmpty>  
+         <isNotEmpty prepend="AND" property="route_incharge_person">
+               ROUTE_INCHARGE_PERSON like '%' || #route_incharge_person# ||'%' escape '\'
+         </isNotEmpty>        
+		<dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+
+	<insert id="insertrouteInfo" parameterClass="routeinfo">
+		<selectKey resultClass="string" keyProperty="route_id" type="pre">    
+	        <![CDATA[SELECT SEQ_XC_SITE_T.NEXTVAL AS route_id FROM DUAL]]>    
+	    </selectKey> 
+		INSERT
+		INTO CLW_XC_ROUTE_T
+		  (
+		    ROUTE_ID,
+		    ROUTE_NAME,
+		    ROUTE_REMARK,
+		    ROUTE_INCHARGE_PERSON,
+		    ROUTE_PHONE,
+		    ROUTE_ENTERPRISE_ID,
+		    ROUTE_ORGANIZATION_ID,
+		    CREATER,
+		    CREATE_TIME,
+		    VALID_FLAG,
+		    UPSTARTTIME,
+		    UPENDTIME,
+		    DOWNSTARTTIME,
+		    DOWNENDTIME
+		  )
+		  VALUES
+		  (
+		    #route_id#,#route_name#,#route_remark#,#route_incharge_person#,#route_phone#,
+			#route_enterprise_id#,#route_organization_id#,#creater#,sysdate,'0',
+			sysdate,sysdate,
+			sysdate,sysdate
+		  )
+	</insert>
+	
+	<resultMap class="routeinfo" id="routeinfo-editbefore">
+       <result property="route_id" column="ROUTE_ID"/>
+       <result property="route_name" column="ROUTE_NAME"/>
+       <result property="route_organization_id" column="ROUTE_ORGANIZATION_ID"/>
+       <result property="upsitenum" column="UPSITENUM"/>
+       <result property="downsitenum" column="DOWNSITENUM"/>
+       <result property="short_allname" column="short_allname"/>
+       <result property="route_incharge_person" column="ROUTE_INCHARGE_PERSON"/>
+       <result property="route_phone" column="ROUTE_PHONE"/>
+       <result property="route_remark" column="ROUTE_REMARK"/>
+       <result property="upstarttime" column="UPSTARTTIME"/>
+       <result property="upendtime" column="UPENDTIME"/>
+       <result property="downstarttime" column="DOWNSTARTTIME"/>
+       <result property="downendtime" column="DOWNENDTIME"/>
+       <result property="configFlag" column="CONFIG_FLAG"/>
+    </resultMap>
+    
+	<select id="getRouteInfo" parameterClass="routeinfo" resultMap="routeinfo-editbefore">
+		SELECT
+		    ROUTE_ID,
+		    ROUTE_NAME,
+		    ROUTE_REMARK,
+		    ROUTE_INCHARGE_PERSON,
+		    ROUTE_PHONE,
+		    ROUTE_ORGANIZATION_ID,
+		    '' AS UPSITENUM,
+		    '' AS DOWNSITENUM,
+        	cjet.SHORT_NAME short_allname,
+		    TO_CHAR(UPSTARTTIME,'HH24:MI') as UPSTARTTIME,
+		    TO_CHAR(UPENDTIME,'HH24:MI') as UPENDTIME,
+		    TO_CHAR(DOWNSTARTTIME,'HH24:MI') as DOWNSTARTTIME,
+		    TO_CHAR(DOWNENDTIME,'HH24:MI') as DOWNENDTIME,
+		    (SELECT CASE
+			         WHEN COUNT(1) > 0 THEN
+			          '1'
+			         ELSE
+			          '0'
+			       END AS CONFIG_FLAG
+			  FROM CLW_XC_VSS_T XV
+			 WHERE XV.ROUTE_ID = #route_id#) AS CONFIG_FLAG
+		FROM CLW_XC_ROUTE_T cxrt,CLW_JC_ENTERPRISE_T cjet
+    	WHERE cxrt.ROUTE_ORGANIZATION_ID=cjet.enterprise_id
+			AND ROUTE_ID=#route_id# 
+	</select>
+	
+	<update id="updatebyRouteid" parameterClass="routeinfo">
+	   UPDATE CLW_XC_ROUTE_T 
+	   SET ROUTE_NAME=#route_name#,
+	       ROUTE_ORGANIZATION_ID=#route_organization_id#,
+	       ROUTE_REMARK=#route_remark#,
+	       ROUTE_INCHARGE_PERSON=#route_incharge_person#,
+	       ROUTE_PHONE=#route_phone#,
+	       MODIFIER=#modifier#,
+	       MODIFY_TIME=SYSDATE
+	    WHERE ROUTE_ID=#route_id#
+	</update>
+	
+	<select id="getvehCount" parameterClass="routeinfo" resultClass="Integer">
+		SELECT COUNT(1) FROM 
+		(SELECT ROUTE_ID FROM CLW_XC_VSS_T GROUP BY ROUTE_ID) CXVT
+		WHERE CXVT.ROUTE_ID=#route_id#
+	</select>
+	
+	<update id="deletebyRouteid" parameterClass="routeinfo">
+	   UPDATE CLW_XC_ROUTE_T 
+	   SET VALID_FLAG='1',
+	       VASET_USER_ID=#vaset_user_id#,
+	       VASET_TIME=SYSDATE
+	    WHERE ROUTE_ID=#route_id#
+	</update>
+	
+	<!-- 删除线路的站点 -->
+	<update id="deleteRouteStation" parameterClass="routeinfo">
+		DELETE FROM CLW_XC_ROUTESITE_T XS
+		WHERE XS.ROUTE_ID = #route_id#
+	</update>
+	
+	<resultMap class="stations" id="stationinfos-result">
+       <result property="site_id" column="SITE_ID"/>
+       <result property="site_name" column="SITE_NAME"/>
+       <result property="rs_order" column="RS_ORDER"/>
+       <result property="site_remark" column="SITE_REMARK"/>
+       <result property="deleteflag" column="DELETEFLAG"/>
+    </resultMap> 
+    
+    <!-- 获取已选上行站点列表 -->
+	<select id="getUpStationInfos" parameterClass="stations" resultMap="stationinfos-result">
+		SELECT CXRT.SITE_ID,CXST.SITE_NAME,CXRT.RS_ORDER,CXST.SICHEN_ADDR SITE_REMARK,
+			CASE WHEN CXVT.ROUTE_ID IS NULL THEN 0 ELSE 1 END DELETEFLAG
+		FROM CLW_XC_ROUTESITE_T CXRT, CLW_XC_SITE_T CXST,
+			(SELECT ROUTE_ID FROM CLW_XC_VSS_T GROUP BY ROUTE_ID) CXVT
+			WHERE CXRT.SITE_ID=CXST.SITE_ID
+			AND CXST.CONTROL_STATION='0'
+			AND CXRT.ROUTE_ID=CXVT.ROUTE_ID(+)
+			AND CXRT.ROUTE_ID=#route_id#
+			<isNotEmpty prepend="AND" property="deleteStations">
+               CXRT.SITE_ID NOT IN ($deleteStations$)
+            </isNotEmpty>
+            <isNotEmpty prepend="UNION" property="addStations">
+	            SELECT SITE_ID,SITE_NAME,5000 RS_ORDER, SICHEN_ADDR SITE_REMARK,
+					0 DELETEFLAG
+				FROM CLW_XC_SITE_T
+				WHERE SITE_ID IN ($addStations$)
+            </isNotEmpty>
+		ORDER BY RS_ORDER
+	</select>
+    
+    <select id="getSelectedUpStationInfos" parameterClass="stations" resultMap="stationinfos-result">
+        SELECT SITE_ID,SITE_NAME,5000 RS_ORDER, SICHEN_ADDR SITE_REMARK,
+        		CASE WHEN (SELECT COUNT(0) FROM CLW_XC_VSS_T WHERE ROUTE_ID=#route_id# GROUP BY ROUTE_ID)>0 
+				THEN 1 ELSE 0 END  DELETEFLAG
+		  FROM CLW_XC_SITE_T
+	     WHERE SITE_ID IN ($site_up_string$)
+    </select>
+	
+	<!-- 获取已选下行站点列表 -->
+	<select id="getDownStationInfos" parameterClass="stations" resultMap="stationinfos-result">
+		SELECT CXRT.SITE_ID,CXST.SITE_NAME,CXRT.RS_ORDER,CXST.SICHEN_ADDR SITE_REMARK,
+			CASE WHEN CXVT.ROUTE_ID IS NULL THEN 0 ELSE 1 END DELETEFLAG
+		FROM CLW_XC_ROUTESITE_T CXRT, CLW_XC_SITE_T CXST,
+			(SELECT ROUTE_ID FROM CLW_XC_VSS_T GROUP BY ROUTE_ID) CXVT
+			WHERE CXRT.SITE_ID=CXST.SITE_ID
+			AND CXST.CONTROL_STATION='1'
+			AND CXRT.ROUTE_ID=CXVT.ROUTE_ID(+)
+			AND CXRT.ROUTE_ID=#route_id#
+			<isNotEmpty prepend="AND" property="deleteStations">
+               CXRT.SITE_ID NOT IN ($deleteStations$)
+            </isNotEmpty>
+            <isNotEmpty prepend="UNION" property="addStations">
+	            SELECT SITE_ID,SITE_NAME,5000 RS_ORDER, SICHEN_ADDR SITE_REMARK,
+					0 DELETEFLAG
+				FROM CLW_XC_SITE_T
+				WHERE SITE_ID IN ($addStations$)
+            </isNotEmpty>
+		ORDER BY RS_ORDER
+	</select>
+	
+    <select id="getSelectedDownStationInfos" parameterClass="stations" resultMap="stationinfos-result">
+        SELECT SITE_ID,SITE_NAME,5000 RS_ORDER, SICHEN_ADDR SITE_REMARK,
+       			CASE WHEN (SELECT COUNT(0) FROM CLW_XC_VSS_T WHERE ROUTE_ID=#route_id# GROUP BY ROUTE_ID)>0 
+				THEN 1 ELSE 0 END  DELETEFLAG
+		 FROM CLW_XC_SITE_T
+		WHERE SITE_ID IN ($site_down_string$)
+    </select>
+    
+	<!-- 删除上行已去除的站点 -->
+	<update id="deleteupbyStationId" parameterClass="stations">
+	  	DELETE FROM CLW_XC_ROUTESITE_T
+	    WHERE ROUTE_ID = #route_id# AND SITE_UPDOWN='0' AND SITE_ID NOT IN ($site_id_del$)
+	</update>
+	
+	<!-- 删除下行已去除的站点 -->
+	<update id="deletedownbyStationId" parameterClass="stations">
+	  	DELETE FROM CLW_XC_ROUTESITE_T
+	    WHERE ROUTE_ID = #route_id# AND SITE_UPDOWN='1' AND SITE_ID NOT IN ($site_id_del$)
+	</update>
+	
+	<!-- 设置上行站点 -->
+	<update id="setUpStationInfos" parameterClass="stations">
+		MERGE INTO CLW_XC_ROUTESITE_T XS
+		USING DUAL
+		ON (XS.ROUTE_ID = #route_id# AND XS.SITE_ID = #site_id#)
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET RS_ORDER  = #rs_order#,MODIFY_TIME = sysdate
+		WHEN NOT MATCHED THEN
+		  INSERT
+		    (ROUTE_ID,
+		     SITE_ID,
+		     RS_ORDER,
+		     SITE_UPDOWN,
+		     MODIFY_TIME)
+		  VALUES
+		    ( #route_id#,
+		      #site_id#,
+		      #rs_order#,
+		      '0',
+		      sysdate)
+	</update>
+	
+	<!-- 设置下行站点 -->
+	<update id="setDownStationInfos" parameterClass="stations">
+		MERGE INTO CLW_XC_ROUTESITE_T XS
+		USING DUAL
+		ON (XS.ROUTE_ID = #route_id# AND XS.SITE_ID = #site_id#)
+		WHEN MATCHED THEN
+		  UPDATE
+		     SET RS_ORDER  = #rs_order#,MODIFY_TIME = sysdate
+		WHEN NOT MATCHED THEN
+		  INSERT
+		    (ROUTE_ID,
+		     SITE_ID,
+		     RS_ORDER,
+		     SITE_UPDOWN,
+		     MODIFY_TIME)
+		  VALUES
+		    ( #route_id#,
+		      #site_id#,
+		      #rs_order#,
+		      '1',
+		      sysdate)
+	</update>
+	
+	<!-- 新需求 start -->
+	<typeAlias alias="terminalViBean" type="com.neusoft.clw.businessmanage.gpsmanage.gpsposition.domain.TerminalViBean" />
+    <resultMap class="terminalViBean" id="mapList-result">
+       <result property="LONGITUDE" column="SITE_LONGITUDE"/>
+       <result property="LATITUDE" column="SITE_LATITUDE"/>
+       <result property="ID" column="SITE_ID"/>
+       <result property="STATION_ADDR" column="SITE_NAME"/>
+       <result property="CONTROL_STATION" column="CONTROL_STATION"/>
+       <result property="SITE_FLAG" column="SITE_FLAG"/>
+    </resultMap>
+	
+	<!-- 获取上行所有站点列表-->
+	<select id="getStationInfo" parameterClass="terminalViBean" resultMap="mapList-result">
+	  	SELECT CXST.SITE_ID,CXST.SITE_NAME,CXST.SITE_LONGITUDE,CXST.SITE_LATITUDE,CXST.CONTROL_STATION,'0' SITE_FLAG
+	  	FROM CLW_XC_SITE_T CXST
+		WHERE CXST.VALID_FLAG='0'
+		AND CXST.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #ORGANIZATION_ID#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#ORGANIZATION_ID#)        
+			)
+   		]]>
+		<isNotEmpty prepend="AND" property="STATION_ADDR">
+			SITE_NAME like '%' || #STATION_ADDR# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="CONTROL_STATION">
+			CXST.CONTROL_STATION =#CONTROL_STATION#
+	    </isNotEmpty>
+        <isNotEmpty prepend="AND" property="START_TIME">
+			CXST.CREATE_TIME between to_date(#START_TIME#,'yyyy-mm-dd HH24:MI:SS') and to_date(#END_TIME#,'yyyy-mm-dd HH24:MI:SS')
+	    </isNotEmpty>
+	    
+	    <isNotEmpty prepend="AND" property="delstationids">
+   			CXST.SITE_ID NOT IN ($delstationids$)
+   		</isNotEmpty>
+   		<isNotEmpty prepend="UNION" property="addstationids">
+	   		SELECT SITE_ID,SITE_NAME,SITE_LONGITUDE,SITE_LATITUDE,CONTROL_STATION,'1' SITE_FLAG
+			FROM CLW_XC_SITE_T
+			WHERE SITE_ID IN ($addstationids$)
+   		</isNotEmpty>
+   		<isNotEmpty prepend="UNION" property="delstationids">
+	   		SELECT SITE_ID,SITE_NAME,SITE_LONGITUDE,SITE_LATITUDE,CONTROL_STATION,'0' SITE_FLAG
+			FROM CLW_XC_SITE_T
+			WHERE SITE_ID IN ($delstationids$)
+   		</isNotEmpty>
+   		
+	</select>
+	
+	<resultMap class="terminalViBean" id="mapEditList-result">
+       <result property="LONGITUDE" column="SITE_LONGITUDE"/>
+       <result property="LATITUDE" column="SITE_LATITUDE"/>
+       <result property="ID" column="SITE_ID"/>
+       <result property="STATION_ADDR" column="SITE_NAME"/>
+       <result property="CONTROL_STATION" column="CONTROL_STATION"/>
+       <result property="SITE_FLAG" column="SITE_FLAG"/>
+       
+    </resultMap>
+    
+	<select id="getEditStationInfo" parameterClass="terminalViBean" resultMap="mapEditList-result">
+	  	SELECT SITE_ID,SITE_NAME,SITE_LONGITUDE,SITE_LATITUDE,CONTROL_STATION,SITE_FLAG FROM (
+	  	SELECT CXST.SITE_ID,CXST.SITE_NAME,CXST.SITE_LONGITUDE,CXST.SITE_LATITUDE,CXST.CONTROL_STATION,'0' SITE_FLAG
+	  	FROM CLW_XC_SITE_T CXST
+		WHERE CXST.VALID_FLAG='0'
+		AND CXST.ORGANIZATION_ID in 
+		<![CDATA[
+			(select enterprise_id
+			     from clw_jc_enterprise_vi
+			     where left_num >= (select left_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id = #ORGANIZATION_ID#)
+			     and right_num <=(select right_num
+			                  from clw_jc_enterprise_vi
+			                  where enterprise_id =#ORGANIZATION_ID#)        
+			)
+   		]]>
+		<isNotEmpty prepend="AND" property="STATION_ADDR">
+            SITE_NAME like '%' || #STATION_ADDR# ||'%' escape '\'
+        </isNotEmpty>
+        <isNotEmpty prepend="AND" property="START_TIME">
+			CXST.CREATE_TIME between to_date(#START_TIME#,'yyyy-mm-dd HH24:MI:SS') and to_date(#END_TIME#,'yyyy-mm-dd HH24:MI:SS')
+	    </isNotEmpty>
+	    <isNotEmpty prepend="UNION" property="delstationids">
+	   		SELECT SITE_ID,SITE_NAME,SITE_LONGITUDE,SITE_LATITUDE,CONTROL_STATION,'0' SITE_FLAG
+			FROM CLW_XC_SITE_T
+			WHERE SITE_ID IN ($delstationids$)
+   		</isNotEmpty>
+		UNION
+		SELECT CXST.SITE_ID,CXST.SITE_NAME,CXST.SITE_LONGITUDE,CXST.SITE_LATITUDE,CXST.CONTROL_STATION,'1' SITE_FLAG
+		FROM CLW_XC_ROUTESITE_T CXRT,CLW_XC_SITE_T CXST
+		WHERE CXRT.SITE_ID=CXST.SITE_ID
+		AND CXRT.ROUTE_ID=#ROUTE_ID#
+		<isNotEmpty prepend="AND" property="delstationids">
+   			CXST.SITE_ID NOT IN ($delstationids$)
+   		</isNotEmpty>
+   		<isNotEmpty prepend="UNION" property="addstationids">
+	   		SELECT SITE_ID,SITE_NAME,SITE_LONGITUDE,SITE_LATITUDE,CONTROL_STATION,'1' SITE_FLAG
+			FROM CLW_XC_SITE_T
+			WHERE SITE_ID IN ($addstationids$)
+   		</isNotEmpty>
+		) STATIONINFO
+		WHERE STATIONINFO.CONTROL_STATION=#CONTROL_STATION#
+		<isNotEmpty prepend="AND" property="SITE_FLAG">
+        	SITE_FLAG=#SITE_FLAG# 
+        </isNotEmpty>
+	</select>
+	<!-- 新需求 end -->
+</sqlMap>

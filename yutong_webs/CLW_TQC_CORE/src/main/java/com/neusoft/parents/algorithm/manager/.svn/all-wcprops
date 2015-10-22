@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager
+END
+SimpleTripOrbitGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/SimpleTripOrbitGenerator.java
+END
+AlgorithmManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/AlgorithmManager.java
+END
+IStationGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/IStationGenerator.java
+END
+ITimeCalculator.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/ITimeCalculator.java
+END
+SimpleStationGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/SimpleStationGenerator.java
+END
+SimpleTimeCalculator.java
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/SimpleTimeCalculator.java
+END
+AlgorithmUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/AlgorithmUtil.java
+END
+SimpleStationGenerator2.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/SimpleStationGenerator2.java
+END
+IMileageCalculator.java
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/IMileageCalculator.java
+END
+SimpleMileageCalculator.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/SimpleMileageCalculator.java
+END
+IStationStudentGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 148
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/IStationStudentGenerator.java
+END
+SimpleStationStudentGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 153
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/SimpleStationStudentGenerator.java
+END
+StationComparator.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/StationComparator.java
+END
+ITripOrbitGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/parents/algorithm/manager/ITripOrbitGenerator.java
+END

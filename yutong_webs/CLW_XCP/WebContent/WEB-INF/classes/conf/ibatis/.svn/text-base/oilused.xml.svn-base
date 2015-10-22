@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OilUsed">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="OilUsed" type="com.neusoft.clw.itsmanage.oilmanage.oilused.domain.OilUsed" />
+	<!-- 按车辆显示油耗列表 resultMap-->
+	<resultMap id="oilused-result" class="OilUsed">
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="hkm_oilused" column="HKM_OILUSED" />
+		<result property="check_value" column="CHECK_VALUE" />
+		<result property="refuel_amount" column="REFUEL_AMOUNT" />
+		<result property="minusoil" column="MINUSOIL" />
+		<result property="COUNT_OIL_TOTAL" column="COUNT_OIL_TOTAL" />
+		<result property="minusamount" column="MINUSAMOUNT" />
+		<result property="COUNT_MILEAGE" column="COUNT_MILEAGE" />
+		<result property="short_allname" column="SHORT_NAME" />
+	</resultMap>
+	
+	<!-- 按车辆显示总计油耗列表 resultMap-->
+	<resultMap id="oilusedsum-result" class="OilUsed">
+		<result property="refuel_amount" column="REFUEL_AMOUNT" />
+		<result property="COUNT_OIL_TOTAL" column="COUNT_OIL_TOTAL" />
+		<result property="minusamount" column="MINUSAMOUNT" />
+		<result property="COUNT_MILEAGE" column="COUNT_MILEAGE" />
+	</resultMap>
+	
+	<!-- 单车累计油耗图表列表 resultMap-->
+	<resultMap id="oilusedline-result" class="OilUsed">
+		<result property="alarm_day" column="alarm_day" />
+		<result property="COUNT_OIL_TOTAL" column="COUNT_OIL_TOTAL" />
+	</resultMap>
+	
+	<!-- 单车累计油耗信息列表 resultMap-->
+	<resultMap id="oilusedInfo-result" class="OilUsed">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="short_allname" column="short_allname" />
+	</resultMap>
+
+	<!-- =====================================for VEHICLE start=========================================== -->
+	
+	<!-- 按车辆显示油耗列表 -->
+	<select id="getOilUsedList" parameterClass="OilUsed" resultMap="oilused-result">
+		SELECT ccna.ROUTE_NAME,
+		  ccna.vehicle_vin,
+		  ccna.VEHICLE_LN,
+		  ccna.VEHICLE_CODE,
+		  ccna.DRIVER_NAME,
+		  to_number(TO_CHAR( ROUND((NVL(total_info.COUNT_OIL_TOTAL, 0) * 100 / DECODE(NVL(total_info.COUNT_MILEAGE, 0), 0, 1, NVL(total_info.COUNT_MILEAGE, 0))), 3) ,'fm9999999990.00'))                              AS HKM_OILUSED,
+		  to_number(TO_CHAR( NVL(ccna.check_value, '0'),'fm9999999990.00'))                                                                                                                                            AS check_value,
+		  to_number(TO_CHAR( ROUND((NVL(total_info.COUNT_OIL_TOTAL, 0) * 100 / DECODE(NVL(total_info.COUNT_MILEAGE, 0), 0, 1, NVL(total_info.COUNT_MILEAGE, 0))), 3) - NVL(ccna.check_value, '0') ,'fm9999999990.00')) AS minusOil,
+		  to_number(TO_CHAR( NVL(ccna.refuel_amount, 0) ,'fm9999999990.00'))                                                                                                                                           AS refuel_amount,
+		  to_number(TO_CHAR( NVL(total_info.COUNT_OIL_TOTAL, 0) ,'fm9999999990.00'))                                                                                                                                   AS COUNT_OIL_TOTAL,
+		  to_number(TO_CHAR( NVL(ROUND(NVL(ccna.refuel_amount, 0) - NVL(total_info.COUNT_OIL_TOTAL, 0), 3), 0) ,'fm9999999990.00')) minusAmount,
+		  to_number(TO_CHAR( NVL(total_info.COUNT_MILEAGE, 0) ,'fm9999999990.00')) AS COUNT_MILEAGE,
+		  ccna.SHORT_NAME
+		FROM
+		  (SELECT ccbi.VEHICLE_LN,
+		    ccbi.vehicle_vin,
+		    ccbi.VEHICLE_CODE,
+		    ccbi.DRIVER_NAME,
+		    ccbi.ORGANIZATION_ID,
+		    cyrt.ROUTE_NAME,
+		    cyrf.refuel_amount,
+		    OIL_CHECK_T.check_value,
+		    ccbi.OIL_CONFIG,
+		    ccbi.SHORT_NAME
+		  FROM CLW_JC_VEHICLE_BASEINFO_VI ccbi,
+		    CLW_YW_ROUTE_T cyrt,
+		    (SELECT ca.vehicle_vin,
+		      NVL(SUM(ca.refuel_amount), '0') refuel_amount
+		    FROM CLW_YW_REFUELRED_T ca
+		    WHERE ca.valid_flag = '0'
+		    AND to_date(TO_CHAR(ca.refuel_time,'yyyy-MM-dd'),'yyyy-MM-dd') BETWEEN
+		      CASE
+		        WHEN (SELECT MAX(cb.start_time) start_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		        THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		        ELSE
+		          (SELECT MAX(cb.start_time) start_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id#
+		          )
+		      END
+		    AND
+		      CASE
+		        WHEN (SELECT MAX(cb.end_time) end_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		        THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		        ELSE
+		          (SELECT MAX(cb.end_time) end_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id#
+		          )
+		      END
+		    GROUP BY ca.vehicle_vin
+		    ) cyrf,
+		    (SELECT cc.vehicle_vin,
+		      NVL(cc.check_value,0) check_value,
+		      cc.enterprise_id
+		    FROM CLW_YW_OIL_CHECK_T cc
+		    WHERE cc.CHECK_TIME_CODE = #check_time_code#
+		    AND cc.valid_flag(+)     = '0'
+		    AND cc.ENTERPRISE_ID     = #enterprise_id#
+		    ) OIL_CHECK_T
+		  WHERE ccbi.vehicle_vin    = cyrf.vehicle_vin(+)
+		  AND ccbi.ROUTE_ID         = cyrt.ROUTE_ID(+)
+		  AND CCBI.VEHICLE_VIN      = OIL_CHECK_T.vehicle_vin(+)
+		  AND ccbi.ORGANIZATION_ID IN
+		    (SELECT enterprise_id
+		    FROM clw_jc_enterprise_vi
+		    WHERE left_num &gt;=
+		    (SELECT left_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #organization_id#
+		    ) AND right_num &lt;=
+		    (SELECT right_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #organization_id#
+		    )
+		    )
+		  ) ccna,
+		  (SELECT ccbb.vehicle_vin,
+		    ROUND(SUM(NVL(t.oil, 0)), 3)     AS COUNT_OIL_TOTAL,
+		    ROUND(SUM(NVL(t.mileage, 0)), 3) AS COUNT_MILEAGE
+		  FROM clw_yw_baddriving_t t,
+		    CLW_CL_BASE_INFO_T ccbb
+		  WHERE t.alarm_day BETWEEN
+		    CASE
+		      WHEN (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		      ELSE
+		        (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND
+		    CASE
+		      WHEN (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		      ELSE
+		        (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		  AND ccbb.DEVICE_TYPE='0'
+		  AND EXISTS
+		    (SELECT ENTERPRISE_ID
+		    FROM CLW_JC_ENTERPRISE_T
+		      START WITH ENTERPRISE_ID       = #organization_id#
+		      CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		    AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		    )
+		  GROUP BY ccbb.vehicle_vin
+		  ) total_info 
+		  WHERE ccna.vehicle_vin = total_info.vehicle_vin(+) AND ccna.OIL_CONFIG='0' AND ccna.ORGANIZATION_ID IN
+		  (SELECT enterprise_id
+		  FROM clw_jc_enterprise_vi
+		  WHERE left_num &gt;=
+		  (SELECT left_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  ) AND right_num &lt;=
+		  (SELECT right_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  )
+		  )
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+      	  ccna.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+      </isNotEmpty>
+		<dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>
+	</select>
+	
+	<!-- 按车辆显示油耗数量 -->
+	<select id="getOilUsedCount" parameterClass="OilUsed" resultClass="Integer">
+		SELECT COUNT(1)
+		FROM
+		  (SELECT ccbi.VEHICLE_LN,
+		    ccbi.vehicle_vin,
+		    ccbi.VEHICLE_CODE,
+		    ccbi.DRIVER_NAME,
+		    ccbi.ORGANIZATION_ID,
+		    cyrt.ROUTE_NAME,
+		    cyrf.refuel_amount,
+		    OIL_CHECK_T.check_value,
+		    ccbi.OIL_CONFIG,
+		    ccbi.SHORT_NAME
+		  FROM CLW_JC_VEHICLE_BASEINFO_VI ccbi,
+		    CLW_YW_ROUTE_T cyrt,
+		    (SELECT ca.vehicle_vin,
+		      NVL(SUM(ca.refuel_amount), '0') refuel_amount
+		    FROM CLW_YW_REFUELRED_T ca
+		    WHERE ca.valid_flag = '0'
+		    AND to_date(TO_CHAR(ca.refuel_time,'yyyy-MM-dd'),'yyyy-MM-dd') BETWEEN
+		      CASE
+		        WHEN (SELECT MAX(cb.start_time) start_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		        THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		        ELSE
+		          (SELECT MAX(cb.start_time) start_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id#
+		          )
+		      END
+		    AND
+		      CASE
+		        WHEN (SELECT MAX(cb.end_time) end_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		        THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		        ELSE
+		          (SELECT MAX(cb.end_time) end_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id#
+		          )
+		      END
+		    GROUP BY ca.vehicle_vin
+		    ) cyrf,
+		    (SELECT cc.vehicle_vin,
+		      NVL(cc.check_value,0) check_value,
+		      cc.enterprise_id
+		    FROM CLW_YW_OIL_CHECK_T cc
+		    WHERE cc.CHECK_TIME_CODE = #check_time_code#
+		    AND cc.valid_flag(+)     = '0'
+		    AND cc.ENTERPRISE_ID     = #enterprise_id#
+		    ) OIL_CHECK_T
+		  WHERE ccbi.vehicle_vin    = cyrf.vehicle_vin(+)
+		  AND ccbi.ROUTE_ID         = cyrt.ROUTE_ID(+)
+		  AND CCBI.VEHICLE_VIN      = OIL_CHECK_T.vehicle_vin(+)
+		  AND ccbi.ORGANIZATION_ID IN
+		    (SELECT enterprise_id
+		    FROM clw_jc_enterprise_vi
+		    WHERE left_num &gt;=
+		    (SELECT left_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #organization_id#
+		    ) AND right_num &lt;=
+		    (SELECT right_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #organization_id#
+		    )
+		    )
+		  ) ccna,
+		  (SELECT ccbb.vehicle_vin,
+		    ROUND(SUM(NVL(t.oil, 0)), 3)     AS COUNT_OIL_TOTAL,
+		    ROUND(SUM(NVL(t.mileage, 0)), 3) AS COUNT_MILEAGE
+		  FROM clw_yw_baddriving_t t,
+		    CLW_CL_BASE_INFO_T ccbb
+		  WHERE t.alarm_day BETWEEN
+		    CASE
+		      WHEN (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		      ELSE
+		        (SELECT MAX(cb.start_time) start_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND
+		    CASE
+		      WHEN (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		      THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		      ELSE
+		        (SELECT MAX(cb.end_time) end_time
+		        FROM CLW_YW_OCKTIME_T cb
+		        WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		        AND cb.valid_flag        = '0'
+		        AND cb.ENTERPRISE_ID     = #enterprise_id#
+		        )
+		    END
+		  AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		  AND ccbb.DEVICE_TYPE='0'
+		  AND EXISTS
+		    (SELECT ENTERPRISE_ID
+		    FROM CLW_JC_ENTERPRISE_T
+		      START WITH ENTERPRISE_ID       = #organization_id#
+		      CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		    AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		    )
+		  GROUP BY ccbb.vehicle_vin
+		  ) total_info 
+		  WHERE ccna.vehicle_vin = total_info.vehicle_vin(+) AND ccna.OIL_CONFIG='0' AND ccna.ORGANIZATION_ID IN
+		  (SELECT enterprise_id
+		  FROM clw_jc_enterprise_vi
+		  WHERE left_num &gt;=
+		  (SELECT left_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  ) AND right_num &lt;=
+		  (SELECT right_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  )
+		  )
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+      	  ccna.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+      </isNotEmpty>
+	</select>
+	
+	<!-- 按车辆显示总计油耗列表 -->
+	<select id="getOilUsedSumList" parameterClass="OilUsed" resultMap="oilusedsum-result">
+		SELECT ROUND(SUM(refuel_amount),2) refuel_amount,
+		  ROUND(SUM(COUNT_OIL_TOTAL),2) COUNT_OIL_TOTAL,
+		  ROUND(SUM(minusAmount),2) minusAmount,
+		  ROUND(SUM(COUNT_MILEAGE),2) COUNT_MILEAGE
+		FROM
+		  (SELECT ccna.ROUTE_NAME,
+		    ccna.VEHICLE_LN,
+		    ccna.VEHICLE_CODE,
+		    ccna.DRIVER_NAME,
+		    ROUND((NVL(total_info.COUNT_OIL_TOTAL, 0) * 100 / DECODE(NVL(total_info.COUNT_MILEAGE, 0), 0, 1, NVL(total_info.COUNT_MILEAGE, 0))), 3)                              AS HKM_OILUSED,
+		    NVL(ccna.check_value, '0')                                                                                                                                           AS check_value,
+		    ROUND((NVL(total_info.COUNT_OIL_TOTAL, 0) * 100 / DECODE(NVL(total_info.COUNT_MILEAGE, 0), 0, 1, NVL(total_info.COUNT_MILEAGE, 0))), 3) - NVL(ccna.check_value, '0') AS minusOil,
+		    NVL(ccna.refuel_amount, 0)                                                                                                                                           AS refuel_amount,
+		    NVL(total_info.COUNT_OIL_TOTAL, 0)                                                                                                                                   AS COUNT_OIL_TOTAL,
+		    NVL(ROUND(NVL(ccna.refuel_amount, 0) - NVL(total_info.COUNT_OIL_TOTAL, 0), 3), 0) minusAmount,
+		    NVL(total_info.COUNT_MILEAGE, 0) AS COUNT_MILEAGE
+		  FROM
+		    (SELECT ccbi.VEHICLE_LN,
+		      ccbi.vehicle_vin,
+		      ccbi.VEHICLE_CODE,
+		      ccbi.DRIVER_NAME,
+		      ccbi.ORGANIZATION_ID,
+		      cyrt.ROUTE_NAME,
+		      cyrf.refuel_amount,
+		      OIL_CHECK_T.check_value,
+		      ccbi.OIL_CONFIG,
+		      ccbi.SHORT_NAME
+		    FROM CLW_JC_VEHICLE_BASEINFO_VI ccbi,
+		      CLW_YW_ROUTE_T cyrt,
+		      (SELECT ca.vehicle_vin,
+		        NVL(SUM(ca.refuel_amount), '0') refuel_amount
+		      FROM CLW_YW_REFUELRED_T ca
+		      WHERE ca.valid_flag = '0'
+		      AND to_date(TO_CHAR(ca.refuel_time,'yyyy-MM-dd'),'yyyy-MM-dd') BETWEEN
+		        CASE
+		          WHEN (SELECT MAX(cb.start_time) start_time
+		            FROM CLW_YW_OCKTIME_T cb
+		            WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		            AND cb.valid_flag        = '0'
+		            AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		          THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		          ELSE
+		            (SELECT MAX(cb.start_time) start_time
+		            FROM CLW_YW_OCKTIME_T cb
+		            WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		            AND cb.valid_flag        = '0'
+		            AND cb.ENTERPRISE_ID     = #enterprise_id#
+		            )
+		        END
+		      AND
+		        CASE
+		          WHEN (SELECT MAX(cb.end_time) end_time
+		            FROM CLW_YW_OCKTIME_T cb
+		            WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		            AND cb.valid_flag        = '0'
+		            AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		          THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		          ELSE
+		            (SELECT MAX(cb.end_time) end_time
+		            FROM CLW_YW_OCKTIME_T cb
+		            WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		            AND cb.valid_flag        = '0'
+		            AND cb.ENTERPRISE_ID     = #enterprise_id#
+		            )
+		        END
+		      GROUP BY ca.vehicle_vin
+		      ) cyrf,
+		      (SELECT cc.vehicle_vin,
+		        NVL(cc.check_value,0) check_value,
+		        cc.enterprise_id
+		      FROM CLW_YW_OIL_CHECK_T cc
+		      WHERE cc.CHECK_TIME_CODE = #check_time_code#
+		      AND cc.valid_flag(+)     = '0'
+		      AND cc.ENTERPRISE_ID     = #enterprise_id#
+		      ) OIL_CHECK_T
+		    WHERE ccbi.vehicle_vin    = cyrf.vehicle_vin(+)
+		    AND ccbi.ROUTE_ID         = cyrt.ROUTE_ID(+)
+		    AND CCBI.VEHICLE_VIN      = OIL_CHECK_T.vehicle_vin(+)
+		    AND ccbi.ORGANIZATION_ID IN
+		      (SELECT enterprise_id
+		      FROM clw_jc_enterprise_vi
+		      WHERE left_num &gt;=
+		      (SELECT left_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      ) AND right_num &lt;=
+		      (SELECT right_num
+		      FROM clw_jc_enterprise_vi
+		      WHERE enterprise_id = #organization_id#
+		      )
+		      )
+		    ) ccna,
+		    (SELECT ccbb.vehicle_vin,
+		      ROUND(SUM(NVL(t.oil, 0)), 3)     AS COUNT_OIL_TOTAL,
+		      ROUND(SUM(NVL(t.mileage, 0)), 3) AS COUNT_MILEAGE
+		    FROM clw_yw_baddriving_t t,
+		      CLW_CL_BASE_INFO_T ccbb
+		    WHERE t.alarm_day BETWEEN
+		      CASE
+		        WHEN (SELECT MAX(cb.start_time) start_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		        THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		        ELSE
+		          (SELECT MAX(cb.start_time) start_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id#
+		          )
+		      END
+		    AND
+		      CASE
+		        WHEN (SELECT MAX(cb.end_time) end_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		        THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		        ELSE
+		          (SELECT MAX(cb.end_time) end_time
+		          FROM CLW_YW_OCKTIME_T cb
+		          WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		          AND cb.valid_flag        = '0'
+		          AND cb.ENTERPRISE_ID     = #enterprise_id#
+		          )
+		      END
+		    AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		    AND ccbb.DEVICE_TYPE='0'
+		    AND EXISTS
+		      (SELECT ENTERPRISE_ID
+		      FROM CLW_JC_ENTERPRISE_T
+		        START WITH ENTERPRISE_ID       = #organization_id#
+		        CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		      AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		      )
+		    GROUP BY ccbb.vehicle_vin
+		    ) total_info 
+		    WHERE ccna.vehicle_vin = total_info.vehicle_vin(+) AND ccna.OIL_CONFIG='0' AND ccna.ORGANIZATION_ID IN
+		    (SELECT enterprise_id
+		    FROM clw_jc_enterprise_vi
+		    WHERE left_num &gt;=
+		    (SELECT left_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #organization_id#
+		    ) AND right_num &lt;=
+		    (SELECT right_num
+		    FROM clw_jc_enterprise_vi
+		    WHERE enterprise_id = #organization_id#
+		    )
+		    )
+      <isNotEmpty prepend="AND" property="vehicle_ln">
+            ccna.VEHICLE_LN like '%' || #vehicle_ln# ||'%' escape '\'
+      </isNotEmpty>
+		)
+	</select>
+	<!-- =====================================for VEHICLE start=========================================== -->
+	
+	<!-- =====================================for oilLineChart start=========================================== -->
+	<select id="getChartDate" parameterClass="OilUsed" resultMap="oilusedline-result">
+		SELECT TO_CHAR(t.alarm_day,'MM-dd') alarm_day,
+		  <!--round(sum(nvl(t.oil, 0)), 3) as COUNT_OIL_TOTAL -->
+		  ROUND((SUM(NVL(t.oil, 0)) * 100 / DECODE(SUM(NVL(t.mileage, 0)), 0, 1, SUM(NVL(t.mileage, 0)))), 2) AS COUNT_OIL_TOTAL
+		FROM clw_yw_baddriving_t t,
+		  CLW_CL_BASE_INFO_T ccbb
+		WHERE t.alarm_day BETWEEN
+		  CASE
+		    WHEN (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		    THEN TRUNC(to_date(#check_time_code#,'yyyy-MM'), 'MONTH')
+		    ELSE
+		      (SELECT MAX(cb.start_time) start_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id#
+		      )
+		  END
+		AND
+		  CASE
+		    WHEN (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id# ) IS NULL
+		    THEN last_day(to_date(#check_time_code#,'yyyy-MM'))
+		    ELSE
+		      (SELECT MAX(cb.end_time) end_time
+		      FROM CLW_YW_OCKTIME_T cb
+		      WHERE cb.CHECK_TIME_CODE = #check_time_code#
+		      AND cb.valid_flag        = '0'
+		      AND cb.ENTERPRISE_ID     = #enterprise_id#
+		      )
+		  END
+		AND t.vehicle_vin   =#vehicle_vin#
+		AND t.vehicle_vin(+)=ccbb.vehicle_vin
+		AND ccbb.DEVICE_TYPE='0'
+		AND EXISTS
+		  (SELECT ENTERPRISE_ID
+		  FROM CLW_JC_ENTERPRISE_T
+		    START WITH ENTERPRISE_ID       = #organization_id#
+		    CONNECT BY PRIOR ENTERPRISE_ID = PARENT_ID
+		  AND ccbb.ORGANIZATION_ID         =ENTERPRISE_ID
+		  )
+		GROUP BY t.alarm_day
+		ORDER BY t.alarm_day
+	</select>
+	
+	<select id="getChartInfo" parameterClass="OilUsed" resultMap="oilusedInfo-result">
+		SELECT cjcv.vehicle_ln,
+		  cjcv.vehicle_code,
+		  cjcv.short_allname
+		FROM CLW_JC_CLEN_VI cjcv
+		WHERE cjcv.vehicle_vin    =#vehicle_vin#
+		AND cjcv.ORGANIZATION_ID IN
+		  (SELECT enterprise_id
+		  FROM clw_jc_enterprise_vi
+		  WHERE left_num &gt;=
+		  (SELECT left_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  ) AND right_num &lt;=
+		  (SELECT right_num
+		  FROM clw_jc_enterprise_vi
+		  WHERE enterprise_id = #organization_id#
+		  )
+		  )
+	</select>
+</sqlMap>

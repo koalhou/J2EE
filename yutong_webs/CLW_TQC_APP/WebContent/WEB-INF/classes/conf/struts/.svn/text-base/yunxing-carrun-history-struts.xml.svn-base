@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="carRun" namespace="/carrun" extends="clw-default">
+		<action name="ready" class="carRunHistoryAction" method="readyPage">
+			<result name="error">/WEB-INF/jsp/yunxing/carrun/newcarrun_history.jsp</result>
+			<result name="success">/WEB-INF/jsp/yunxing/carrun/newcarrun_history.jsp</result>	
+		</action>
+		<action name="exportRunHistory" class="carRunHistoryAction" method="exportRunHistory">
+			<result name="error" type="redirect-action">
+				<param name="actionName">ready</param>
+				<param name="message">${message}</param>
+			</result>
+		</action>		
+	</package>
+	<package name="carRun-json" namespace="/carrun_history" extends="json-default">
+		<action name="carList" class="carRunHistoryAction" method="getSelectCarList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+		<action name="historyList" class="carRunHistoryAction" method="getRunHistoryList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+            <result name="error" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action> 
+       
+       <!-- add by jinp begin -->
+       <action name="getTreeNodesWithoutOnlineRepare" class="carRunHistoryAction" method="getTreeNodesWithoutOnlineRepare">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	 <action name="getTreeNodesWithoutOnline" class="carRunHistoryAction" method="getTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- add by jinp begin -->
+       <action name="getTreeNodesWithoutl_exe" class="carRunHistoryAction" method="getTreeNodesWithoutl_exe">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchTreeNodesWithoutOnline" class="carRunHistoryAction" method="searchTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	
+       	<action name="searchTreeNodesWithoutOnlineRepare" class="carRunHistoryAction" method="searchTreeNodesWithoutOnlineRepare">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="getPlannedTreeNodes" class="carRunHistoryAction" method="getPlannedTreeNodes">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="getPlannedTreeNodes_exe" class="carRunHistoryAction" method="getPlannedTreeNodes_exe">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchPlannedTreeNodesWithoutOnline" class="carRunHistoryAction" method="searchPlannedTreeNodesWithoutOnline">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<action name="searchPlannedTreeNodesWithoutl_exe" class="carRunHistoryAction" method="searchPlannedTreeNodesWithoutl_exe">
+        	<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">treeNodesList</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">treeNodesList</param>
+           	</result>
+       	</action>
+       	<!-- add by jinp end -->      
+	</package>
+</struts>

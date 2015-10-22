@@ -1,0 +1,11 @@
+#Thu Dec 15 10:21:20 CST 2011
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/jsp/common/meta.jsp=UTF-8
+encoding//WebContent/WEB-INF/jsp/common/taglibs.jsp=UTF-8
+encoding//WebContent/scripts=utf-8
+encoding//WebContent/styles/common.css=utf-8
+encoding//src/java/com/neusoft/clw/common/util/Constants.java=UTF-8
+encoding//src/java/com/neusoft/clw/yw/zd/terminal/action/TerminalManageAction-conversion.properties=UTF-8
+encoding//src/resources/ApplicationResources_zh_CN.properties=UTF-8
+encoding//src/resources/log4j.properties=UTF-8
+encoding/<project>=UTF-8

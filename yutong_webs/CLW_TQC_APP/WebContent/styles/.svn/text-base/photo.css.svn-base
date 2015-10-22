@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+.searchPlan {
+	float: left;
+	width: 250px;
+}
+
+/* 底部内容，图片列表。 */
+.list_pic ul{list-style-type:none}
+.list_pic li{float:left;margin:0;padding:0;width:20%;text-align:center;}
+.list_pic li img{display:block;margin:0 auto;padding:2px;border:1px solid #d4d4d4;_vertical-align:bottom;}
+/* .list_pic li h4{margin:0;padding:0 5px;height:40px;line-height:40px;color:#000000;font-size:12px;font-weight:normal;overflow:hidden;} */
+.list_pic li h4{margin:0;padding:0 5px;height:15px;line-height:15px;color:#000000;font-size:12px;font-weight:normal;overflow:hidden;}
+.list_pic li a{COLOR:#000000;text-decoration:none;font-size:12px;font-weight:normal;}
+.list_pic li a:hover{COLOR:#b80000;text-decoration:underline;}

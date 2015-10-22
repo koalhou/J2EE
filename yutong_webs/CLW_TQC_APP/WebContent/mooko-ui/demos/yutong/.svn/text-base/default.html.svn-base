@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sublime Text - Download</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/global.css" />
+    <link rel="stylesheet" type="text/css" href="./stylesheets/pop.css" />
+    <link rel="stylesheet" type="text/css" href="./stylesheets/icon.css" />
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.menubar.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/default/mk.menu.css">
+    <link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+
+    <style>
+      a.m-btn-plain-active {
+        border: 0 !important ;
+      }
+      /*.mk-sidelayer {
+        background: none repeat scroll 0 0 #00FFFF;
+        border: 0 solid red;
+        display: block;
+        margin-left: 2px;
+        position: fixed;
+        right: 0;
+        width: 300;
+        height: 300;
+      }*/
+    </style>
+<script type="text/javascript" src="http://app.mapabc.com/apis?&t=ajaxmap&v=2.1.2&key=b0a7db0b3a30f944a21c3682064dc70ef5b738b062f6479a5eca39725798b1ee300bd8d5de3a4ae3|29e8ed1f7f6a97d8e99fc568cea6a7dc0ccd920856e07c0718b9885faf7551a18141699c81f526d7"></script> 
+    <script src="../../libs/jquery-1.7.2.min.js"></script>
+    <script src="../../core/mk.parser.js"></script>
+    <script src="../../core/mk.linkbutton.js"></script>
+    <script src="../../core/mk.menubar.js"></script>
+    <script src="../../core/mk.menu.js"></script>
+    <script src="../../core/mk.sidelayer.js"></script>
+    <script src="demo.js"></script>
+    <script>
+      $(function() {
+        $('#bi1, #bi2, #bi3, #bi4').mk_menubar();
+        $('#side_layer').mk_sidelayer({
+          url: 'a1.html',
+          show: true
+        });
+
+        $('#show_hide').click(function() {
+          if ($('#side_layer').mk_sidelayer('is_show')) {
+            $('#side_layer').mk_sidelayer('hide');
+          } else {
+            $('#side_layer').mk_sidelayer('show');
+          }
+        });
+        $('#a1').click(function() {
+          $('#side_layer').mk_sidelayer('reload', {
+            url: 'a1.html'
+          });
+        });
+        $('#a2').click(function() {
+          $('#side_layer').mk_sidelayer('reload', {
+            url: 'a2.html'
+          });
+        });
+        $('#a3').click(function() {
+          $('#side_layer').mk_sidelayer('reload', {
+            url: 'a3.html'
+          });
+        });
+        $('#close').click(function() {
+          $('#side_layer').mk_sidelayer('close');
+        });
+
+        mapInit();
+      });
+ function mapInit() {   
+    var mapOptions = new MMapOptions();//构建地图辅助类   
+    mapOptions.zoom=13;//设置地图zoom级别   
+    mapOptions.center=new MLngLat(116.397428,39.90923);   //设置地图中心点   
+    mapOptions.toolbar = DEFAULT;//工具条   
+    mapOptions.toolbarPos = new MPoint(15,15);  //工具条   
+    mapOptions.overviewMap = SHOW;//是否显示鹰眼   
+    mapOptions.scale = SHOW;//是否显示比例尺   
+    mapOptions.returnCoordType = COORD_TYPE_OFFSET;//返回数字坐标   
+    mapOptions.zoomBox = true;//鼠标滚轮缩放和双击放大时是否有红框动画效果。   
+    mapObj=new MMap("iCenter",mapOptions); //地图初始   
+} 
+    </script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <div class="headBg">
+          <div class="logo">
+            <img src="./images/logo.png" />
+          </div>
+          <div class="userInfo"><strong>欢迎您！企业管理员</strong>
+            <p class="userLink"><a href="/CLW_XCP/logout.shtml">注销</a> | <a href="/CLW_XCP/usm/modifyPersonalinitAction.shtml">设置</a> | <a href="javascript:aboutbrwose();">帮助</a></p>
+          </div>
+          <div class="navigation">
+            <ul>
+              <li class="snav1"><a href="javascript:void(0)" id="bi1" class="mk-menubar-item xx" data-options="menu: '#mm1', arrow: false">系统管理</a></li>
+              <li class="snav2"><a href="javascript:void(0)" id="bi2" class="mk-menubar-item xx" data-options="menu: '#mm2', arrow: false">机务管理</a></li>
+              <li class="snav3"><a href="javascript:void(0)" id="bi3" class="mk-menubar-item xx" data-options="menu: '#mm3', arrow: false">基础数据</a></li>
+              <li class="snav4"><a href="javascript:void(0)" id="bi4" class="mk-menubar-item xx" data-options="menu: '#mm4', arrow: false">乘车管理</a></li>
+
+              <li class="snav5">
+              <a href="default.html" id="bi0" class="mk-menubutton-item xx" data-options="menu: '#mm0', arrow: false">线路监控</a>
+              </li>
+            </ul>            
+          </div>
+        </div>
+      </div>
+      <br />
+      <br />
+      <br />
+      <button id="show_hide">Click</button>
+      <button id="close">close</button>
+      <button id="a1">A1</button>
+      <button id="a2">A2</button>
+      <button id="a3">A3</button>
+<div style="width:400px; height:400px;">   
+<div id="iCenter" style="width:400px; height:400px;"></div>   
+</div> 
+    </div>
+    
+    <!-- <div id="side_layer" class="mk-sidelayer">
+      <div class="mk-sidelayer-bar" style="background: red;">Tool bar456</div>
+      <div class="mk-sidelayer-title-bar" style="background: greed;">Title123</div>
+      <div class="mk-sidelayer-content" style="background: yellow;"></div>
+    </div> -->
+    <div id="side_layer" class="mk-sidelayer">
+      <div class="mk-sidelayer-bar">Test</div>
+      <div class="mk-sidelayer-title-bar pop-tools">
+            <span class="pop-btn show"></span>
+            <h1>辽A666666</h1>
+            <ul>
+                <li><a href="#"><img src="images/pop_btn_0.png"/></a></li>
+                <li><a href="#"><img src="images/pop_btn_1.png"/></a></li>
+                <li><a href="#"><img src="images/pop_btn_2.png"/></a></li>
+                <li><a href="#"><img src="images/pop_btn_3.png"/></a></li>
+                <li><a href="#"><img src="images/pop_btn_4.png"/></a></li>
+                <li><a href="#"><img src="images/pop_btn_5.png"/></a></li>
+                <li class="selected"><a href="#"><img src="images/pop_btn_6.png"/></a></li>
+            </ul>
+      </div>
+      <div class="mk-sidelayer-content warn">
+        <h2>超速告警</h2>
+        <span class="times">2012-12-12 00:00:00</span>
+        <div class="wait"><strong>120</strong>条未处理告警</div>
+            <table class="table" width="470" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <th>车速：</th>
+                    <td>120</td>
+                    <th>驾驶员：</th>
+                    <td>李三三</td>
+                    <th>电话：</th>
+                    <td>15966666666</td>
+                </tr>
+            </table>
+      </div>
+      <div id="map">
+      </div>
+      <div class="sub-form">
+          <form action="#">
+              <textarea rows="3"></textarea>
+              <span class="warn-history"><a href="#">查看历史告警</a></span>
+              <input class="btn-blue" type="submit" value="解除"/>
+          </form>
+      </div>
+    </div>
+
+    <div id="test" style="width: 500px;height: 500px;border: 1px solid red;">
+    </div>
+
+    <div id="mm0" style="width: 140px;"></div>
+    <div id="mm1" style="width: 140px;">
+      <div data-options="icon_cls: 'icon-1'"><a href="1.html">车辆运行日志</a></div>
+      <div data-options="icon_cls: 'icon-2'"><a href="/CLW_XCP/ridealarm/ready.shtml">异常乘车统计</a></div>
+      <div data-options="icon_cls: 'icon-3'"><a href="/CLW_XCP/humanbaddrv/baddrive.shtml">违规驾驶统计</a></div>
+      <div data-options="icon_cls: 'icon-4'"><a href="/CLW_XCP/stride/ready.shtml">学生乘车记录</a></div>
+    </div>
+
+    <div id="mm2" style="width:120px;">              
+      <div data-options="icon_cls: 'icon-5'"><a href="2.html">站点配置</a></div>
+      <div data-options="icon_cls: 'icon-6'"><a href="/CLW_XCP/route/routemanage.shtml">线路管理</a></div>
+      <div data-options="icon_cls: 'icon-7'"><a href="/CLW_XCP/infomanage/ridingplan.shtml">乘车规划</a></div>
+      <div data-options="icon_cls: 'icon-8'"><a href="/CLW_XCP/holiday/holidaymanage.shtml">请销假管理</a></div>
+    </div>
+
+    <div id="mm3" style="width:120px;">
+      <div data-options="icon_cls: 'icon-9'"><a href="3.html">车况监控</a></div>
+      <div data-options="icon_cls: 'icon-10'"><a href="/CLW_XCP/oilused/oilused.shtml">油耗分析</a></div>
+      <div data-options="icon_cls: 'icon-11'"><a href="/CLW_XCP/baddriv/baddriving.shtml">不良驾驶记录</a></div>
+      <div data-options="icon_cls: 'icon-12'"><a href="/CLW_XCP/runoil/ready.shtml">日行车记录</a></div>      
+    </div>
+
+    <div id="mm4" style="width:140px;">
+      <div data-options="icon_cls: 'icon-13'"><a href="4.html">车辆信息</a></div>
+      <div data-options="icon_cls: 'icon-14'"><a href="/CLW_XCP/rm/roleAction.shtml">角色管理</a></div>
+      <div data-options="icon_cls: 'icon-15'"><a href= "/CLW_XCP/usm/usermanageAction.shtml">用户管理</a></div>
+      <div data-options="icon_cls: 'icon-16'"><a href="/CLW_XCP/enti/entimanage.shtml">组织结构设置</a></div>
+      <div data-options="icon_cls: 'icon-17'"><a href="/CLW_XCP/logoset/logoset.shtml">企业LOGO设置</a></div>          
+      <div data-options="icon_cls: 'icon-18'"><a href="/CLW_XCP/zdnew/init.shtml">业务参数设置</a></div>
+      <div data-options="icon_cls: 'icon-19'"><a href="/CLW_XCP/ock/ocktimeset.shtml">考核油耗月度设置</a></div>
+      <div data-options="icon_cls: 'icon-20'"><a href="/CLW_XCP/oilset/oilSet.shtml">考核油耗设置</a></div>          
+    </div>     
+  </body>
+</html>

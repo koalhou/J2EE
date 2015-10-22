@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="false"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<bean id="dataSyncJob" class="com.neusoft.clw.vncs.job.DataSyncJob">
+		<property name="appConfigCacheManager" ref="appConfigCacheManager" />
+		<property name="terminalCacheManager" ref="terminalCacheManager"/>
+		<property name="harmDefCacheManager" ref="harmDefCacheManager"/>
+		<property name="vehicleCacheManager" ref="vehicleCacheManager"/>
+		<property name="sendCommandManager" ref="sendCommandManager"/>
+		<property name="reportManager" ref="reportManager"/>
+		<property name="sendxcmsmCommandManager" ref="sendxcmsmCommandManager" />
+		<property name="syncCommandManager" ref="syncCommandManager" />
+		<property name="quartzTripCommandManager" ref="quartzTripCommandManager" />	
+		<property name="smsOrderManager" ref="smsOrderManager" />	
+		<property name="fullQuantityCacheManager" ref="fullQuantityCacheManager" />
+		<property name="tqcStatisticManager" ref="tqcStatisticManager" />
+		<property name="tqcOilWearManager" ref="tqcOilWearManager" />	
+		<property name="ridingPlanCacheManager" ref="ridingPlanCacheManager"/>	
+		<property name="siteNoteManager" ref="siteNoteManager"></property>
+		<property name="newsManager" ref="newsManager"></property>
+		<property name="vehicleRealCacheManager" ref="vehicleRealCacheManager"></property>
+		<property name="vinTripCacheManager" ref="vinTripCacheManager"></property>
+		<property name="preLineAlarm" ref="preLineAlarm"></property>
+<!-- 		<property name="overPreLine" ref="overPreLine"></property> -->
+		<property name="privateUseManager" ref="privateUseManager"></property>
+	</bean>
+	<!-- 应用配置定时任务 -->
+	<bean id="appConfigCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>appConfigCacheInit</value>
+		</property>
+	</bean>
+	<bean id="appConfigCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="appConfigCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/2 * * ?</value>
+		</property>
+	</bean> 
+	
+	<!-- 终端增减量信息定时任务 -->
+	<bean id="terminalCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>terminalCacheInit</value>
+		</property>
+	</bean>
+	
+	<bean id="terminalCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="terminalCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+	<!-- 定时发送命令任务 -->
+	<bean id="sendCommand"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>sendCommandInit</value>
+		</property>
+	</bean>
+	<bean id="sendCommandTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="sendCommand" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 每天2点同步30天补传偷油加油 add by liuja -->
+	<bean id="syncAddOrStealOil"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>sendCommandInitByOneDay</value>
+		</property>
+	</bean>
+	<bean id="syncAddOrStealOilTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="syncAddOrStealOil" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 2 * * ?</value>
+		</property>
+	</bean>
+	
+
+	<!-- 定时报表统计任务 -->
+	<bean id="reportManagerJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>reportInit</value>
+		</property>
+	</bean>
+	<bean id="reportManagerTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="reportManagerJobDetail" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>
+	<!-- 不良驾驶信息定时任务 -->
+	<bean id="harmDefCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>harmDefCacheInit</value>
+		</property>
+	</bean>
+	<bean id="harmDefCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="harmDefCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/2 * * ?</value>
+		</property>
+	</bean>
+    <bean id="vehicleCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>vehicleCacheInit</value>
+		</property>
+	</bean>
+	<bean id="vehicleCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="vehicleCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+	<!-- 校车异常信息短信下发 -->
+	<bean id="sendxcmsmCommand"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>sendXcSMSCommandInit</value>
+		</property>
+	</bean>
+	<bean id="sendxcmsmCommandTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="sendxcmsmCommand" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/3 * * * ?</value>
+		</property>
+	</bean>	
+    <!-- 行程文件更新 -->	
+	<bean id="tripSend"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>quartzTripManagerInit</value>
+		</property>
+	</bean>
+	<bean id="tripSendTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="tripSend" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 2 * * ?</value>
+		</property>
+	</bean>	
+	
+	<bean id="syncManager"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>syncManagerInit</value>
+		</property>
+	</bean>
+	<bean id="syncManagerTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="syncManager" />
+		</property>
+		<property name="cronExpression">
+			<value>0 5 2 * * ?</value>
+		</property>
+	</bean>
+	
+	<bean id="smsOrder"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>smsOrderInit</value>
+		</property>
+	</bean>
+	<bean id="smsOrderTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="smsOrder" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>	
+	
+	<bean id="fullQuantity"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>fullQuantityInit</value>
+		</property>
+	</bean>
+	<bean id="fullQuantityTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="fullQuantity" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/6 * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 员工乘车规划增减量信息定时任务 -->
+	<bean id="ridingPlanCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>ridingPlanCacheInit</value>
+		</property>
+	</bean>
+	<bean id="ridingPlanCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="ridingPlanCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 23 * * ?</value>
+		</property>
+	</bean>
+	
+	<!-- **********************通勤车定时报表统计 **************************-->
+	<bean id="tqcManagerJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>tqcStatisticManagerInit</value>
+		</property>
+	</bean>
+	<bean id="tqcManagerTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="tqcManagerJobDetail" />
+		</property>
+		<property name="cronExpression">
+		     <!-- 每3个小时执行一次-->
+			<value>0 0 0/2 * * ?</value> 
+			<!-- 每天凌晨3点执行-->
+			<!-- <value>0 0 3 * * ?</value>-->
+            <!--每10分钟执行一次
+			<value>0 0/10 * * * ?</value> -->
+		</property>
+	</bean>
+	
+	
+	<!-- 消息推送-->
+	<bean id="siteNote"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="concurrent" value="false"/> 
+		<property name="targetMethod">
+			<value>siteNoteInit</value>
+		</property>
+	</bean>
+	<bean id="siteNoteTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="siteNote" />
+		</property>
+		<property name="cronExpression">
+			<value>0/10 * * * * ?</value>
+		</property>
+	</bean>
+	
+	
+	<bean id="vehicleRealCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>vehicleRealInit</value>
+		</property>
+	</bean>
+	<bean id="vehicleRealCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="vehicleRealCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0/10 * * * * ?</value>
+		</property>
+	</bean>
+	
+	
+	<bean id="vinTripCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>vinTripInit</value>
+		</property>
+	</bean>
+	<bean id="vinTripCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="vinTripCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/2 * * * ?</value>
+		</property>
+	</bean>
+	
+	<bean id="delVinTripCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>delVinTripInit</value>
+		</property>
+	</bean>
+	<bean id="delVinTripCacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="delVinTripCache" />
+		</property>
+		<property name="cronExpression">
+			<value>0 30 0 * * ?</value>
+		</property>
+	</bean>
+	
+	
+	<bean id="newsSend"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="concurrent" value="false"/> 
+		<property name="targetMethod">
+			<value>newsInit</value>
+		</property>
+	</bean>
+	<bean id="newsTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="newsSend" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>
+	
+	
+	
+	<!-- **********************更新预运行轨迹表**************************-->
+	<bean id="updatePreLine"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>updatePreLineInit</value>
+		</property>
+	</bean>
+	<bean id="updatePreLineTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="updatePreLine" />
+		</property>
+		<property name="cronExpression">
+			<value>0 10 1 * * ?</value>
+		</property>
+	</bean>
+	
+		<!-- **********************偏航告警 1分钟一次**************************-->
+<!-- 	<bean id="overPreLineBean" -->
+<!-- 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> -->
+<!-- 		<property name="targetObject"> -->
+<!-- 			<ref bean="dataSyncJob" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="targetMethod"> -->
+<!-- 			<value>overPreLineInit</value> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="overPreLineTrigger" -->
+<!-- 		class="org.springframework.scheduling.quartz.CronTriggerBean"> -->
+<!-- 		<property name="jobDetail"> -->
+<!-- 			<ref bean="overPreLineBean" /> -->
+<!-- 		</property> -->
+<!-- 		<property name="cronExpression"> -->
+<!-- 			<value>5 0/1 * * * ?</value> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+	
+	<!-- **********************公车私用巡检 30分钟一次**************************-->
+	<bean id="privateUseManagerBean"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>privateUseInit</value>
+		</property>
+	</bean>
+	<bean id="privateUseManagerBeanTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="privateUseManagerBean" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/30 * * * ?</value>
+		</property>
+	</bean>
+	
+	
+	<!-- **********************通勤车按天统计油耗 **************************-->
+	<bean id="tqcOilWearManagerDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="dataSyncJob" />
+		</property>
+		<property name="targetMethod">
+			<value>tqcOilWearManagerInit</value>
+		</property>
+	</bean>
+	<bean id="tqcOilWearManagerTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="tqcOilWearManagerDetail" />
+		</property>
+		<property name="cronExpression">
+		    <!-- 凌晨3点执行一次 -->
+			<value>0 0 3 * * ?</value>
+		</property>
+	</bean>
+	<!-- ************************************************************ -->
+	
+	
+	<!--	Quartz总管理类 -->
+	<bean id="startQuartz"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="appConfigCacheTrigger" />
+				<ref bean="terminalCacheTrigger"/>
+				<ref bean="harmDefCacheTrigger"/>			
+				<ref bean="vehicleCacheTrigger"/>
+				<ref bean="sendCommandTrigger"/>
+				<ref bean="syncAddOrStealOilTrigger"/>
+				<ref bean="reportManagerTrigger"/>
+				<ref bean="sendxcmsmCommandTrigger"/>
+			    <ref bean="syncManagerTrigger"/>
+				<ref bean="tripSendTrigger"/>
+                <ref bean="smsOrderTrigger"/>		
+                <ref bean="fullQuantityTrigger"/>	
+                <ref bean="tqcManagerTrigger"/>	
+                <ref bean="tqcOilWearManagerTrigger"/>
+                <ref bean="ridingPlanCacheTrigger"/>
+                <ref bean="siteNoteTrigger"/>
+                <ref bean="vehicleRealCacheTrigger"/>
+                <ref bean="vinTripCacheTrigger"/>
+                <ref bean="delVinTripCacheTrigger"/>
+                <ref bean="newsTrigger"/>
+                <ref bean="updatePreLineTrigger"/>
+<!--                 <ref bean="overPreLineTrigger"/> -->
+                <ref bean="privateUseManagerBeanTrigger"/>
+			</list>
+		</property>
+	</bean>
+</beans>

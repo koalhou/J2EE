@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">   
+<html xmlns="http://www.w3.org/1999/xhtml">   
+<head>   
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />   
+<title>逆地理编码（位置描述）</title>   
+.<script type="text/javascript" src="http://app.mapabc.com/apis?&t=ajaxmap&v=2.1.2&key=b0a7db0b3a30f944a21c3682064dc70ef5b738b062f6479a5eca39725798b1ee300bd8d5de3a4ae3|29e8ed1f7f6a97d8e99fc568cea6a7dc0ccd920856e07c0718b9885faf7551a18141699c81f526d7"></script>   
+<script type="text/javascript">   
+var mapObj=null;   
+function mapInit() {   
+    var mapOptions = new MMapOptions();//构建地图辅助类   
+    mapOptions.zoom=13;//要加载的地图的缩放级别   
+    mapOptions.center=new MLngLat(116.397428,39.90923);//要加载的地图的中心点经纬度坐标   
+    mapOptions.toolbar = DEFAULT;//设置地图初始化工具条   
+    mapOptions.toolbarPos = new MPoint(15,15); //设置工具条在地图上的显示位置   
+    mapOptions.overviewMap = SHOW; //设置鹰眼地图的状态，SHOW:显示，HIDE:隐藏（默认）   
+    mapOptions.scale = SHOW; //设置地图初始化比例尺状态，SHOW:显示（默认），HIDE:隐藏。   
+    mapOptions.returnCoordType = COORD_TYPE_OFFSET;//返回数字坐标   
+    mapOptions.zoomBox = true;//鼠标滚轮缩放和双击放大时是否有红框动画效果。   
+    mapObj=new MMap("map",mapOptions); //地图初始化   
+}   
+function geocodeSearch(){   
+    var xy=document.getElementById("lnglat").value;   
+    if(xy==""){   
+        return;   
+   }else{   
+        var coor=xy.split(",");   
+        var lnglatXY=new MLngLat(coor[0],coor[1])   
+        var mls =new MReGeoCodeSearch();   
+		var opt= new MReGeoCodeSearchOptions();   
+        opt.poiNumber=1;;//返回周边的POI数量,默认10   
+		        opt.range=500;//限定周边热点POI和道路的距离范围   
+        opt.pattern=0;//返回数据的模式,0表示返回地标性POI,1表示返回全部POI，   
+        opt.exkey="";//排除的关键字   
+        mls.setCallbackFunction(poiToAddressSearch_CallBack);   
+        mls.poiToAddress(lnglatXY,opt);   
+   }   
+}   
+function poiToAddressSearch_CallBack(data){   
+    var resultStr="";   
+    if(data.error_message != null){   
+        resultStr="查询异常！"+data.error_message;   
+    }else{   
+    switch(data.message){   
+    case 'ok':   
+        resultStr+="省："+data.SpatialBean.Province.name+"<br />市："+data.SpatialBean.City.name+"<br />区："+data.SpatialBean.District.name+"</span>";   
+            for(var i=0;i<data.SpatialBean.roadList.length;i++){   
+                resultStr+="<br />道路："+data.SpatialBean.roadList[i].name+"&nbsp;&nbsp;<br />距离："+data.SpatialBean.roadList[i].distance+"<br />";   
+            }   
+            for (var i = 0; i < data.SpatialBean.poiList.length; i++) {   
+                resultStr += "<br />名称："+data.SpatialBean.poiList[i].name+"<br />地址："+data.SpatialBean.poiList[i].address+"<br />类型："+data.SpatialBean.poiList[i].type+"<br />距离："+data.SpatialBean.poiList[i].distance+"<br />经度："+data.SpatialBean.poiList[i].x+"<br />纬度："+data.SpatialBean.poiList[i].y+"<br />";   
+            }   
+    break;   
+    case 'error':   
+        content='<div class=\"default\"><div class=\"default_title\">网络忙！请重新尝试！</div><div class=\"d_link\"><div class=\"d_right\"></div><div class=\"suggest\"><strong>建议：</strong><br />如果您刷新页后仍无法显示结果，请过几分钟后再次尝试或者与我们的服务人员联系。<br />Email：service@mapabc.com <br />电话：400 810 0080</div></div></span>错误信息："+data.message+"</div>';   
+    break;   
+    default:   
+        content='<div class=\"default\"><div class=\"default_title\">对不起！网络繁忙！请稍后重新尝试！</div><div class=\"d_link\"><div class=\"d_right\"></div><div class=\"suggest\"><strong>建议：</strong><br />如果您刷新页后仍无法显示结果，请过几分钟后再次尝试或者与我们的服务人员联系。<br />Email：service@mapabc.com <br />电话：400 810 0080</div></div></span>错误信息："+data.message+"</div>';   
+    }   
+    document.getElementById("result").innerHTML = resultStr;   
+    }   
+}   
+</script>   
+</head>   
+<body onload="mapInit();">   
+<table width="989"  border="0" cellpadding="0" cellspacing="2" bgcolor="#DDDDDD">   
+    <tr height="100%">   
+        <td rowspan="2" style="width:750px;height:600px;"><div id="map" style="height:600px; width:750px"></div></td>   
+        <td style="width:247px;border-left:1px solid #666;" valign="top" >   
+        <div style="padding:5px 0px 0px 5px;font-size:12px;height:290px">   
+            <div>逆地理编码（位置描述）<br />经纬度坐标：<input type="text" id="lnglat" name="lnglat" value="116.334,39.9872" /><br /><input type="button" value="查询" onclick="geocodeSearch()" style="margin-left:100px"/></div>   
+            <div id="result" name="result" style="height:507px;overflow:auto;width:247px;margin-top:5px"></div>   
+       </div></td>   
+   </tr>   
+</table>   
+</body>   
+</html>  

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="NewTerminalVersions">
+	<typeAlias alias="TerminalVersionsInfo" type="com.neusoft.clw.yw.zdnew.terminalversions.ds.TerminalVersionsInfo" />
+	
+	<resultMap class="TerminalVersionsInfo" id="version_list">
+       <result property="vehicle_ln" column="VEHICLE_LN"/>
+       <result property="hardware_vehicle_ln" column="HARDWARE_VEHICLE_LN"/>
+       <result property="vehicle_vin" column="VEHICLE_VIN"/>
+       <result property="hardware_vehicle_vin" column="HARDWARE_VEHICLE_VIN"/>
+       <result property="terminal_id" column="TERMINAL_ID"/>
+       <result property="hardware_terminal_id" column="HARDWARE_TERMINAL_ID"/>      
+       <result property="veh_pai_color" column="VEH_PAI_COLOR"/>
+       <result property="hardware_veh_pai_color" column="HARDWARE_VEH_PAI_COLOR"/>
+       <result property="cellphone" column="CELLPHONE"/>
+       <result property="sim_sccid" column="SIM_SCCID"/>
+       <result property="host_hard_ver" column="HOST_HARD_VER"/>
+       <result property="host_firm_ver" column="HOST_FIRM_VER"/>       
+       <result property="xianshi_hard_ver" column="XIANSHI_HARD_VER"/>
+       <result property="xianshi_firm_ver" column="XIANSHI_FIRM_VER"/>
+       <result property="dvr_hard_ver" column="DVR_HARD_VER"/>
+       <result property="dvr_firm_ver" column="DVR_FIRM_VER"/>
+       <result property="shepin_hard_ver" column="SHEPIN_HARD_VER"/>
+       <result property="shepin_firm_ver" column="SHEPIN_FIRM_VER"/>  
+       <result property="terminal_time" column="TERMINAL_TIME"/>            
+    </resultMap>
+	
+	<select id="getTerminalVersionsCount" parameterClass="TerminalVersionsInfo" resultClass="Integer">
+			SELECT COUNT(1)
+			FROM CLW_JC_TERMINAL_T   JT,
+			     CLW_CL_BASE_INFO_T  CBI,
+			     CLW_CL_SIM_T        CS
+			WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 AND CBI.ORGANIZATION_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+	 		 <isNotEmpty prepend="AND" property="vehicle_vin">
+	               JT.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="terminal_id">
+	               JT.TERMINAL_ID LIKE '%$terminal_id$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="cellphone">
+	               CS.CELLPHONE LIKE '%$cellphone$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="sim_sccid">
+	               JT.SIM_SCCID LIKE '%$sim_sccid$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_hard_ver">
+	               JT.HOST_HARD_VER LIKE '%$host_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_firm_ver">
+	               JT.HOST_FIRM_VER LIKE '%$host_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_hard_ver">
+	               JT.XIANSHI_HARD_VER LIKE '%$xianshi_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_firm_ver">
+	               JT.XIANSHI_FIRM_VER LIKE '%$xianshi_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_hard_ver">
+	               JT.DVR_HARD_VER LIKE '%$dvr_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_firm_ver">
+	               JT.DVR_FIRM_VER LIKE '%$dvr_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_hard_ver">
+	               JT.SHEPIN_HARD_VER LIKE '%$shepin_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_firm_ver">
+	               JT.SHEPIN_FIRM_VER LIKE '%$shepin_firm_ver$%'
+	         </isNotEmpty>	         	         	         	         	         	         
+			  OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 AND CBI.ENTERPRISE_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+			 AND CBI.ORGANIZATION_ID IS NULL
+	 		 <isNotEmpty prepend="AND" property="vehicle_vin">
+	               JT.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="terminal_id">
+	               JT.TERMINAL_ID LIKE '%$terminal_id$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="cellphone">
+	               CS.CELLPHONE LIKE '%$cellphone$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="sim_sccid">
+	               JT.SIM_SCCID LIKE '%$sim_sccid$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_hard_ver">
+	               JT.HOST_HARD_VER LIKE '%$host_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_firm_ver">
+	               JT.HOST_FIRM_VER LIKE '%$host_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_hard_ver">
+	               JT.XIANSHI_HARD_VER LIKE '%$xianshi_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_firm_ver">
+	               JT.XIANSHI_FIRM_VER LIKE '%$xianshi_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_hard_ver">
+	               JT.DVR_HARD_VER LIKE '%$dvr_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_firm_ver">
+	               JT.DVR_FIRM_VER LIKE '%$dvr_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_hard_ver">
+	               JT.SHEPIN_HARD_VER LIKE '%$shepin_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_firm_ver">
+	               JT.SHEPIN_FIRM_VER LIKE '%$shepin_firm_ver$%'
+	         </isNotEmpty>			 
+	</select>
+	
+	<select id="getTerminalVersionsById" parameterClass="TerminalVersionsInfo" resultMap="version_list">
+			SELECT CBI.VEHICLE_LN,JT.HARDWARE_VEHICLE_LN,
+			       JT.VEHICLE_VIN,JT.HARDWARE_VEHICLE_VIN,
+			       JT.TERMINAL_ID,JT.HARDWARE_TERMINAL_ID,
+			       CBI.VEH_PAI_COLOR,JT.HARDWARE_VEH_PAI_COLOR,
+			       CS.CELLPHONE,JT.SIM_SCCID,
+			       JT.HOST_HARD_VER,JT.HOST_FIRM_VER,
+			       JT.XIANSHI_HARD_VER,JT.XIANSHI_FIRM_VER,
+			       JT.DVR_HARD_VER,JT.DVR_FIRM_VER,
+			       JT.SHEPIN_HARD_VER,JT.SHEPIN_FIRM_VER,
+			       to_char(JT.VERSION_RECEIVING_TIME,'YYYY-MM-DD HH24:mi:ss') TERMINAL_TIME
+			FROM CLW_JC_TERMINAL_T   JT,
+			     CLW_CL_BASE_INFO_T  CBI,
+			     CLW_CL_SIM_T        CS
+			WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 AND CBI.ORGANIZATION_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+	 		 <isNotEmpty prepend="AND" property="vehicle_vin">
+	               JT.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="terminal_id">
+	               JT.TERMINAL_ID LIKE '%$terminal_id$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="cellphone">
+	               CS.CELLPHONE LIKE '%$cellphone$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="sim_sccid">
+	               JT.SIM_SCCID LIKE '%$sim_sccid$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_hard_ver">
+	               JT.HOST_HARD_VER LIKE '%$host_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_firm_ver">
+	               JT.HOST_FIRM_VER LIKE '%$host_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_hard_ver">
+	               JT.XIANSHI_HARD_VER LIKE '%$xianshi_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_firm_ver">
+	               JT.XIANSHI_FIRM_VER LIKE '%$xianshi_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_hard_ver">
+	               JT.DVR_HARD_VER LIKE '%$dvr_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_firm_ver">
+	               JT.DVR_FIRM_VER LIKE '%$dvr_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_hard_ver">
+	               JT.SHEPIN_HARD_VER LIKE '%$shepin_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_firm_ver">
+	               JT.SHEPIN_FIRM_VER LIKE '%$shepin_firm_ver$%'
+	         </isNotEmpty>			               
+			  OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 AND CBI.ENTERPRISE_ID IN
+			     (SELECT ENTERPRISE_ID
+			        FROM CLW_JC_ENTERPRISE_VI
+			       WHERE LEFT_NUM &gt;= (SELECT LEFT_NUM
+			                            FROM CLW_JC_ENTERPRISE_VI
+			                           WHERE ENTERPRISE_ID = #enterprise_id#)
+			         AND RIGHT_NUM &lt;=
+			             (SELECT RIGHT_NUM
+			                FROM CLW_JC_ENTERPRISE_VI
+			               WHERE ENTERPRISE_ID = #enterprise_id#))
+			 AND CBI.ORGANIZATION_ID IS NULL
+	 		 <isNotEmpty prepend="AND" property="vehicle_vin">
+	               JT.VEHICLE_VIN LIKE '%$vehicle_vin$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="vehicle_ln">
+	               CBI.VEHICLE_LN LIKE '%$vehicle_ln$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="terminal_id">
+	               JT.TERMINAL_ID LIKE '%$terminal_id$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="cellphone">
+	               CS.CELLPHONE LIKE '%$cellphone$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="sim_sccid">
+	               JT.SIM_SCCID LIKE '%$sim_sccid$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_hard_ver">
+	               JT.HOST_HARD_VER LIKE '%$host_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="host_firm_ver">
+	               JT.HOST_FIRM_VER LIKE '%$host_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_hard_ver">
+	               JT.XIANSHI_HARD_VER LIKE '%$xianshi_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="xianshi_firm_ver">
+	               JT.XIANSHI_FIRM_VER LIKE '%$xianshi_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_hard_ver">
+	               JT.DVR_HARD_VER LIKE '%$dvr_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="dvr_firm_ver">
+	               JT.DVR_FIRM_VER LIKE '%$dvr_firm_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_hard_ver">
+	               JT.SHEPIN_HARD_VER LIKE '%$shepin_hard_ver$%'
+	         </isNotEmpty>
+	 		 <isNotEmpty prepend="AND" property="shepin_firm_ver">
+	               JT.SHEPIN_FIRM_VER LIKE '%$shepin_firm_ver$%'
+	         </isNotEmpty>			 
+		    <dynamic prepend="ORDER BY">  
+			   <isNotEmpty property="sortname">  
+			    $sortname$   $sortorder$  
+			   </isNotEmpty>  
+			</dynamic>
+	</select>
+</sqlMap>

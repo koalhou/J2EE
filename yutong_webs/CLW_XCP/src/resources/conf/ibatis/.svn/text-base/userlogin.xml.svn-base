@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="login">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="List" type="java.util.List" />
+	<typeAlias alias="UserInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserInfo" />
+	<typeAlias alias="userPermissionInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.usermanage.domain.UserPermissionInfo" />
+
+	<resultMap id="user-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="sex" column="USER_SEX" />
+		<result property="birth" column="USER_BIRTH" />
+		<result property="countyID" column="USER_COUNTRY" />
+		<result property="provinceID" column="USER_PROVINCE" />
+		<result property="cityID" column="USER_CITY" />
+		<result property="moblie" column="USER_MOBILE" />
+		<result property="tel" column="USER_OFFICE_TEL" />
+		<result property="email" column="USER_EMAIL" />
+		<result property="idCard" column="USER_IDT_CARD" />
+		<result property="duty" column="USER_DUTY" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="creater" column="CREATER" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifyTime" column="MODIFY_TIME" />
+		<result property="valideFlg" column="VALID_FLAG" />
+		<result property="vUserID" column="VASET_USER_ID" />
+		<result property="vTime" column="VASET_TIME" />
+	</resultMap>
+
+	<resultMap id="ent-result" class="UserInfo">
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="fullName" column="FULL_NAME" />
+	</resultMap>
+
+	<resultMap id="loginpass-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="student_pwd" column="STUDENT_PWD" />
+	</resultMap>
+
+	<resultMap id="userpass-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="en_code" column="ENTERPRISE_CODE" />
+		<result property="img_path" column="IMG_PATH" />
+		<result property="fullName" column="FULL_NAME" />
+		<result property="en_mould" column="ENTERPRISE_MODEL" />
+		<result property="en_gateway" column="ENTERPRISE_SMGATEWAY" />
+	</resultMap>
+
+	<!-- 权限列表 -->
+	<resultMap class="userPermissionInfo" id="permissList">
+		<result property="moduleId" column="MODULE_ID" />
+	</resultMap>
+	
+	<!-- 企业信息列表 -->
+	<resultMap id="entcode-result" class="UserInfo">
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="fullName" column="FULL_NAME" />
+		<result property="img_path" column="IMG_PATH" />
+		<result property="en_mould" column="ENTERPRISE_MODEL" />
+	</resultMap>
+	
+	<!-- 为了应对垃圾用户和禁用用户 -->
+	<resultMap id="userforbid-result" class="UserInfo">
+		<result property="userID" column="USER_ID" />
+		<result property="loginName" column="LOGIN_NAME" />
+		<result property="loginPwd" column="LOGIN_PWD" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="userName" column="USER_NAME" />
+		<result property="valideFlg" column="VALID_FLAG" />
+		<result property="entiID" column="ENTERPRISE_ID" />
+		<result property="organizationID" column="ORGANIZATION_ID" />
+		<result property="en_code" column="ENTERPRISE_CODE" />
+		<result property="img_path" column="IMG_PATH" />
+		<result property="fullName" column="FULL_NAME" />
+		<result property="en_mould" column="ENTERPRISE_MODEL" />
+		<result property="en_gateway" column="ENTERPRISE_SMGATEWAY" />
+	</resultMap>
+
+	<select id="getUserInfo" parameterClass="Map" resultMap="user-result">
+		SELECT
+		USER_ID,
+		LOGIN_NAME,
+		LOGIN_PWD,
+		USER_TYPE,
+		USER_NAME,
+		USER_SEX,
+		USER_BIRTH,
+		USER_COUNTRY,
+		USER_PROVINCE,
+		USER_CITY,
+		USER_MOBILE,
+		USER_OFFICE_TEL,
+		USER_EMAIL,
+		USER_IDT_CARD,
+		ENTERPRISE_ID,
+		ORGANIZATION_ID,
+		USER_DUTY,
+		CREATER,
+		CREATE_TIME,
+		MODIFIER,
+		MODIFY_TIME,
+		VALID_FLAG,
+		VASET_USER_ID,
+		VASET_TIME
+		FROM CLW_JC_USER_T T
+
+		WHERE T.LOGIN_NAME = #loginname#
+		AND
+		T.LOGIN_PWD = #loginpwd#
+		AND T.USER_TYPE = #userType#
+		AND T.VALID_FLAG =
+		'0'
+	</select>
+
+	<select id="getentiInfo" parameterClass="String" resultMap="ent-result">
+		select ENTERPRISE_ID ,FULL_NAME
+		from CLW_JC_ENTERPRISE_T t
+		where
+		ENTERPRISE_CODE = #encode#
+	</select>
+
+	<select id="getUserRoleModule" parameterClass="String"
+		resultClass="java.util.HashMap" remapResults="true">
+		<![CDATA[
+		select  distinct t.MODULE_ID from CLW_JC_ROLE_RIGHT_T t
+		where ROLE_ID in (select tt.ROLE_ID from CLW_JC_USER_ROLE_T tt
+		where tt.USER_ID=#userid#
+		and tt.APPLY_ID='1')
+		]]>
+	</select>
+
+	<select id="getUserPass" parameterClass="UserInfo" resultMap="loginpass-result">
+		SELECT
+		USER_ID,
+		LOGIN_NAME,
+		LOGIN_PWD,
+		STUDENT_PWD
+		FROM CLW_JC_USER_T T
+		WHERE T.USER_ID
+		= #userID#
+		AND T.VALID_FLAG =
+		'0'
+	</select>
+
+	<update id="updateUserPass" parameterClass="UserInfo">
+		update
+		CLW_JC_USER_T
+		set
+		LOGIN_PWD =#loginPwd#
+		where USER_ID = #userID#
+	</update>
+	<update id="updateUserPassST" parameterClass="UserInfo">
+		update
+		CLW_JC_USER_T
+		set
+		STUDENT_PWD =#student_pwd#
+		where USER_ID = #userID#
+	</update>
+
+	<!-- 获取登录用户信息 -->
+	<select id="getUserbyPasswd" parameterClass="UserInfo"
+		resultMap="userpass-result">
+		select us.USER_ID,
+		us.LOGIN_NAME,
+		us.LOGIN_PWD,
+		us.USER_NAME,
+		us.USER_TYPE,
+		us.ENTERPRISE_ID,
+		us.ORGANIZATION_ID,
+		en.ENTERPRISE_CODE,
+		en.IMG_PATH,
+		en.FULL_NAME
+		from CLW_JC_USER_T us, CLW_JC_ENTERPRISE_T en
+		where us.ENTERPRISE_ID = en.ENTERPRISE_ID(+)
+		and us.valid_flag='0' 
+		and en.ISUSED='0' 
+		and en.VALID_FLAG='0'
+		and us.USER_TYPE!='2' 
+  		and us.USER_TYPE!='0'
+		and us.LOGIN_NAME=#loginName#
+		and us.LOGIN_PWD=#loginPwd#
+		<isNotEmpty prepend="AND" property="userType">
+			us.USER_TYPE = #userType#
+        </isNotEmpty>
+		<isNotEmpty prepend="AND" property="en_code">
+			en.ENTERPRISE_CODE = #en_code#
+        </isNotEmpty>
+	</select>
+
+	<!-- 获取当前用户的权限 -->
+	<select id="getUserPermissList" parameterClass="UserInfo"
+		resultMap="permissList">
+		select rr.module_id from CLW_JC_ROLE_RIGHT_T rr,CLW_JC_ROLE_T r
+		,CLW_JC_USER_ROLE_T ur where rr.role_id = r.role_id and
+		r.role_id = ur.role_id and ur.user_id = #userID#
+	</select>
+	
+	<!-- 获取登录的超级用户信息 -->
+	<select id="getUserforsuper" parameterClass="UserInfo"
+		resultMap="userpass-result">
+		select us.USER_ID,
+		us.LOGIN_NAME,
+		us.LOGIN_PWD,
+		us.USER_NAME,
+		us.USER_TYPE,
+		us.ENTERPRISE_ID,
+		us.ORGANIZATION_ID,
+		en.ENTERPRISE_CODE,
+		en.IMG_PATH,
+		en.FULL_NAME,
+		en.ENTERPRISE_MODEL,
+		en.ENTERPRISE_SMGATEWAY
+		from CLW_JC_USER_T us, CLW_JC_ENTERPRISE_T en
+		where us.ENTERPRISE_ID = en.ENTERPRISE_ID(+)
+		and us.valid_flag='0' 
+		and en.ISUSED='0' 
+		and en.VALID_FLAG='0'
+		and us.LOGIN_NAME=#loginName#
+		and us.LOGIN_PWD=#loginPwd#
+		and en.ENTERPRISE_ID='111'
+	</select>
+	
+	<select id="getEnByEncode" parameterClass="String"
+		resultMap="entcode-result">
+		select ENTERPRISE_ID ,FULL_NAME,IMG_PATH,ENTERPRISE_MODEL
+		from CLW_JC_ENTERPRISE_T
+		where
+		ENTERPRISE_CODE = #id#
+		and VALID_FLAG='0'
+	</select>
+	
+	<!-- 获取登录用户信息 -->
+	<select id="getUserForforbid" parameterClass="UserInfo"
+		resultMap="userforbid-result">
+		select us.USER_ID,
+		us.LOGIN_NAME,
+		us.LOGIN_PWD,
+		us.USER_NAME,
+		us.USER_TYPE,
+		us.ENTERPRISE_ID,
+		us.ORGANIZATION_ID,
+		us.VALID_FLAG,
+		en.ENTERPRISE_CODE,
+		en.IMG_PATH,
+		en.FULL_NAME,
+		en.ENTERPRISE_MODEL,
+		en.ENTERPRISE_SMGATEWAY
+		from CLW_JC_USER_T us, CLW_JC_ENTERPRISE_T en
+		where us.ENTERPRISE_ID = en.ENTERPRISE_ID(+)
+		and us.valid_flag!='1' 
+		and en.ISUSED='0' 
+		and en.VALID_FLAG='0'
+		and us.USER_TYPE!='2' 
+  		and us.USER_TYPE!='0'
+		and us.LOGIN_NAME=#loginName#
+		and us.LOGIN_PWD=#loginPwd#
+		and	en.ENTERPRISE_CODE = #en_code#
+		order by us.VALID_FLAG
+	</select>
+
+	<!-- 首页头部是否显示new图标，0：不显示，1：显示 -->
+	<select id="getDisplayNewIcon" resultClass="HashMap">
+		select case
+		         when sysdate > max(publish_date + valid_num) then
+		          0
+		         else
+		          1
+		       end IS_DISPLAY_NEW_ICON,
+		       Terminal_type
+		  from clw_jc_version_t a
+		 where terminal_type = 'MOBILE'
+		    or terminal_type = 'PC'
+		 group by terminal_type
+		 order by terminal_type
+	</select>
+	
+	<select id="getHomeShow" parameterClass="String" resultClass="HashMap">
+		select id, user_id, to_char(login_date, 'yyyyMMdd') login_date
+		  from clw_yw_homeshow_t
+		 where user_id = #userID#
+		   and login_date >= (select max(publish_date)
+		                        from clw_jc_version_t
+		                       where terminal_type = 'PC')
+	</select>
+	<select id="getMaxPublishDate" resultClass="String">
+		select to_char(max(publish_date),'yyyyMMdd') from clw_jc_version_t where terminal_type = 'PC'
+	</select>
+	<insert id="insertHomeShow" parameterClass="HashMap">
+		insert into clw_yw_homeshow_t
+		  (id, user_id, login_date)
+		values
+		  (#id#, #userID#, (select max(publish_date) from clw_jc_version_t where terminal_type = 'PC'))
+	</insert>
+</sqlMap>

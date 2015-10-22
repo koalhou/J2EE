@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	 
+ 
+	<!-- 被动活跃度action start-->
+ <package name="ubpassivity" namespace="/ub/passivity" extends="clw-default">
+		
+		<action name="overall" class="ubPassivityAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/passivity/overall.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/passivity/overall.jsp 
+				</result>
+		</action>
+		<action name="pushlist" class="ubPassivityAction" method="getpushlist">
+			<result name="success"> /WEB-INF/jsp/ub/passivity/pushlist.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/passivity/pushlist.jsp 
+				</result>
+		</action>
+</package>
+	<!-- 被动活跃度action end-->
+	
+	 <package name="ubpasivityjson" namespace="/ub/passivity/json" extends="json-default">
+	<!-- 统计区域 -->
+		<action name="gather" class="ubPassivityAction" method="gather">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 趋势图 -->
+		<action name="lines" class="ubPassivityAction" method="lines">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 统计表格 -->
+		<action name="grid" class="ubPassivityAction" method="grid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 各个推送的访问情况 -->
+		<action name="questtionGrid" class="ubPassivityAction" method="questtionGrid">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+	<!-- 根据ID获取name -->
+		<action name="getQuestion" class="ubPassivityAction" method="getQuestion">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+        </package>
+	
+</struts>

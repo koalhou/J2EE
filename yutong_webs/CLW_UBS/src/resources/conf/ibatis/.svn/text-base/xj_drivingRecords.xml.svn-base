@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="drivingRecords">
+	<typeAlias alias="Result" type="java.sql.ResultSet" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="Integer" type="java.lang.Integer" />
+	<typeAlias alias="DrivingRecords"
+		type="com.neusoft.clw.yw.xj.drivingrecords.ds.DrivingRecords" />
+	<typeAlias alias="vehcileinfo"
+		type="com.neusoft.clw.yw.xj.drivingrecords.ds.VehcileInfo" />
+	<!-- 只针对GPS信息 -->
+	<resultMap id="gpsinfoshortlist-result" class="DrivingRecords">
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="create_time" column="CREATE_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="direction" column="DIRECTION" />
+		<result property="gps_speeding" column="GPS_SPEEDING" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+	</resultMap>		
+	<!-- CLW_YW_MINUTE5_DATA_T resultMap -->
+	<resultMap id="gpsinfolist-result" class="DrivingRecords">
+		<result property="utc_time" column="UTC_TIME" />
+		<result property="create_time" column="CREATE_TIME" />
+		<result property="latitude" column="LATITUDE" />
+		<result property="longitude" column="LONGITUDE" />
+		<result property="direction" column="DIRECTION" />
+		<result property="gps_speeding" column="GPS_SPEEDING" />
+
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="on_off" column="ON_OFF" />
+		<result property="battery_voltage" column="BATTERY_VOLTAGE" />
+		<result property="ext_voltage" column="EXT_VOLTAGE" />
+		<result property="power_state" column="POWER_STATE" />
+		<result property="e_water_temp" column="E_WATER_TEMP" />
+		<result property="oil_pressure" column="OIL_PRESSURE" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+	</resultMap>
+	<!-- CLW_YW_SEC_DATA_T resultMap -->
+	<resultMap id="secdatalist-result" class="DrivingRecords">
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="write_time" column="WRITE_TIME" />	
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="torque" column="E_TORQUE" />
+		<result property="vehicle_speed" column="VEHICLE_SPEED" />
+		<result property="oil_instant" column="OIL_INSTANT" />
+	</resultMap>
+
+	<!-- CLW_YW_MINUTE1_DATA_T/CLW_YW_MINUTE5_DATA_T resultMap -->
+	<resultMap id="minute1data-result" class="DrivingRecords">
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="write_time" column="WRITE_TIME" />
+		<result property="oil_temperature" column="OIL_TEMPERATURE" />
+		<result property="colder_temperature" column="COLDER_TEMPERATURE" />
+		<result property="oil_total" column="OIL_TOTAL" />
+	</resultMap>
+
+	<!-- CLW_YW_MINUTE1_DATA_T/CLW_YW_MINUTE5_DATA_T resultMap -->
+	<resultMap id="minute5data-result" class="DrivingRecords">
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="write_time" column="WRITE_TIME" />
+		<result property="air_pressure" column="AIR_PRESSURE" />
+		<result property="air_inflow_tpr" column="AIR_INFLOW_TPR" />
+		<result property="enghrrev_t_e_h" column="ENGHRREV_T_E_H" />
+	</resultMap>
+
+	<!-- CLW_YW_MALARMD_T resultMap -->
+	<resultMap id="malarmd-result" class="DrivingRecords">
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="write_time" column="WRITE_TIME" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="maxspeed" column="MAXSPEED" />
+	</resultMap>
+	
+    <resultMap id="vehcileinfo-result" class="vehcileinfo">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_id" column="VEHICLE_ID" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="enterprise_name" column="FULL_NAME" />
+	</resultMap>
+	
+	<!-- 使用表名称为:CLW_YW_TERMINAL_RECORD_T -->
+	<!-- 包含了(GPS信息) -->
+	<select id="getGpsInfoList" parameterClass="DrivingRecords"
+		resultMap="gpsinfoshortlist-result">
+		SELECT
+		TO_CHAR(rec.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') AS TERMINAL_TIME,
+		TO_CHAR(rec.CREATE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS CREATE_TIME ,
+		rec.LATITUDE,
+		rec.LONGITUDE,
+		rec.DIRECTION,
+		rec.GPS_SPEEDING,
+		rec.VEHICLE_VIN
+		FROM
+		CLW_YW_TERMINAL_RECORD_T partition(TERMINAL_RECORD_$partition_time$) rec
+		WHERE
+		rec.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			rec.TERMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+		<!-- 只针对速度信息 -->
+	<resultMap id="gpsinfolistforspeed-result" class="DrivingRecords">
+		<result property="terminal_time" column="TERMINAL_TIME" />
+		<result property="create_time" column="CREATE_TIME" />
+		<result property="mileage" column="MILEAGE" />
+		<result property="engine_rotate_speed" column="ENGINE_ROTATE_SPEED" />
+		<result property="speeding" column="SPEEDING" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+	</resultMap>
+	<parameterMap id="pm_in_example" class="java.util.Map">
+		<parameter property="p_dayfrom" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="p_dayto" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="p_parttable" javaType="String" jdbcType="VARCHAR"  />
+		<parameter property="p_partpreflag" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="p_vehicle_vin" javaType="String" jdbcType="VARCHAR"  />
+		<parameter property="p_alarm_type_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="p_datestr" javaType="String" jdbcType="VARCHAR"  />
+		<parameter property="p_count" javaType="Integer" jdbcType="INTEGER" mode="OUT"/>
+    </parameterMap>
+    <procedure id="get_count_by_partition" parameterMap="pm_in_example" >
+       { call get_count_by_partition(?, ? , ? , ? , ? , ? , ? , ? ) }
+     </procedure> 
+     
+	<select id="getGpsInfoCount" parameterClass="DrivingRecords"
+		resultClass="Integer">
+		SELECT COUNT(TERMINAL_TIME)
+		FROM CLW_YW_TERMINAL_RECORD_T partition(TERMINAL_RECORD_$partition_time$) rec
+		WHERE
+		rec.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			rec.TERMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+		</isNotEmpty>
+	</select>
+   <!--包含了(速度)-->
+    <select id="getTerminalListForSpeed" parameterClass="DrivingRecords"
+		resultMap="gpsinfolistforspeed-result">
+		SELECT
+		TO_CHAR(rec.CREATE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS CREATE_TIME ,
+		TO_CHAR(rec.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') AS TERMINAL_TIME,
+		rec.SPEEDING,
+		rec.ENGINE_ROTATE_SPEED,
+		rec.MILEAGE,
+		rec.VEHICLE_VIN
+		FROM
+		CLW_YW_TERMINAL_RECORD_T partition(TERMINAL_RECORD_$partition_time$) rec
+		WHERE
+		rec.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			rec.TERMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!--
+		使用表名称为:CLW_YW_TERMINAL_RECORD_T,所以进行了查询合并,如果需求变更,不只使用这表,就拆分为多个查询吧
+	-->
+	<!--
+		包含了(转速,里程信息,开关量信息,CAN-蓄电池电压,CAN-外部电压,CAN-供电状态,CAN-发动机油温,CAN-发动机水温,CAN-机油压力)
+	-->
+	<select id="getTerminalList" parameterClass="DrivingRecords"
+		resultMap="gpsinfolist-result">
+		SELECT
+		TO_CHAR(rec.UTC_TIME,'YYYY-MM-DD HH24:MI:SS') AS UTC_TIME ,
+		TO_CHAR(rec.CREATE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS CREATE_TIME ,
+		rec.LATITUDE,rec.LONGITUDE,
+		rec.DIRECTION,
+		rec.GPS_SPEEDING,
+		TO_CHAR(rec.TERMINAL_TIME,'YYYY-MM-DD HH24:MI:SS') AS TERMINAL_TIME,
+		rec.SPEEDING,
+		rec.ENGINE_ROTATE_SPEED,
+		rec.MILEAGE,
+		rec.ON_OFF,
+		rec.BATTERY_VOLTAGE,
+		rec.EXT_VOLTAGE,
+		rec.POWER_STATE,
+		rec.E_WATER_TEMP,
+		rec.OIL_PRESSURE,
+		rec.VEHICLE_VIN
+		FROM
+		CLW_YW_TERMINAL_RECORD_T partition(TERMINAL_RECORD_$partition_time$) rec
+		WHERE
+		rec.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			rec.TERMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getTerminalCount" parameterClass="DrivingRecords"
+		resultClass="Integer">
+		SELECT COUNT(TERMINAL_TIME)
+		FROM CLW_YW_TERMINAL_RECORD_T partition(TERMINAL_RECORD_$partition_time$) rec
+		WHERE
+		rec.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			rec.TERMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+		</isNotEmpty>
+	</select>
+
+	<!-- 使用表名称为:CLW_YW_SEC_DATA_T,所以进行了查询合并,如果需求变更,不只使用这表,就拆分为多个查询吧 -->
+	<!-- 包含了(CAN-车速,CAN-瞬时油耗,CAN-扭矩,CAN-发动机转速) -->
+	<select id="getSecDataList" parameterClass="DrivingRecords"
+		resultMap="secdatalist-result">
+		SELECT
+		TO_CHAR(t.TEMINAL_TIME,'YYYY-MM-DD HH24:MI:SS')  AS TERMINAL_TIME ,
+		TO_CHAR(t.WRITE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS WRITE_TIME ,
+		t.ENGINE_ROTATE_SPEED,
+		t.TORQUE AS
+		E_TORQUE,
+		t.VEHICLE_SPEED,
+		t.OIL_INSTANT
+		FROM CLW_YW_SEC_DATA_T partition(SEC_DATA_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getSecDataCount" parameterClass="DrivingRecords"
+		resultClass="Integer">
+		SELECT COUNT(TEMINAL_TIME)
+		FROM CLW_YW_SEC_DATA_T partition(SEC_DATA_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+		</isNotEmpty>
+	</select>
+
+	<!-- 使用表名称为:CLW_YW_MINUTE1_DATA_T,所以进行了查询合并,如果需求变更,不只使用这表,就拆分为多个查询吧 -->
+	<!-- 包含了(CAN-发动机油温,CAN-冷却剂温度,CAN-累计油耗 ) -->
+	<select id="getMinute1DataList" parameterClass="DrivingRecords"
+		resultMap="minute1data-result">
+		SELECT
+		TO_CHAR(t.TEMINAL_TIME,'YYYY-MM-DD HH24:MI:SS')  AS TERMINAL_TIME ,
+		TO_CHAR(t.WRITE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS WRITE_TIME ,
+		t.OIL_TEMPERATURE,
+		t.OIL_TOTAL,
+		t.COLDER_TEMPERATURE
+		FROM CLW_YW_MINUTE1_DATA_T partition(MINUTE1_DATA_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getMinute1DataCount" parameterClass="DrivingRecords"
+		resultClass="Integer">
+		SELECT COUNT(TEMINAL_TIME)
+		FROM CLW_YW_MINUTE1_DATA_T partition(MINUTE1_DATA_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+		</isNotEmpty>
+	</select>
+
+	<!-- 使用表名称为:CLW_YW_MINUTE5_DATA_T,所以进行了查询合并,如果需求变更,不只使用这表,就拆分为多个查询吧 -->
+	<!-- 包含了(CAN-大气压力,CAN-进气温度,CAN-发动机运行时间) -->
+	<select id="getMinute5DataList" parameterClass="DrivingRecords"
+		resultMap="minute5data-result">
+		SELECT
+		TO_CHAR(t.TEMINAL_TIME,'YYYY-MM-DD HH24:MI:SS')  AS TERMINAL_TIME ,
+		TO_CHAR(t.WRITE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS WRITE_TIME ,
+		t.AIR_PRESSURE,
+		t.AIR_INFLOW_TPR,
+		t.ENGHRREV_T_E_H
+		FROM CLW_YW_MINUTE5_DATA_T partition(MINUTE5_DATA_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getMinute5DataCount" parameterClass="DrivingRecords"
+		resultClass="Integer">
+		SELECT COUNT(TEMINAL_TIME)
+		FROM CLW_YW_MINUTE5_DATA_T partition(MINUTE5_DATA_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+		</isNotEmpty>
+	</select>
+
+	<!-- 超速信息 使用表名称为:clw_yw_malarmd_t,所以进行了查询合并,如果需求变更,不只使用这表,就拆分为多个查询吧 -->
+	<!-- 包含了(Extend-急减速,Extend-急加速,Extend-超速) -->
+	<select id="getMalarmdList" parameterClass="DrivingRecords"
+		resultMap="malarmd-result">
+		SELECT
+		TO_CHAR(t.TEMINAL_TIME,'YYYY-MM-DD HH24:MI:SS')  AS TERMINAL_TIME ,
+		TO_CHAR(t.WRITE_TIME,'YYYY-MM-DD
+		HH24:MI:SS') AS WRITE_TIME ,
+		TO_CHAR(NVL(t.ALARM_TIME,
+		'0'),'FM9999999990') AS ALARM_TIME,
+		t.MAXSPEED
+		FROM CLW_YW_MALARMD_T partition(MALARMD_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin# and t.ALARM_TYPE_ID =#alarm_type_id#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+         </isNotEmpty>
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="sortname">
+				$sortname$ $sortorder$  
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getMalarmdCount" parameterClass="DrivingRecords"
+		resultClass="Integer">
+		SELECT COUNT(TEMINAL_TIME)
+		FROM CLW_YW_MALARMD_T partition(MALARMD_$partition_time$) t
+		WHERE
+		t.VEHICLE_VIN=#vehicle_vin# and t.ALARM_TYPE_ID =#alarm_type_id#
+		<isNotEmpty prepend="AND" property="start_time">
+			t.TEMINAL_TIME BETWEEN TO_DATE(#start_time#,'YYYY-MM-DD HH24:MI:SS') AND
+			TO_DATE(#end_time#,'YYYY-MM-DD HH24:MI:SS')
+		</isNotEmpty>
+	</select>
+	
+	<!-- 获取车辆列表个数 -->
+	<select id="getCountVeh" parameterClass="vehcileinfo" resultClass="Integer">
+		    SELECT COUNT(1)
+			FROM CLW_JC_TERMINAL_T   JT,
+			     CLW_CL_BASE_INFO_T  CBI,
+			     CLW_CL_SIM_T        CS
+			WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			 AND JT.TERMINAL_ID IS NOT NULL
+			 AND JT.VEHICLE_VIN IS NOT NULL
+			 AND JT.SIM_CARD_NUMBER IS NOT NULL
+			 AND JT.VALID_FLAG = '0'
+			 AND CBI.VALID_FLAG = '0'
+			 AND CS.VALID_FLAG = '0'
+			 AND JT.DEVICE_TYPE = '0'
+			 AND CBI.DEVICE_TYPE = '0'
+			 AND CS.DEVICE_TYPE = '0'
+			 <isNotEmpty prepend="AND" property="vehicle_ln">
+				   CBI.VEHICLE_LN like '%$vehicle_ln$%'
+	         </isNotEmpty>
+	</select>
+	<select id="getvehln" parameterClass="String" resultClass="String">
+	   SELECT 
+	   VEHICLE_LN
+       FROM CLW_CL_BASE_INFO_T 
+       WHERE VEHICLE_VIN=#vehicle_vin#
+       and valid_flag='0'
+	</select>
+	<!-- 获取车辆信息 -->
+	<select id="getInfosVeh" parameterClass="vehcileinfo" resultMap="vehcileinfo-result">
+		 SELECT CBI.VEHICLE_VIN,
+		      CBI.VEHICLE_ID,
+		      CBI.VEHICLE_LN,
+		      JE.FULL_NAME
+		 FROM CLW_JC_TERMINAL_T        JT,
+		      CLW_CL_BASE_INFO_T       CBI,
+		      CLW_CL_SIM_T             CS,
+		      CLW_JC_ENTERPRISE_T      JE
+		WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		 AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		 AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		 AND JT.TERMINAL_ID IS NOT NULL
+		 AND JT.VEHICLE_VIN IS NOT NULL
+		 AND JT.SIM_CARD_NUMBER IS NOT NULL
+		 AND JT.VALID_FLAG = '0'
+		 AND CBI.VALID_FLAG = '0'
+		 AND CS.VALID_FLAG = '0'
+		 AND JT.DEVICE_TYPE = '0'
+		 AND CBI.DEVICE_TYPE = '0'
+		 AND CS.DEVICE_TYPE = '0'
+		 <isNotEmpty prepend="AND" property="vehicle_ln">
+			   CBI.VEHICLE_LN like '%$vehicle_ln$%'
+         </isNotEmpty>
+	     <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		       $sortname$ $sortorder$
+		   </isNotEmpty>  
+		 </dynamic>    
+	</select>
+</sqlMap>

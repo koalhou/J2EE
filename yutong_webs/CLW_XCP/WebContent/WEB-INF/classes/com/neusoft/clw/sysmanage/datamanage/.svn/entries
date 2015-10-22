@@ -1,0 +1,76 @@
+10
+
+dir
+46
+http://192.168.175.105/svn/datas/other/work_spaces/workspace_xc/CLW_XCP/src/java/com/neusoft/clw/sysmanage/datamanage
+http://192.168.175.105/svn/datas
+
+
+
+2014-10-07T13:33:01.290584Z
+27
+test
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+f81c60f4-19e2-fb44-8912-2fbc0516ba03
+
+zonemanage
+dir
+
+photographmanage
+dir
+
+zdnew
+dir
+
+usermanage
+dir
+
+sendcommand
+dir
+
+vehiclemanage
+dir
+
+alarmsetting
+dir
+
+wx
+dir
+
+runtimeset
+dir
+
+drivermanage
+dir
+
+appconfig
+dir
+
+wxmanage
+dir
+
+security
+dir
+
+routemanage
+dir
+
+entimanage
+dir
+
+rolemanage
+dir
+

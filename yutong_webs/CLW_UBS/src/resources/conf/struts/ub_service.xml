@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 服务活跃度action start -->
+  <package name="ubservice" namespace="/ub/srv" extends="clw-default">
+		<action name="overall" class="serviceAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/service/service.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/service/service.jsp
+			</result>
+		</action>
+		<action name="srvlist" class="serviceAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/ub/service/servicelist.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/ub/service/servicelist.jsp
+			</result>
+		</action>
+	</package>
+	<package name="ubservicejson" namespace="/ub/srv/json" extends="json-default">
+	<!-- 服务列表 -->
+		<action name="getSrvList" class="serviceAction" method="getSrvList">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+           </action>
+		<!-- 所有服务汇总 -->
+		<action name="getSummary" class="serviceAction" method="getSummary">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个服务汇总 -->
+		<action name="getOneSummary" class="serviceAction" method="getOneSummary">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 获取服务表格数据 -->
+		<action name="getVisList" class="serviceAction" method="getVisList">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 获取服务趋势图 -->
+		<action name="getChartByIndex" class="serviceAction" method="getChartByIndex">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		
+		<!-- 各个服务服务情况 -->
+		<action name="getServiceVisChart" class="serviceAction" method="getServiceVisChart">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		<!-- 单个服务的月度活跃度图 -->
+		<action name="getSingleServiceActive" class="serviceAction" method="getSingleServiceActive">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+		
+		<!-- 单个服务的大区统计 -->
+		<action name="getVis4Area" class="serviceAction" method="getVis4Area">
+			<result name="success" type="json">
+           		<param name="contentType">text/json</param>
+				<param name="excludeNullProperties">false</param>
+           		<param name="noCache">true</param>
+            	<param name="root">returnMap</param>
+           	</result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">returnMap</param>
+           	</result>
+		</action>
+	</package>
+	<!-- 服务活跃度action end -->
+</struts>

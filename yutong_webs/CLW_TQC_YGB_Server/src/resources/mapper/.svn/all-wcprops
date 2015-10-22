@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper
+END
+AccountMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/AccountMapper.xml
+END
+NewsMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/NewsMapper.xml
+END
+FileMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/FileMapper.xml
+END
+VehicleMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/VehicleMapper.xml
+END
+LogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/LogMapper.xml
+END
+StationMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/StationMapper.xml
+END
+MessageMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/MessageMapper.xml
+END
+SystemMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/SystemMapper.xml
+END
+AlgorithmMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/AlgorithmMapper.xml
+END
+ChildrenMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/ChildrenMapper.xml
+END
+CommonMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_YGB_Server/src/resources/mapper/CommonMapper.xml
+END

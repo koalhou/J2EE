@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 传输管理 -->
+	<package name="cs" namespace="/cs" extends="clw-default">
+		<!-- 运营商管理 -->
+		<!-- 初始化 -->
+		<action name="businessmanage" class="businessManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cs/businessManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/businessManage.jsp
+			</result>
+		</action>
+		<!-- 查询运营商信息 -->
+		<action name="queryBusiness" class="businessManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cs/businessManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/businessManage.jsp
+			</result>
+		</action>
+		<!-- 新建运营商信息初始化 -->
+		<action name="addBusinessBefore" class="businessManageAction" method="addBusinessBefore">
+			<result name="success">
+				/WEB-INF/jsp/cs/businessInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/businessManage.jsp
+			</result>
+		</action>
+		<!-- 新建运营商信息 -->
+		<action name="addBusiness" class="businessManageAction" method="addBusiness">
+			<result name="input">
+				/WEB-INF/jsp/cs/businessInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">businessmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addBusinessBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询运营商信息 -->
+		<action name="queryBusinessInfo" class="businessManageAction" method="queryBusinessInfo">
+			<result name="success">
+				/WEB-INF/jsp/cs/businessEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">businessmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 运营商信息更新 -->
+		<action name="updateBusiness" class="businessManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">businessmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryBusinessInfo</param>
+				<param name="message">${message}</param>
+				<param name="businessId">${businessId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 运营商信息删除 -->
+		<action name="deleteBusiness" class="businessManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">businessmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">queryBusinessInfo</param>
+				<param name="message">${message}</param>
+				<param name="businessId">${businessId}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- SIM卡管理 -->
+		<!-- 初始化 -->
+		<action name="simmanage" class="simManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cs/simManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simManage.jsp
+			</result>
+		</action>
+		<!-- 查询SIM卡信息 -->
+		<action name="querySim" class="simManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cs/simManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simManage.jsp
+			</result>
+		</action>
+		<!-- 新建SIM卡信息初始化 -->
+		<action name="addSimBefore" class="simManageAction" method="addSimBefore">
+			<result name="success">
+				/WEB-INF/jsp/cs/simInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simManage.jsp
+			</result>
+		</action>
+		<!-- 新建SIM卡信息 -->
+		<action name="addSim" class="simManageAction" method="addSim">
+			<result name="input">
+				/WEB-INF/jsp/cs/simInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">simmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addSimBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 查询SIM卡信息 -->
+		<action name="querySimInfo" class="simManageAction" method="querySimInfo">
+			<result name="success">
+				/WEB-INF/jsp/cs/simEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">simmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- SIM卡信息更新 -->
+		<action name="updateSim" class="simManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">simmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">querySimInfo</param>
+				<param name="message">${message}</param>
+				<param name="simId">${simId}</param>
+				<param name="simOldNumber">${simOldNumber}</param>
+				<param name="simOldNumber">${oldPhoneNumber}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- SIM卡信息删除 -->
+		<action name="deleteSim" class="simManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">simmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">querySimInfo</param>
+				<param name="message">${message}</param>
+				<param name="simId">${simId}</param>
+				<param name="simOldNumber">${simOldNumber}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导入SIM卡信息初始化 -->
+		<action name="importSimBefore" class="simManageAction" method="importSimBefore">
+			<result name="success">
+				/WEB-INF/jsp/cs/simImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simManage.jsp
+			</result>
+		</action>
+		<!-- 导入SIM卡信息 -->
+		<action name="importSim" class="simManageAction" method="importSim">
+			<result name="input">
+				/WEB-INF/jsp/cs/simImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">simmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simImport.jsp
+			</result>
+		</action>
+		<!-- 导出SIM卡信息 -->
+		<action name="exportSim" class="simManageAction" method="exportSim">
+			<result name="error" type="redirect-action">
+				<param name="actionName">simmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- SIM卡流量管理 -->
+		<!-- 初始化 -->
+		<action name="simfluxmanage" class="simFluxManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cs/simFluxManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simFluxManage.jsp
+			</result>
+		</action>
+		<!-- 查询SIM卡流量信息 -->
+		<action name="querySimFlux" class="simFluxManageAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/cs/simFluxManage.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simFluxManage.jsp
+			</result>
+		</action>
+		<!-- 新建SIM卡流量信息初始化 -->
+		<action name="addSimFluxBefore" class="simFluxManageAction" method="addSimFluxBefore">
+			<result name="success">
+				/WEB-INF/jsp/cs/simFluxInfo.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simFluxManage.jsp
+			</result>
+		</action>
+		<!-- 新建SIM卡流量信息 -->
+		<action name="addSimFlux" class="simFluxManageAction" method="addSimFlux">
+			<result name="input">
+				/WEB-INF/jsp/cs/simFluxInfo.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">simfluxmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">addSimFluxBefore</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+		<!-- 查询SIM卡流量信息 -->
+		<action name="querySimFluxInfo" class="simFluxManageAction" method="querySimFluxInfo">
+			<result name="success">
+				/WEB-INF/jsp/cs/simFluxEdit.jsp
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">simfluxmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- SIM卡流量信息更新 -->
+		<action name="updateSimFlux" class="simFluxManageAction" method="update">
+			<result name="success" type="redirect-action">
+				<param name="actionName">simfluxmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">querySimFluxInfo</param>
+				<param name="message">${message}</param>
+				<param name="simId">${simId}</param>
+				<param name="simOldNumber">${simOldNumber}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- SIM卡流量信息删除 -->
+		<action name="deleteSimFlux" class="simFluxManageAction" method="delete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">simfluxmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">querySimFluxInfo</param>
+				<param name="message">${message}</param>
+				<param name="simId">${simId}</param>
+				<param name="simOldNumber">${simOldNumber}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 导入SIM卡流量信息初始化 -->
+		<action name="importSimFluxBefore" class="simFluxManageAction" method="importSimFluxBefore">
+			<result name="success">
+				/WEB-INF/jsp/cs/simFluxImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simFluxManage.jsp
+			</result>
+		</action>
+		<!-- 导入SIM卡流量信息 -->
+		<action name="importSimFlux" class="simFluxManageAction" method="importSimFlux">
+			<result name="input">
+				/WEB-INF/jsp/cs/simFluxImport.jsp
+			</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">simfluxmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/cs/simFluxImport.jsp
+			</result>
+		</action>
+		<!-- 导出SIM卡流量信息 -->
+		<action name="exportSimFlux" class="simFluxManageAction" method="exportSimFlux">
+			<result name="error" type="redirect-action">
+				<param name="actionName">simfluxmanage</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

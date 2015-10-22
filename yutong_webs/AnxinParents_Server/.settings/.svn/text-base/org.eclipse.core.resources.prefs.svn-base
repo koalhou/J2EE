@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+encoding//src/resources/jdbc.properties=GBK
+encoding//src/resources/systemConfig.properties=GBK
+encoding/<project>=UTF-8

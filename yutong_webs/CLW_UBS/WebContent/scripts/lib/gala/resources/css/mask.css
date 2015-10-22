@@ -1,0 +1,61 @@
+* {
+	padding : 0;
+	margin : 0;	
+}
+
+#gala-mask {
+	z-index : 99000;
+	position : absolute;
+	top : 0;
+	left : 0;
+	margin-top : 64px;
+	width : 100%;
+	height : 90%;
+}
+
+.gala-mask-bg {
+	background-color : #006699;
+	filter : alpha(opacity = 20);
+	-moz-opacity : 0.20;
+	opacity : 0.20;
+}
+
+#gala-mask-msg {
+	z-index : 99001;
+	position : absolute;
+	top : 0;
+	left : 0;
+	border : 1px solid #6593cf;
+	background : #c3daf9 url(../images/tb-blue.gif) repeat-x 0 -16px;
+	padding : 2px;
+}
+
+#gala-mask-msg div {
+    padding:5px 10px 5px 10px;
+    background: #eee;
+    border:1px solid #a3bad9;
+    color:#222;
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    cursor:wait;
+}
+
+#gala-mask-msg .gala-mask-loading {
+    padding:5px 10px 5px 25px;
+    background: #fbfbfb url( '../images/loading.gif' ) no-repeat 5px 5px;
+    line-height: 16px;
+}
+
+#gala-mask-hide-select {
+	z-index : 90000;
+	position : absolute;
+	top : 0;
+	left : 0;
+	margin-top : 64px;
+	background-color : #FFF;
+	broder : none;
+	filter : alpha(opacity = 0);
+	-moz-opacity : 0;
+	opacity : 0;
+	width : 100%;
+	height : 90%;
+}

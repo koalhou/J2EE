@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>安芯2.0畅行版新特性</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type=text/javascript src="js/scrolltop.js"></script>
+<!--百度统计代码-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?81030f71aa3525ffa874831c3eeb41f3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+
+function changeImg(obj){
+	var ul = document.getElementById('version');
+	var lis = ul.getElementsByTagName('li');
+	for(var i=0;i<lis.length;i++){
+		if(lis[i].id != obj.id){
+			 lis[i].className = '';
+			 lis[i].style.background =  '';
+			 lis[i].style.color =  '';
+		}else{
+			lis[i].classNames ='fouce' ;
+			lis[i].style.background = 'url(images/ahover.jpg) no-repeat';
+			lis[i].style.color =  '#FFF';
+			document.getElementById('img1').src = 'images/'+obj.id+'.jpg';
+		}
+	}
+}
+</script>
+<!--百度统计代码-->
+
+<!--[if IE 6]>
+	<script type="text/javascript" src="unitpngfix.js"></script>
+<![endif]--> 
+</head>
+<body>
+    <div class="main">
+         <div class="top">
+         
+         </div>
+         <div class="wrap">
+              <div class="left">
+                   <ul id="version">
+                   	   <li id="2.9-3" class="fouce" style=" background:url(images/ahover.jpg) no-repeat; color:#FFF;" onclick="changeImg(this)">V2.9.3-140717</li>
+                       <li id="2.9-2" onclick="changeImg(this)">V2.9.2-140701</li>
+                       <li id="2.9-1" onclick="changeImg(this)">V2.9.1-140425</li>
+                   </ul>
+              </div>
+              <div class="right">
+                   <img id="img1" src="images/2.9-3.jpg" />
+              </div>
+         </div>
+         <div class="bottom">
+         </div>
+    </div>
+    <div style="display:none; position: fixed;bottom:10px;right:10px; z-index: 99999; " id=goTopBtn><img border=0 src="images/lanren_top.jpg"></div>
+    <script type=text/javascript>goTopEx();</script>
+</body>

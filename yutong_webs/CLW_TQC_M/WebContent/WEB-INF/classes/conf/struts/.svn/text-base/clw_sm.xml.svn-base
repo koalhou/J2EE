@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 服务管理 -->
+	<package name="sm" namespace="/sm" extends="clw-default">
+		<!-- 转到维保设置信息表 -->
+		<action name="maintenanceInit" class="maintenanceSetAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/sm/maintenanceset.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/maintenanceset.jsp
+			</result>
+		</action>
+		<!-- 维保设置信息添加页面 -->
+		<action name="maintenanceToAdd" class="maintenanceSetAction"
+			method="toAdd">
+			<result name="success">
+				/WEB-INF/jsp/sm/maintenanceset_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/maintenanceset_add.jsp
+			</result>
+		</action>
+		<!-- 维保设置信息添加 -->
+		<action name="maintenanceDoAdd" class="maintenanceSetAction"
+			method="doAdd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">maintenance</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">maintenanceToAdd</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 维保设置信息修改页面 -->
+		<action name="maintenanceToMod" class="maintenanceSetAction"
+			method="toModify">
+			<result name="success">
+				/WEB-INF/jsp/sm/maintenanceset_edit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/maintenanceset_edit.jsp
+			</result>
+		</action>
+		<!-- 维保设置信息修改 -->
+		<action name="maintenanceDoMod" class="maintenanceSetAction"
+			method="doModify">
+			<result name="success" type="redirect-action">
+				<param name="actionName">maintenanceToMod</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">maintenanceToMod</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 维保设置信息删除 -->
+		<action name="maintenanceDoDel" class="maintenanceSetAction"
+			method="doDelete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">maintenance</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">maintenance</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>	
+
+		<!-- 转到高档车设置列表页面 -->
+		<action name="luxuryCarSetInit" class="luxuryCarSetAction" method="init">
+			<result name="success">
+				/WEB-INF/jsp/sm/luxurycarset.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/luxurycarset.jsp
+			</result>
+		</action>
+		<!-- 高档车设置添加页面 -->
+		<action name="luxuryCarSetToAdd" class="luxuryCarSetAction"
+			method="gotoAdd">
+			<result name="success">
+				/WEB-INF/jsp/sm/luxurycarset_add.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/luxurycarset_add.jsp
+			</result>
+		</action>
+		<!-- 高档车设置添加 -->
+		<action name="luxuryCarSetDoAdd" class="luxuryCarSetAction"
+			method="doAdd">
+			<result name="success" type="redirect-action">
+				<param name="actionName">luxuryCarSetInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">luxuryCarSetToAdd</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 高档车设置修改页面 -->
+		<action name="luxuryCarSetToMod" class="luxuryCarSetAction"
+			method="gotoModify">
+			<result name="success">
+				/WEB-INF/jsp/sm/luxurycarset_edit.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/luxurycarset_edit.jsp
+			</result>
+		</action>
+		<!-- 高档车设置修改 -->
+		<action name="luxuryCarSetDoMod" class="luxuryCarSetAction"
+			method="doModify">
+			<result name="success" type="redirect-action">
+				<param name="actionName">luxuryCarSetInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">luxuryCarSetToMod</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+		<!-- 高档车设置删除 -->
+		<action name="luxuryCarSetDoDel" class="luxuryCarSetAction" method="doDelete">
+			<result name="success" type="redirect-action">
+				<param name="actionName">luxuryCarSetInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">luxuryCarSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>		
+		<!-- 高档车导入页面 -->
+		<action name="luxurycarsetImport" class="luxuryCarSetAction"
+			method="toImport">
+			<result name="success">
+				/WEB-INF/jsp/sm/luxurycarsetImport.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/luxurycarsetImport.jsp
+			</result>
+		</action>
+		<!-- 高档车导入 -->
+		<action name="luxuryCarSetDoImport" class="luxuryCarSetAction"
+			method="doImport">
+			<interceptor-ref name="token" />
+			<!-- <interceptor-ref name="token-session" />-->
+			<interceptor-ref name="fileUpload">
+				<!-- 配置允许上传的文件类型，多个用","分隔 -->
+				<param name="allowedTypes">application/vnd.ms-excel,application/octet-stream</param>
+				<!-- 配置允许上传的文件大小，单位字节 -->
+				<param name="maximumSize">102400</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack" />
+			<!-- 动态设置Action中的savePath属性的值 -->
+			<param name="savePath">/tmp</param>
+			<result name="input">
+				/WEB-INF/jsp/sm/luxurycarsetImport.jsp
+			</result>
+			<result name="invalid.token">/WEB-INF/jsp/sm/luxurycarsetImport.jsp</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">luxuryCarSetInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/luxurycarsetImport.jsp
+			</result>
+		</action>
+		<!-- 高档车导出 -->
+		<action name="luxurycarsetExport" class="luxuryCarSetAction"
+			method="doExport">
+			<result name="success" type="redirect-action">
+				<param name="actionName">luxuryCarSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">luxuryCarSet</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+
+
+		<!-- 维保查询页面 -->
+		<action name="maintenanceQueryInit" class="maintenanceQueryAction"
+			method="init">
+			<result name="success">
+				/WEB-INF/jsp/sm/maintenancequery.jsp
+			</result>
+			<result name="error">
+				/WEB-INF/jsp/sm/maintenancequery.jsp
+			</result>
+		</action>
+		<!-- 维保查询更新提醒状态 -->
+		<action name="modifyRemindState" class="maintenanceQueryAction"
+			method="modifyRemindState">
+			<result name="success" type="redirect-action">
+				<param name="actionName">maintenanceQueryInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="error" type="redirect-action">
+				<param name="actionName">maintenanceQueryInit</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+		</action>
+	</package>
+	<package name="smquery" namespace="/smquery" extends="json-default">
+		<action name="maintenanceSetQueryList" class="maintenanceSetAction" method="queryList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>   
+	
+       <action name="luxuryCarQuery" class="luxuryCarSetAction" method="luxuryCarQuery">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>
+       
+       <action name="maintenanceQuery" class="maintenanceQueryAction" method="maintenanceQuery">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">map</param>
+           </result>
+       </action>       
+	</package>
+</struts>

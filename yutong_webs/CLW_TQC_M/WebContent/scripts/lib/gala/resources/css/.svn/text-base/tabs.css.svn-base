@@ -1,0 +1,60 @@
+.gala_tab_title {
+    list-style-image : none;
+    list-style-type : none;
+    margin : 0px;
+    padding : 0px;
+    height : 24px;
+    cursor: hand;
+}
+
+.gala_tab_title li {
+    color: #006699;
+	display: block;
+	text-align: left;
+    white-space: nowrap; /* required in IE 6 */    
+    padding: 0 0 0 40px;
+    width: 60px; /* IE 6 treats width as min-width */
+    min-width: 60px;
+   /* height: 18px; /* IE 6 treats height as min-height */
+  /*  min-height: 20px; */
+    
+    margin: 2px 0 0; /* position: relative makes opacity fail for disabled tab in IE */
+    background: url(../images/tab2.gif) no-repeat;
+}
+
+.gala_tab_title li.active {
+    position: relative;
+    top: 0px;
+    z-index: 2;
+    margin-top: 0;
+    text-decoration: none;
+    background: url(../images/tab1.gif) no-repeat;
+}
+
+.gala_tab_panel {
+    display : none;
+    border : 1px solid blue;
+}
+
+.gala_tab_panel_hide {
+	display : none;
+}
+
+.gala_tab_panel_show {
+    display : inline;
+}
+
+.gala-tab-hide-select {
+	z-index : 90000;
+	position : absolute;
+	top : 0;
+	left : 0;
+	margin-top : 64px;
+	background-color : #FFF;
+	broder : none;
+	filter : alpha(opacity = 0);
+	-moz-opacity : 0;
+	opacity : 0;
+	width : 100%;
+	height : 90%;
+}

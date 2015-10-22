@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="RoleManage">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="ModuleResInfo" type="com.neusoft.clw.yw.qx.rolemanage.ds.ModuleResInfo" />
+	 <typeAlias alias="RoleDataInfo" type="com.neusoft.clw.yw.qx.rolemanage.ds.RoleDataInfo" />
+	 
+	 <resultMap class="ModuleResInfo" id="module_tree">
+       <result property="module_id" column="module_id"/>
+       <result property="module_name" column="module_name"/>
+       <result property="left_num" column="left_num"/>
+       <result property="right_num" column="right_num"/>
+       <result property="treeleve" column="treeleve"/>
+       <result property="module_parent" column="module_parent"/>
+       <result property="module_uri" column="module_uri"/>
+    </resultMap>
+
+ 
+	<parameterMap id="pm_showall_module_tree" class="java.util.Map">
+		<parameter property="in_module_id" javaType="String" jdbcType="VARCHAR" />
+		<parameter property="out_flag" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_message" javaType="String" jdbcType="VARCHAR" mode="OUT" />
+		<parameter property="out_ref" javaType="Result" jdbcType="ORACLECURSOR" mode="OUT" resultMap="module_tree"/>
+    </parameterMap>
+    
+    <procedure id="showall_module_tree" parameterMap="pm_showall_module_tree" >
+       { call tree_module_pack.showall_module_tree(?, ? ,? ,?) }
+    </procedure> 
+    
+    <select id="getCount" parameterClass="Map" resultClass="Integer">
+		SELECT COUNT(*) 
+		FROM clw_jc_role_t t , clw_jc_enterprise_t et
+		WHERE t.valid_flag = '0'
+		AND t.enterprise_id = et.enterprise_id
+		<isNotEmpty prepend="AND" property="role_name">
+       	t.role_name LIKE '%$role_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="full_name">
+       	et.full_name LIKE '%$full_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="apply_id">
+       	t.apply_id=#apply_id#
+       </isNotEmpty>
+	</select>
+	
+	<resultMap id="role-result" class="RoleDataInfo">
+		<result property="role_id" column="ROLE_ID" />
+		<result property="role_name" column="ROLE_NAME" />
+		<result property="apply_id" column="APPLY_ID" />
+		<result property="full_name" column="FULL_NAME" />
+	</resultMap>
+	<select id="selectRoleInfo"  parameterClass="Map" resultMap="role-result">
+	 SELECT t.role_id, t.role_name, t.apply_id, et.full_name as full_name
+	  FROM clw_jc_role_t t, clw_jc_enterprise_t et
+	 WHERE t.valid_flag = '0'
+	   AND t.enterprise_id = et.enterprise_id
+	   <isNotEmpty prepend="AND" property="role_name">
+       	t.role_name LIKE '%$role_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="full_name">
+       	et.full_name LIKE '%$full_name$%'
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="apply_id">
+       	t.apply_id=#apply_id#
+       </isNotEmpty>
+	  <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+ 	</select>
+ 	
+ 	<insert id="insertRoles" parameterClass="Map">
+ 		INSERT INTO clw_jc_role_right_t t
+		  (t.role_id, t.module_id)
+		VALUES
+		  (#roleID#, #moduleID#)
+ 	</insert>
+ 	<resultMap id="module_strs" class="ModuleResInfo">
+		<result property="module_id" column="MODULE_ID" />
+	</resultMap>
+ 	<select id="selectRoles" parameterClass="Map" resultMap="module_strs">
+		 SELECT t.module_id
+		  FROM clw_jc_role_right_t t
+		 WHERE t.role_id = #role_id#
+ 	</select>
+ 	<insert id="insertRoleInfo" parameterClass="Map">
+			INSERT INTO clw_jc_role_t
+			  (role_id,
+			   role_name,
+			   remark,
+			   apply_id,
+			   creater,
+			   create_time,
+			   modifier,
+			   modify_time,
+			   valid_flag,
+			   vaset_user_id,
+			   vaset_time,
+			   enterprise_id)
+			VALUES
+			  (#role_id#,
+			   #role_name#,
+			   #remark#,
+			   '0',
+			   #userID#,
+			   SYSDATE,
+			   '',
+			   '',
+			   '0',
+			   '',
+			   '',
+			   '111')
+ 	</insert>
+    <select id="getRoleInfo" parameterClass="Map" resultClass="RoleDataInfo">
+	 SELECT t.role_id,
+	       t.role_name,
+	       t.remark,
+	       t.apply_id,
+	       ut.user_name  AS creater,
+	       to_char(t.create_time, 'yyyy-mm-dd hh24:mi:ss') AS create_time,
+	       ut2.user_name  AS modifier,
+	       to_char(t.modify_time, 'yyyy-mm-dd hh24:mi:ss') AS modify_time,
+	       et.full_name AS full_name
+	  FROM clw_jc_role_t       t,
+	       clw_jc_enterprise_t et,
+	       clw_jc_user_t       ut,
+	       clw_jc_user_t       ut2
+	 WHERE t.valid_flag = '0'
+	   AND t.enterprise_id = et.enterprise_id
+	   AND t.creater = ut.user_id(+)
+	   AND t.modifier = ut2.user_id(+)
+	   AND t.role_id=#role_id#
+	</select>
+	<update id="updateRoleInfo" parameterClass="Map">
+		UPDATE clw_jc_role_t t
+		   SET t.role_name   = #role_name#,
+		       t.remark      = #remark#,
+		       t.modifier    = #modifier#,
+		       t.modify_time = SYSDATE
+		 WHERE t.role_id = #role_id#
+	</update>
+	<delete id="delRoles" parameterClass="Map">
+		DELETE clw_jc_role_right_t t WHERE t.role_id=#role_id#
+	</delete>
+	<update id="updateDelRoleInfo" parameterClass="Map">
+		UPDATE clw_jc_role_t t
+		   SET t.valid_flag = '1', t.vaset_user_id = #vaset_user_id#, t.vaset_time = SYSDATE
+		 WHERE t.role_id = #role_id#
+	</update>
+	<select id="getUserRoleCont" parameterClass="String" resultClass="Integer">
+		SELECT COUNT(*)
+		  FROM clw_jc_user_role_t t
+		 WHERE t.role_id = #role_id#
+	</select>
+</sqlMap>

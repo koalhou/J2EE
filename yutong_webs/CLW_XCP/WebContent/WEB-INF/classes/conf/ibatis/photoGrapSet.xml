@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="photoGrapSet">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="photoGrapInfo"
+		type="com.neusoft.clw.sysmanage.datamanage.photographmanage.domain.PhotoGraphSet" />
+		
+    <resultMap id="photoSetinfo-result" class="photoGrapInfo">
+    	<result property="setId" column="SET_ID"/>
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="week" column="WEEK" />
+		<result property="beginTime" column="BEG_TIME" />
+		<result property="endTime" column="END_TIME" />
+		<result property="interval" column="INTERVAL" />
+		<result property="type" column="type"/>
+	</resultMap>
+	
+	
+	<resultMap id="vehcileinfo-result" class="photoGrapInfo">
+		<result property="vehicleVin" column="VEHICLE_VIN" />
+		<result property="vehicleln" column="VEHICLE_LN" />
+		<result property="limitNumber" column="LIMITE_NUMBER" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="organizationId" column="ORGANIZATION_ID" />
+		<result property="fullName" column="FULL_NAME" />
+		<result property="shortFullName" column="organizationName" />
+		<result property="vehbrand" column="vehbrand" />
+		<result property="isSet" column="is_set" />
+	</resultMap>
+	<!--  -->
+	<select id="findVehicleListCount" parameterClass="Map" resultClass="Integer">
+		select count(1) from (
+		SELECT vi.vehicle_vin,
+	          vi.vehicle_ln,
+	          vi.limite_number,
+	          vi.organization_id,
+	          vi.enterprise_id,
+	          vi.full_name,
+	          vi.organizationName,
+	          vi.vehbrand
+	      FROM CLW_JC_CLEN_VI vi,
+	      	(
+	      		select vehicle_vin,week from CLW_YW_PHOTO_TRIGGER_T 
+	      		where 1=1
+	      		 <isNotEmpty prepend="AND" property="vehicleVin">
+		    		vehicle_vin in 
+		    		<iterate conjunction="," open="(" close=")" property="vehicleVin">  
+			        	#vehicleVin[]#
+			        </iterate>
+		    	</isNotEmpty>
+		    	<isNotEmpty prepend="AND" property="weeks">
+		    		week in 
+		    		<iterate conjunction="," open="(" close=")" property="weeks">  
+			        	#weeks[]#
+			        </iterate>
+		   	 	</isNotEmpty>
+	      		group by vehicle_vin,week) photo 
+	      	WHERE 1=1
+	      	and vi.vehicle_vin = photo.vehicle_vin(+)
+	      	<isNotEmpty prepend="AND" property="vehicleVin">
+	    		vi.vehicle_vin in 
+	    		<iterate  property="vehicleVin" conjunction="," open="(" close=")">  
+		        	#vehicleVin[]#
+		        </iterate>
+	    	</isNotEmpty>   
+	    	group by vi.vehicle_vin,vi.vehicle_ln,vi.limite_number,
+                   vi.organization_id,vi.enterprise_id,vi.full_name,
+                   vi.organizationName,vi.vehbrand)
+	</select>
+	
+	<select id="findVehicleList" parameterClass="Map" resultMap="vehcileinfo-result">
+		SELECT vi.VEHICLE_VIN,
+	           vi.VEHICLE_LN,
+	           vi.LIMITE_NUMBER,
+	           vi.ORGANIZATION_ID,
+	           vi.ENTERPRISE_ID,
+	           vi.full_name,
+	           vi.organizationName,
+	           vi.vehbrand,
+	           photo.is_set
+	      FROM CLW_JC_CLEN_VI vi,
+	      	(
+	      		select vehicle_vin,week ,'1' is_set from CLW_YW_PHOTO_TRIGGER_T 
+	      		where 1=1
+	      		 <isNotEmpty prepend="AND" property="vehicleVin">
+		    		vehicle_vin in 
+		    		<iterate  property="vehicleVin" conjunction="," open="(" close=")">  
+			        	#vehicleVin[]#
+			        </iterate>
+		    	</isNotEmpty>
+		    	<isNotEmpty prepend="AND" property="weeks">
+		    		week in 
+		    		<iterate property="weeks" conjunction="," open="(" close=")">  
+			        	#weeks[]#
+			        </iterate>
+		   	 	</isNotEmpty>
+	      		group by vehicle_vin,week) photo 
+	      	WHERE 1=1
+	      	and vi.vehicle_vin = photo.vehicle_vin(+)
+	      	<isNotEmpty prepend="AND" property="vehicleVin">
+	    		vi.vehicle_vin in 
+	    		<iterate  property="vehicleVin" conjunction="," open="(" close=")">  
+		        	#vehicleVin[]#
+		        </iterate>
+	    	</isNotEmpty>
+	    	group by vi.vehicle_vin,vi.vehicle_ln,vi.limite_number,
+                   vi.organization_id,vi.enterprise_id,vi.full_name,
+                   vi.organizationName,vi.vehbrand,photo.is_set     
+	     <dynamic prepend="ORDER BY">  
+     		<isNotEmpty property="sortname">
+      			$sortname$ $sortorder$  
+     		</isNotEmpty>  
+   		 </dynamic> 
+	</select>
+	
+	<!-- 定时拍照设置 -->
+	<select id="findSignPhotoSet" parameterClass="Map" resultMap="photoSetinfo-result">
+		select wm_concat(set_id) set_id,vehicle_vin,wm_concat(week) week,beg_time,end_time,type,interval/60 interval from CLW_YW_PHOTO_TRIGGER_T where 1=1
+		    <isNotEmpty prepend="AND" property="vehicleVin">
+		    		vehicle_vin in 
+		    		<iterate property="vehicleVin" conjunction="," open="(" close=")">  
+			        	#vehicleVin[]#
+			        </iterate>
+		    </isNotEmpty>
+				group by vehicle_vin,beg_time,end_time,type,interval
+			order by vehicle_vin desc, week asc
+	</select>
+	
+	<!-- 添加车辆新的定时拍照 -->
+	<insert id="insertPhotoSet" parameterClass="photoGrapInfo">
+		insert into CLW_YW_PHOTO_TRIGGER_T (set_id,vehicle_vin,week,beg_time,end_time,interval,type,create_time,creater)
+			values 
+			(#setId#,#vehicleVin#,#week#,#beginTime#,#endTime#,#interval#,#type#,sysdate,#creater#)
+	</insert>
+	
+	<!-- 删除车辆定时拍照 -->
+	<delete id="deletePhotoSet" parameterClass="Map">
+		delete CLW_YW_PHOTO_TRIGGER_T where 1=1
+		<isNotEmpty prepend="AND" property="vehicleVin">
+			vehicle_vin in 
+    		<iterate property="vehicleVin" conjunction="," open="(" close=")">  
+	        	#vehicleVin[]#
+	        </iterate>
+		</isNotEmpty>
+	</delete>
+	
+	<delete id="deleteSetIds" parameterClass="Map">
+		delete CLW_YW_PHOTO_TRIGGER_T where 1=1
+		<isNotEmpty prepend="AND" property="setIds">
+			set_id in 
+    		<iterate property="setIds" conjunction="," open="(" close=")">  
+	        	#setIds[]#
+	        </iterate>
+		</isNotEmpty>
+	</delete>
+	
+</sqlMap>

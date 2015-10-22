@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service
+END
+BuildSQL.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/BuildSQL.java
+END
+TqcStatisticSQL.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/TqcStatisticSQL.java
+END
+CachePattern.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/CachePattern.java
+END
+OilWearSQL.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/OilWearSQL.java
+END
+ActiveCoreService.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/ActiveCoreService.java
+END
+SearchGisAreaByCode.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/SearchGisAreaByCode.java
+END
+XCBuildSQL.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/XCBuildSQL.java
+END
+ParentsBuildSQL.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/ParentsBuildSQL.java
+END
+FtlyBuildSQL.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/FtlyBuildSQL.java
+END
+SendCmdService.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/datas/!svn/ver/25/other/work_spaces/workspace_xc/CLW_NEW_CORE/src/main/java/com/yutong/clw/service/SendCmdService.java
+END

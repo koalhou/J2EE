@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ZoneManage">
+	 <typeAlias alias="Map" type="java.util.Map" />
+	 <typeAlias alias="Result" type="java.sql.ResultSet" />
+	 <typeAlias alias="String" type="java.lang.String" />
+	 <typeAlias alias="ZoneXsInfo" type="com.neusoft.clw.sysmanage.datamanage.zonemanage.domain.ZoneXsInfo" />
+ 	
+ 	<!-- ZoneManageDWR使用 begin -->
+ 	<resultMap id="data-select" class="ZoneXsInfo">
+		<result property="zone_id" column="ZONE_ID" />
+		<result property="zone_name" column="ZONE_NAME" />
+	</resultMap>
+ 	<select id="getSelectList" parameterClass="Map" resultMap="data-select">
+ 	SELECT t.zone_id, t.zone_name
+	  FROM clw_jc_zone_t t
+	 WHERE t.valid_flag = '0'
+	 <isNotEmpty prepend="AND" property="zone_parent_id">
+      t.zone_parent_id = #zone_parent_id#
+     </isNotEmpty>
+	 <isEmpty prepend="AND" property="zone_parent_id">
+	  t.zone_parent_id IS NULL
+	 </isEmpty>
+ 	</select>
+ 	<!-- ZoneManageDWR使用end -->
+ 	
+ 	<!-- add by jinp begin -->
+ 	<resultMap id="geography-list" class="ZoneXsInfo">
+		<result property="zone_id" column="REGION_ID" />
+		<result property="zone_name" column="REGION_NAME" />
+	</resultMap>
+	
+ 	<select id="getGeographyList" parameterClass="Map" resultMap="geography-list">
+ 		SELECT T.REGION_ID, 
+ 		       T.REGION_NAME 
+ 		  FROM CLW_JC_GEOGRAPHY_T T
+ 	  <dynamic prepend="WHERE">  
+ 		<isNotEmpty property="parentId">
+               T.PARENT_ID = #parentId#
+        </isNotEmpty>
+		<isEmpty property="parentId">
+		       T.PARENT_ID IS NULL
+		</isEmpty>
+	  </dynamic>
+	  ORDER BY T.REGION_ID 
+ 	</select>
+ 	<!-- add by jinp end -->
+ 	
+ 	<select id="getZoneName"  parameterClass="String" resultClass="String">
+		SELECT t.zone_name FROM clw_jc_zone_t t WHERE t.zone_id = #zone_id#
+ 	</select>
+</sqlMap>

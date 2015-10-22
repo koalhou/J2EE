@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="clw-default" extends="struts-default">
+		<interceptors>
+			<!--用户的每一次请求，必须调用这个拦截器 -->
+			<interceptor name="turnPageInter" class="turnPageInterceptor" />
+			<interceptor name="authentication" class="authenticationInterceptor" />
+			<interceptor-stack name="matStack">
+				<interceptor-ref name="authentication">
+					<param name="excludeMethods">creatValidatePic,login,logout</param>
+				</interceptor-ref>			
+				<interceptor-ref name="turnPageInter" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="matStack" />
+		
+		<default-action-ref name="login" />
+		
+		<global-results>
+			<result name="login" type="redirect-action">
+				<param name="actionName">logout</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="no_permission" type="dispatcher"></result>
+		</global-results>
+		
+		<!-- 注销 -->
+		<action name="logout" class="securityAction" method="logout">
+		    <result name="error">sessionTimeOut.jsp</result>
+			<result name="success">sessionTimeOut.jsp</result>
+		</action>
+		
+		<!-- 首页 -->
+		<!--  
+		<action name="main" class="mainAction" method="execute">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">firstSet</param>
+				<param name="namespace">/firstSet</param>
+			</result>
+		</action>
+		-->
+		  
+		<action name="main" class="mainAction" method="execute">
+			<result name="error">login.jsp</result>
+			<result name="success" type="redirect-action">
+				<param name="actionName">gpsAction</param>
+				<param name="namespace">/gps</param>
+			</result>
+		</action>
+		
+		<!-- 登陆 -->  
+		<!-- 
+		<action name="login" class="securityAction" method="login">	
+			<result name="success" type="redirect-action">
+				<param name="actionName">main</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="error">login.jsp</result>
+		</action>
+	     -->
+	     
+	    <action name="login" class="securityAction" method="login">	
+			
+		</action>
+	     
+		
+		 <!-- 验证码  -->
+		<action name="validatecode" class="validateCode" method="creatValidatePic">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+
+	</package>
+
+	<package name="newIconDisplay" namespace="/newIconDisplay" extends="json-default">
+		<!-- new图标显示-->
+		<action name="getDisplayNewIcon" class="securityAction" method="getDisplayNewIcon">
+	           <result name="success" type="json">
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">isDisplayNewIcon</param>
+	           </result>
+		</action>
+		<action name="getHomeShow" class="securityAction" method="getHomeShow">
+	           <result name="success" type="json">
+	              <param name="contentType">text/json</param>
+	              <param name="excludeNullProperties">false</param>
+	              <param name="noCache">true</param>
+	              <param name="root">fileNames</param>
+	           </result>
+		</action>
+	</package>
+</struts>

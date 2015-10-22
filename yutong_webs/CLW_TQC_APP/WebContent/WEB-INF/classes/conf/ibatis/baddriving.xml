@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BadDriving">
+    <typeAlias alias="Result" type="java.sql.ResultSet" />
+    <typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="BadDriving" type="com.neusoft.clw.itsmanage.oilmanage.baddriving.domain.BadDriving" />
+	<typeAlias alias="BadDrivDay" type="com.neusoft.clw.itsmanage.oilmanage.baddriving.domain.BadDrivDay" />
+		
+	<resultMap id="baddriving-result" class="BadDriving">
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_start_time" column="ALARM_START_TIME" />
+		<result property="alarm_end_time" column="ALARM_END_TIME" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="alarm_start_speed" column="ALARM_START_SPEED" />
+		<result property="alarm_start_rpm" column="ALARM_START_RPM" />
+		<result property="alarm_start_latitude" column="ALARM_START_LATITUDE" />
+		<result property="alarm_start_longitude" column="ALARM_START_LONGITUDE" />
+	</resultMap>
+	
+	<resultMap id="report-result" class="BadDriving">
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="alarm_type_name" column="ALARM_TYPE_NAME" />
+		<result property="alarm_start_time" column="ALARM_START_TIME" />
+		<result property="alarm_end_time" column="ALARM_END_TIME" />
+		<result property="alarm_time" column="ALARM_TIME" />
+		<result property="alarm_start_speed" column="ALARM_START_SPEED" />
+		<result property="alarm_start_rpm" column="ALARM_START_RPM" />
+		<result property="alarm_start_latitude" column="ALARM_START_LATITUDE" />
+		<result property="alarm_start_longitude" column="ALARM_START_LONGITUDE" />
+	</resultMap>
+	
+	<!-- 不良驾驶详细数量-->
+	<select id="getBadDrivCount" parameterClass="BadDriving" resultClass="Integer">
+		SELECT
+		    COUNT(1)
+		FROM
+		    CLW_JC_VEHICLE_BASEINFO_VI ccbi ,
+		    CLW_XC_BADEVENT_T cyat ,
+		    clw_cl_alarmtype_t alarm
+		WHERE
+		    ccbi.VEHICLE_VIN = cyat.VEHICLE_VIN(+)
+		    AND cyat.EVENT_TYPE_ID = alarm.alarm_type_id
+		    AND ccbi.ORGANIZATION_ID IN <![CDATA[(
+		        SELECT
+		            enterprise_id
+		        FROM
+		            clw_jc_enterprise_vi
+		        WHERE
+		            left_num >=(
+		                SELECT
+		                    left_num
+		                FROM
+		                    clw_jc_enterprise_vi
+		                WHERE
+		                    enterprise_id = #organization_id#
+		            )
+		            AND right_num <=(
+		                SELECT
+		                    right_num
+		                FROM
+		                    clw_jc_enterprise_vi
+		                WHERE
+		                    enterprise_id = #organization_id#
+		            )
+		    ) ]]>
+       <isNotEmpty prepend="AND" property="vehicle_vin">
+			 ccbi.VEHICLE_VIN=#vehicle_vin#	      
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="alarm_type_id">
+			 cyat.EVENT_TYPE_ID in ($alarm_type_id$)	      
+	   </isNotEmpty>	
+	   <isEmpty prepend="AND" property="alarm_type_id">
+			 cyat.EVENT_TYPE_ID in ('32','46','47','48','49','50','51')	      
+	   </isEmpty>	  
+	   <isNotEmpty prepend="AND" property="alarm_start_time">
+			 cyat.EVENT_START_TIME(+) between to_date(#alarm_start_time#,'yyyy-mm-dd HH24:MI:SS') and to_date(#alarm_end_time#,'yyyy-mm-dd HH24:MI:SS')
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicle_ln">
+			 upper(ccbi.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'     
+	   </isNotEmpty>
+	</select>
+	
+     <!-- 不良驾驶详细延迟天数查询-->
+	<select id="getBadDrivDateCount" parameterClass="BadDriving" resultClass="String">
+		SELECT
+		    t.param_value
+		FROM
+		    clw_jc_param_cfg_t t
+		WHERE
+		    t.param_name = 'reportBuildTimeDelay'
+	</select>
+	
+    <!-- 不良驾驶详细列表 -->
+	<select id="getBadDrivList" parameterClass="BadDriving" resultMap="baddriving-result">
+		SELECT
+		    ccbi.VEHICLE_VIN ,
+		    ccbi.VEHICLE_LN ,
+		    CASE
+		        WHEN cydt.DRIVER_NAME IS NULL
+		        THEN '未登陆'
+		        ELSE cydt.DRIVER_NAME
+		    END VEHICLE_CODE ,
+		    ccbi.ROUTE_NAME ,
+		    ccbi.DRIVER_NAME ,
+		    alarm.ALARM_TYPE_NAME ,
+		    TO_CHAR(
+		        cyat.EVENT_START_TIME ,
+		        'YYYY-MM-DD HH24:MI:SS'
+		    ) AS ALARM_START_TIME ,
+		    TO_CHAR(
+		        cyat.EVENT_END_TIME ,
+		        'YYYY-MM-DD HH24:MI:SS'
+		    ) AS ALARM_END_TIME ,
+		    cyat.EVENT_TIME ALARM_TIME ,
+		    cyat.EVENT_START_SPEED ALARM_START_SPEED ,
+		    '' ALARM_START_RPM ,
+		    cyat.EVENT_START_LATITUDE ALARM_START_LATITUDE ,
+		    cyat.EVENT_START_LONGITUDE ALARM_START_LONGITUDE
+		FROM
+		    CLW_JC_VEHICLE_BASEINFO_VI ccbi ,
+		    CLW_XC_BADEVENT_T cyat ,
+		    clw_cl_alarmtype_t alarm ,
+		    CLW_YW_DRIVER_T cydt
+		WHERE
+		    ccbi.VEHICLE_VIN = cyat.VEHICLE_VIN(+)
+		    AND cyat.EVENT_TYPE_ID = alarm.alarm_type_id
+		    AND cyat.DRIVER_ID = TO_CHAR(
+		        cydt.DRIVER_ID(+)
+		    )
+		    AND ccbi.ORGANIZATION_ID IN <![CDATA[(
+		        SELECT
+		            enterprise_id
+		        FROM
+		            clw_jc_enterprise_vi
+		        WHERE
+		            left_num >=(
+		                SELECT
+		                    left_num
+		                FROM
+		                    clw_jc_enterprise_vi
+		                WHERE
+		                    enterprise_id = #organization_id#
+		            )
+		            AND right_num <=(
+		                SELECT
+		                    right_num
+		                FROM
+		                    clw_jc_enterprise_vi
+		                WHERE
+		                    enterprise_id = #organization_id#
+		            )
+		    ) ]]>
+	   <isNotEmpty prepend="AND" property="vehicle_vin">
+			 ccbi.VEHICLE_VIN=#vehicle_vin#	      
+	   </isNotEmpty>
+	   <isNotEmpty prepend="AND" property="alarm_type_id">
+			 cyat.EVENT_TYPE_ID in ($alarm_type_id$)	      
+	   </isNotEmpty>	
+	   <isEmpty prepend="AND" property="alarm_type_id">
+			 cyat.EVENT_TYPE_ID in ('32','46','47','48','49','50','51')	      
+	   </isEmpty>	  
+	   <isNotEmpty prepend="AND" property="alarm_start_time">
+			 cyat.EVENT_START_TIME(+) between to_date(#alarm_start_time#,'yyyy-mm-dd HH24:MI:SS') and to_date(#alarm_end_time#,'yyyy-mm-dd HH24:MI:SS')
+       </isNotEmpty>
+       <isNotEmpty prepend="AND" property="vehicle_ln">
+			 upper(ccbi.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+	   </isNotEmpty>
+        <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<select id="getvehln" parameterClass="String" resultClass="String">
+		SELECT
+		    VEHICLE_LN
+		FROM
+		    CLW_CL_BASE_INFO_T
+		WHERE
+		    VEHICLE_VIN = #id#
+		    AND valid_flag = '0'
+	</select>
+	
+	<!-- 车辆 -->
+	<resultMap id="baddrivday-result" class="BadDrivDay">
+		<result property="route_name" column="ROUTE_NAME" />
+		<result property="vehicle_ln" column="VEHICLE_LN" />
+		<result property="vehicle_vin" column="VEHICLE_VIN" />
+		<result property="vehicle_code" column="VEHICLE_CODE" />
+		<result property="driver_name" column="DRIVER_NAME" />
+		<result property="short_allname" column="short_allname" />
+		<result property="speeding_num" column="speeding_num" />
+		<result property="speeding_time" column="speeding_time" />
+		<result property="rpm_num" column="rpm_num" />
+		<result property="rpm_time" column="rpm_time" />
+		<result property="gear_glide_time" column="gear_glide_time" />
+		<result property="gear_glide_num" column="gear_glide_num" />
+		<result property="long_idle_num" column="long_idle_num" />
+		<result property="long_idle_time" column="long_idle_time" />
+		<result property="urgent_speed_num" column="urgent_speed_num" />
+		<result property="urgent_speed_time" column="urgent_speed_time" />
+		<result property="urgent_lowdown_time" column="urgent_lowdown_time" />
+		<result property="air_condition_num" column="air_condition_num" />
+		<result property="air_condition_time" column="air_condition_time" />
+		<result property="economic_run_per" column="economic_run_per" />
+		<result property="engineRotateTime" column="ENGINE_ROTATE_TIME" />
+	</resultMap>
+	
+	<resultMap id="baddrivdaysum-result" class="BadDrivDay">
+		<result property="speeding_num" column="speeding_num" />
+		<result property="speeding_time" column="speeding_time" />
+		<result property="rpm_num" column="rpm_num" />
+		<result property="rpm_time" column="rpm_time" />
+		<result property="gear_glide_time" column="gear_glide_time" />
+		<result property="gear_glide_num" column="gear_glide_num" />
+		<result property="long_idle_num" column="long_idle_num" />
+		<result property="long_idle_time" column="long_idle_time" />
+		<result property="economic_run_per" column="economic_run_per" />
+		<result property="urgent_speed_num" column="urgent_speed_num" />
+		<result property="urgent_speed_time" column="urgent_speed_time" />
+		<result property="urgent_lowdown_time" column="urgent_lowdown_time" />
+		<result property="air_condition_num" column="air_condition_num" />
+		<result property="air_condition_time" column="air_condition_time" />
+		<result property="engineRotateTime" column="ENGINE_ROTATE_TIME" />
+	</resultMap>
+	
+	<!-- 不良驾驶天数量 -->
+	<select id="getBadDrivDayCount" parameterClass="BadDrivDay" resultClass="Integer">
+		SELECT COUNT(1) FROM
+		  (SELECT (
+		    CASE
+		      WHEN speeding_num      =0
+		      AND speeding_time      ='00:00:00'
+		      AND rpm_num            =0
+		      AND rpm_time           = '00:00:00'
+		      AND gear_glide_num     =0
+		      AND gear_glide_time    = '00:00:00'
+		      AND long_idle_num      =0
+		      AND long_idle_time     ='00:00:00'
+		      AND urgent_speed_num   =0
+		      AND urgent_speed_time  ='00:00:00'
+		      AND urgent_lowdown_time='00:00:00'
+		      AND air_condition_num  =0
+		      AND air_condition_time ='00:00:00'
+		      AND ENGINE_ROTATE_TIME ='00:00:00'
+		      AND economic_run_per   =0
+		      THEN 0
+		      ELSE 1
+		    END ) AS filter ,
+		    vehicle_vin ,
+		    VEHICLE_LN ,
+		    vehicle_code ,
+		    route_name ,
+		    short_allname ,
+		    driver_name ,
+		    speeding_num ,
+		    ENGINE_ROTATE_TIME ,
+		    speeding_time ,
+		    rpm_num,
+		    rpm_time ,
+		    gear_glide_num,
+		    gear_glide_time ,
+		    long_idle_num,
+		    long_idle_time ,
+		    air_condition_num,
+		    air_condition_time ,
+		    urgent_speed_num,
+		    urgent_speed_time ,
+		    economic_run_per,
+		    urgent_lowdown_time
+		  FROM
+		    (SELECT vt.vehicle_vin,
+		      vt.VEHICLE_LN,
+		      vt.vehicle_code,
+		      vt.route_name,
+		      vt.short_allname,
+		      vt.driver_name,
+		      vt.speeding_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.speeding_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.speeding_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) speeding_time,
+		      vt.rpm_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.rpm_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.rpm_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) rpm_time,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.ENGINE_ROTATE_TIME / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.ENGINE_ROTATE_TIME, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) ENGINE_ROTATE_TIME,
+		      vt.gear_glide_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.gear_glide_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.gear_glide_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) gear_glide_time,
+		      vt.long_idle_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.long_idle_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.long_idle_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) long_idle_time,
+		      vt.air_condition_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.air_condition_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.air_condition_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) air_condition_time,
+		      vt.urgent_speed_num ,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.urgent_speed_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.urgent_speed_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) urgent_speed_time,
+		      economic_run_per,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.urgent_lowdown_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.urgent_lowdown_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) urgent_lowdown_time
+		    FROM
+		      (SELECT ccbi.vehicle_vin,
+		        ccbi.VEHICLE_LN,
+		        ccbi.vehicle_code,
+		        MAX(ccbi.short_name) short_allname,
+		        MAX(ccbi.ROUTE_NAME) route_name,
+		        MAX(ccbi.driver_name) driver_name,
+		        SUM(
+		        CASE
+		          WHEN cyat.speeding_num IS NULL
+		          THEN 0
+		          ELSE cyat.speeding_num
+		        END ) speeding_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.speeding_time IS NULL
+		          THEN 0
+		          ELSE cyat.speeding_time
+		        END) speeding_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.rpm_num IS NULL
+		          THEN 0
+		          ELSE cyat.rpm_num
+		        END ) rpm_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.rpm_time IS NULL
+		          THEN 0
+		          ELSE cyat.rpm_time
+		        END) rpm_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.gear_glide_num IS NULL
+		          THEN 0
+		          ELSE cyat.gear_glide_num
+		        END ) gear_glide_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.gear_glide_time IS NULL
+		          THEN 0
+		          ELSE cyat.gear_glide_time
+		        END) gear_glide_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.long_idle_num IS NULL
+		          THEN 0
+		          ELSE cyat.long_idle_num
+		        END ) long_idle_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.long_idle_time IS NULL
+		          THEN 0
+		          ELSE cyat.long_idle_time
+		        END) long_idle_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.urgent_speed_num IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_speed_num
+		        END )+SUM(
+		        CASE
+		          WHEN cyat.urgent_lowdown_num IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_lowdown_num
+		        END ) urgent_speed_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.urgent_speed_time IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_speed_time
+		        END) urgent_speed_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.urgent_lowdown_time IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_lowdown_time
+		        END) urgent_lowdown_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.air_condition_num IS NULL
+		          THEN 0
+		          ELSE cyat.air_condition_num
+		        END) air_condition_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.air_condition_time IS NULL
+		          THEN 0
+		          ELSE cyat.air_condition_time
+		        END) air_condition_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.ECONOMIC_RUN_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ECONOMIC_RUN_TIME
+		        END ) ENGINE_ROTATE_TIME,
+		        NVL(ROUND(DECODE(SUM(
+		        CASE
+		          WHEN cyat.ENGINE_ROTATE_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ENGINE_ROTATE_TIME
+		        END ),0,0,SUM(
+		        CASE
+		          WHEN cyat.ECONOMIC_RUN_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ECONOMIC_RUN_TIME
+		        END )*100/ SUM(
+		        CASE
+		          WHEN cyat.ENGINE_ROTATE_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ENGINE_ROTATE_TIME
+		        END )),2),0) economic_run_per
+		      FROM CLW_JC_VEHICLE_BASEINFO_VI ccbi,
+		        CLW_YW_BADDRIVING_T cyat
+		      WHERE ccbi.vehicle_vin    =cyat.vehicle_vin(+)
+		      AND ccbi.ORGANIZATION_ID IN <![CDATA[
+		        (SELECT enterprise_id
+		        FROM clw_jc_enterprise_vi
+		        WHERE left_num >=
+		          (SELECT left_num
+		          FROM clw_jc_enterprise_vi
+		          WHERE enterprise_id = #organization_id#
+		          )
+		        AND right_num <=
+		          (SELECT right_num
+		          FROM clw_jc_enterprise_vi
+		          WHERE enterprise_id =#organization_id#
+		          )
+		        ) ]]>
+		<isNotEmpty prepend="AND" property="vehicle_ln">
+			upper(ccbi.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="start_time">
+			cyat.alarm_day(+) between to_date(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS') and to_date(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+		</isNotEmpty>
+		<isNotEmpty property="time_list">
+			<isEqual prepend="AND" property="time_list" compareValue="week">
+				cyat.alarm_day(+) between TRUNC(SYSDATE, 'IW') and sysdate
+			</isEqual>
+			<isEqual prepend="AND" property="time_list" compareValue="month">
+				cyat.alarm_day(+) between TRUNC(SYSDATE, 'MONTH') and last_day(sysdate)
+			</isEqual>
+			<isEqual prepend="AND" property="time_list" compareValue="quarter">
+				cyat.alarm_day(+) between TRUNC(SYSDATE,'Q') and last_day(add_months(TRUNC(SYSDATE,'Q'),2))
+			</isEqual>
+			<isEqual prepend="AND" property="time_list" compareValue="year">
+				cyat.alarm_day(+) between TRUNC(SYSDATE, 'Y') and last_day(add_months(TRUNC(sysdate,'Y'),11))
+			</isEqual>
+		</isNotEmpty>  
+		GROUP BY ccbi.vehicle_vin, ccbi.VEHICLE_LN, ccbi.VEHICLE_CODE) vt)  pv)
+		where vehicle_vin is not null
+		<isEqual prepend="AND" property="fileterFlag" compareValue="1">
+			filter = 1
+		</isEqual>		
+	</select>
+	
+    <!-- 不良驾驶天列表 -->
+	<select id="getBadDrivDayList" parameterClass="BadDrivDay" resultMap="baddrivday-result">
+		SELECT * FROM
+		  (SELECT (
+		    CASE
+		      WHEN speeding_num      =0
+		      AND speeding_time      ='00:00:00'
+		      AND rpm_num            =0
+		      AND rpm_time           = '00:00:00'
+		      AND gear_glide_num     =0
+		      AND gear_glide_time    = '00:00:00'
+		      AND long_idle_num      =0
+		      AND long_idle_time     ='00:00:00'
+		      AND urgent_speed_num   =0
+		      AND urgent_speed_time  ='00:00:00'
+		      AND urgent_lowdown_time='00:00:00'
+		      AND air_condition_num  =0
+		      AND air_condition_time ='00:00:00'
+		      AND ENGINE_ROTATE_TIME ='00:00:00'
+		      AND economic_run_per   =0
+		      THEN 0
+		      ELSE 1
+		    END ) AS filter ,
+		    vehicle_vin ,
+		    VEHICLE_LN ,
+		    vehicle_code ,
+		    route_name ,
+		    short_allname ,
+		    driver_name ,
+		    speeding_num ,
+		    ENGINE_ROTATE_TIME ,
+		    speeding_time ,
+		    rpm_num,
+		    rpm_time ,
+		    gear_glide_num,
+		    gear_glide_time ,
+		    long_idle_num,
+		    long_idle_time ,
+		    air_condition_num,
+		    air_condition_time ,
+		    urgent_speed_num,
+		    urgent_speed_time ,
+		    economic_run_per,
+		    urgent_lowdown_time
+		  FROM
+		    (SELECT vt.vehicle_vin,
+		      vt.VEHICLE_LN,
+		      vt.vehicle_code,
+		      vt.route_name,
+		      vt.short_allname,
+		      vt.driver_name,
+		      vt.speeding_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.speeding_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.speeding_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) speeding_time,
+		      vt.rpm_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.rpm_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.rpm_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) rpm_time,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.ENGINE_ROTATE_TIME / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.ENGINE_ROTATE_TIME, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) ENGINE_ROTATE_TIME,
+		      vt.gear_glide_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.gear_glide_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.gear_glide_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) gear_glide_time,
+		      vt.long_idle_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.long_idle_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.long_idle_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) long_idle_time,
+		      vt.air_condition_num,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.air_condition_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.air_condition_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) air_condition_time,
+		      vt.urgent_speed_num ,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.urgent_speed_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.urgent_speed_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) urgent_speed_time,
+		      economic_run_per,
+		      (SELECT TRIM(TO_CHAR(TRUNC(vt.urgent_lowdown_time / 3600), '99999999999900'))
+		        || ':'
+		        || TO_CHAR(TO_DATE(MOD(vt.urgent_lowdown_time, 3600), 'sssss'), 'mi":"ss')
+		      FROM DUAL
+		      ) urgent_lowdown_time
+		    FROM
+		      (SELECT ccbi.vehicle_vin,
+		        ccbi.VEHICLE_LN,
+		        ccbi.vehicle_code,
+		        MAX(ccbi.short_name) short_allname,
+		        MAX(ccbi.ROUTE_NAME) route_name,
+		        MAX(ccbi.driver_name) driver_name,
+		        SUM(
+		        CASE
+		          WHEN cyat.speeding_num IS NULL
+		          THEN 0
+		          ELSE cyat.speeding_num
+		        END ) speeding_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.speeding_time IS NULL
+		          THEN 0
+		          ELSE cyat.speeding_time
+		        END) speeding_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.rpm_num IS NULL
+		          THEN 0
+		          ELSE cyat.rpm_num
+		        END ) rpm_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.rpm_time IS NULL
+		          THEN 0
+		          ELSE cyat.rpm_time
+		        END) rpm_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.gear_glide_num IS NULL
+		          THEN 0
+		          ELSE cyat.gear_glide_num
+		        END ) gear_glide_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.gear_glide_time IS NULL
+		          THEN 0
+		          ELSE cyat.gear_glide_time
+		        END) gear_glide_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.long_idle_num IS NULL
+		          THEN 0
+		          ELSE cyat.long_idle_num
+		        END ) long_idle_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.long_idle_time IS NULL
+		          THEN 0
+		          ELSE cyat.long_idle_time
+		        END) long_idle_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.urgent_speed_num IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_speed_num
+		        END )+SUM(
+		        CASE
+		          WHEN cyat.urgent_lowdown_num IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_lowdown_num
+		        END ) urgent_speed_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.urgent_speed_time IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_speed_time
+		        END) urgent_speed_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.urgent_lowdown_time IS NULL
+		          THEN 0
+		          ELSE cyat.urgent_lowdown_time
+		        END) urgent_lowdown_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.air_condition_num IS NULL
+		          THEN 0
+		          ELSE cyat.air_condition_num
+		        END) air_condition_num,
+		        SUM(
+		        CASE
+		          WHEN cyat.air_condition_time IS NULL
+		          THEN 0
+		          ELSE cyat.air_condition_time
+		        END) air_condition_time,
+		        SUM(
+		        CASE
+		          WHEN cyat.ECONOMIC_RUN_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ECONOMIC_RUN_TIME
+		        END ) ENGINE_ROTATE_TIME,
+		        NVL(ROUND(DECODE(SUM(
+		        CASE
+		          WHEN cyat.ENGINE_ROTATE_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ENGINE_ROTATE_TIME
+		        END ),0,0,SUM(
+		        CASE
+		          WHEN cyat.ECONOMIC_RUN_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ECONOMIC_RUN_TIME
+		        END )*100/ SUM(
+		        CASE
+		          WHEN cyat.ENGINE_ROTATE_TIME IS NULL
+		          THEN 0
+		          ELSE cyat.ENGINE_ROTATE_TIME
+		        END )),2),0) economic_run_per
+		      FROM CLW_JC_VEHICLE_BASEINFO_VI ccbi,
+		        CLW_YW_BADDRIVING_T cyat
+		      WHERE ccbi.vehicle_vin    =cyat.vehicle_vin(+)
+		      AND ccbi.ORGANIZATION_ID IN <![CDATA[
+		        (SELECT enterprise_id
+		        FROM clw_jc_enterprise_vi
+		        WHERE left_num >=
+		          (SELECT left_num
+		          FROM clw_jc_enterprise_vi
+		          WHERE enterprise_id = #organization_id#
+		          )
+		        AND right_num <=
+		          (SELECT right_num
+		          FROM clw_jc_enterprise_vi
+		          WHERE enterprise_id =#organization_id#
+		          )
+		        ) ]]>
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+			 upper(ccbi.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+			 cyat.alarm_day(+) between to_date(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS') and to_date(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+		 <isNotEmpty property="time_list">
+			 <isEqual prepend="AND" property="time_list" compareValue="week">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE, 'IW') and sysdate
+			 </isEqual>
+			 <isEqual prepend="AND" property="time_list" compareValue="month">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE, 'MONTH') and last_day(sysdate)
+			 </isEqual>
+			 <isEqual prepend="AND" property="time_list" compareValue="quarter">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE,'Q') and last_day(add_months(TRUNC(SYSDATE,'Q'),2))
+			 </isEqual>
+			 <isEqual prepend="AND" property="time_list" compareValue="year">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE, 'Y') and last_day(add_months(TRUNC(sysdate,'Y'),11))
+			 </isEqual>
+		</isNotEmpty>  
+        GROUP BY ccbi.vehicle_vin, ccbi.VEHICLE_LN, ccbi.VEHICLE_CODE) vt)  pv)
+        where vehicle_vin is not null
+        <isEqual prepend="AND" property="fileterFlag" compareValue="1">
+               filter = 1
+		</isEqual>  
+        <dynamic prepend="ORDER BY">  
+		   <isNotEmpty property="sortname">  
+		    $sortname$   $sortorder$  
+		   </isNotEmpty>  
+		 </dynamic>  
+	</select>
+	
+	<!-- 不良驾驶列表总计 -->
+	<select id="getBadDrivDayListSum" parameterClass="BadDrivDay" resultMap="baddrivdaysum-result">
+		SELECT speeding_num,
+		  (SELECT TRIM(TO_CHAR(TRUNC(speeding_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(speeding_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) speeding_time,
+		  rpm_num,
+		  (SELECT TRIM(TO_CHAR(TRUNC(rpm_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(rpm_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) rpm_time,
+		  gear_glide_num,
+		  (SELECT TRIM(TO_CHAR(TRUNC(gear_glide_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(gear_glide_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) gear_glide_time,
+		  (SELECT TRIM(TO_CHAR(TRUNC(ENGINE_ROTATE_TIME / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(ENGINE_ROTATE_TIME, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) ENGINE_ROTATE_TIME,
+		  long_idle_num,
+		  (SELECT TRIM(TO_CHAR(TRUNC(long_idle_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(long_idle_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) long_idle_time,
+		  urgent_speed_num,
+		  (SELECT TRIM(TO_CHAR(TRUNC(urgent_speed_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(urgent_speed_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) urgent_speed_time,
+		  (SELECT TRIM(TO_CHAR(TRUNC(urgent_lowdown_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(urgent_lowdown_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) urgent_lowdown_time,
+		  air_condition_num,
+		  (SELECT TRIM(TO_CHAR(TRUNC(air_condition_time / 3600), '99999999999900'))
+		    || ':'
+		    || TO_CHAR(TO_DATE(MOD(air_condition_time, 3600), 'sssss'), 'mi":"ss')
+		  FROM DUAL
+		  ) air_condition_time,
+		  economic_run_per
+		FROM
+		  (SELECT SUM(speeding_num) speeding_num,
+		    SUM(speeding_time) speeding_time,
+		    SUM(rpm_num) rpm_num,
+		    SUM(rpm_time) rpm_time,
+		    SUM(gear_glide_num) gear_glide_num,
+		    SUM(gear_glide_time) gear_glide_time,
+		    SUM(long_idle_num) long_idle_num,
+		    SUM(long_idle_time) long_idle_time,
+		    SUM(urgent_speed_num) urgent_speed_num,
+		    SUM(urgent_speed_time) urgent_speed_time,
+		    SUM(urgent_lowdown_time) urgent_lowdown_time,
+		    SUM(air_condition_num) air_condition_num,
+		    SUM(air_condition_time) air_condition_time,
+		    SUM(ENGINE_ROTATE_TIME) ENGINE_ROTATE_TIME,
+		    NVL(ROUND(DECODE(SUM(ENGINE_ROTATE_TIME),0,0,SUM(ECONOMIC_RUN_TIME)*100/ SUM(ENGINE_ROTATE_TIME)),2),0) economic_run_per
+		  FROM
+		    (SELECT COUNT(1) num ,
+		      ccbi.vehicle_vin ,
+		      ccbi.VEHICLE_LN ,
+		      MAX(ccbi.vehicle_code) vehicle_code,
+		      MAX(ccbi.ROUTE_NAME) route_name,
+		      SUM(
+		      CASE
+		        WHEN cyat.speeding_num IS NULL
+		        THEN 0
+		        ELSE cyat.speeding_num
+		      END ) speeding_num,
+		      SUM(
+		      CASE
+		        WHEN cyat.speeding_time IS NULL
+		        THEN 0
+		        ELSE cyat.speeding_time
+		      END) speeding_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.rpm_num IS NULL
+		        THEN 0
+		        ELSE cyat.rpm_num
+		      END ) rpm_num,
+		      SUM(
+		      CASE
+		        WHEN cyat.rpm_time IS NULL
+		        THEN 0
+		        ELSE cyat.rpm_time
+		      END) rpm_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.gear_glide_num IS NULL
+		        THEN 0
+		        ELSE cyat.gear_glide_num
+		      END) gear_glide_num,
+		      SUM(
+		      CASE
+		        WHEN cyat.gear_glide_time IS NULL
+		        THEN 0
+		        ELSE cyat.gear_glide_time
+		      END) gear_glide_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.long_idle_num IS NULL
+		        THEN 0
+		        ELSE cyat.long_idle_num
+		      END ) long_idle_num,
+		      SUM(
+		      CASE
+		        WHEN cyat.long_idle_time IS NULL
+		        THEN 0
+		        ELSE cyat.long_idle_time
+		      END) long_idle_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.urgent_speed_num IS NULL
+		        THEN 0
+		        ELSE cyat.urgent_speed_num
+		      END )+SUM(
+		      CASE
+		        WHEN cyat.urgent_lowdown_num IS NULL
+		        THEN 0
+		        ELSE cyat.urgent_lowdown_num
+		      END ) urgent_speed_num,
+		      SUM(
+		      CASE
+		        WHEN cyat.urgent_speed_time IS NULL
+		        THEN 0
+		        ELSE cyat.urgent_speed_time
+		      END) urgent_speed_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.urgent_lowdown_time IS NULL
+		        THEN 0
+		        ELSE cyat.urgent_lowdown_time
+		      END) urgent_lowdown_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.air_condition_num IS NULL
+		        THEN 0
+		        ELSE cyat.air_condition_num
+		      END) air_condition_num,
+		      SUM(
+		      CASE
+		        WHEN cyat.air_condition_time IS NULL
+		        THEN 0
+		        ELSE cyat.air_condition_time
+		      END) air_condition_time,
+		      SUM(
+		      CASE
+		        WHEN cyat.ECONOMIC_RUN_TIME IS NULL
+		        THEN 0
+		        ELSE cyat.ECONOMIC_RUN_TIME
+		      END ) ENGINE_ROTATE_TIME,
+		      SUM(
+		      CASE
+		        WHEN cyat.ECONOMIC_RUN_TIME IS NULL
+		        THEN 0
+		        ELSE cyat.ECONOMIC_RUN_TIME
+		      END ) ECONOMIC_RUN_TIME
+		    FROM CLW_JC_VEHICLE_BASEINFO_VI ccbi,
+		      CLW_YW_BADDRIVING_T cyat
+		    WHERE ccbi.vehicle_vin    =cyat.vehicle_vin(+)
+		    AND ccbi.ORGANIZATION_ID IN <![CDATA[
+		      (SELECT enterprise_id
+		      FROM clw_jc_enterprise_vi
+		      WHERE left_num >=
+		        (SELECT left_num
+		        FROM clw_jc_enterprise_vi
+		        WHERE enterprise_id = #organization_id#
+		        )
+		      AND right_num <=
+		        (SELECT right_num
+		        FROM clw_jc_enterprise_vi
+		        WHERE enterprise_id =#organization_id#
+		        )
+		      ) ]]>
+	     <isNotEmpty prepend="AND" property="vehicle_ln">
+			 upper(ccbi.VEHICLE_LN) like '%' || upper(#vehicle_ln#) ||'%' escape '\'
+         </isNotEmpty>
+         <isNotEmpty prepend="AND" property="start_time">
+			 cyat.alarm_day(+) between to_date(#start_time# ||'00:00:00','yyyy-mm-dd HH24:MI:SS') and to_date(#end_time# ||'23:59:59','yyyy-mm-dd HH24:MI:SS')
+         </isNotEmpty>
+		 <isNotEmpty property="time_list">
+			 <isEqual prepend="AND" property="time_list" compareValue="week">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE, 'IW') and sysdate
+			 </isEqual>
+			 <isEqual prepend="AND" property="time_list" compareValue="month">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE, 'MONTH') and last_day(sysdate)
+			 </isEqual>
+			 <isEqual prepend="AND" property="time_list" compareValue="quarter">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE,'Q') and last_day(add_months(TRUNC(SYSDATE,'Q'),2))
+			 </isEqual>
+			 <isEqual prepend="AND" property="time_list" compareValue="year">
+				   cyat.alarm_day(+) between TRUNC(SYSDATE, 'Y') and last_day(add_months(TRUNC(sysdate,'Y'),11))
+			 </isEqual>
+		 </isNotEmpty>  
+         group by ccbi.vehicle_vin, ccbi.VEHICLE_LN))
+	</select>
+</sqlMap>

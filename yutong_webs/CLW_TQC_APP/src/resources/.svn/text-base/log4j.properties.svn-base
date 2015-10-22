@@ -1,0 +1,26 @@
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+log4j.appender.CONSOLE.Threshold=DEBUG
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+log4j.appender.CONSOLE.layout.ConversionPattern=%d{yyyy-MM-dd HH\:mm\:ss} %c %-5p %m%n
+
+log4j.appender.PRODUCT-DEBUG=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.PRODUCT-DEBUG.Append=true
+log4j.appender.PRODUCT-DEBUG.DatePattern='.'yyyy-MM-dd
+log4j.appender.PRODUCT-DEBUG.File=/opt/logs/clw_tqc/tqc-app-debug.log
+log4j.appender.PRODUCT-DEBUG.Threshold=DEBUG
+log4j.appender.PRODUCT-DEBUG.layout=org.apache.log4j.PatternLayout
+log4j.appender.PRODUCT-DEBUG.layout.ConversionPattern=%d{yyyy-MM-dd HH\:mm\:ss} [%-5p] %m%n%n
+
+log4j.logger.com.ibatis=DEBUG
+log4j.logger.java.sql.Connection=DEBUG
+log4j.logger.java.sql.PreparedStatement=DEBUG
+#log4j.logger.java.sql由原来的debug修改为error后，去掉日志信息中打印过多的ResultSet信息。
+log4j.logger.java.sql=ERROR   
+log4j.logger.org.apache.struts=ERROR
+log4j.logger.org.springframework=ERROR
+log4j.logger.uk.ltd.getahead.dwr=ERROR
+log4j.logger.com.opensymphony.xwork2=ERROR
+log4j.logger.org.directwebremoting=ERROR
+#log4j.rootLogger由原来的ERROR修改为INFO,可以输入info和error的日志信息。
+log4j.rootLogger=INFO,CONSOLE,PRODUCT-DEBUG
+

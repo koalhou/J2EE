@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 登录次数action start-->
+	<package name="logincnt" namespace="/ub/login" extends="clw-default">
+		
+		<action name="logincountstat" class="loginCountAction" method="init">
+			<result name="success"> /WEB-INF/jsp/ub/login/loginCountStat.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/login/loginCountStat.jsp 
+				</result>
+		</action>
+		<action name="querystat" class="loginCountAction" method="query">
+			<result name="success"> /WEB-INF/jsp/ub/login/loginCountStat.jsp 
+				</result>
+			<result name="error"> /WEB-INF/jsp/ub/login/loginCountStat.jsp 
+				</result>
+		</action>
+		
+		<!-- 导出 -->
+		<action name="exportStat" class="loginCountAction" method="exportStat">
+			<result name="error" type="redirect-action">
+				<param name="actionName">logincnt</param>
+				<param name="message">${message}</param>
+				<param name="page">${page}</param>
+				<param name="pageSize">${pageSize}</param>
+			</result>
+			<result name="success"> /WEB-INF/jsp/ub/login/loginCountStat.jsp 
+				</result>
+		</action>
+       
+	</package>
+
+	<package name="ubloginJson" namespace="/ubl" extends="json-default">
+		<!-- 首页登录次数统计 -->
+		<action name="mainlogincnt" class="loginCountAction"  method="getMainlogincntList">
+           <result name="success" type="json">
+           	  <param name="contentType">text/json</param>
+			  <param name="excludeNullProperties">false</param>
+           	  <param name="noCache">true</param>
+              <param name="root">staticsMap</param>
+           </result>
+            <result name="error" type="json">
+           	  	<param name="contentType">text/json</param>
+			  	<param name="excludeNullProperties">false</param>
+           	  	<param name="noCache">true</param>
+              	<param name="root">staticsMap</param>
+           	</result>
+       </action>
+       
+	</package>
+	
+	<!-- 登录次数action end-->
+</struts>

@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp
+END
+SyncEnterpriseInfoResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 156
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/SyncEnterpriseInfoResp.java
+END
+ReceiveStuInfoResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 152
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/ReceiveStuInfoResp.java
+END
+OrderRelationsResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 152
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/OrderRelationsResp.java
+END
+SendMessageResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/SendMessageResp.java
+END
+ChangePhoneResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/ChangePhoneResp.java
+END
+MessageActiveTestResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 155
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/MessageActiveTestResp.java
+END
+MessageBindResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/MessageBindResp.java
+END
+SyncStuInfoResp.java
+K 25
+svn:wc:ra_dav:version-url
+V 149
+/svn/datas/!svn/ver/26/other/work_spaces/workspace_xc/CLW_TQC_CORE/src/main/java/com/neusoft/smsplatform/message/inside/msg/resp/SyncStuInfoResp.java
+END

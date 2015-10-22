@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="UserOperateLog">
+	<typeAlias alias="userOperateLog"
+		type="com.neusoft.clw.common.util.log.ds.UserOperateLog" />	
+			
+	<resultMap id="log-param" class="userOperateLog">
+		<result property="id" column="LOG_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="loginName" column="USER_NAME" />
+		<result property="hostIp" column="OPERATE_IP" />
+		<result property="enterpriseId" column="ENTERPRISE_ID" />
+		<result property="enterpriseName" column="ENTERPRISE_NAME" />
+		<result property="applyId" column="APPLY_ID" />
+		<result property="operateModule" column="MODULE_ID" />
+		<result property="operType" column="OPERATE_TYPE" />
+		<result property="operDesc" column="OPERATE_DESC" />
+	</resultMap>
+
+    <!-- 插入日志信息 -->
+	<insert id="insert" parameterClass="userOperateLog" >		
+		INSERT INTO CLW_JC_LOG_T
+          (LOG_ID,
+           USER_ID,
+           USER_NAME,
+           OPERATE_IP,
+           ENTERPRISE_ID,
+           ENTERPRISE_NAME,
+           APPLY_ID,
+           MODULE_ID,
+           OPERATE_TIME,
+           OPERATE_TYPE,
+           OPERATE_DESC)
+        VALUES
+          (#id#,
+           #userId#,
+           #loginName#,
+           #hostIp#,
+           #enterpriseId#,
+           #enterpriseName#,
+           #applyId#,
+           #operateModule#,
+           SYSDATE,
+           #operType#,
+           #operDesc#)
+	</insert>	
+	 
+</sqlMap>

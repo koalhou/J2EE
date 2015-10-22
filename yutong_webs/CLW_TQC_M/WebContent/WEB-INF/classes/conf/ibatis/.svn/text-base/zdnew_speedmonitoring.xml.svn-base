@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SpeedMonitoring">
+	<typeAlias alias="Map" type="java.util.Map" />
+	<typeAlias alias="String" type="java.lang.String" />
+	<typeAlias alias="SpeedMonitoringInfo" type="com.neusoft.clw.yw.zdnew.speedmonitoring.ds.SpeedMonitoringInfo" />
+	<typeAlias alias="updownMonitoringInfo" type="com.neusoft.clw.yw.zdnew.speedmonitoring.ds.UpdownMonitoringInfo" />
+	<resultMap class="updownMonitoringInfo" id="updown_list">
+	    <result property="vehicle_code" column="VEHICLE_code"/>
+       <result property="vehicleLn" column="VEHICLE_LN"/>
+       <result property="terminalTime" column="time"/>
+       <result property="driver_tel" column="driver_tel"/>
+       <result property="vehicle_state" column="status"/>
+       <result property="vehicle_vin" column="vehicle_vin"/>
+       <result property="vehicle_state" column="reason"/>
+       <result property="device_id" column="device_id"/>
+       <result property="driver_name" column="driver_name"/>
+       <result property="driver_id" column="driver_id"/>
+       <result property="downlose" column="downlose"/>
+    </resultMap>
+	<select id="getVehicleCount" parameterClass="Map" resultClass="Integer">
+		<![CDATA[
+		SELECT COUNT(1)
+		  FROM (SELECT CBI.VEHICLE_ID,
+		               CBI.VEHICLE_LN,
+		               TO_CHAR(JT.VEHICLE_MONITORING_GPS_SPEED, 'FM990.00') AS GPSSPEED,
+		               TO_CHAR(JT.VEHICLE_MONITORING_SPEEDING, 'FM990.00') AS VSSSPEED,
+		               TO_CHAR(ROUND((TO_NUMBER(JT.VEHICLE_MONITORING_SPEEDING) -
+		                             TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED)) * 100 /
+		                             TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED),
+		                             2),
+		                       'FM990.00') AS OFFSETSCALE,
+		               TO_CHAR(JT.VEHICLE_MONITORING_TIME, 'YYYY-MM-DD HH24:MI:SS') AS VEHICLE_MONITORING_TIME,
+		               JT.CHARACTER_OEFFICIENT_STATUS
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_GPS_SPEED, '^[0-9,.]*$$')
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_SPEEDING, '^[0-9,.]*$$')
+		           AND TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED) > 40D
+		           AND JT.CHARACTER_OEFFICIENT_STATUS IS NOT NULL
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM >= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		            OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ENTERPRISE_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM >= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		           AND CBI.ORGANIZATION_ID IS NULL
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_GPS_SPEED, '^[0-9,.]*$$')
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_SPEEDING, '^[0-9,.]*$$')
+		           AND TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED) > 40D
+		           AND JT.CHARACTER_OEFFICIENT_STATUS IS NOT NULL) 
+		            ]]>
+			<dynamic prepend="WHERE">  
+		    	<isNotEmpty property="vehicleLn">
+                       VEHICLE_LN LIKE '%$vehicleLn$%'
+                </isNotEmpty>
+            </dynamic> 
+	</select>
+	<select id="getupdownMonitoringCount" parameterClass="Map" resultClass="Integer">
+		select count(1)
+		  from mxc.M2M_VEHICLE_ONLINE_T t,clw_cl_base_info_t t2
+		 where 
+		 t.status != '3' and
+		 t.vehicle_vin = t2.vehicle_vin(+)
+		  <isNotEmpty prepend="and" property="start_time">
+			trunc(to_date(t.time, 'yyyy-mm-dd hh24:mi:ss'), 'DD') >=
+		       to_date(#start_time#, 'yyyy-mm-dd')
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="end_time">
+			trunc(to_date(t.time, 'yyyy-mm-dd hh24:mi:ss'), 'DD') &lt;=
+		       to_date(#end_time#, 'yyyy-mm-dd')
+		</isNotEmpty>
+		 AND t2.ORGANIZATION_ID IN
+              (SELECT ENTERPRISE_ID
+                 FROM CLW_JC_ENTERPRISE_VI
+                WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                                     FROM CLW_JC_ENTERPRISE_VI
+                                    WHERE ENTERPRISE_ID = #enterpriseId#)
+                  AND RIGHT_NUM &lt;=
+                      (SELECT RIGHT_NUM
+                         FROM CLW_JC_ENTERPRISE_VI
+                        WHERE ENTERPRISE_ID = #enterpriseId#))
+		<isNotEmpty prepend="and" property="vehicleLn">
+			t2.vehicle_ln like '%$vehicleLn$%'
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="vehicleCode">
+			t2.vehicle_code like '%$vehicleCode$%'
+		</isNotEmpty>
+		 order by t.vehicle_vin, t.time desc
+	</select>
+	<select id="getupdownMonitorList" parameterClass="Map" resultMap="updown_list">
+	    select t.* from (select s.*, rownum as rownum_2 from (
+		select t2.vehicle_ln,t2.vehicle_code,t.vehicle_vin,t.status,t.time,t.reason,t.device_id,(select driver_name from clw_yw_driver_t t where t.driver_id = t3.driver_id) driver_name,
+		(select driver_tel from clw_yw_driver_t t where t.driver_id = t3.driver_id) driver_tel,t3.driver_id,
+		decode(t.status,2,(select count(1)
+          from clw_yw_terminal_record_t partition(TERMINAL_RECORD_20140306) g
+         where substr(g.alarm_base_info, 56, 1) = '1'
+           and ceil((g.terminal_time -
+                    to_date(t.time, 'yyyy-mm-dd hh24:mi:ss')) * 24 * 60) &lt;= 10
+           and ceil((to_date(t.time, 'yyyy-mm-dd hh24:mi:ss') -
+                    g.terminal_time) * 24 * 60) &lt;= 20
+           and g.vehicle_vin = t.vehicle_vin
+           ),0) downlose
+		  from mxc.M2M_VEHICLE_ONLINE_T t,clw_cl_base_info_t t2,clw_xc_vehdriver_t t3
+		 where t.vehicle_vin = t2.vehicle_vin(+)
+		 and t.status != '3'
+		 and t2.vehicle_vin = t3.vehicle_vin(+)
+		 <isNotEmpty prepend="and" property="start_time">
+			trunc(to_date(t.time, 'yyyy-mm-dd hh24:mi:ss'), 'DD') = to_date(#start_time#, 'yyyy-mm-dd')
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="end_time">
+			trunc(to_date(t.time, 'yyyy-mm-dd hh24:mi:ss'), 'DD') &lt;= to_date(#end_time#, 'yyyy-mm-dd')
+		</isNotEmpty>
+		 AND t2.ORGANIZATION_ID IN
+              (SELECT ENTERPRISE_ID
+                 FROM CLW_JC_ENTERPRISE_VI
+                WHERE LEFT_NUM >= (SELECT LEFT_NUM
+                                     FROM CLW_JC_ENTERPRISE_VI
+                                    WHERE ENTERPRISE_ID = #enterpriseId#)
+                  AND RIGHT_NUM &lt;=
+                      (SELECT RIGHT_NUM
+                         FROM CLW_JC_ENTERPRISE_VI
+                        WHERE ENTERPRISE_ID = #enterpriseId#))
+		<isNotEmpty prepend="and" property="vehicleLn">
+			t2.vehicle_ln like '%$vehicleLn$%'
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="vehicleCode">
+			t2.vehicle_code like '%$vehicleCode$%'
+		</isNotEmpty>
+		 order by t.vehicle_vin, t.time desc
+		 
+		 ) s where rownum&lt;= #rowEnd# ) t where rownum_2 &gt; #rowStart#
+	</select>
+	<resultMap class="SpeedMonitoringInfo" id="vehicle_list">
+       <result property="vehicleId" column="VEHICLE_ID"/>
+       <result property="vehicleLn" column="VEHICLE_LN"/>
+       <result property="gpsSpeed" column="GPSSPEED"/>
+       <result property="vssSpeed" column="VSSSPEED"/>
+       <result property="offsetScale" column="OFFSETSCALE"/>
+       <result property="terminalTime" column="VEHICLE_MONITORING_TIME"/>
+       <result property="dealStatus" column="CHARACTER_OEFFICIENT_STATUS"/>
+    </resultMap>
+    
+	<select id="getVehicleListById" parameterClass="Map" resultMap="vehicle_list">
+	<![CDATA[
+		SELECT VEHICLE_ID,
+		       VEHICLE_LN,
+		       GPSSPEED,
+		       VSSSPEED,
+		       OFFSETSCALE,
+		       VEHICLE_MONITORING_TIME,
+		       CHARACTER_OEFFICIENT_STATUS
+		  FROM (SELECT CBI.VEHICLE_ID,
+		               CBI.VEHICLE_LN,
+		               TO_CHAR(JT.VEHICLE_MONITORING_GPS_SPEED, 'FM990.00') AS GPSSPEED,
+		               TO_CHAR(JT.VEHICLE_MONITORING_SPEEDING, 'FM990.00') AS VSSSPEED,
+		               TO_CHAR(ROUND((TO_NUMBER(JT.VEHICLE_MONITORING_SPEEDING) -
+		                             TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED)) * 100 /
+		                             TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED),
+		                             2),
+		                       'FM990.00') AS OFFSETSCALE,
+		               TO_CHAR(JT.VEHICLE_MONITORING_TIME, 'YYYY-MM-DD HH24:MI:SS') AS VEHICLE_MONITORING_TIME,
+		               JT.CHARACTER_OEFFICIENT_STATUS
+		          FROM CLW_JC_TERMINAL_T   JT,
+		               CLW_CL_BASE_INFO_T  CBI,
+		               CLW_CL_SIM_T        CS,
+		               CLW_JC_ENTERPRISE_T JE
+		         WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_GPS_SPEED, '^[0-9,.]*$$')
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_SPEEDING, '^[0-9,.]*$$')
+		           AND TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED) > 40D
+		           AND JT.CHARACTER_OEFFICIENT_STATUS IS NOT NULL
+		           AND CBI.ORGANIZATION_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM >= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		            OR JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+		           AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+		           AND CBI.ENTERPRISE_ID = JE.ENTERPRISE_ID(+)
+		           AND JT.TERMINAL_ID IS NOT NULL
+		           AND JT.VEHICLE_VIN IS NOT NULL
+		           AND JT.SIM_CARD_NUMBER IS NOT NULL
+		           AND JT.VALID_FLAG = '0'
+		           AND CBI.VALID_FLAG = '0'
+		           AND CS.VALID_FLAG = '0'
+		           AND JT.DEVICE_TYPE = '0'
+		           AND CBI.DEVICE_TYPE = '0'
+		           AND CS.DEVICE_TYPE = '0'
+		           AND CBI.ENTERPRISE_ID IN
+		               (SELECT ENTERPRISE_ID
+		                  FROM CLW_JC_ENTERPRISE_VI
+		                 WHERE LEFT_NUM >= (SELECT LEFT_NUM
+		                                      FROM CLW_JC_ENTERPRISE_VI
+		                                     WHERE ENTERPRISE_ID = #enterpriseId#)
+		                   AND RIGHT_NUM <=
+		                       (SELECT RIGHT_NUM
+		                          FROM CLW_JC_ENTERPRISE_VI
+		                         WHERE ENTERPRISE_ID = #enterpriseId#))
+		           AND CBI.ORGANIZATION_ID IS NULL
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_GPS_SPEED, '^[0-9,.]*$$')
+		           AND REGEXP_LIKE(JT.VEHICLE_MONITORING_SPEEDING, '^[0-9,.]*$$')
+		           AND TO_NUMBER(JT.VEHICLE_MONITORING_GPS_SPEED) > 40D
+		           AND JT.CHARACTER_OEFFICIENT_STATUS IS NOT NULL) 
+		            ]]>
+			<dynamic prepend="WHERE">  
+		    	<isNotEmpty property="vehicleLn">
+                       VEHICLE_LN LIKE '%$vehicleLn$%'
+                </isNotEmpty>
+            </dynamic>       
+		    <dynamic prepend="ORDER BY">  
+			   <isNotEmpty property="sortname">  
+			    $sortname$   $sortorder$  
+			   </isNotEmpty>  
+			</dynamic>
+	</select>
+	
+	<resultMap class="SpeedMonitoringInfo" id="vehicleInfos">
+       <result property="vehicleVin" column="VEHICLE_VIN"/>
+       <result property="simCardNo" column="SIM_CARD_NUMBER"/>
+    </resultMap>
+	<select id="getVehicleInfos" parameterClass="String" resultMap="vehicleInfos">
+			SELECT JT.VEHICLE_VIN, JT.SIM_CARD_NUMBER
+			  FROM CLW_JC_TERMINAL_T JT, CLW_CL_BASE_INFO_T CBI, CLW_CL_SIM_T CS
+			 WHERE JT.VEHICLE_VIN = CBI.VEHICLE_VIN(+)
+			   AND JT.SIM_CARD_NUMBER = CS.SIM_CARD_NUMBER(+)
+			   AND JT.TERMINAL_ID IS NOT NULL
+			   AND JT.VEHICLE_VIN IS NOT NULL
+			   AND JT.SIM_CARD_NUMBER IS NOT NULL
+			   AND JT.VALID_FLAG = '0'
+			   AND CBI.VALID_FLAG = '0'
+			   AND CS.VALID_FLAG = '0'
+			   AND JT.DEVICE_TYPE = '0'
+			   AND CBI.DEVICE_TYPE = '0'
+			   AND CS.DEVICE_TYPE = '0'
+			   AND CBI.VEHICLE_ID IN ($value$)  
+	</select>
+</sqlMap>
